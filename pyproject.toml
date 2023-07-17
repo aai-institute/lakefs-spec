@@ -63,6 +63,7 @@ min-similarity-lines = 5
 [tool.pylint.messages_control]
 disable = [
   "line-too-long",                # line too long, rely on black for reformatting of these, since sometimes URLs or comments can be longer
+  "logging-fstring-interpolation",# TODO: Re-enable after porting interpolation with modern f-string format placeholders
   "fixme",                        # Allow FIXME & TODO comments
   "missing-module-docstring",     # Don't require a module docstring
   "missing-function-docstring",   # Don't require a function docstring
