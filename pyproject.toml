@@ -1,0 +1,98 @@
+[tool.poetry]
+name = "lakefs-spec"
+version = "0.1.0"
+description = "An fsspec implementation for lakeFS."
+authors = ["Nicholas Junge <n.junge@appliedai.de>"]
+readme = "README.md"
+packages = [{include = "lakefs_spec", from = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+fsspec = "^2023.6.0"
+lakefs-client = "^0.104.0"
+
+[tool.poetry.group.dev.dependencies]
+bandit = { extras = ["toml"], version = "^1.7.5" }
+black = "^23.7.0"
+bump2version = "^1.0.1"
+isort = "^5.12.0"
+mypy = "^1.4.1"
+pre-commit = "3.3.3"
+pylint = "^2.17.4"
+pytest = "^7.4.0"
+ruff = "^0.0.278"
+
+[tool.black]
+# Source https://github.com/psf/black#configuration-format
+include = "\\.pyi?$"
+line-length = 88
+target-version = ["py39"]
+
+# Black-compatible settings for isort
+# See https://black.readthedocs.io/en/stable/compatible_configs.html
+[tool.isort]
+line_length = "88"
+profile = "black"
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_incomplete_defs = true
+ignore_missing_imports = true
+install_types = true
+pretty = true
+python_version = "3.9"
+scripts_are_modules = true
+strict_optional = false
+warn_unreachable = true
+
+[tool.pylint.main]
+ignore-paths = ["tests"]
+output-format = "colorized"
+jobs = 0                    # Parallelize linting across all CPUs
+
+[tool.pylint.TYPECHECK]
+generated-members = "lakefs_spec.client.LakeFSClient.*"
+
+[tool.pylint.similarity]
+ignore-comments = true
+ignore-docstrings = true
+ignore-imports = true
+ignore-signatures = true
+min-similarity-lines = 5
+
+[tool.pylint.messages_control]
+disable = [
+  "line-too-long",                # line too long, rely on black for reformatting of these, since sometimes URLs or comments can be longer
+  "fixme",                        # Allow FIXME & TODO comments
+  "missing-module-docstring",     # Don't require a module docstring
+  "missing-function-docstring",   # Don't require a function docstring
+  "invalid-name",                 # Allow names such as `df`
+  "too-many-arguments",           # Allow more than 5 arguments in a function
+  "too-many-instance-attributes", # Don't require at least 2 public methods
+  "too-few-public-methods",       # Allow more than 7 instance attributes
+]
+
+[tool.ruff]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+select = ["E", "F", "W"]
+ignore = [
+    # whitespace before colon (:), rely on black for formatting (in particular, allow spaces before ":" in list/array slices)
+    "E203",
+    # line too long, rely on black for reformatting of these, since sometimes URLs or comments can be longer
+    "E501",
+    # Allow capitalized variable names, necessary for e.g., `X_train = get_train_data()`
+    "F841",
+    # Multiple spaces before operator
+    "E221",
+    # Module imported but unused - covered by Pylint
+    "F401",
+    # Redefinition of unused name from line n - covered by Pylint
+    "F811",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

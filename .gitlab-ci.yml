@@ -1,0 +1,23 @@
+include:
+  - project: 'resources/gitlab-ci-templates'
+    # Available tags: https://gitlab.aai.sh/resources/gitlab-ci-templates/-/releases
+    ref: v10.0.0 # IMPORTANT: always use a commit or tag, never "master"
+    file: '/python-pytest/pytest.gitlab-ci.yml'
+  - project: 'resources/gitlab-ci-templates'
+    # Available tags: https://gitlab.aai.sh/resources/gitlab-ci-templates/-/releases
+    ref: v10.0.0 # IMPORTANT: always use a commit or tag, never "master"
+    file: '/python-poetry/poetry.gitlab-ci.yml'
+
+stages:
+  - test
+
+workflow:
+  rules:
+    # Prevent skipped pipelines from commits authored by CI
+    - if: $CI_COMMIT_TAG
+      when: always
+    - if: $CI_COMMIT_AUTHOR == "Gitlab CI <gitlab-ci@gitlab.aai.sh>"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "develop"
+    - if: $CI_COMMIT_BRANCH == "main"

@@ -1,0 +1,11 @@
+# top-most EditorConfig file
+root = true
+
+# Apply the following rules to all files
+[*]
+# Unix-style newlines with a newline ending every file
+# A mix of line endings can lead to various problems, e.g., when running scripts in
+# containers or when versioning python scripts based on the hash of the source file.
+end_of_line = lf
+# Consistency
+insert_final_newline = true
