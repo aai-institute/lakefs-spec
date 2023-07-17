@@ -10,11 +10,9 @@ repos:
     hooks:
       - id: check-added-large-files
       - id: check-json
-        exclude: "^(\\.vscode/|\\.devcontainer/)"
       - id: check-toml
-        exclude: "^(\\.gitlab/|src/mlopskit/cli/resources/)"
       - id: check-yaml
-        exclude: "^(\\.gitlab/|src/mlopskit/cli/resources/|deploy/charts/)|mkdocs\\.ya?ml|\\.gitlab-ci\\.yml"
+        exclude: "^\\.gitlab-ci\\.yml"
       - id: end-of-file-fixer
       - id: mixed-line-ending
   - repo: local
@@ -47,6 +45,12 @@ repos:
         # exclude the lakeFS client stub to suppress duplicate module errors
         # https://github.com/pre-commit/mirrors-mypy/issues/33#issuecomment-967247764
         exclude: "^(src/lakefs_spec/client.pyi)"
+      - id: ruff
+        name: ruff
+        require_serial: true
+        entry: build_scripts/run_in_venv.sh ruff
+        language: system
+        types: [ python ]
       # Pylint only works locally, since it needs to import modules and dependencies
       # See: https://pylint.pycqa.org/en/latest/user_guide/pre-commit-integration.html
       # See https://github.com/PyCQA/pylint/blob/main/.pre-commit-hooks.yaml
@@ -69,14 +73,6 @@ repos:
         types_or: [python, pyi]
         entry: build_scripts/run_in_venv.sh bandit
         args: ["-c", "pyproject.toml"]
-  - repo: local
-    hooks:
-      - id: ruff
-        name: ruff
-        require_serial: true
-        entry: build_scripts/run_in_venv.sh ruff
-        language: system
-        types: [python]
   - repo: https://github.com/DavidAnson/markdownlint-cli2
     rev: v0.7.1
     hooks:

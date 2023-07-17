@@ -69,7 +69,9 @@ def with_counter(client: LakeFSClient) -> tuple[LakeFSClient, APICounter]:
     return client, counter
 
 
-def test_checksum_matching(tmp_path: Path, lakefs_client: LakeFSClient) -> None:
+def test_checksum_matching(
+    tmp_path: Path, lakefs_client: LakeFSClient, repository: str
+) -> None:
     # generate 4KiB random string
     random_file = tmp_path / "test.txt"
     random_str = "".join(
@@ -78,7 +80,7 @@ def test_checksum_matching(tmp_path: Path, lakefs_client: LakeFSClient) -> None:
     random_file.write_text(random_str, encoding="utf-8")
     random_fp = str(random_file)
 
-    fs = LakeFSFileSystem(client=lakefs_client, repository="test")
+    fs = LakeFSFileSystem(client=lakefs_client, repository=repository)
     fs.client, counter = with_counter(fs.client)
 
     remote_path = "test.txt"
@@ -88,7 +90,7 @@ def test_checksum_matching(tmp_path: Path, lakefs_client: LakeFSClient) -> None:
     blocksizes = [2**5, 2**8, 2**10, 2**12, 2**22]
     for blocksize in blocksizes:
         local_checksum = md5_checksum(random_fp, blocksize)
-        assert local_checksum == fs.checksum("test.txt")
+        assert local_checksum == fs.checksum("test.txt", ref="main")
 
     # we expect to get one `ls` call per upload attempt,
     # but only one actual upload!
@@ -100,12 +102,12 @@ def test_checksum_matching(tmp_path: Path, lakefs_client: LakeFSClient) -> None:
     assert counter.count("objects.upload_object") == 2
 
 
-def test_get_nonexistent_file(lakefs_client: LakeFSClient) -> None:
+def test_get_nonexistent_file(lakefs_client: LakeFSClient, repository: str) -> None:
     """
     Regression test against error on file closing in fs.get_file() after a
      lakeFS API exception.
     """
-    fs = LakeFSFileSystem(client=lakefs_client, repository="test")
+    fs = LakeFSFileSystem(client=lakefs_client, repository=repository)
 
     with pytest.raises(FileNotFoundError):
         fs.get_file("hello-i-no-exist1234.txt", "out.txt", ref="main")
@@ -113,11 +115,11 @@ def test_get_nonexistent_file(lakefs_client: LakeFSClient) -> None:
     Path("out.txt").unlink(missing_ok=True)
 
 
-def test_paginated_ls(lakefs_client: LakeFSClient) -> None:
+def test_paginated_ls(lakefs_client: LakeFSClient, repository: str) -> None:
     """
     Check that all results of an ``ls`` call are returned independently of page size.
     """
-    fs = LakeFSFileSystem(client=lakefs_client, repository="test")
+    fs = LakeFSFileSystem(client=lakefs_client, repository=repository)
 
     # default amount of 100 objects per page
     all_results = fs.ls("/", ref="main")

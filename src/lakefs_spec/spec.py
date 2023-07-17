@@ -51,9 +51,9 @@ class LakeFSFileSystem(AbstractFileSystem):
     def _rm(self, path):
         raise NotImplementedError
 
-    def checksum(self, path):
+    def checksum(self, path, ref=None):
         try:
-            return self.info(path).get("checksum", None)
+            return self.info(path, ref=ref).get("checksum", None)
         except (ApiException, FileNotFoundError):
             return None
 
@@ -172,7 +172,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     ):
         if not force:
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
-            remote_checksum = self.checksum(rpath)
+            remote_checksum = self.checksum(rpath, ref=branch)
             if remote_checksum is not None and local_checksum == remote_checksum:
                 logger.info(
                     f"Skipping upload of resource {lpath!r} to remote path {rpath!r}: "
@@ -194,7 +194,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     def rm_file(self, path, branch=None):
         if branch is None:
             raise ValueError(
-                f"unable to delete object {path!r}: " f"no lakeFS branch was specified."
+                f"unable to delete object {path!r}: no lakeFS branch was specified."
             )
         if not self.exists(path, ref=branch):
             raise FileNotFoundError(
