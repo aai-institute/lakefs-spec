@@ -25,9 +25,7 @@ ruff = "^0.0.278"
 # Register lakeFS file system via the fsspec entry point
 # Source: https://github.com/python-poetry/poetry/issues/927#issuecomment-1232254538
 [tool.poetry.plugins]
-
-[tool.poetry.plugins."fsspec.specs"]
-"lakefs" = "lakefs_spec.spec.LakeFSFileSystem"
+"fsspec.specs" = {"lakefs" = "lakefs_spec.spec.LakeFSFileSystem"}
 
 [tool.black]
 # Source https://github.com/psf/black#configuration-format
@@ -56,9 +54,6 @@ warn_unreachable = true
 ignore-paths = ["tests"]
 output-format = "colorized"
 jobs = 0                    # Parallelize linting across all CPUs
-
-[tool.pylint.TYPECHECK]
-generated-members = "lakefs_spec.client.LakeFSClient.*"
 
 [tool.pylint.similarity]
 ignore-comments = true

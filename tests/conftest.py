@@ -21,7 +21,7 @@ logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--lakefs-instance",
+        "--lakefs-host",
         action="store",
         type=str,
         default=_DEFAULT_LAKEFS_INSTANCE,
@@ -44,23 +44,31 @@ def lakefs_client(lakefs_host: str) -> LakeFSClient:
 
 @pytest.fixture(scope="session")
 def lakefs_host(request: Any) -> str:
-    return request.config.getoption("--lakefs-instance")
+    return request.config.getoption("--lakefs-host")
 
 
 @pytest.fixture(scope="session")
 def ensurerepo(lakefs_client: LakeFSClient) -> str:
     repos = lakefs_client.repositories.list_repositories()
     reponames = [r.id for r in repos.results]
+
     if _TEST_REPO in reponames:
         pass
     else:
-        logger.info(f"Creating test repository {_TEST_REPO!r}.")
+        # Storage prefix is s3://lakefs/ in lakeFS via Helm deployment,
+        # but local:// e.g. in the local Docker container. This seems to
+        # be a solid way of extracting the prefix under the assumption that
+        # it does not change inside a deployment.
+        (sn_prefix,) = set(r.storage_namespace.replace(r.id, "") for r in repos)
+        storage_namespace = sn_prefix + _TEST_REPO
+        logger.info(
+            f"Creating test repository {_TEST_REPO!r} "
+            f"with associated storage namespace {storage_namespace!r}."
+        )
         lakefs_client.repositories.create_repository(
             RepositoryCreation(
                 name=_TEST_REPO,
-                # TODO (n.junge): Local Docker storage namespaces start with
-                #  the local:// prefix instead of s3://lakefs/, is this a problem?
-                storage_namespace=f"s3://lakefs/{_TEST_REPO}",
+                storage_namespace=storage_namespace,
             )
         )
     return _TEST_REPO
