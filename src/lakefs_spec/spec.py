@@ -53,7 +53,7 @@ def parse(path: str) -> tuple[str, str, str]:
     results = path_regex.fullmatch(path)
     if results is None:
         raise ValueError(
-            "expected path with structure <repo>/<ref>/<resource>, " f"got {path!r}"
+            f"expected path with structure <repo>/<ref>/<resource>, got {path!r}"
         )
 
     return results.group(1), results.group(2), results.group(3)
@@ -77,31 +77,19 @@ class LakeFSFileSystem(AbstractFileSystem):
         super().__init__()
         self.client = client
 
-    @classmethod
-    def _parent(cls, path):
-        repo, ref, resource = parse(path)
-        resource = super()._parent(resource)
-        return f"{repo}/{ref}/{resource}"
-
     def _rm(self, path):
         raise NotImplementedError
 
     def checksum(self, path):
         try:
-            # info() calls ls() under the hood, which parses the path
             return self.info(path).get("checksum", None)
-        except (ApiException, FileNotFoundError) as e:
-            logger.error(e)
+        except (ApiException, FileNotFoundError):
             return None
 
-    def exists(self, path, repository=None, ref=None, **kwargs):
-        if ref is None:
-            raise ValueError(
-                f"unable to test existence of file {path!r}: "
-                f"no lakeFS branch was specified."
-            )
+    def exists(self, path, **kwargs):
+        repository, ref, resource = parse(path)
         try:
-            self.client.objects.head_object(repository, ref, path)
+            self.client.objects.head_object(repository, ref, resource)
             return True
         except ApiException as e:
             if e.status == 404:
@@ -152,10 +140,29 @@ class LakeFSFileSystem(AbstractFileSystem):
             if not isfilelike(lpath):
                 outfile.close()
 
+    def info(self, path, **kwargs):
+        out = self.ls(path, detail=True, **kwargs)
+        # TODO: Avoid double path parsing by implementing an ls overload
+        #  that takes the parsed inputs instead of raw paths
+        *_, resource = parse(path)
+        resource = resource.rstrip("/")
+
+        # input path is a file name
+        if len(out) == 1:
+            return out[0]
+        # input path is a directory name
+        elif len(out) > 1:
+            return {
+                "name": resource,
+                "size": sum(o.get("size", 0) for o in out),
+                "type": "directory",
+            }
+        else:
+            raise FileNotFoundError(resource)
+
     def isfile(self, path):
         """Is this entry file-like?"""
         try:
-            # info() calls ls() under the hood, which parses the path
             return self.info(path)["type"] == "object"
         except (ApiException, FileNotFoundError):
             return False
@@ -219,14 +226,14 @@ class LakeFSFileSystem(AbstractFileSystem):
                 repository=repository, branch=branch, path=resource, content=f
             )
 
-    def rm_file(self, path, branch=None):
+    def rm_file(self, path):
         repository, branch, resource = parse(path)
 
-        if not self.exists(resource, repository=repository, ref=branch):
+        if not self.exists(path):
             raise FileNotFoundError(
-                f"object {path!r} does not exist on branch {branch!r}"
+                f"object {resource!r} does not exist on branch {branch!r}"
             )
 
         self.client.objects.delete_object(
-            repository=repository, branch=branch, path=path
+            repository=repository, branch=branch, path=resource
         )

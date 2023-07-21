@@ -69,6 +69,7 @@ disable = [
   "fixme",                        # Allow FIXME & TODO comments
   "missing-module-docstring",     # Don't require a module docstring
   "missing-function-docstring",   # Don't require a function docstring
+  "no-else-return",               # Allow if-elif-else constructs
   "invalid-name",                 # Allow names such as `df`
   "too-many-arguments",           # Allow more than 5 arguments in a function
   "too-many-instance-attributes", # Don't require at least 2 public methods
