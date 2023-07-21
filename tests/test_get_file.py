@@ -11,9 +11,10 @@ def test_get_nonexistent_file(lakefs_client: LakeFSClient, repository: str) -> N
     Regression test against error on file closing in fs.get_file() after a
      lakeFS API exception.
     """
-    fs = LakeFSFileSystem(client=lakefs_client, repository=repository)
+    fs = LakeFSFileSystem(client=lakefs_client)
+    rpath = f"{repository}/main/hello-i-no-exist1234.txt"
 
     with pytest.raises(FileNotFoundError):
-        fs.get_file("hello-i-no-exist1234.txt", "out.txt", ref="main")
+        fs.get_file(rpath, "out.txt")
 
     Path("out.txt").unlink(missing_ok=True)

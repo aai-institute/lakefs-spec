@@ -1,6 +1,7 @@
 import hashlib
 import io
 import logging
+import re
 import sys
 from typing import Any
 
@@ -29,6 +30,35 @@ def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
     return file_hash.hexdigest()
 
 
+def parse(path: str) -> tuple[str, str, str]:
+    """
+    Parses a lakeFS URI in the form <repo>/<ref>/<path>.
+
+    Parameters
+    ----------
+    path: String path, needs to conform to the lakeFS URI format described above.
+
+    Returns
+    -------
+    A tuple of repository name, reference, and resource name.
+
+    """
+    # First regex reflects the lakeFS repository naming rules:
+    # only lowercase letters, digits and dash, no leading dash,
+    # minimum 3, maximum 63 characters
+    # https://docs.lakefs.io/understand/model.html#repository
+    # Second regex is the branch: Only letters, digits, underscores
+    # and dash, no leading dash
+    path_regex = re.compile(r"([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-]+)/(.*)")
+    results = path_regex.fullmatch(path)
+    if results is None:
+        raise ValueError(
+            f"expected path with structure <repo>/<ref>/<resource>, got {path!r}"
+        )
+
+    return results.group(1), results.group(2), results.group(3)
+
+
 class LakeFSFileSystem(AbstractFileSystem):
     """
     lakeFS file system spec implementation.
@@ -43,28 +73,23 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     protocol = "lakefs"
 
-    def __init__(self, client: LakeFSClient, repository: str):
+    def __init__(self, client: LakeFSClient):
         super().__init__()
         self.client = client
-        self.repository = repository
 
     def _rm(self, path):
         raise NotImplementedError
 
-    def checksum(self, path, ref=None):
+    def checksum(self, path):
         try:
-            return self.info(path, ref=ref).get("checksum", None)
+            return self.info(path).get("checksum", None)
         except (ApiException, FileNotFoundError):
             return None
 
-    def exists(self, path, ref=None, **kwargs):
-        if ref is None:
-            raise ValueError(
-                f"unable to test existence of file {path!r}: "
-                f"no lakeFS branch was specified."
-            )
+    def exists(self, path, **kwargs):
+        repository, ref, resource = parse(path)
         try:
-            self.client.objects.head_object(self.repository, ref, path)
+            self.client.objects.head_object(repository, ref, resource)
             return True
         except ApiException as e:
             if e.status == 404:
@@ -77,10 +102,13 @@ class LakeFSFileSystem(AbstractFileSystem):
         lpath,
         callback=_DEFAULT_CALLBACK,
         outfile=None,
-        ref=None,
         force=False,
         **kwargs,
     ):
+        # no call to self._strip_protocol here, since that is handled by the
+        # AbstractFileSystem.get() implementation
+        repository, ref, resource = parse(rpath)
+
         if not force and super().exists(lpath):
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
@@ -96,15 +124,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         else:
             outfile = open(lpath, "wb")  # pylint: disable=consider-using-with
 
-        if ref is None:
-            raise ValueError(
-                f"unable to download remote file {rpath!r} to location {lpath!r}: "
-                f"no lakeFS branch was specified."
-            )
-
         try:
             res: io.BufferedReader = self.client.objects.get_object(
-                self.repository, ref, rpath
+                repository, ref, resource
             )
             while True:
                 chunk = res.read(self.blocksize)
@@ -118,6 +140,26 @@ class LakeFSFileSystem(AbstractFileSystem):
             if not isfilelike(lpath):
                 outfile.close()
 
+    def info(self, path, **kwargs):
+        out = self.ls(path, detail=True, **kwargs)
+        # TODO: Avoid double path parsing by implementing an ls overload
+        #  that takes the parsed inputs instead of raw paths
+        *_, resource = parse(path)
+        resource = resource.rstrip("/")
+
+        # input path is a file name
+        if len(out) == 1:
+            return out[0]
+        # input path is a directory name
+        elif len(out) > 1:
+            return {
+                "name": resource,
+                "size": sum(o.get("size", 0) for o in out),
+                "type": "directory",
+            }
+        else:
+            raise FileNotFoundError(resource)
+
     def isfile(self, path):
         """Is this entry file-like?"""
         try:
@@ -125,23 +167,20 @@ class LakeFSFileSystem(AbstractFileSystem):
         except (ApiException, FileNotFoundError):
             return False
 
-    def ls(self, path, detail=True, ref=None, amount=100, **kwargs):
-        if ref is None:
-            raise ValueError(
-                f"unable to list files for resource {path!r}: "
-                f"no lakeFS branch was specified."
-            )
+    def ls(self, path, detail=True, amount=100, **kwargs):
+        repository, ref, prefix = parse(path)
+
         has_more, after = True, ""
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         info: list[Any] = []
 
         while has_more:
             res: ObjectStatsList = self.client.objects.list_objects(
-                self.repository,
+                repository,
                 ref,
                 user_metadata=detail,
                 after=after,
-                prefix=self._strip_protocol(path),
+                prefix=prefix,
                 amount=amount,
             )
             has_more, after = res.pagination.has_more, res.pagination.next_offset
@@ -166,13 +205,15 @@ class LakeFSFileSystem(AbstractFileSystem):
         lpath,
         rpath,
         callback=_DEFAULT_CALLBACK,
-        branch=None,
         force=False,
         **kwargs,
     ):
+        repository, branch, resource = parse(rpath)
+
         if not force:
+            # TODO (n.junge): Make this work for lpaths that are themselves lakeFS paths
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
-            remote_checksum = self.checksum(rpath, ref=branch)
+            remote_checksum = self.checksum(rpath)
             if remote_checksum is not None and local_checksum == remote_checksum:
                 logger.info(
                     f"Skipping upload of resource {lpath!r} to remote path {rpath!r}: "
@@ -180,27 +221,19 @@ class LakeFSFileSystem(AbstractFileSystem):
                 )
                 return
 
-        if branch is None:
-            raise ValueError(
-                f"unable to upload local file {lpath!r} to remote path {rpath!r}: "
-                f"no lakeFS branch was specified."
-            )
-
         with open(lpath, "rb") as f:
             self.client.objects.upload_object(
-                repository=self.repository, branch=branch, path=rpath, content=f
+                repository=repository, branch=branch, path=resource, content=f
             )
 
-    def rm_file(self, path, branch=None):
-        if branch is None:
-            raise ValueError(
-                f"unable to delete object {path!r}: no lakeFS branch was specified."
-            )
-        if not self.exists(path, ref=branch):
+    def rm_file(self, path):
+        repository, branch, resource = parse(path)
+
+        if not self.exists(path):
             raise FileNotFoundError(
-                f"object {path!r} does not exist on branch {branch!r}"
+                f"object {resource!r} does not exist on branch {branch!r}"
             )
 
         self.client.objects.delete_object(
-            repository=self.repository, branch=branch, path=path
+            repository=repository, branch=branch, path=resource
         )

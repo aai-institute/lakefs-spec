@@ -19,17 +19,17 @@ def test_checksum_matching(
     random_file.write_text(random_str, encoding="utf-8")
     random_fp = str(random_file)
 
-    fs = LakeFSFileSystem(client=lakefs_client, repository=repository)
+    fs = LakeFSFileSystem(client=lakefs_client)
     fs.client, counter = with_counter(fs.client)
 
-    remote_path = "test.txt"
-    fs.put_file(random_fp, remote_path, branch="main")
+    remote_path = f"{repository}/main/test.txt"
+    fs.put_file(random_fp, remote_path)
 
     # assert that MD5 hash is insensitive to the block size
     blocksizes = [2**5, 2**8, 2**10, 2**12, 2**22]
     for blocksize in blocksizes:
         local_checksum = md5_checksum(random_fp, blocksize)
-        assert local_checksum == fs.checksum("test.txt", ref="main")
+        assert local_checksum == fs.checksum(remote_path)
         # this test sometimes fails because of a race condition in the client
         time.sleep(0.1)
 
