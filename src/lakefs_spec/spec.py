@@ -86,15 +86,18 @@ class LakeFSFileSystem(AbstractFileSystem):
         except (ApiException, FileNotFoundError):
             return None
 
-    def exists(self, path, **kwargs):
-        repository, ref, resource = parse(path)
+    def _exists_internal(self, repository: str, ref: str, path: str) -> bool:
         try:
-            self.client.objects.head_object(repository, ref, resource)
+            self.client.objects.head_object(repository, ref, path)
             return True
         except ApiException as e:
             if e.status == 404:
                 return False
             raise FileNotFoundError(f"Error (HTTP{e.status}): {e.reason}") from e
+
+    def exists(self, path, **kwargs):
+        repository, ref, resource = parse(path)
+        return self._exists_internal(repository, ref, resource)
 
     def get_file(
         self,
@@ -141,10 +144,10 @@ class LakeFSFileSystem(AbstractFileSystem):
                 outfile.close()
 
     def info(self, path, **kwargs):
-        out = self.ls(path, detail=True, **kwargs)
-        # TODO: Avoid double path parsing by implementing an ls overload
-        #  that takes the parsed inputs instead of raw paths
-        *_, resource = parse(path)
+        repository, ref, resource = parse(path)
+        out = self._ls_internal(
+            repository=repository, ref=ref, prefix=resource, detail=True, **kwargs
+        )
         resource = resource.rstrip("/")
 
         # input path is a file name
@@ -160,16 +163,14 @@ class LakeFSFileSystem(AbstractFileSystem):
         else:
             raise FileNotFoundError(resource)
 
-    def isfile(self, path):
-        """Is this entry file-like?"""
-        try:
-            return self.info(path)["type"] == "object"
-        except (ApiException, FileNotFoundError):
-            return False
-
-    def ls(self, path, detail=True, amount=100, **kwargs):
-        repository, ref, prefix = parse(path)
-
+    def _ls_internal(
+        self,
+        repository: str,
+        ref: str,
+        prefix: str,
+        detail: bool = True,
+        amount: int = 100,
+    ) -> list[Any]:
         has_more, after = True, ""
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         info: list[Any] = []
@@ -192,13 +193,19 @@ class LakeFSFileSystem(AbstractFileSystem):
                         "mtime": obj.mtime,
                         "name": obj.path,
                         "size": obj.size_bytes,
-                        "type": obj.path_type,
+                        "type": "file",
                     }
                 )
 
         if not detail:
             return [o["name"] for o in info]
         return info
+
+    def ls(self, path, detail=True, amount=100, **kwargs):
+        repository, ref, prefix = parse(path)
+        return self._ls_internal(
+            repository=repository, ref=ref, prefix=prefix, detail=detail, amount=amount
+        )
 
     def put_file(
         self,
@@ -229,7 +236,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     def rm_file(self, path):
         repository, branch, resource = parse(path)
 
-        if not self.exists(path):
+        if not self._exists_internal(repository=repository, ref=branch, path=resource):
             raise FileNotFoundError(
                 f"object {resource!r} does not exist on branch {branch!r}"
             )
