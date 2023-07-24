@@ -7,11 +7,12 @@ from typing import Any
 
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractFileSystem
-from fsspec.utils import isfilelike
+from fsspec.utils import isfilelike, stringify_path
 from lakefs_client import ApiException
 from lakefs_client.models import ObjectStatsList
 
 from lakefs_spec.client import LakeFSClient
+from lakefs_spec.commithook import CommitHook, Default
 
 _DEFAULT_CALLBACK = NoOpCallback()
 
@@ -32,17 +33,20 @@ def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
 
 def parse(path: str) -> tuple[str, str, str]:
     """
-    Parses a lakeFS URI in the form <repo>/<ref>/<path>.
+    Parses a lakeFS URI in the form ``<repo>/<ref>/<resource>``.
 
     Parameters
     ----------
-    path: String path, needs to conform to the lakeFS URI format described above.
+    path: str
+     String path, needs to conform to the lakeFS URI format described above.
+     The ``<resource>`` part can be the empty string.
 
     Returns
     -------
-    A tuple of repository name, reference, and resource name.
-
+    str
+       A 3-tuple of repository name, reference, and resource name.
     """
+
     # First regex reflects the lakeFS repository naming rules:
     # only lowercase letters, digits and dash, no leading dash,
     # minimum 3, maximum 63 characters
@@ -50,35 +54,54 @@ def parse(path: str) -> tuple[str, str, str]:
     # Second regex is the branch: Only letters, digits, underscores
     # and dash, no leading dash
     path_regex = re.compile(r"([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-]+)/(.*)")
-    results = path_regex.fullmatch(path)
+    results = path_regex.match(path)
     if results is None:
         raise ValueError(
             f"expected path with structure <repo>/<ref>/<resource>, got {path!r}"
         )
 
-    return results.group(1), results.group(2), results.group(3)
+    repo, ref, resource = results.groups()
+    return repo, ref, resource
 
 
 class LakeFSFileSystem(AbstractFileSystem):
     """
     lakeFS file system spec implementation.
 
-    Objects are put into a remote repository via the lakeFS API directly,
-    instead of going the indirection through boto3. This allows us to direct
-    all S3 resources to Flyte's storage.
-
-    The repository is assumed immutable in an instance of the filesystem,
-    the branch is not necessarily constant, though.
+    The client is immutable in the implementation, so different users need different
+    file systems.
     """
 
     protocol = "lakefs"
 
-    def __init__(self, client: LakeFSClient):
+    def __init__(
+        self,
+        client: LakeFSClient,
+        autocommit: bool = False,
+        commithook: CommitHook = Default,
+    ):
         super().__init__()
         self.client = client
+        self.autocommit = autocommit
+        self.commithook = commithook
 
     def _rm(self, path):
         raise NotImplementedError
+
+    @classmethod
+    def _strip_protocol(cls, path):
+        """Copied verbatim from the base class, save for the slash rstrip."""
+        if isinstance(path, list):
+            return [cls._strip_protocol(p) for p in path]
+        path = stringify_path(path)
+        protos = (cls.protocol,) if isinstance(cls.protocol, str) else cls.protocol
+        for protocol in protos:
+            if path.startswith(protocol + "://"):
+                path = path[len(protocol) + 3 :]
+            elif path.startswith(protocol + "::"):
+                path = path[len(protocol) + 2 :]
+        # use of root_marker to make minimum required path, e.g., "/"
+        return path or cls.root_marker
 
     def checksum(self, path):
         try:
@@ -112,10 +135,15 @@ class LakeFSFileSystem(AbstractFileSystem):
         # AbstractFileSystem.get() implementation
         repository, ref, resource = parse(rpath)
 
+        if not self._exists_internal(repository, ref, resource):
+            raise FileNotFoundError(
+                f"resource {resource!r} does not exist on ref {ref!r}"
+            )
+
         if not force and super().exists(lpath):
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
-            if remote_checksum is not None and local_checksum == remote_checksum:
+            if local_checksum == remote_checksum:
                 logger.info(
                     f"Skipping download of resource {rpath!r} to local path {lpath!r}: "
                     f"Resource {lpath!r} exists and checksums match."
@@ -137,13 +165,13 @@ class LakeFSFileSystem(AbstractFileSystem):
                     break
                 outfile.write(chunk)
         except ApiException as e:
-            logger.error(e)
             raise FileNotFoundError(f"Error (HTTP{e.status}): {e.reason}") from e
         finally:
             if not isfilelike(lpath):
                 outfile.close()
 
     def info(self, path, **kwargs):
+        path = self._strip_protocol(path)
         repository, ref, resource = parse(path)
         out = self._ls_internal(
             repository=repository, ref=ref, prefix=resource, detail=True, **kwargs
@@ -202,6 +230,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         return info
 
     def ls(self, path, detail=True, amount=100, **kwargs):
+        path = self._strip_protocol(path)
         repository, ref, prefix = parse(path)
         return self._ls_internal(
             repository=repository, ref=ref, prefix=prefix, detail=detail, amount=amount
@@ -221,7 +250,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             # TODO (n.junge): Make this work for lpaths that are themselves lakeFS paths
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
-            if remote_checksum is not None and local_checksum == remote_checksum:
+            if local_checksum == remote_checksum:
                 logger.info(
                     f"Skipping upload of resource {lpath!r} to remote path {rpath!r}: "
                     f"Resource {rpath!r} exists and checksums match."
@@ -231,6 +260,12 @@ class LakeFSFileSystem(AbstractFileSystem):
         with open(lpath, "rb") as f:
             self.client.objects.upload_object(
                 repository=repository, branch=branch, path=resource, content=f
+            )
+
+        if self.autocommit:
+            commit_creation = self.commithook("put_file", resource)
+            self.client.commits.commit(
+                repository=repository, branch=branch, commit_creation=commit_creation
             )
 
     def rm_file(self, path):
@@ -244,3 +279,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.client.objects.delete_object(
             repository=repository, branch=branch, path=resource
         )
+
+        if self.autocommit:
+            commit_creation = self.commithook("rm_file", resource)
+            self.client.commits.commit(
+                repository=repository, branch=branch, commit_creation=commit_creation
+            )

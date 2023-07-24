@@ -18,6 +18,13 @@ def test_path_parsing():
     assert ref == "my-ref"
     assert resource == "my/nested/resource.txt"
 
+    # case 3: top-level resource
+    path = "my-repo/my-ref/"
+    repo, ref, resource = parse(path)
+    assert repo == "my-repo"
+    assert ref == "my-ref"
+    assert resource == ""
+
     # ----------------- Failure cases -------------------
     # repo name illegally begins with hyphen
     path = "-repo/my-ref/resource.txt"
