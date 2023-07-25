@@ -1,4 +1,9 @@
 import collections
+import random
+import string
+import uuid
+from pathlib import Path
+from typing import Optional, Union
 
 from lakefs_spec.client import LakeFSClient
 
@@ -46,3 +51,29 @@ def with_counter(client: LakeFSClient) -> tuple[LakeFSClient, APICounter]:
                     setattr(api, ep_name, patch(endpoint, f"{api_name}.{ep_name}"))
 
     return client, counter
+
+
+class RandomFileFactory:
+    def __init__(self, path: Union[str, Path]):
+        path = Path(path)
+        if not path.is_dir():
+            raise ValueError(f"input path needs to be a directory, got {path}")
+
+        self.path = path
+
+    def list(self) -> list[Path]:
+        return list(self.path.iterdir())
+
+    def make(self, fname: Optional[str] = None, size: int = 2**10) -> Path:
+        """
+        Generate a random file named ``fname`` with a random string of size
+        ``size`` (in bytes) as content.
+        """
+        if fname is None:
+            fname = "test-" + str(uuid.uuid4()) + ".txt"
+        random_file = self.path / fname
+        random_str = "".join(
+            random.choices(string.ascii_letters + string.digits, k=size)
+        )
+        random_file.write_text(random_str, encoding="utf-8")
+        return random_file
