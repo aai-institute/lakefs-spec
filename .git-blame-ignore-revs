@@ -1,0 +1,7 @@
+# Revs to ignore in blame views on Gitlab / GitHub.
+# Mainly intended for (re)formatting commits and similar
+# which scrapes over potentially many files, but contains
+# no useful information for history.
+
+# 88->100 char line length change
+29fbc0b4f379197dea5fb8aac31b18cc6ba3eeb3
