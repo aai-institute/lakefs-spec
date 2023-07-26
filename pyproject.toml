@@ -20,7 +20,7 @@ mypy = "^1.4.1"
 pre-commit = "3.3.3"
 pylint = "^2.17.4"
 pytest = "^7.4.0"
-ruff = "^0.0.278"
+ruff = "^0.0"  # `poetry update` with caret implicitly pins 0.0.x tags, drop the patch version to fix.
 
 # Register lakeFS file system via the fsspec entry point
 # Source: https://github.com/python-poetry/poetry/issues/927#issuecomment-1232254538

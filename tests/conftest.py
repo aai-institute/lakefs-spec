@@ -3,6 +3,7 @@ import os
 import random
 import string
 import sys
+from pathlib import Path
 from typing import Any, Generator, TypeVar
 
 import pytest
@@ -10,6 +11,7 @@ from lakefs_client import Configuration
 from lakefs_client.models import BranchCreation, RepositoryCreation
 
 from lakefs_spec.client import LakeFSClient
+from tests.util import RandomFileFactory
 
 _DEFAULT_LAKEFS_INSTANCE = "http://lakefs.10.32.16.101.nip.io"
 _DEFAULT_LAKEFS_USERNAME = "mlopskit"
@@ -100,3 +102,8 @@ def temp_branch(lakefs_client: LakeFSClient, repository: str) -> YieldFixture[st
             repository=repository,
             branch=name,
         )
+
+
+@pytest.fixture
+def random_file_factory(tmp_path: Path) -> RandomFileFactory:
+    return RandomFileFactory(path=tmp_path)
