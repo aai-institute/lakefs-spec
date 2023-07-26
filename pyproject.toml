@@ -30,13 +30,13 @@ ruff = "^0.0"  # `poetry update` with caret implicitly pins 0.0.x tags, drop the
 [tool.black]
 # Source https://github.com/psf/black#configuration-format
 include = "\\.pyi?$"
-line-length = 88
+line-length = 100
 target-version = ["py39"]
 
 # Black-compatible settings for isort
-# See https://black.readthedocs.io/en/stable/compatible_configs.html
+# See https://black.readthedocs.io/en/stable/
 [tool.isort]
-line_length = "88"
+line_length = "100"
 profile = "black"
 
 [tool.mypy]
