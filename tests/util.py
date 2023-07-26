@@ -72,8 +72,6 @@ class RandomFileFactory:
         if fname is None:
             fname = "test-" + str(uuid.uuid4()) + ".txt"
         random_file = self.path / fname
-        random_str = "".join(
-            random.choices(string.ascii_letters + string.digits, k=size)
-        )
+        random_str = "".join(random.choices(string.ascii_letters + string.digits, k=size))
         random_file.write_text(random_str, encoding="utf-8")
         return random_file

@@ -56,9 +56,7 @@ def parse(path: str) -> tuple[str, str, str]:
     path_regex = re.compile(r"([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-]+)/(.*)")
     results = path_regex.match(path)
     if results is None:
-        raise ValueError(
-            f"expected path with structure <repo>/<ref>/<resource>, got {path!r}"
-        )
+        raise ValueError(f"expected path with structure <repo>/<ref>/<resource>, got {path!r}")
 
     repo, ref, resource = results.groups()
     return repo, ref, resource
@@ -136,9 +134,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, ref, resource = parse(rpath)
 
         if not self._exists_internal(repository, ref, resource):
-            raise FileNotFoundError(
-                f"resource {resource!r} does not exist on ref {ref!r}"
-            )
+            raise FileNotFoundError(f"resource {resource!r} does not exist on ref {ref!r}")
 
         if not force and super().exists(lpath):
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
@@ -156,9 +152,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             outfile = open(lpath, "wb")  # pylint: disable=consider-using-with
 
         try:
-            res: io.BufferedReader = self.client.objects.get_object(
-                repository, ref, resource
-            )
+            res: io.BufferedReader = self.client.objects.get_object(repository, ref, resource)
             while True:
                 chunk = res.read(self.blocksize)
                 if not chunk:
@@ -272,13 +266,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, branch, resource = parse(path)
 
         if not self._exists_internal(repository=repository, ref=branch, path=resource):
-            raise FileNotFoundError(
-                f"object {resource!r} does not exist on branch {branch!r}"
-            )
+            raise FileNotFoundError(f"object {resource!r} does not exist on branch {branch!r}")
 
-        self.client.objects.delete_object(
-            repository=repository, branch=branch, path=resource
-        )
+        self.client.objects.delete_object(repository=repository, branch=branch, path=resource)
 
         if self.autocommit:
             commit_creation = self.commithook("rm_file", resource)
