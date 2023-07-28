@@ -34,7 +34,8 @@ def test_checksum_matching(
     assert counter.count("objects.upload_object") == 1
 
     # force overwrite this time, assert the `upload` API was called again
-    # TODO: Use a scope here later
-    fs.precheck_files = False
-    fs.put_file(lpath, rpath)
+    with fs.scope(precheck_files=False):
+        fs.put_file(lpath, rpath)
+
+    assert fs.precheck_files is True
     assert counter.count("objects.upload_object") == 2

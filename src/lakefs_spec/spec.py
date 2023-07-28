@@ -3,7 +3,8 @@ import io
 import logging
 import re
 import sys
-from typing import Any
+from contextlib import contextmanager
+from typing import Any, Generator, Optional
 
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
@@ -19,6 +20,8 @@ _DEFAULT_CALLBACK = NoOpCallback()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
+
+EmptyYield = Generator[None, None, None]
 
 
 def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
@@ -122,6 +125,28 @@ class LakeFSFileSystem(AbstractFileSystem):
                 path = path[len(protocol) + 2 :]
         # use of root_marker to make minimum required path, e.g., "/"
         return path or cls.root_marker
+
+    @contextmanager
+    def scope(
+        self, postcommit: Optional[bool] = None, precheck_files: Optional[bool] = None
+    ) -> EmptyYield:
+        """
+        Creates a context manager scope in which the lakeFS file system behavior
+        is changed from defaults.
+
+        Either post-write-operation commits, pre-operation checksum verification,
+        or both can be selectively enabled or disabled.
+        """
+        curr_postcommit, curr_precheck_files = self.postcommit, self.precheck_files
+        try:
+            if postcommit is not None:
+                self.postcommit = postcommit
+            if precheck_files is not None:
+                self.precheck_files = precheck_files
+            yield
+        finally:
+            self.postcommit = curr_postcommit
+            self.precheck_files = curr_precheck_files
 
     def checksum(self, path):
         try:
