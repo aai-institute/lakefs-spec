@@ -25,6 +25,13 @@ def test_path_parsing():
     assert ref == "my-ref"
     assert resource == ""
 
+    # case 4: single-character branch
+    path = "my-repo/a/resource.txt"
+    repo, ref, resource = parse(path)
+    assert repo == "my-repo"
+    assert ref == "a"
+    assert resource == "resource.txt"
+
     # ----------------- Failure cases -------------------
     # repo name illegally begins with hyphen
     path = "-repo/my-ref/resource.txt"
