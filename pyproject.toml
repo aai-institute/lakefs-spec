@@ -1,37 +1,53 @@
-[tool.poetry]
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
 name = "lakefs-spec"
 version = "0.1.0"
 description = "An fsspec implementation for lakeFS."
-authors = ["Nicholas Junge <n.junge@appliedai.de>"]
+requires-python = ">=3.9"
 readme = "README.md"
-packages = [{include = "lakefs_spec", from = "src"}]
+license = {file = "LICENSE"}
+authors = [
+    {name = "Nicholas Junge", email= "n.junge@appliedai.de"}
+]
 
-[tool.poetry.dependencies]
-python = ">=3.9"
-fsspec = "^2023.6.0"
-lakefs-client = "^0.104.0"
+dependencies = [
+    "fsspec >=2023.6.0",
+    "lakefs-client>=0.104.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-bandit = { extras = ["toml"], version = "^1.7.5" }
-black = "^23.7.0"
-bump2version = "^1.0.1"
-isort = "^5.12.0"
-mypy = "^1.4.1"
-pre-commit = "3.3.3"
-pylint = "^2.17.4"
-pytest = "^7.4.0"
-ruff = "^0.0"  # `poetry update` with caret implicitly pins 0.0.x tags, drop the patch version to fix.
+[project.optional-dependencies]
+dev = [
+    "pre-commit>=3.3.3",
+    "pytest>=7.4.0",
+    "pylint>=2.17.5",
+    "black>=23.7.0",
+    "mypy>=1.4.1",
+    "isort>=5.12.0",
+    "ruff>=0.0.280",
+    "bandit[toml]>=1.7.5",
+    "bump2version>=1.0.1",
+]
 
 # Register lakeFS file system via the fsspec entry point
-# Source: https://github.com/python-poetry/poetry/issues/927#issuecomment-1232254538
-[tool.poetry.plugins]
+[project.entry-points]
 "fsspec.specs" = {"lakefs" = "lakefs_spec.spec.LakeFSFileSystem"}
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 
 [tool.black]
 # Source https://github.com/psf/black#configuration-format
 include = "\\.pyi?$"
 line-length = 100
-target-version = ["py39"]
+target-version = ["py311"]
 
 # Black-compatible settings for isort
 # See https://black.readthedocs.io/en/stable/
@@ -45,7 +61,7 @@ disallow_incomplete_defs = true
 ignore_missing_imports = true
 install_types = true
 pretty = true
-python_version = "3.9"
+python_version = "3.11"
 scripts_are_modules = true
 strict_optional = false
 warn_unreachable = true
@@ -102,7 +118,3 @@ filterwarnings = [
     # OpenAPI generated code contains deprecated urllib3 calls, nothing to do about it
     "ignore::DeprecationWarning:lakefs_client.*:",
 ]
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
