@@ -9,7 +9,7 @@ def test_put_file_with_default_commit_hook(
     repository: str,
     temp_branch: str,
 ) -> None:
-    fs = LakeFSFileSystem(client=lakefs_client, autocommit=True)
+    fs = LakeFSFileSystem(client=lakefs_client, postcommit=True)
 
     random_file = random_file_factory.make()
 

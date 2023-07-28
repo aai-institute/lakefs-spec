@@ -42,7 +42,7 @@ def lakefs_host(request: Any) -> str:
     return request.config.getoption("--lakefs-host")
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="session")
 def lakefs_client(lakefs_host: str) -> LakeFSClient:
     host = os.getenv("LAKEFS_HOST", lakefs_host)
     access_key_id = os.getenv("LAKEFS_ACCESS_KEY_ID", _DEFAULT_LAKEFS_USERNAME)
@@ -57,18 +57,15 @@ def lakefs_client(lakefs_host: str) -> LakeFSClient:
 
 @pytest.fixture(scope="session")
 def ensurerepo(lakefs_client: LakeFSClient) -> str:
-    repos = lakefs_client.repositories.list_repositories()
-    reponames = [r.id for r in repos.results]
+    # no loop, assumes there exist fewer than 100 repos.
+    repos = lakefs_client.repositories.list_repositories().results
+    reponames = [r.id for r in repos]
 
     if _TEST_REPO in reponames:
         logger.info(f"Test repository {_TEST_REPO!r} already exists.")
     else:
-        # Storage prefix is s3://lakefs/ in lakeFS via Helm deployment,
-        # but local:// e.g. in the local Docker container. This seems to
-        # be a solid way of extracting the prefix under the assumption that
-        # it does not change inside a deployment.
-        (sn_prefix,) = set(r.storage_namespace.replace(r.id, "") for r in repos)
-        storage_namespace = sn_prefix + _TEST_REPO
+        storage_config = lakefs_client.config.get_storage_config()
+        storage_namespace = f"{storage_config.default_namespace_prefix}/{_TEST_REPO}"
         logger.info(
             f"Creating test repository {_TEST_REPO!r} "
             f"with associated storage namespace {storage_namespace!r}."
@@ -82,7 +79,7 @@ def ensurerepo(lakefs_client: LakeFSClient) -> str:
     return _TEST_REPO
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="session")
 def repository(ensurerepo: str) -> str:
     return ensurerepo
 
