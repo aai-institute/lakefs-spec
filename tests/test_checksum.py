@@ -6,7 +6,10 @@ from tests.util import RandomFileFactory, with_counter
 
 
 def test_checksum_matching(
-    random_file_factory: RandomFileFactory, lakefs_client: LakeFSClient, repository: str
+    random_file_factory: RandomFileFactory,
+    lakefs_client: LakeFSClient,
+    repository: str,
+    temp_branch: str,
 ) -> None:
     random_file = random_file_factory.make()
 
@@ -14,7 +17,7 @@ def test_checksum_matching(
     fs.client, counter = with_counter(fs.client)
 
     lpath = str(random_file)
-    rpath = f"{repository}/main/{random_file.name}"
+    rpath = f"{repository}/{temp_branch}/{random_file.name}"
     fs.put_file(lpath, rpath)
 
     # assert that MD5 hash is insensitive to the block size
@@ -31,5 +34,7 @@ def test_checksum_matching(
     assert counter.count("objects.upload_object") == 1
 
     # force overwrite this time, assert the `upload` API was called again
-    fs.put_file(lpath, rpath, force=True)
+    # TODO: Use a scope here later
+    fs.precheck_files = False
+    fs.put_file(lpath, rpath)
     assert counter.count("objects.upload_object") == 2

@@ -6,7 +6,7 @@ import sys
 from typing import Any
 
 from fsspec.callbacks import NoOpCallback
-from fsspec.spec import AbstractFileSystem
+from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
 from lakefs_client import ApiException
 from lakefs_client.models import ObjectStatsList
@@ -66,7 +66,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     """
     lakeFS file system spec implementation.
 
-    The client is immutable in the implementation, so different users need different
+    The client is immutable in this implementation, so different users need different
     file systems.
     """
 
@@ -75,13 +75,35 @@ class LakeFSFileSystem(AbstractFileSystem):
     def __init__(
         self,
         client: LakeFSClient,
-        autocommit: bool = False,
+        postcommit: bool = False,
         commithook: CommitHook = Default,
+        precheck_files: bool = True,
     ):
+        """
+        The LakeFS file system constructor.
+
+        Parameters
+        ----------
+        client: LakeFSClient
+            The lakeFS client configured for (and authenticated with) the target instance.
+        postcommit: bool
+            Whether to create lakeFS commits on the chosen branch after mutating operations,
+            e.g. uploading or removing a file.
+        commithook: CommitHook
+            A function taking the fsspec event name (e.g. ``put_file`` for file uploads)
+             and the rpath (path relative to the repository root). Must return
+             a ``CommitCreation`` object, which is used to create a lakeFS commit
+             for the previous file operation. Only applies to mutating operations, and when
+             ``postcommit = True``.
+        precheck_files: bool
+            Whether to compare MD5 checksums of local and remote objects before file
+            operations, and skip these operations if checksums match.
+        """
         super().__init__()
         self.client = client
-        self.autocommit = autocommit
+        self.postcommit = postcommit
         self.commithook = commithook
+        self.precheck_files = precheck_files
 
     def _rm(self, path):
         raise NotImplementedError
@@ -126,7 +148,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         lpath,
         callback=_DEFAULT_CALLBACK,
         outfile=None,
-        force=False,
         **kwargs,
     ):
         # no call to self._strip_protocol here, since that is handled by the
@@ -136,7 +157,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         if not self._exists_internal(repository, ref, resource):
             raise FileNotFoundError(f"resource {resource!r} does not exist on ref {ref!r}")
 
-        if not force and super().exists(lpath):
+        if self.precheck_files and super().exists(lpath):
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
             if local_checksum == remote_checksum:
@@ -170,7 +191,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         out = self._ls_internal(
             repository=repository, ref=ref, prefix=resource, detail=True, **kwargs
         )
-        resource = resource.rstrip("/")
 
         # input path is a file name
         if len(out) == 1:
@@ -230,17 +250,38 @@ class LakeFSFileSystem(AbstractFileSystem):
             repository=repository, ref=ref, prefix=prefix, detail=detail, amount=amount
         )
 
+    def _open(
+        self,
+        path,
+        mode="rb",
+        block_size=None,
+        autocommit=True,
+        cache_options=None,
+        **kwargs,
+    ):
+        if mode != "rb":
+            raise NotImplementedError("only mode='rb' is supported for open()")
+
+        return LakeFSFile(
+            self,
+            path=path,
+            mode=mode,
+            block_size=block_size,
+            autocommit=autocommit,
+            cache_options=cache_options,
+            **kwargs,
+        )
+
     def put_file(
         self,
         lpath,
         rpath,
         callback=_DEFAULT_CALLBACK,
-        force=False,
         **kwargs,
     ):
         repository, branch, resource = parse(rpath)
 
-        if not force:
+        if self.precheck_files:
             # TODO (n.junge): Make this work for lpaths that are themselves lakeFS paths
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
@@ -256,7 +297,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 repository=repository, branch=branch, path=resource, content=f
             )
 
-        if self.autocommit:
+        if self.postcommit:
             commit_creation = self.commithook("put_file", resource)
             self.client.commits.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
@@ -270,8 +311,54 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         self.client.objects.delete_object(repository=repository, branch=branch, path=resource)
 
-        if self.autocommit:
+        if self.postcommit:
             commit_creation = self.commithook("rm_file", resource)
             self.client.commits.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
+
+
+class LakeFSFile(AbstractBufferedFile):
+    """lakeFS file implementation. Currently read-only."""
+
+    def __init__(
+        self,
+        fs,
+        path,
+        mode="rb",
+        block_size="default",
+        autocommit=True,
+        cache_type="readahead",
+        cache_options=None,
+        size=None,
+        **kwargs,
+    ):
+        super().__init__(
+            fs,
+            path,
+            mode=mode,
+            block_size=block_size,
+            autocommit=autocommit,
+            cache_type=cache_type,
+            cache_options=cache_options,
+            size=size,
+            **kwargs,
+        )
+
+    def _upload_chunk(self, final=False):
+        # Possibly blocked by https://github.com/treeverse/lakeFS/issues/6259
+        raise NotImplementedError
+
+    def _initiate_upload(self):
+        # Possibly blocked by https://github.com/treeverse/lakeFS/issues/6259
+        raise NotImplementedError
+
+    def _fetch_range(self, start: int, end: int) -> bytes:
+        repository, ref, resource = parse(self.path)
+        try:
+            res: io.BufferedReader = self.fs.client.objects.get_object(
+                repository, ref, resource, range=f"bytes={start}-{end - 1}"
+            )
+            return res.read()
+        except ApiException as e:
+            raise FileNotFoundError(f"Error (HTTP{e.status}): {e.reason}") from e

@@ -97,6 +97,12 @@ ignore = [
 [tool.bandit]
 exclude_dirs = ["tests"]
 
+[tool.pytest.ini_options]
+filterwarnings = [
+    # OpenAPI generated code contains deprecated urllib3 calls, nothing to do about it
+    "ignore::DeprecationWarning:lakefs_client.*:",
+]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
