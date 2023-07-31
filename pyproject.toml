@@ -42,7 +42,6 @@ zip-safe = false
 [tool.setuptools.packages.find]
 where = ["src"]
 
-
 [tool.black]
 # Source https://github.com/psf/black#configuration-format
 include = "\\.pyi?$"
