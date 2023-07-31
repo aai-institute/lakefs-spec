@@ -1,15 +1,33 @@
-include:
-  - project: 'resources/gitlab-ci-templates'
-    # Available tags: https://gitlab.aai.sh/resources/gitlab-ci-templates/-/releases
-    ref: v10.0.0 # IMPORTANT: always use a commit or tag, never "master"
-    file: '/python-pytest/pytest.gitlab-ci.yml'
-  - project: 'resources/gitlab-ci-templates'
-    # Available tags: https://gitlab.aai.sh/resources/gitlab-ci-templates/-/releases
-    ref: v10.0.0 # IMPORTANT: always use a commit or tag, never "master"
-    file: '/python-poetry/poetry.gitlab-ci.yml'
-
 stages:
   - test
+
+.venv:
+  stage: test
+  image: python:3.11-bookworm
+  cache:
+    paths:
+      - venv
+    key:
+      files:
+        - pyproject.toml  # not ideal, but let's see how it goes
+
+  before_script:
+    - python3 -m venv venv --system-site-packages
+    - echo "Installing dev dependencies"
+    - source venv/bin/activate
+    - python3 -m pip install ".[dev]"
+
+lint:
+  extends: .venv
+  script:
+    -  source venv/bin/activate
+    -  pre-commit run --all-files
+
+pytest:
+  extends: .venv
+  script:
+    - source venv/bin/activate
+    - python -m pytest
 
 workflow:
   rules:

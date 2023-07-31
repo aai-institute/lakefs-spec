@@ -23,7 +23,7 @@ repos:
         require_serial: true
         language: system
         types_or: [cython, pyi, python]
-        entry: build_scripts/run_in_venv.sh isort
+        entry: isort
         args: ['--filter-files']
       # See https://github.com/psf/black/blob/main/.pre-commit-hooks.yaml
       - id: black
@@ -31,24 +31,23 @@ repos:
         require_serial: true
         language: system
         types: [python]
-        entry: build_scripts/run_in_venv.sh black
+        entry: black
       # See https://github.com/pre-commit/mirrors-mypy/blob/main/.pre-commit-hooks.yaml
       - id: mypy
         name: mypy
         language: system
-        entry: build_scripts/run_in_venv.sh mypy
+        entry: mypy
         require_serial: true
         types: [python]
         files: '.*\.py[i]?'
         args: ["--non-interactive"]
-        # mlopskit.cli.resources contains a cookiecutter template, which breaks mypy
         # exclude the lakeFS client stub to suppress duplicate module errors
         # https://github.com/pre-commit/mirrors-mypy/issues/33#issuecomment-967247764
         exclude: "^(src/lakefs_spec/client.pyi)"
       - id: ruff
         name: ruff
         require_serial: true
-        entry: build_scripts/run_in_venv.sh ruff
+        entry: ruff
         language: system
         types: [ python ]
       # Pylint only works locally, since it needs to import modules and dependencies
@@ -59,7 +58,7 @@ repos:
         require_serial: true
         language: system
         types: [python]
-        entry: build_scripts/run_in_venv.sh pylint
+        entry: pylint
         args:
           [
             "-rn", # Only display messages
@@ -71,7 +70,7 @@ repos:
         require_serial: true
         language: system
         types_or: [python, pyi]
-        entry: build_scripts/run_in_venv.sh bandit
+        entry: bandit
         args: ["-c", "pyproject.toml"]
 #  - repo: https://github.com/DavidAnson/markdownlint-cli2
 #    rev: v0.8.1
