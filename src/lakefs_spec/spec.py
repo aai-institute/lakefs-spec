@@ -195,7 +195,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         if isfilelike(lpath):
             outfile = lpath
         else:
-            outfile = open(lpath, "wb")  # pylint: disable=consider-using-with
+            outfile = open(lpath, "wb")
 
         try:
             res: io.BufferedReader = self.client.objects.get_object(repository, ref, resource)

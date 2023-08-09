@@ -4,7 +4,7 @@ import random
 import string
 import sys
 from pathlib import Path
-from typing import Any, Generator, TypeVar
+from typing import Generator, TypeVar
 
 import pytest
 from lakefs_client import Configuration
@@ -13,9 +13,6 @@ from lakefs_client.models import BranchCreation, RepositoryCreation
 from lakefs_spec.client import LakeFSClient
 from tests.util import RandomFileFactory
 
-_DEFAULT_LAKEFS_INSTANCE = "http://lakefs.10.32.16.101.nip.io"
-_DEFAULT_LAKEFS_USERNAME = "mlopskit"
-_DEFAULT_LAKEFS_PASSWORD = "mlopskit"
 _TEST_REPO = "lakefs-spec-tests"
 
 logger = logging.getLogger(__name__)
@@ -27,26 +24,11 @@ T = TypeVar("T")
 YieldFixture = Generator[T, None, None]
 
 
-def pytest_addoption(parser):
-    parser.addoption(
-        "--lakefs-host",
-        action="store",
-        type=str,
-        default=_DEFAULT_LAKEFS_INSTANCE,
-        help="lakeFS endpoint to run tests with.",
-    )
-
-
 @pytest.fixture(scope="session")
-def lakefs_host(request: Any) -> str:
-    return request.config.getoption("--lakefs-host")
-
-
-@pytest.fixture(scope="session")
-def lakefs_client(lakefs_host: str) -> LakeFSClient:
-    host = os.getenv("LAKEFS_HOST", lakefs_host)
-    access_key_id = os.getenv("LAKEFS_ACCESS_KEY_ID", _DEFAULT_LAKEFS_USERNAME)
-    secret_access_key = os.getenv("LAKEFS_SECRET_ACCESS_KEY", _DEFAULT_LAKEFS_PASSWORD)
+def lakefs_client() -> LakeFSClient:
+    host = os.getenv("LAKEFS_HOST")
+    access_key_id = os.getenv("LAKEFS_ACCESS_KEY_ID")
+    secret_access_key = os.getenv("LAKEFS_SECRET_ACCESS_KEY")
     configuration = Configuration(
         host=host,
         username=access_key_id,
@@ -58,8 +40,7 @@ def lakefs_client(lakefs_host: str) -> LakeFSClient:
 @pytest.fixture(scope="session")
 def ensurerepo(lakefs_client: LakeFSClient) -> str:
     # no loop, assumes there exist fewer than 100 repos.
-    repos = lakefs_client.repositories.list_repositories().results
-    reponames = [r.id for r in repos]
+    reponames = [r.id for r in lakefs_client.repositories.list_repositories().results]
 
     if _TEST_REPO in reponames:
         logger.info(f"Test repository {_TEST_REPO!r} already exists.")

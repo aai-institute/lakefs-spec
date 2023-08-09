@@ -1,32 +1,42 @@
 stages:
   - test
 
+variables:  # Change pip's cache directory to be inside the project directory since we can only cache local items.
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PRE_COMMIT_HOME: "$CI_PROJECT_DIR/.cache/pre-commit"
+  MYPY_CACHE_DIR: "$CI_PROJECT_DIR/.cache/mypy"
+  RUFF_CACHE_DIR: "$CI_PROJECT_DIR/.cache/ruff"
+
 .venv:
   stage: test
   image: python:3.11-bookworm
   cache:
     paths:
       - venv
-    key:
-      files:
-        - pyproject.toml  # not ideal, but let's see how it goes
+      - .cache/pre-commit
+      - .cache/mypy
+      - .cache/ruff
+    key: dev-deps.lock
 
   before_script:
-    - python3 -m venv venv --system-site-packages
-    - echo "Installing dev dependencies"
+    - python -m venv venv --system-site-packages
     - source venv/bin/activate
-    - python3 -m pip install ".[dev]"
+    - python -m pip install -r dev-deps.lock
 
 lint:
   extends: .venv
   script:
-    -  source venv/bin/activate
+    -  python -m pip install . --no-deps --force-reinstall
     -  pre-commit run --all-files
 
 pytest:
   extends: .venv
+  variables:
+    LAKEFS_HOST: http://lakefs.10.32.16.101.nip.io
+    LAKEFS_ACCESS_KEY_ID: mlopskit
+    LAKEFS_SECRET_ACCESS_KEY: mlopskit
   script:
-    - source venv/bin/activate
+    - python -m pip install . --no-deps --force-reinstall
     - python -m pytest
 
 workflow:
