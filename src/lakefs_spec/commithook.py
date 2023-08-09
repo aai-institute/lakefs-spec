@@ -5,7 +5,7 @@ from lakefs_client.models import CommitCreation
 CommitHook = Callable[[str, str], CommitCreation]
 """
 A hook to execute before a lakeFS commit is created during stateful file operations such as
-uploads or deletes. Input arguments are fsspec event name (e.g. put_file, rm_file) and rpath,
+uploads or deletes. Input arguments are fsspec event name (e.g. ``put``, ``rm``) and rpath,
 the output needs to be a ``lakefs_client.models.CommitCreation`` object to pass to the
 ``LakeFSClient.commits.commit`` API.
 """
@@ -17,9 +17,9 @@ def Default(event: str, rpath: str) -> CommitCreation:
     been modified.
     """
 
-    if event == "put_file":
+    if event in ("put", "put_file"):
         action = "Add"
-    elif event == "rm_file":
+    elif event in ("rm", "rm_file"):
         action = "Remove"
     else:
         raise ValueError(f"unknown file event {event!r}")
