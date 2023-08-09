@@ -322,8 +322,23 @@ class LakeFSFileSystem(AbstractFileSystem):
                 repository=repository, branch=branch, path=resource, content=f
             )
 
+    def put(
+        self,
+        lpath,
+        rpath,
+        recursive=False,
+        callback=_DEFAULT_CALLBACK,
+        maxdepth=None,
+        **kwargs,
+    ):
+        super().put(
+            lpath, rpath, recursive=recursive, callback=callback, maxdepth=maxdepth, **kwargs
+        )
+
         if self.postcommit:
-            commit_creation = self.commithook("put_file", resource)
+            # TODO: This only works for string rpaths, fsspec allows rpath lists
+            repository, branch, resource = parse(rpath)
+            commit_creation = self.commithook("put", resource)
             self.client.commits.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
@@ -336,8 +351,12 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         self.client.objects.delete_object(repository=repository, branch=branch, path=resource)
 
+    def rm(self, path, recursive=False, maxdepth=None):
+        super().rm(path, recursive=recursive, maxdepth=maxdepth)
+
         if self.postcommit:
-            commit_creation = self.commithook("rm_file", resource)
+            repository, branch, resource = parse(path)
+            commit_creation = self.commithook("rm", resource)
             self.client.commits.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
