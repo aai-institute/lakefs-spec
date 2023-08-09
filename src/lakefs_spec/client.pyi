@@ -4,7 +4,6 @@ from lakefs_client import Configuration, apis
 class _WrappedApiClient(lakefs_client.ApiClient):
     def files_parameters(self, files: str | None = ...): ...
 
-
 class LakeFSClient:
     _api: _WrappedApiClient
     actions: apis.ActionsApi
@@ -27,10 +26,10 @@ class LakeFSClient:
     templates: apis.TemplatesApi
 
     def __init__(
-            self,
-            configuration: Configuration | None = ...,
-            header_name: str | None = ...,
-            header_value: str | None = ...,
-            cookie: str | None = ...,
-            pool_threads: int = ...
+        self,
+        configuration: Configuration | None = ...,
+        header_name: str | None = ...,
+        header_value: str | None = ...,
+        cookie: str | None = ...,
+        pool_threads: int = ...,
     ) -> None: ...

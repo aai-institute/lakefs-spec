@@ -22,13 +22,6 @@ dependencies = [
 dev = [
     "pre-commit>=3.3.3",
     "pytest>=7.4.0",
-    "pylint>=2.17.5",
-    "black>=23.7.0",
-    "mypy>=1.4.1",
-    "isort>=5.12.0",
-    "ruff>=0.0.280",
-    "bandit[toml]>=1.7.5",
-    "bump2version>=1.0.1",
 ]
 
 # Register lakeFS file system via the fsspec entry point
@@ -65,32 +58,6 @@ scripts_are_modules = true
 strict_optional = false
 warn_unreachable = true
 
-[tool.pylint.main]
-ignore-paths = ["tests"]
-output-format = "colorized"
-jobs = 0                    # Parallelize linting across all CPUs
-
-[tool.pylint.similarity]
-ignore-comments = true
-ignore-docstrings = true
-ignore-imports = true
-ignore-signatures = true
-min-similarity-lines = 5
-
-[tool.pylint.messages_control]
-disable = [
-  "line-too-long",                # line too long, rely on black for reformatting of these, since sometimes URLs or comments can be longer
-  "logging-fstring-interpolation",# TODO: Re-enable after porting interpolation with modern f-string format placeholders
-  "fixme",                        # Allow FIXME & TODO comments
-  "missing-module-docstring",     # Don't require a module docstring
-  "missing-function-docstring",   # Don't require a function docstring
-  "no-else-return",               # Allow if-elif-else constructs
-  "invalid-name",                 # Allow names such as `df`
-  "too-many-arguments",           # Allow more than 5 arguments in a function
-  "too-many-instance-attributes", # Don't require at least 2 public methods
-  "too-few-public-methods",       # Allow more than 7 instance attributes
-]
-
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 select = ["E", "F", "W"]
@@ -103,17 +70,18 @@ ignore = [
     "F841",
     # Multiple spaces before operator
     "E221",
-    # Module imported but unused - covered by Pylint
-    "F401",
-    # Redefinition of unused name from line n - covered by Pylint
-    "F811",
 ]
+
+# Ignore `F401` (unused imports) in all `__init__.py` files and in the client stub forwarding
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+"src/lakefs_spec/client.py" = ["F401"]
 
 [tool.bandit]
 exclude_dirs = ["tests"]
 
 [tool.pytest.ini_options]
 filterwarnings = [
-    # OpenAPI generated code contains deprecated urllib3 calls, nothing to do about it
+    # OpenAPI-generated code contains deprecated urllib3 calls
     "ignore::DeprecationWarning:lakefs_client.*:",
 ]
