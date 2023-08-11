@@ -1,7 +1,7 @@
 # lakefs-spec: An `fsspec` implementation for lakeFS 
 
 This repository contains a [filesystem-spec](https://github.com/fsspec/filesystem_spec) implementation for the [lakeFS](https://lakefs.io/) project.
-Its main goal is to facilitate versioned data operations in lakeFS directly from Python code, for example using `pandas`. See the examples below for inspiration.
+Its main goal is to facilitate versioned data operations in lakeFS directly from Python code, for example using `pandas`. See the [examples](#usage) below for inspiration.
 
 ## Installation
 
@@ -53,7 +53,7 @@ The resource can be a single file name, or a directory name for recursive operat
 
 In order to reduce the number of IO operations, you can enable client-side caching of both uploaded and downloaded files.
 Caching works by calculating the MD5 checksum of the local file, and comparing it to that of the lakeFS remote file.
-If they match, the operations are cancelled, and no client-server communication happens.
+If they match, the operations are cancelled, and no additional client-server communication (including up- and downloads) happens.
 
 Client-side caching is enabled by default in the lakeFS file system, and can be controlled through the `precheck_files` argument in the constructor:
 
@@ -69,7 +69,7 @@ fs = LakeFSFileSystem(client, precheck_files=True)
 Some operations, like `fs.put()` or `fs.rm()`, change the state of a lakeFS repository by changing files. According to
 the lakeFS working model, these changes are tracked as _uncommitted changes_, similarly to the git version control system.
 
-With the lakeFS file system, you can optionally commit changes caused by file system operations directly after they are made,
+With `lakefs-spec`, you can optionally commit changes caused by file system operations directly after they are made,
 by using a **commit hook**. A commit hook is a Python function taking the `fsspec` event name that caused the changes
 (e.g. `put` or `rm`), as well as the remote resource path, and returning a `CommitCreation` object that is then used by
 lakeFS to create a commit directly on the chosen branch.
