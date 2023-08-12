@@ -3,7 +3,9 @@ import io
 import logging
 import re
 import sys
+import warnings
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Any, Generator, Optional
 
 from fsspec.callbacks import NoOpCallback
@@ -200,7 +202,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         # AbstractFileSystem.get() implementation
         repository, ref, resource = parse(rpath)
 
-        if self.precheck_files and super().exists(lpath):
+        if self.precheck_files and Path(lpath).exists():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
             if local_checksum == remote_checksum:
@@ -242,7 +244,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         path = self._strip_protocol(path)
         out = self.ls(path, detail=True, **kwargs)
 
-        resource = path.split("/", maxsplit=2)
+        resource = path.split("/", maxsplit=2)[-1]
         # input path is a file name
         if len(out) == 1:
             return out[0]
@@ -305,8 +307,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         cache_options=None,
         **kwargs,
     ):
-        if mode != "rb":
-            raise NotImplementedError("only mode='rb' is supported for open()")
+        if mode not in {"wb", "rb"}:
+            raise NotImplementedError(f"unsupported mode {mode!r}")
 
         return LakeFSFile(
             self,
@@ -387,7 +389,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
 
 class LakeFSFile(AbstractBufferedFile):
-    """lakeFS file implementation. Currently read-only."""
+    """lakeFS file implementation. Buffered in reads, unbuffered in writes."""
 
     def __init__(
         self,
@@ -401,6 +403,14 @@ class LakeFSFile(AbstractBufferedFile):
         size=None,
         **kwargs,
     ):
+        if mode == "wb":
+            warnings.warn(
+                "Calling open() in write mode results in unbuffered file uploads, "
+                "because the lakeFS Python client does not support multipart uploads."
+                "Note that uploading large files unbuffered can "
+                "have performance implications."
+            )
+
         super().__init__(
             fs,
             path,
@@ -414,12 +424,28 @@ class LakeFSFile(AbstractBufferedFile):
         )
 
     def _upload_chunk(self, final=False):
-        # Possibly blocked by https://github.com/treeverse/lakeFS/issues/6259
-        raise NotImplementedError
+        """Single-chunk (unbuffered) upload, on final (i.e. during file.close())."""
+        if final:
+            repository, branch, resource = parse(self.path)
+
+            try:
+                # single-shot upload.
+                # empty buffer is equivalent to a touch()
+                self.buffer.seek(0)
+                self.fs.client.objects.upload_object(
+                    repository=repository,
+                    branch=branch,
+                    path=resource,
+                    content=self.buffer,
+                )
+            except ApiException as e:
+                raise OSError(f"file upload {self.path!r} failed") from e
+
+        return not final
 
     def _initiate_upload(self):
-        # Possibly blocked by https://github.com/treeverse/lakeFS/issues/6259
-        raise NotImplementedError
+        """No-op."""
+        return
 
     def _fetch_range(self, start: int, end: int) -> bytes:
         repository, ref, resource = parse(self.path)
