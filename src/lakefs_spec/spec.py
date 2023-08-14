@@ -9,7 +9,7 @@ from typing import Any, Generator, Optional
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
-from lakefs_client import ApiException
+from lakefs_client.exceptions import ApiException
 from lakefs_client.models import ObjectStatsList
 
 from lakefs_spec.client import LakeFSClient
@@ -180,7 +180,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, ref, resource = parse(rpath)
 
         if not self._exists_internal(repository, ref, resource):
-            raise FileNotFoundError(f"resource {resource!r} does not exist on ref {ref!r}")
+            raise FileNotFoundError(
+                f"resource {resource!r} does not exist on ref {ref!r} in repository {repository!r}"
+            )
 
         if self.precheck_files and super().exists(lpath):
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
@@ -242,27 +244,30 @@ class LakeFSFileSystem(AbstractFileSystem):
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         info: list[Any] = []
 
-        while has_more:
-            res: ObjectStatsList = self.client.objects.list_objects(
-                repository,
-                ref,
-                user_metadata=detail,
-                after=after,
-                prefix=prefix,
-                amount=amount,
-            )
-            has_more, after = res.pagination.has_more, res.pagination.next_offset
-            for obj in res.results:
-                info.append(
-                    {
-                        "checksum": obj.checksum,
-                        "content-type": obj.content_type,
-                        "mtime": obj.mtime,
-                        "name": obj.path,
-                        "size": obj.size_bytes,
-                        "type": "file",
-                    }
+        try:
+            while has_more:
+                res: ObjectStatsList = self.client.objects.list_objects(
+                    repository,
+                    ref,
+                    user_metadata=detail,
+                    after=after,
+                    prefix=prefix,
+                    amount=amount,
                 )
+                has_more, after = res.pagination.has_more, res.pagination.next_offset
+                for obj in res.results:
+                    info.append(
+                        {
+                            "checksum": obj.checksum,
+                            "content-type": obj.content_type,
+                            "mtime": obj.mtime,
+                            "name": obj.path,
+                            "size": obj.size_bytes,
+                            "type": "file",
+                        }
+                    )
+        except ApiException as e:
+            raise FileNotFoundError(f"Error (HTTP{e.status}): {e.reason}") from e
 
         if not detail:
             return [o["name"] for o in info]
@@ -347,7 +352,10 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, branch, resource = parse(path)
 
         if not self._exists_internal(repository=repository, ref=branch, path=resource):
-            raise FileNotFoundError(f"object {resource!r} does not exist on branch {branch!r}")
+            raise FileNotFoundError(
+                f"object {resource!r} does not exist on branch {branch!r} "
+                f"in repository {repository!r}"
+            )
 
         self.client.objects.delete_object(repository=repository, branch=branch, path=resource)
 
