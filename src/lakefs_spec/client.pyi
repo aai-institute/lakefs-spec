@@ -1,8 +1,10 @@
+from typing import Any
+
 import lakefs_client
 from lakefs_client import Configuration, apis
 
 class _WrappedApiClient(lakefs_client.ApiClient):
-    def files_parameters(self, files: str | None = ...): ...
+    def files_parameters(self, files: str | None = ...) -> list[Any]: ...
 
 class LakeFSClient:
     _api: _WrappedApiClient

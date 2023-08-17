@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from lakefs_spec.client import LakeFSClient
@@ -15,6 +17,8 @@ def test_get_nonexistent_file(lakefs_client: LakeFSClient, repository: str) -> N
     with pytest.raises(FileNotFoundError):
         fs.get(rpath, "out.txt")
 
+    assert not Path("out.txt").exists()
+
 
 def test_get_from_nonexistent_repo(lakefs_client: LakeFSClient) -> None:
     """
@@ -27,6 +31,8 @@ def test_get_from_nonexistent_repo(lakefs_client: LakeFSClient) -> None:
     with pytest.raises(FileNotFoundError):
         fs.get(rpath, "out.txt")
 
+    assert not Path("out.txt").exists()
+
 
 def test_get_from_nonexistent_branch(lakefs_client: LakeFSClient, repository: str) -> None:
     """
@@ -38,3 +44,5 @@ def test_get_from_nonexistent_branch(lakefs_client: LakeFSClient, repository: st
 
     with pytest.raises(FileNotFoundError):
         fs.get(rpath, "out.txt")
+
+    assert not Path("out.txt").exists()

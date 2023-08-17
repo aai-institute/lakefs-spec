@@ -50,11 +50,8 @@ profile = "black"
 [tool.mypy]
 check_untyped_defs = true
 disallow_incomplete_defs = true
-ignore_missing_imports = true
-install_types = true
 pretty = true
 python_version = "3.11"
-scripts_are_modules = true
 strict_optional = false
 warn_unreachable = true
 
