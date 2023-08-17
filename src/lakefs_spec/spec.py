@@ -9,7 +9,12 @@ from typing import Any, Generator, Optional
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
-from lakefs_client.exceptions import ApiException
+from lakefs_client.exceptions import (
+    ApiException,
+    ForbiddenException,
+    NotFoundException,
+    UnauthorizedException,
+)
 from lakefs_client.models import ObjectStatsList
 
 from lakefs_spec.client import LakeFSClient
@@ -22,6 +27,27 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 EmptyYield = Generator[None, None, None]
+
+
+@contextmanager
+def translate_exceptions(path: str) -> EmptyYield:
+    """
+    A context manager to translate lakeFS API exceptions / error codes
+    to file exceptions. This is convenience for the user to not have to
+    adjust their exception handling to any lakeFS specifics.
+
+    Specifically meant to be applied to lakeFS API endpoints.
+    """
+    try:
+        yield
+    except NotFoundException as e:
+        raise FileNotFoundError(path) from e
+    except ForbiddenException as e:
+        raise PermissionError(path) from e
+    except UnauthorizedException as e:
+        raise PermissionError(f"{path!r} (unauthorized)") from e
+    except ApiException as e:
+        raise IOError(f"HTTP {e.status}: {e.reason}")
 
 
 def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
@@ -151,21 +177,16 @@ class LakeFSFileSystem(AbstractFileSystem):
     def checksum(self, path):
         try:
             return self.info(path).get("checksum", None)
-        except (ApiException, FileNotFoundError):
+        except FileNotFoundError:
             return None
-
-    def _exists_internal(self, repository: str, ref: str, path: str) -> bool:
-        try:
-            self.client.objects.head_object(repository, ref, path)
-            return True
-        except ApiException as e:
-            if e.status == 404:
-                return False
-            raise FileNotFoundError(f"Error (HTTP{e.status}): {e.reason}") from e
 
     def exists(self, path, **kwargs):
         repository, ref, resource = parse(path)
-        return self._exists_internal(repository, ref, resource)
+        try:
+            self.client.objects.head_object(repository, ref, path)
+            return True
+        except NotFoundException:
+            return False
 
     def get_file(
         self,
@@ -178,11 +199,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         # no call to self._strip_protocol here, since that is handled by the
         # AbstractFileSystem.get() implementation
         repository, ref, resource = parse(rpath)
-
-        if not self._exists_internal(repository, ref, resource):
-            raise FileNotFoundError(
-                f"resource {resource!r} does not exist on ref {ref!r} in repository {repository!r}"
-            )
 
         if self.precheck_files and super().exists(lpath):
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
@@ -206,6 +222,10 @@ class LakeFSFileSystem(AbstractFileSystem):
                 if not chunk:
                     break
                 outfile.write(chunk)
+        except NotFoundException:
+            raise FileNotFoundError(
+                f"resource {resource!r} does not exist on ref {ref!r} in repository {repository!r}"
+            )
         except ApiException as e:
             raise FileNotFoundError(f"Error (HTTP{e.status}): {e.reason}") from e
         finally:
@@ -214,11 +234,9 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def info(self, path, **kwargs):
         path = self._strip_protocol(path)
-        repository, ref, resource = parse(path)
-        out = self._ls_internal(
-            repository=repository, ref=ref, prefix=resource, detail=True, **kwargs
-        )
+        out = self.ls(path, detail=True, **kwargs)
 
+        resource = path.split("/", maxsplit=2)
         # input path is a file name
         if len(out) == 1:
             return out[0]
@@ -232,20 +250,16 @@ class LakeFSFileSystem(AbstractFileSystem):
         else:
             raise FileNotFoundError(resource)
 
-    def _ls_internal(
-        self,
-        repository: str,
-        ref: str,
-        prefix: str,
-        detail: bool = True,
-        amount: int = 100,
-    ) -> list[Any]:
+    def ls(self, path, detail=True, amount=100, **kwargs):
+        path = self._strip_protocol(path)
+        repository, ref, prefix = parse(path)
+
         has_more, after = True, ""
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         info: list[Any] = []
 
-        try:
-            while has_more:
+        while has_more:
+            try:
                 res: ObjectStatsList = self.client.objects.list_objects(
                     repository,
                     ref,
@@ -254,31 +268,27 @@ class LakeFSFileSystem(AbstractFileSystem):
                     prefix=prefix,
                     amount=amount,
                 )
-                has_more, after = res.pagination.has_more, res.pagination.next_offset
-                for obj in res.results:
-                    info.append(
-                        {
-                            "checksum": obj.checksum,
-                            "content-type": obj.content_type,
-                            "mtime": obj.mtime,
-                            "name": obj.path,
-                            "size": obj.size_bytes,
-                            "type": "file",
-                        }
-                    )
-        except ApiException as e:
-            raise FileNotFoundError(f"Error (HTTP{e.status}): {e.reason}") from e
+            except NotFoundException:
+                raise FileNotFoundError(
+                    f"resource {prefix!r} does not exist on ref {ref!r} "
+                    f"in repository {repository!r}"
+                )
+            has_more, after = res.pagination.has_more, res.pagination.next_offset
+            for obj in res.results:
+                info.append(
+                    {
+                        "checksum": obj.checksum,
+                        "content-type": obj.content_type,
+                        "mtime": obj.mtime,
+                        "name": obj.path,
+                        "size": obj.size_bytes,
+                        "type": "file",
+                    }
+                )
 
         if not detail:
             return [o["name"] for o in info]
         return info
-
-    def ls(self, path, detail=True, amount=100, **kwargs):
-        path = self._strip_protocol(path)
-        repository, ref, prefix = parse(path)
-        return self._ls_internal(
-            repository=repository, ref=ref, prefix=prefix, detail=detail, amount=amount
-        )
 
     def _open(
         self,
@@ -351,13 +361,13 @@ class LakeFSFileSystem(AbstractFileSystem):
     def rm_file(self, path):
         repository, branch, resource = parse(path)
 
-        if not self._exists_internal(repository=repository, ref=branch, path=resource):
+        try:
+            self.client.objects.delete_object(repository=repository, branch=branch, path=resource)
+        except NotFoundException:
             raise FileNotFoundError(
                 f"object {resource!r} does not exist on branch {branch!r} "
                 f"in repository {repository!r}"
             )
-
-        self.client.objects.delete_object(repository=repository, branch=branch, path=resource)
 
     def rm(self, path, recursive=False, maxdepth=None):
         super().rm(path, recursive=recursive, maxdepth=maxdepth)
