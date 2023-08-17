@@ -232,6 +232,12 @@ class LakeFSFileSystem(AbstractFileSystem):
             if not isfilelike(lpath):
                 outfile.close()
 
+            exc_type, _, __ = sys.exc_info()
+            if exc_type:
+                from fsspec.implementations.local import LocalFileSystem
+
+                LocalFileSystem().rm_file(lpath)
+
     def info(self, path, **kwargs):
         path = self._strip_protocol(path)
         out = self.ls(path, detail=True, **kwargs)
