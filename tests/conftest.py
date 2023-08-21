@@ -7,7 +7,7 @@ from typing import Generator, TypeVar
 
 import pytest
 from lakefs_client import Configuration
-from lakefs_client.models import BranchCreation, RepositoryCreation
+from lakefs_client.models import BranchCreation, CommPrefsInput, RepositoryCreation
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.waiting_utils import wait_container_is_ready
 
@@ -26,13 +26,19 @@ YieldFixture = Generator[T, None, None]
 
 
 @pytest.fixture(scope="session", autouse=True)
-def lakefs_quickstart_container():
+def lakefs_quickstart_container(lakefs_client: LakeFSClient) -> YieldFixture[None]:
     with DockerContainer("treeverse/lakefs:latest").with_command(
         ["run", "--quickstart"]
     ).with_bind_ports(8000, 8000) as container:
         wait_container_is_ready()(container)
 
-        # FIXME: Email setup, demo repo creation
+        # Set up comms preferences
+        comms_prefs = CommPrefsInput(
+            email="lakefs@example.org",
+            feature_updates=False,
+            security_updates=False,
+        )
+        lakefs_client.config.setup_comm_prefs(comms_prefs)
 
         yield
 
