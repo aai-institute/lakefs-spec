@@ -15,7 +15,7 @@ authors = [
 
 dependencies = [
     "fsspec >=2023.6.0",
-    "lakefs-client>=0.104.0",
+    "lakefs-client>=0.105.0",
 ]
 
 [project.optional-dependencies]
