@@ -1,5 +1,4 @@
 import logging
-import os
 import random
 import string
 import sys
@@ -9,6 +8,8 @@ from typing import Generator, TypeVar
 import pytest
 from lakefs_client import Configuration
 from lakefs_client.models import BranchCreation, RepositoryCreation
+from testcontainers.core.container import DockerContainer
+from testcontainers.core.waiting_utils import wait_container_is_ready
 
 from lakefs_spec.client import LakeFSClient
 from tests.util import RandomFileFactory
@@ -24,11 +25,23 @@ T = TypeVar("T")
 YieldFixture = Generator[T, None, None]
 
 
+@pytest.fixture(scope="session", autouse=True)
+def lakefs_quickstart_container():
+    with DockerContainer("treeverse/lakefs:latest").with_command(
+        ["run", "--quickstart"]
+    ).with_bind_ports(8000, 8000) as container:
+        wait_container_is_ready()(container)
+
+        # FIXME: Email setup, demo repo creation
+
+        yield
+
+
 @pytest.fixture(scope="session")
 def lakefs_client() -> LakeFSClient:
-    host = os.getenv("LAKEFS_HOST")
-    access_key_id = os.getenv("LAKEFS_ACCESS_KEY_ID")
-    secret_access_key = os.getenv("LAKEFS_SECRET_ACCESS_KEY")
+    host = "localhost:8000"
+    access_key_id = "AKIAIOSFOLQUICKSTART"
+    secret_access_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
     configuration = Configuration(
         host=host,
         username=access_key_id,
