@@ -2,6 +2,7 @@ import collections
 import random
 import string
 import uuid
+from inspect import ismethod
 from pathlib import Path
 from typing import Optional, Union
 
@@ -44,11 +45,14 @@ def with_counter(client: LakeFSClient) -> tuple[LakeFSClient, APICounter]:
         return wrapped_fn
 
     for api_name, api in client.__dict__.items():
-        if "_api" not in api_name:
-            for ep_name in dir(api):
-                if not (ep_name.endswith("_endpoint") or ep_name.startswith("_")):
-                    endpoint = getattr(api, ep_name)
-                    setattr(api, ep_name, patch(endpoint, f"{api_name}.{ep_name}"))
+        if api_name == "_api":
+            continue
+
+        for ep_name in filter(
+            lambda op: not op.startswith("_") and ismethod(getattr(api, op)), dir(api)
+        ):
+            endpoint = getattr(api, ep_name)
+            setattr(api, ep_name, patch(endpoint, f"{api_name}.{ep_name}"))
 
     return client, counter
 

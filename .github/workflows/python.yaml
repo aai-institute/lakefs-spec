@@ -30,4 +30,4 @@ jobs:
         pre-commit run -av
     - name: Test with pytest
       run: |
-        pytest
+        pytest -s
