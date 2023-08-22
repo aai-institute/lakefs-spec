@@ -107,6 +107,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         postcommit: bool = False,
         commithook: CommitHook = Default,
         precheck_files: bool = True,
+        create_branch_ok: bool = True
     ):
         """
         The LakeFS file system constructor.
@@ -127,6 +128,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         precheck_files: bool
             Whether to compare MD5 checksums of local and remote objects before file
             operations, and skip these operations if checksums match.
+        create_branch_ok:
+            Whether to create branches implicitly when not-exisiting branches are referenced
         """
         super().__init__()
         self.client = client
