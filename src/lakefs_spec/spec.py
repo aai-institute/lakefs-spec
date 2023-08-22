@@ -15,7 +15,8 @@ from lakefs_client.exceptions import (
     NotFoundException,
     UnauthorizedException,
 )
-from lakefs_client.models import ObjectStatsList
+from lakefs_client.models import ObjectStatsList, BranchCreation 
+from lakefs_client.model import branch_creation
 
 from lakefs_spec.client import LakeFSClient
 from lakefs_spec.commithook import CommitHook, Default
@@ -60,7 +61,7 @@ def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
     return file_hash.hexdigest()
 
 
-def parse(path: str) -> tuple[str, str, str]:
+def parse( path: str) -> tuple[str, str, str]:
     """
     Parses a lakeFS URI in the form ``<repo>/<ref>/<resource>``.
 
@@ -90,6 +91,17 @@ def parse(path: str) -> tuple[str, str, str]:
     repo, ref, resource = results.groups()
     return repo, ref, resource
 
+def check_branch_exists_or_create(client, repository, new_branch_name:str, source_branch_name:str = 'main'):
+        try:
+            #TODO: (m.mynter) How to get the source branch in implicit branch creation? 
+            new_branch = BranchCreation(name=new_branch_name, source=source_branch_name)
+            #client.branches_api.create_branch throws ApiException when branch exists
+            client.branches_api.create_branch(repository=repository,branch_creation=new_branch)
+            logger.info(
+                    f"Created new branch {new_branch_name!r} from branch {source_branch_name!r}."
+                )
+        except ApiException:
+            pass
 
 class LakeFSFileSystem(AbstractFileSystem):
     """
@@ -136,6 +148,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.postcommit = postcommit
         self.commithook = commithook
         self.precheck_files = precheck_files
+        self.create_branch_ok = create_branch_ok
 
     def _rm(self, path):
         raise NotImplementedError
@@ -202,7 +215,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         # no call to self._strip_protocol here, since that is handled by the
         # AbstractFileSystem.get() implementation
         repository, ref, resource = parse(rpath)
-
         if self.precheck_files and super().exists(lpath):
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
@@ -308,7 +320,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         cache_options=None,
         **kwargs,
     ):
-        if mode != "rb":
+        if mode !=  'rb':
             raise NotImplementedError("only mode='rb' is supported for open()")
 
         return LakeFSFile(
@@ -329,6 +341,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         **kwargs,
     ):
         repository, branch, resource = parse(rpath)
+
+        if self.create_branch_ok:
+            check_branch_exists_or_create(self.client, repository, branch)
 
         if self.precheck_files:
             # TODO (n.junge): Make this work for lpaths that are themselves lakeFS paths
@@ -355,20 +370,28 @@ class LakeFSFileSystem(AbstractFileSystem):
         maxdepth=None,
         **kwargs,
     ):
+        repository, branch, resource = parse(rpath)
+
         super().put(
             lpath, rpath, recursive=recursive, callback=callback, maxdepth=maxdepth, **kwargs
         )
 
+        if self.create_branch_ok:
+            check_branch_exists_or_create(self.client,repository, branch)
+
         if self.postcommit:
             # TODO: This only works for string rpaths, fsspec allows rpath lists
-            repository, branch, resource = parse(rpath)
             commit_creation = self.commithook("put", resource)
             self.client.commits.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
+        
 
     def rm_file(self, path):
         repository, branch, resource = parse(path)
+
+        if self.create_branch_ok:
+            check_branch_exists_or_create(self.client, repository, branch)
 
         try:
             self.client.objects.delete_object(repository=repository, branch=branch, path=resource)
@@ -380,7 +403,9 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def rm(self, path, recursive=False, maxdepth=None):
         super().rm(path, recursive=recursive, maxdepth=maxdepth)
-
+        repository, branch, resource = parse(path)
+        if self.create_branch_ok:
+            check_branch_exists_or_create(self.client, repository, branch)
         if self.postcommit:
             repository, branch, resource = parse(path)
             commit_creation = self.commithook("rm", resource)
@@ -415,6 +440,9 @@ class LakeFSFile(AbstractBufferedFile):
             size=size,
             **kwargs,
         )
+        if mode == "wb":
+            repository, branch, resource = parse(path)
+            check_branch_exists_or_create(self.fs.client, repository, branch)
 
     def _upload_chunk(self, final=False):
         # Possibly blocked by https://github.com/treeverse/lakeFS/issues/6259
