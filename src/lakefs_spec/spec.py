@@ -157,7 +157,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     @contextmanager
     def scope(
-        self, postcommit: Optional[bool] = None, precheck_files: Optional[bool] = None
+        self, postcommit: Optional[bool] = None, precheck_files: Optional[bool] = None, create_branch_ok: Optional[bool] = None
     ) -> EmptyYield:
         """
         Creates a context manager scope in which the lakeFS file system behavior
