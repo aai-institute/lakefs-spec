@@ -15,13 +15,14 @@ authors = [
 
 dependencies = [
     "fsspec >=2023.6.0",
-    "lakefs-client>=0.104.0",
+    "lakefs-client>=0.105.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pre-commit>=3.3.3",
     "pytest>=7.4.0",
+    "testcontainers>=3.7.1",
 ]
 
 # Register lakeFS file system via the fsspec entry point

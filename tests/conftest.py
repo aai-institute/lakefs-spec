@@ -1,14 +1,17 @@
 import logging
-import os
 import random
 import string
 import sys
+import time
 from pathlib import Path
 from typing import Generator, TypeVar
 
 import pytest
 from lakefs_client import Configuration
-from lakefs_client.models import BranchCreation, RepositoryCreation
+from lakefs_client import __version__ as lakefs_version
+from lakefs_client.models import BranchCreation, CommPrefsInput, RepositoryCreation
+from testcontainers.core.container import DockerContainer
+from testcontainers.core.waiting_utils import wait_container_is_ready
 
 from lakefs_spec.client import LakeFSClient
 from tests.util import RandomFileFactory
@@ -25,10 +28,32 @@ YieldFixture = Generator[T, None, None]
 
 
 @pytest.fixture(scope="session")
-def lakefs_client() -> LakeFSClient:
-    host = os.getenv("LAKEFS_HOST")
-    access_key_id = os.getenv("LAKEFS_ACCESS_KEY_ID")
-    secret_access_key = os.getenv("LAKEFS_SECRET_ACCESS_KEY")
+def lakefs_client(_lakefs_client: LakeFSClient) -> YieldFixture[LakeFSClient]:
+    """A lakeFS client for a sidecar testcontainer with quickstart settings and communication preferences set."""
+
+    # Note: Quickstart is only available in lakeFS>=0.105.0
+    with DockerContainer(f"treeverse/lakefs:{lakefs_version}").with_command(
+        ["run", "--quickstart"]
+    ).with_bind_ports(8000, 8000) as container:
+        wait_container_is_ready()(container)
+        time.sleep(1)
+
+        # Set up comms preferences
+        comms_prefs = CommPrefsInput(
+            email="lakefs@example.org",
+            feature_updates=False,
+            security_updates=False,
+        )
+        _lakefs_client.config.setup_comm_prefs(comms_prefs)
+
+        yield _lakefs_client
+
+
+@pytest.fixture(scope="session")
+def _lakefs_client() -> LakeFSClient:
+    host = "localhost:8000"
+    access_key_id = "AKIAIOSFOLQUICKSTART"
+    secret_access_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
     configuration = Configuration(
         host=host,
         username=access_key_id,
