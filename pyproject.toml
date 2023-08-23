@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lakefs-spec"
-version = "0.1.0"
+version = "0.1.1"
 description = "An fsspec implementation for lakeFS."
 requires-python = ">=3.9"
 readme = "README.md"
