@@ -384,9 +384,6 @@ class LakeFSFileSystem(AbstractFileSystem):
     ):
         repository, branch, resource = parse(rpath)
 
-        if self.create_branch_ok:
-            ensure_branch(self.client, repository, branch, self.source_branch)
-
         if self.precheck_files:
             # TODO (n.junge): Make this work for lpaths that are themselves lakeFS paths
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
