@@ -455,7 +455,6 @@ class LakeFSFile(AbstractBufferedFile):
         fs,
         path,
         mode="rb",
-        source_branch="main",
         block_size="default",
         autocommit=True,
         cache_type="readahead",
@@ -484,7 +483,7 @@ class LakeFSFile(AbstractBufferedFile):
         )
         if mode == "wb":
             repository, branch, resource = parse(path)
-            ensure_branch(self.fs.client, repository, branch, source_branch)
+            ensure_branch(self.fs.client, repository, branch, self.fs.source_branch)
 
     def _upload_chunk(self, final=False):
         """Single-chunk (unbuffered) upload, on final (i.e. during file.close())."""
