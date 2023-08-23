@@ -31,3 +31,27 @@ jobs:
     - name: Test with pytest
       run: |
         pytest -s
+    - name: Build sdist/wheel
+      run: |
+        python -m build
+        twine check dist/*
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: dist
+
+  publish_pypi:
+    name: Publish wheels to PyPI
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_PASSWORD }}
