@@ -96,7 +96,7 @@ def ensure_branch(
 ) -> None:
     """
     Checks if a branch exists. If not, it is created.
-    The implementation depends on server-side error handling.
+    This implementation depends on server-side error handling.
 
     Parameters
     ----------
@@ -115,7 +115,6 @@ def ensure_branch(
     """
     client.commits
     try:
-        # TODO: (m.mynter) How to get the source branch in implicit branch creation?
         new_branch = BranchCreation(name=branch_name, source=source_branch_name)
         # client.branches_api.create_branch throws ApiException when branch exists
         client.branches.create_branch(repository=repository, branch_creation=new_branch)
@@ -141,6 +140,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         commithook: CommitHook = Default,
         precheck_files: bool = True,
         create_branch_ok: bool = True,
+        source_branch: str = "main",
     ):
         """
         The LakeFS file system constructor.
@@ -161,8 +161,10 @@ class LakeFSFileSystem(AbstractFileSystem):
         precheck_files: bool
             Whether to compare MD5 checksums of local and remote objects before file
             operations, and skip these operations if checksums match.
-        create_branch_ok:
+        create_branch_ok: bool
             Whether to create branches implicitly when not-existing branches are referenced.
+        source_branch: str
+            Source branch set as origin when a new branch is implicitly created.
         """
         super().__init__()
         self.client = client
@@ -170,6 +172,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.commithook = commithook
         self.precheck_files = precheck_files
         self.create_branch_ok = create_branch_ok
+        self.source_branch = source_branch
 
     def _rm(self, path):
         raise NotImplementedError
@@ -195,6 +198,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         postcommit: Optional[bool] = None,
         precheck_files: Optional[bool] = None,
         create_branch_ok: Optional[bool] = None,
+        source_branch: Optional[str] = None,
     ) -> EmptyYield:
         """
         Creates a context manager scope in which the lakeFS file system behavior
@@ -203,19 +207,27 @@ class LakeFSFileSystem(AbstractFileSystem):
         Either post-write-operation commits, pre-operation checksum verification,
         or both can be selectively enabled or disabled.
         """
-        curr_postcommit, curr_precheck_files, curr_create_branch_ok = self.postcommit, self.precheck_files, self.create_branch_ok
+        curr_postcommit, curr_precheck_files, curr_create_branch_ok, curr_source_branch = (
+            self.postcommit,
+            self.precheck_files,
+            self.create_branch_ok,
+            self.source_branch,
+        )
         try:
             if postcommit is not None:
                 self.postcommit = postcommit
             if precheck_files is not None:
                 self.precheck_files = precheck_files
             if create_branch_ok is not None:
-                self.create_branch_ok =create_branch_ok
+                self.create_branch_ok = create_branch_ok
+            if source_branch is not None:
+                self.source_branch = source_branch
             yield
         finally:
             self.postcommit = curr_postcommit
             self.precheck_files = curr_precheck_files
             self.create_branch_ok = curr_create_branch_ok
+            self.source_branch = curr_source_branch
 
     def checksum(self, path):
         try:
@@ -370,7 +382,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, branch, resource = parse(rpath)
 
         if self.create_branch_ok:
-            ensure_branch(self.client, repository, branch)
+            ensure_branch(self.client, repository, branch, self.source_branch)
 
         if self.precheck_files:
             # TODO (n.junge): Make this work for lpaths that are themselves lakeFS paths
@@ -404,7 +416,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         )
 
         if self.create_branch_ok:
-            ensure_branch(self.client, repository, branch)
+            ensure_branch(self.client, repository, branch, self.source_branch)
 
         if self.postcommit:
             # TODO: This only works for string rpaths, fsspec allows rpath lists
@@ -442,6 +454,7 @@ class LakeFSFile(AbstractBufferedFile):
         fs,
         path,
         mode="rb",
+        source_branch="main",
         block_size="default",
         autocommit=True,
         cache_type="readahead",
@@ -462,7 +475,7 @@ class LakeFSFile(AbstractBufferedFile):
         )
         if mode == "wb":
             repository, branch, resource = parse(path)
-            ensure_branch(self.fs.client, repository, branch)
+            ensure_branch(self.fs.client, repository, branch, source_branch)
 
     def _upload_chunk(self, final=False):
         # Possibly blocked by https://github.com/treeverse/lakeFS/issues/6259
