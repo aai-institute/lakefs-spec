@@ -9,11 +9,11 @@ from typing import Generator, TypeVar
 import pytest
 from lakefs_client import Configuration
 from lakefs_client import __version__ as lakefs_version
+from lakefs_client.client import LakeFSClient
 from lakefs_client.models import BranchCreation, CommPrefsInput, RepositoryCreation
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.waiting_utils import wait_container_is_ready
 
-from lakefs_spec.client import LakeFSClient
 from tests.util import RandomFileFactory
 
 _TEST_REPO = "lakefs-spec-tests"
@@ -44,7 +44,7 @@ def lakefs_client(_lakefs_client: LakeFSClient) -> YieldFixture[LakeFSClient]:
             feature_updates=False,
             security_updates=False,
         )
-        _lakefs_client.config.setup_comm_prefs(comms_prefs)
+        _lakefs_client.config_api.setup_comm_prefs(comms_prefs)
 
         yield _lakefs_client
 
@@ -65,18 +65,18 @@ def _lakefs_client() -> LakeFSClient:
 @pytest.fixture(scope="session")
 def ensurerepo(lakefs_client: LakeFSClient) -> str:
     # no loop, assumes there exist fewer than 100 repos.
-    reponames = [r.id for r in lakefs_client.repositories.list_repositories().results]
+    reponames = [r.id for r in lakefs_client.repositories_api.list_repositories().results]
 
     if _TEST_REPO in reponames:
         logger.info(f"Test repository {_TEST_REPO!r} already exists.")
     else:
-        storage_config = lakefs_client.config.get_storage_config()
+        storage_config = lakefs_client.config_api.get_storage_config()
         storage_namespace = f"{storage_config.default_namespace_prefix}/{_TEST_REPO}"
         logger.info(
             f"Creating test repository {_TEST_REPO!r} "
             f"with associated storage namespace {storage_namespace!r}."
         )
-        lakefs_client.repositories.create_repository(
+        lakefs_client.repositories_api.create_repository(
             RepositoryCreation(
                 name=_TEST_REPO,
                 storage_namespace=storage_namespace,
@@ -95,13 +95,13 @@ def temp_branch(lakefs_client: LakeFSClient, repository: str) -> YieldFixture[st
     """Create a temporary branch for a test."""
     name = "test-" + "".join(random.choices(string.digits, k=8))
     try:
-        lakefs_client.branches.create_branch(
+        lakefs_client.branches_api.create_branch(
             repository=repository,
             branch_creation=BranchCreation(name=name, source="main"),
         )
         yield name
     finally:
-        lakefs_client.branches.delete_branch(
+        lakefs_client.branches_api.delete_branch(
             repository=repository,
             branch=name,
         )

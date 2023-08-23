@@ -1,4 +1,5 @@
-from lakefs_spec.client import LakeFSClient
+from lakefs_client.client import LakeFSClient
+
 from lakefs_spec.spec import LakeFSFileSystem
 
 
