@@ -40,6 +40,7 @@ dev = [
     "pytest>=7.4.0",
     "testcontainers>=3.7.1",
     "twine>=4.0.0",
+    "build>=0.10.0",
 ]
 
 # Register lakeFS file system via the fsspec entry point

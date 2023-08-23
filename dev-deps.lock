@@ -6,6 +6,8 @@
 #
 bleach==6.0.0
     # via readme-renderer
+build==0.10.0
+    # via lakefs-spec (pyproject.toml)
 certifi==2023.7.22
     # via requests
 cffi==1.15.1
@@ -58,6 +60,7 @@ nodeenv==1.8.0
     # via pre-commit
 packaging==23.1
     # via
+    #   build
     #   deprecation
     #   docker
     #   pytest
@@ -75,6 +78,8 @@ pygments==2.16.1
     # via
     #   readme-renderer
     #   rich
+pyproject-hooks==1.0.0
+    # via build
 pytest==7.4.0
     # via lakefs-spec (pyproject.toml)
 python-dateutil==2.8.2
