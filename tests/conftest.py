@@ -8,7 +8,7 @@ from typing import Generator, TypeVar
 import pytest
 from lakefs_client import Configuration
 from lakefs_client.client import LakeFSClient
-from lakefs_client.models import BranchCreation, CommPrefsInput, RepositoryCreation
+from lakefs_client.models import BranchCreation, RepositoryCreation
 
 from tests.util import RandomFileFactory
 
@@ -24,22 +24,8 @@ YieldFixture = Generator[T, None, None]
 
 
 @pytest.fixture(scope="session")
-def lakefs_client(_lakefs_client: LakeFSClient) -> YieldFixture[LakeFSClient]:
+def lakefs_client() -> LakeFSClient:
     """A lakeFS client with communication preferences set."""
-
-    # Set up comm preferences
-    comms_prefs = CommPrefsInput(
-        email="lakefs@example.org",
-        feature_updates=False,
-        security_updates=False,
-    )
-    _lakefs_client.config_api.setup_comm_prefs(comms_prefs)
-
-    yield _lakefs_client
-
-
-@pytest.fixture(scope="session")
-def _lakefs_client() -> LakeFSClient:
     host = "localhost:8000"
     access_key_id = "AKIAIOSFOLQUICKSTART"
     secret_access_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
