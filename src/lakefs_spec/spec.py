@@ -203,16 +203,19 @@ class LakeFSFileSystem(AbstractFileSystem):
         Either post-write-operation commits, pre-operation checksum verification,
         or both can be selectively enabled or disabled.
         """
-        curr_postcommit, curr_precheck_files = self.postcommit, self.precheck_files
+        curr_postcommit, curr_precheck_files, curr_create_branch_ok = self.postcommit, self.precheck_files, self.create_branch_ok
         try:
             if postcommit is not None:
                 self.postcommit = postcommit
             if precheck_files is not None:
                 self.precheck_files = precheck_files
+            if create_branch_ok is not None:
+                self.create_branch_ok =create_branch_ok
             yield
         finally:
             self.postcommit = curr_postcommit
             self.precheck_files = curr_precheck_files
+            self.create_branch_ok = curr_create_branch_ok
 
     def checksum(self, path):
         try:
