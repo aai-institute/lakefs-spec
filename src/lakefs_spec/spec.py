@@ -18,7 +18,7 @@ from lakefs_client.exceptions import (
     NotFoundException,
     UnauthorizedException,
 )
-from lakefs_client.models import ObjectStatsList
+from lakefs_client.models import BranchCreation, ObjectStatsList
 
 from lakefs_spec.commithook import CommitHook, Default
 
@@ -93,6 +93,36 @@ def parse(path: str) -> tuple[str, str, str]:
     return repo, ref, resource
 
 
+def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_branch: str) -> None:
+    """
+    Checks if a branch exists. If not, it is created.
+    This implementation depends on server-side error handling.
+
+    Parameters
+    ----------
+    client: LakeFSClient
+        The lakeFS client configured for (and authenticated with) the target instance.
+    repository: str
+        Repository name.
+    branch: str
+        Name of the branch.
+    source_branch: str
+        Name of the source branch the new branch is created from.
+
+    Returns
+    -------
+    None
+    """
+
+    try:
+        new_branch = BranchCreation(name=branch, source=source_branch)
+        # client.branches_api.create_branch throws ApiException when branch exists
+        client.branches.create_branch(repository=repository, branch_creation=new_branch)
+        logger.info(f"Created new branch {branch!r} from branch {source_branch!r}.")
+    except ApiException:
+        pass
+
+
 class LakeFSFileSystem(AbstractFileSystem):
     """
     lakeFS file system spec implementation.
@@ -109,6 +139,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         postcommit: bool = False,
         commithook: CommitHook = Default,
         precheck_files: bool = True,
+        create_branch_ok: bool = True,
+        source_branch: str = "main",
     ):
         """
         The LakeFS file system constructor.
@@ -129,12 +161,18 @@ class LakeFSFileSystem(AbstractFileSystem):
         precheck_files: bool
             Whether to compare MD5 checksums of local and remote objects before file
             operations, and skip these operations if checksums match.
+        create_branch_ok: bool
+            Whether to create branches implicitly when not-existing branches are referenced on file uploads.
+        source_branch: str
+            Source branch set as origin when a new branch is implicitly created.
         """
         super().__init__()
         self.client = client
         self.postcommit = postcommit
         self.commithook = commithook
         self.precheck_files = precheck_files
+        self.create_branch_ok = create_branch_ok
+        self.source_branch = source_branch
 
     def _rm(self, path):
         raise NotImplementedError
@@ -156,7 +194,11 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     @contextmanager
     def scope(
-        self, postcommit: Optional[bool] = None, precheck_files: Optional[bool] = None
+        self,
+        postcommit: Optional[bool] = None,
+        precheck_files: Optional[bool] = None,
+        create_branch_ok: Optional[bool] = None,
+        source_branch: Optional[str] = None,
     ) -> EmptyYield:
         """
         Creates a context manager scope in which the lakeFS file system behavior
@@ -165,16 +207,27 @@ class LakeFSFileSystem(AbstractFileSystem):
         Either post-write-operation commits, pre-operation checksum verification,
         or both can be selectively enabled or disabled.
         """
-        curr_postcommit, curr_precheck_files = self.postcommit, self.precheck_files
+        curr_postcommit, curr_precheck_files, curr_create_branch_ok, curr_source_branch = (
+            self.postcommit,
+            self.precheck_files,
+            self.create_branch_ok,
+            self.source_branch,
+        )
         try:
             if postcommit is not None:
                 self.postcommit = postcommit
             if precheck_files is not None:
                 self.precheck_files = precheck_files
+            if create_branch_ok is not None:
+                self.create_branch_ok = create_branch_ok
+            if source_branch is not None:
+                self.source_branch = source_branch
             yield
         finally:
             self.postcommit = curr_postcommit
             self.precheck_files = curr_precheck_files
+            self.create_branch_ok = curr_create_branch_ok
+            self.source_branch = curr_source_branch
 
     def checksum(self, path):
         try:
@@ -354,13 +407,16 @@ class LakeFSFileSystem(AbstractFileSystem):
         maxdepth=None,
         **kwargs,
     ):
+        repository, branch, resource = parse(rpath)
+        if self.create_branch_ok:
+            ensure_branch(self.client, repository, branch, self.source_branch)
+
         super().put(
             lpath, rpath, recursive=recursive, callback=callback, maxdepth=maxdepth, **kwargs
         )
 
         if self.postcommit:
             # TODO: This only works for string rpaths, fsspec allows rpath lists
-            repository, branch, resource = parse(rpath)
             commit_creation = self.commithook("put", resource)
             self.client.commits_api.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
@@ -381,7 +437,6 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def rm(self, path, recursive=False, maxdepth=None):
         super().rm(path, recursive=recursive, maxdepth=maxdepth)
-
         if self.postcommit:
             repository, branch, resource = parse(path)
             commit_creation = self.commithook("rm", resource)
@@ -405,14 +460,6 @@ class LakeFSFile(AbstractBufferedFile):
         size=None,
         **kwargs,
     ):
-        if mode == "wb":
-            warnings.warn(
-                "Calling open() in write mode results in unbuffered file uploads, "
-                "because the lakeFS Python client does not support multipart uploads."
-                "Note that uploading large files unbuffered can "
-                "have performance implications."
-            )
-
         super().__init__(
             fs,
             path,
@@ -424,6 +471,15 @@ class LakeFSFile(AbstractBufferedFile):
             size=size,
             **kwargs,
         )
+        if mode == "wb":
+            warnings.warn(
+                "Calling open() in write mode results in unbuffered file uploads, "
+                "because the lakeFS Python client does not support multipart uploads."
+                "Note that uploading large files unbuffered can "
+                "have performance implications."
+            )
+            repository, branch, resource = parse(path)
+            ensure_branch(self.fs.client, repository, branch, self.fs.source_branch)
 
     def _upload_chunk(self, final=False):
         """Single-chunk (unbuffered) upload, on final (i.e. during file.close())."""
