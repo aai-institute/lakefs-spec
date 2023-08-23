@@ -410,13 +410,12 @@ class LakeFSFileSystem(AbstractFileSystem):
         **kwargs,
     ):
         repository, branch, resource = parse(rpath)
+        if self.create_branch_ok:
+            ensure_branch(self.client, repository, branch, self.source_branch)
 
         super().put(
             lpath, rpath, recursive=recursive, callback=callback, maxdepth=maxdepth, **kwargs
         )
-
-        if self.create_branch_ok:
-            ensure_branch(self.client, repository, branch, self.source_branch)
 
         if self.postcommit:
             # TODO: This only works for string rpaths, fsspec allows rpath lists
