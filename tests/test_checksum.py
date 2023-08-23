@@ -30,12 +30,12 @@ def test_checksum_matching(
 
     # we expect to get one `ls` call per upload attempt,
     # but only one actual upload.
-    assert counter.count("objects.list_objects") == len(blocksizes) + 1
-    assert counter.count("objects.upload_object") == 1
+    assert counter.count("objects_api.list_objects") == len(blocksizes) + 1
+    assert counter.count("objects_api.upload_object") == 1
 
     # force overwrite this time, assert the `upload` API was called again
     with fs.scope(precheck_files=False):
         fs.put_file(lpath, rpath)
 
     assert fs.precheck_files is True
-    assert counter.count("objects.upload_object") == 2
+    assert counter.count("objects_api.upload_object") == 2
