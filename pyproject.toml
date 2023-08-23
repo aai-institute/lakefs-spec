@@ -34,6 +34,11 @@ classifiers = [
 
 dependencies = ["fsspec >=2023.6.0", "lakefs-client>=0.105.0"]
 
+[project.urls]
+Homepage = "https://github.com/appliedai-initiative/lakefs-spec"
+Repository = "https://github.com/appliedai-initiative/lakefs-spec.git"
+Issues = "https://github.com/appliedai-initiative/lakefs-spec/issues"
+
 [project.optional-dependencies]
 dev = [
     "pre-commit>=3.3.3",
