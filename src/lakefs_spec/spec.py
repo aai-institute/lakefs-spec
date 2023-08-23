@@ -94,7 +94,7 @@ def parse(path: str) -> tuple[str, str, str]:
 
 
 def ensure_branch(
-    client: LakeFSClient, repository: str, branch_name: str, source_branch_name: str = "main"
+    client: LakeFSClient, repository: str, branch: str, source_branch: str = "main"
 ) -> None:
     """
     Checks if a branch exists. If not, it is created.
@@ -106,21 +106,21 @@ def ensure_branch(
         The lakeFS client configured for (and authenticated with) the target instance.
     repository: str
         Repository name.
-    branch_name: str
+    branch: str
         Name of the branch.
-    source_branch_name: str
+    source_branch: str
         Name of the source branch the new branch is created from.
 
     Returns
     -------
     None
     """
-    client.commits
+
     try:
-        new_branch = BranchCreation(name=branch_name, source=source_branch_name)
+        new_branch = BranchCreation(name=branch, source=source_branch)
         # client.branches_api.create_branch throws ApiException when branch exists
         client.branches.create_branch(repository=repository, branch_creation=new_branch)
-        logger.info(f"Created new branch {branch_name!r} from branch {source_branch_name!r}.")
+        logger.info(f"Created new branch {branch!r} from branch {source_branch!r}.")
     except ApiException:
         pass
 
