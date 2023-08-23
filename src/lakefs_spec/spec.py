@@ -94,7 +94,7 @@ def parse(path: str) -> tuple[str, str, str]:
 
 
 def ensure_branch(
-    client: LakeFSClient, repository: str, branch: str, source_branch: str = "main"
+    client: LakeFSClient, repository: str, branch: str, source_branch: str
 ) -> None:
     """
     Checks if a branch exists. If not, it is created.
