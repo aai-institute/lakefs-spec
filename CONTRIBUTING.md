@@ -18,9 +18,36 @@ python -m pip install -e . --no-deps
 ```shell
 pre-commit run --all-files
 ```
-4. To run the tests against a lakeFS instance, you can do the following:
+4. To run the tests against an ephemeral lakeFS instance, you just run `pytest`:
 ```shell
-# assumes that your instance is available on port 8000 on localhost
-LAKEFS_HOST=localhost:8000 LAKEFS_ACCESS_KEY_ID="MY-KEY" LAKEFS_SECRET_ACCESS_KEY="MY-SECRET" pytest
+pytest
 ```
-For information on how to quickly spin up lakeFS instances for testing, you can refer to the [lakeFS quickstart](https://docs.lakefs.io/quickstart/).
+
+### Updating dependencies
+
+Dependencies should stay locked for as long as possible, ideally for a whole release.
+If you have to update a dependency during development, you should do the following:
+
+1. If it is a core dependency needed for the package, add it to the `dependencies` section in the `pyproject.toml`.
+2. In case of a development dependency, add it to the `dev` section of the `project.optional-dependencies` table instead.
+
+After adding the dependency in either of these sections, run `pip-compile` to pin all dependencies again:
+
+```shell
+python -m pip install --upgrade pip-tools
+pip-compile --extra=dev --output-file=dev-deps.lock pyproject.toml
+```
+
+⚠️ Since the official development version is Python 3.11, please run the above `pip-compile` command in a virtual
+environment with Python 3.11.
+
+### A note on local development with poetry
+
+Since `lakefs-spec` relies on a setuptools entry point for registration, it will not be registered by `poetry` upon
+installation, since that uses a different build backend. To register the lakeFS file system with poetry in local
+development, add the following to your `pyproject.toml` file:
+
+```toml
+[tool.poetry.plugins."fsspec.specs"]
+"lakefs" = "lakefs_spec.spec.LakeFSFileSystem"
+```
