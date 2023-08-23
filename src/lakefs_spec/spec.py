@@ -3,12 +3,15 @@ import io
 import logging
 import re
 import sys
+import warnings
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Any, Generator, Optional
 
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
+from lakefs_client.client import LakeFSClient
 from lakefs_client.exceptions import (
     ApiException,
     ForbiddenException,
@@ -17,7 +20,6 @@ from lakefs_client.exceptions import (
 )
 from lakefs_client.models import BranchCreation, ObjectStatsList
 
-from lakefs_spec.client import LakeFSClient
 from lakefs_spec.commithook import CommitHook, Default
 
 _DEFAULT_CALLBACK = NoOpCallback()
@@ -238,7 +240,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     def exists(self, path, **kwargs):
         repository, ref, resource = parse(path)
         try:
-            self.client.objects.head_object(repository, ref, path)
+            self.client.objects_api.head_object(repository, ref, path)
             return True
         except NotFoundException:
             return False
@@ -254,7 +256,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         # no call to self._strip_protocol here, since that is handled by the
         # AbstractFileSystem.get() implementation
         repository, ref, resource = parse(rpath)
-        if self.precheck_files and super().exists(lpath):
+
+        if self.precheck_files and Path(lpath).exists():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
             if local_checksum == remote_checksum:
@@ -270,7 +273,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             outfile = open(lpath, "wb")
 
         try:
-            res: io.BufferedReader = self.client.objects.get_object(repository, ref, resource)
+            res: io.BufferedReader = self.client.objects_api.get_object(repository, ref, resource)
             while True:
                 chunk = res.read(self.blocksize)
                 if not chunk:
@@ -296,7 +299,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         path = self._strip_protocol(path)
         out = self.ls(path, detail=True, **kwargs)
 
-        resource = path.split("/", maxsplit=2)
+        resource = path.split("/", maxsplit=2)[-1]
         # input path is a file name
         if len(out) == 1:
             return out[0]
@@ -320,7 +323,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         while has_more:
             try:
-                res: ObjectStatsList = self.client.objects.list_objects(
+                res: ObjectStatsList = self.client.objects_api.list_objects(
                     repository,
                     ref,
                     user_metadata=detail,
@@ -359,8 +362,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         cache_options=None,
         **kwargs,
     ):
-        if mode != "rb":
-            raise NotImplementedError("only mode='rb' is supported for open()")
+        if mode not in {"wb", "rb"}:
+            raise NotImplementedError(f"unsupported mode {mode!r}")
 
         return LakeFSFile(
             self,
@@ -396,7 +399,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 return
 
         with open(lpath, "rb") as f:
-            self.client.objects.upload_object(
+            self.client.objects_api.upload_object(
                 repository=repository, branch=branch, path=resource, content=f
             )
 
@@ -420,7 +423,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         if self.postcommit:
             # TODO: This only works for string rpaths, fsspec allows rpath lists
             commit_creation = self.commithook("put", resource)
-            self.client.commits.commit(
+            self.client.commits_api.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
 
@@ -428,7 +431,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, branch, resource = parse(path)
 
         try:
-            self.client.objects.delete_object(repository=repository, branch=branch, path=resource)
+            self.client.objects_api.delete_object(
+                repository=repository, branch=branch, path=resource
+            )
         except NotFoundException:
             raise FileNotFoundError(
                 f"object {resource!r} does not exist on branch {branch!r} "
@@ -440,13 +445,13 @@ class LakeFSFileSystem(AbstractFileSystem):
         if self.postcommit:
             repository, branch, resource = parse(path)
             commit_creation = self.commithook("rm", resource)
-            self.client.commits.commit(
+            self.client.commits_api.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
 
 
 class LakeFSFile(AbstractBufferedFile):
-    """lakeFS file implementation. Currently read-only."""
+    """lakeFS file implementation. Buffered in reads, unbuffered in writes."""
 
     def __init__(
         self,
@@ -461,6 +466,14 @@ class LakeFSFile(AbstractBufferedFile):
         size=None,
         **kwargs,
     ):
+        if mode == "wb":
+            warnings.warn(
+                "Calling open() in write mode results in unbuffered file uploads, "
+                "because the lakeFS Python client does not support multipart uploads."
+                "Note that uploading large files unbuffered can "
+                "have performance implications."
+            )
+
         super().__init__(
             fs,
             path,
@@ -477,12 +490,28 @@ class LakeFSFile(AbstractBufferedFile):
             ensure_branch(self.fs.client, repository, branch, source_branch)
 
     def _upload_chunk(self, final=False):
-        # Possibly blocked by https://github.com/treeverse/lakeFS/issues/6259
-        raise NotImplementedError
+        """Single-chunk (unbuffered) upload, on final (i.e. during file.close())."""
+        if final:
+            repository, branch, resource = parse(self.path)
+
+            try:
+                # single-shot upload.
+                # empty buffer is equivalent to a touch()
+                self.buffer.seek(0)
+                self.fs.client.objects.upload_object(
+                    repository=repository,
+                    branch=branch,
+                    path=resource,
+                    content=self.buffer,
+                )
+            except ApiException as e:
+                raise OSError(f"file upload {self.path!r} failed") from e
+
+        return not final
 
     def _initiate_upload(self):
-        # Possibly blocked by https://github.com/treeverse/lakeFS/issues/6259
-        raise NotImplementedError
+        """No-op."""
+        return
 
     def _fetch_range(self, start: int, end: int) -> bytes:
         repository, ref, resource = parse(self.path)

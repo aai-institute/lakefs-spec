@@ -4,37 +4,67 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lakefs-spec"
-version = "0.1.0"
 description = "An fsspec implementation for lakeFS."
 requires-python = ">=3.9"
 readme = "README.md"
-license = {file = "LICENSE"}
-authors = [
-    {name = "Nicholas Junge", email= "n.junge@appliedai.de"}
+license = { text = "Apache-2.0" }
+authors = [{ name = "appliedAI Initiative", email = "info+oss@appliedai.de" }]
+maintainers = [
+    { name = "Nicholas Junge", email = "n.junge@appliedai.de" },
+    { name = "Max Mynter", email = "m.mynter@appliedai.de" },
+    { name = "Adrian Rumpold", email = "a.rumpold@appliedai.de" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Version Control",
+    "Topic :: System :: Filesystems",
+    "Topic :: Utilities",
+    "Typing :: Typed",
 ]
 
-dependencies = [
-    "fsspec >=2023.6.0",
-    "lakefs-client>=0.105.0",
-]
+dependencies = ["fsspec >=2023.6.0", "lakefs-client>=0.105.0"]
+
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/appliedai-initiative/lakefs-spec"
+Repository = "https://github.com/appliedai-initiative/lakefs-spec.git"
+Issues = "https://github.com/appliedai-initiative/lakefs-spec/issues"
 
 [project.optional-dependencies]
 dev = [
     "pre-commit>=3.3.3",
     "pytest>=7.4.0",
     "testcontainers>=3.7.1",
+    "twine>=4.0.0",
+    "build>=0.10.0",
 ]
 
 # Register lakeFS file system via the fsspec entry point
 [project.entry-points]
-"fsspec.specs" = {"lakefs" = "lakefs_spec.spec.LakeFSFileSystem"}
+"fsspec.specs" = { "lakefs" = "lakefs_spec.spec.LakeFSFileSystem" }
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = { "" = "src" }
 zip-safe = false
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+lakefs_spec = ["py.typed"]
+
+[tool.setuptools.dynamic]
+version = { attr = "lakefs_spec.version" }
 
 [tool.black]
 # Source https://github.com/psf/black#configuration-format
@@ -70,10 +100,9 @@ ignore = [
     "E221",
 ]
 
-# Ignore `F401` (unused imports) in all `__init__.py` files and in the client stub forwarding
+# Ignore `F401` (unused imports) in all `__init__.py` files
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
-"src/lakefs_spec/client.py" = ["F401"]
 
 [tool.bandit]
 exclude_dirs = ["tests"]
