@@ -141,7 +141,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             Whether to compare MD5 checksums of local and remote objects before file
             operations, and skip these operations if checksums match.
         create_branch_ok:
-            Whether to create branches implicitly when not-exisiting branches are referenced
+            Whether to create branches implicitly when not-existing branches are referenced.
         """
         super().__init__()
         self.client = client
