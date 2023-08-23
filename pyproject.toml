@@ -8,33 +8,48 @@ version = "0.1.0"
 description = "An fsspec implementation for lakeFS."
 requires-python = ">=3.9"
 readme = "README.md"
-license = {file = "LICENSE"}
-authors = [
-    {name = "Nicholas Junge", email= "n.junge@appliedai.de"}
+license = { file = "LICENSE" }
+authors = [{ name = "appliedAI Initiative", email = "info+oss@appliedai.de" }]
+maintainers = [
+    { name = "Nicholas Junge", email = "n.junge@appliedai.de" },
+    { name = "Max Mynter", email = "m.mynter@appliedai.de" },
+    { name = "Adrian Rumpold", email = "a.rumpold@appliedai.de" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Version Control",
+    "Topic :: System :: Filesystems",
+    "Topic :: Utilities",
+    "Typing :: Typed",
 ]
 
-dependencies = [
-    "fsspec >=2023.6.0",
-    "lakefs-client>=0.105.0",
-]
+dependencies = ["fsspec >=2023.6.0", "lakefs-client>=0.105.0"]
 
 [project.optional-dependencies]
-dev = [
-    "pre-commit>=3.3.3",
-    "pytest>=7.4.0",
-    "testcontainers>=3.7.1",
-]
+dev = ["pre-commit>=3.3.3", "pytest>=7.4.0", "testcontainers>=3.7.1"]
 
 # Register lakeFS file system via the fsspec entry point
 [project.entry-points]
-"fsspec.specs" = {"lakefs" = "lakefs_spec.spec.LakeFSFileSystem"}
+"fsspec.specs" = { "lakefs" = "lakefs_spec.spec.LakeFSFileSystem" }
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = { "" = "src" }
 zip-safe = false
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+lakefs_spec = ["py.typed"]
 
 [tool.black]
 # Source https://github.com/psf/black#configuration-format
