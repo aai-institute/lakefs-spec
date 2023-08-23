@@ -11,6 +11,7 @@ from typing import Any, Generator, Optional
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
+from lakefs_client.client import LakeFSClient
 from lakefs_client.exceptions import (
     ApiException,
     ForbiddenException,
@@ -19,7 +20,6 @@ from lakefs_client.exceptions import (
 )
 from lakefs_client.models import ObjectStatsList
 
-from lakefs_spec.client import LakeFSClient
 from lakefs_spec.commithook import CommitHook, Default
 
 _DEFAULT_CALLBACK = NoOpCallback()
@@ -185,7 +185,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     def exists(self, path, **kwargs):
         repository, ref, resource = parse(path)
         try:
-            self.client.objects.head_object(repository, ref, path)
+            self.client.objects_api.head_object(repository, ref, path)
             return True
         except NotFoundException:
             return False
@@ -218,7 +218,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             outfile = open(lpath, "wb")
 
         try:
-            res: io.BufferedReader = self.client.objects.get_object(repository, ref, resource)
+            res: io.BufferedReader = self.client.objects_api.get_object(repository, ref, resource)
             while True:
                 chunk = res.read(self.blocksize)
                 if not chunk:
@@ -268,7 +268,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         while has_more:
             try:
-                res: ObjectStatsList = self.client.objects.list_objects(
+                res: ObjectStatsList = self.client.objects_api.list_objects(
                     repository,
                     ref,
                     user_metadata=detail,
@@ -341,7 +341,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 return
 
         with open(lpath, "rb") as f:
-            self.client.objects.upload_object(
+            self.client.objects_api.upload_object(
                 repository=repository, branch=branch, path=resource, content=f
             )
 
@@ -362,7 +362,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             # TODO: This only works for string rpaths, fsspec allows rpath lists
             repository, branch, resource = parse(rpath)
             commit_creation = self.commithook("put", resource)
-            self.client.commits.commit(
+            self.client.commits_api.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
 
@@ -370,7 +370,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, branch, resource = parse(path)
 
         try:
-            self.client.objects.delete_object(repository=repository, branch=branch, path=resource)
+            self.client.objects_api.delete_object(
+                repository=repository, branch=branch, path=resource
+            )
         except NotFoundException:
             raise FileNotFoundError(
                 f"object {resource!r} does not exist on branch {branch!r} "
@@ -383,7 +385,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         if self.postcommit:
             repository, branch, resource = parse(path)
             commit_creation = self.commithook("rm", resource)
-            self.client.commits.commit(
+            self.client.commits_api.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
 

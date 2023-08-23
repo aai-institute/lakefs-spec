@@ -1,4 +1,5 @@
-from lakefs_spec.client import LakeFSClient
+from lakefs_client.client import LakeFSClient
+
 from lakefs_spec.spec import LakeFSFileSystem
 from tests.util import RandomFileFactory
 
@@ -17,7 +18,7 @@ def test_put_with_default_commit_hook(
     rpath = f"{repository}/{temp_branch}/{random_file.name}"
     fs.put(lpath, rpath)
 
-    commits = fs.client.commits.log_branch_commits(
+    commits = fs.client.commits_api.log_branch_commits(
         repository=repository,
         branch=temp_branch,
     )
