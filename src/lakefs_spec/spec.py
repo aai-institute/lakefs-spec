@@ -409,9 +409,6 @@ class LakeFSFileSystem(AbstractFileSystem):
     def rm_file(self, path):
         repository, branch, resource = parse(path)
 
-        if self.create_branch_ok:
-            ensure_branch(self.client, repository, branch)
-
         try:
             self.client.objects.delete_object(repository=repository, branch=branch, path=resource)
         except NotFoundException:
@@ -422,9 +419,6 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def rm(self, path, recursive=False, maxdepth=None):
         super().rm(path, recursive=recursive, maxdepth=maxdepth)
-        repository, branch, resource = parse(path)
-        if self.create_branch_ok:
-            ensure_branch(self.client, repository, branch)
         if self.postcommit:
             repository, branch, resource = parse(path)
             commit_creation = self.commithook("rm", resource)
