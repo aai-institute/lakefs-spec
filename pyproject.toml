@@ -44,7 +44,6 @@ Issues = "https://github.com/appliedai-initiative/lakefs-spec/issues"
 dev = [
     "pre-commit>=3.3.3",
     "pytest>=7.4.0",
-    "testcontainers>=3.7.1",
     "twine>=4.0.0",
     "build>=0.10.0",
 ]
