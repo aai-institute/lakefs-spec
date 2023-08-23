@@ -91,14 +91,33 @@ def parse( path: str) -> tuple[str, str, str]:
     repo, ref, resource = results.groups()
     return repo, ref, resource
 
-def ensure_branch(client, repository, new_branch_name:str, source_branch_name:str = 'main'):
+def ensure_branch(client, repository:str, branch_name:str, source_branch_name:str = 'main'):
+        """
+        Checks if a branch exists. If not, it is created.
+        The implementation depends on server-side error handling. 
+
+        Parameters
+        ----------
+        client: LakeFSClient
+            The lakeFS client configured for (and authenticated with) the target instance.
+        repository: str
+            Repository name.
+        branch_name: str
+            Name of the branch.
+        source_branch_name: str
+            Name of the source branch the new branch is created from.
+
+        Returns
+        -------
+        None
+        """
         try:
             #TODO: (m.mynter) How to get the source branch in implicit branch creation? 
-            new_branch = BranchCreation(name=new_branch_name, source=source_branch_name)
+            new_branch = BranchCreation(name=branch_name, source=source_branch_name)
             #client.branches_api.create_branch throws ApiException when branch exists
             client.branches_api.create_branch(repository=repository,branch_creation=new_branch)
             logger.info(
-                    f"Created new branch {new_branch_name!r} from branch {source_branch_name!r}."
+                    f"Created new branch {branch_name!r} from branch {source_branch_name!r}."
                 )
         except ApiException:
             pass
