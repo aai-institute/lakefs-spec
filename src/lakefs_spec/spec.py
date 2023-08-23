@@ -164,7 +164,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             Whether to compare MD5 checksums of local and remote objects before file
             operations, and skip these operations if checksums match.
         create_branch_ok: bool
-            Whether to create branches implicitly when not-existing branches are referenced.
+            Whether to create branches implicitly when not-existing branches are referenced on file uploads.
         source_branch: str
             Source branch set as origin when a new branch is implicitly created.
         """
