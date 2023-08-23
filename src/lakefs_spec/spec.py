@@ -15,8 +15,7 @@ from lakefs_client.exceptions import (
     NotFoundException,
     UnauthorizedException,
 )
-from lakefs_client.models import ObjectStatsList, BranchCreation 
-from lakefs_client.model import branch_creation
+from lakefs_client.models import BranchCreation, ObjectStatsList
 
 from lakefs_spec.client import LakeFSClient
 from lakefs_spec.commithook import CommitHook, Default
@@ -61,7 +60,7 @@ def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
     return file_hash.hexdigest()
 
 
-def parse( path: str) -> tuple[str, str, str]:
+def parse(path: str) -> tuple[str, str, str]:
     """
     Parses a lakeFS URI in the form ``<repo>/<ref>/<resource>``.
 
@@ -91,36 +90,39 @@ def parse( path: str) -> tuple[str, str, str]:
     repo, ref, resource = results.groups()
     return repo, ref, resource
 
-def ensure_branch(client, repository:str, branch_name:str, source_branch_name:str = 'main'):
-        """
-        Checks if a branch exists. If not, it is created.
-        The implementation depends on server-side error handling. 
 
-        Parameters
-        ----------
-        client: LakeFSClient
-            The lakeFS client configured for (and authenticated with) the target instance.
-        repository: str
-            Repository name.
-        branch_name: str
-            Name of the branch.
-        source_branch_name: str
-            Name of the source branch the new branch is created from.
+def ensure_branch(
+    client: LakeFSClient, repository: str, branch_name: str, source_branch_name: str = "main"
+) -> None:
+    """
+    Checks if a branch exists. If not, it is created.
+    The implementation depends on server-side error handling.
 
-        Returns
-        -------
-        None
-        """
-        try:
-            #TODO: (m.mynter) How to get the source branch in implicit branch creation? 
-            new_branch = BranchCreation(name=branch_name, source=source_branch_name)
-            #client.branches_api.create_branch throws ApiException when branch exists
-            client.branches_api.create_branch(repository=repository,branch_creation=new_branch)
-            logger.info(
-                    f"Created new branch {branch_name!r} from branch {source_branch_name!r}."
-                )
-        except ApiException:
-            pass
+    Parameters
+    ----------
+    client: LakeFSClient
+        The lakeFS client configured for (and authenticated with) the target instance.
+    repository: str
+        Repository name.
+    branch_name: str
+        Name of the branch.
+    source_branch_name: str
+        Name of the source branch the new branch is created from.
+
+    Returns
+    -------
+    None
+    """
+    client.commits
+    try:
+        # TODO: (m.mynter) How to get the source branch in implicit branch creation?
+        new_branch = BranchCreation(name=branch_name, source=source_branch_name)
+        # client.branches_api.create_branch throws ApiException when branch exists
+        client.branches.create_branch(repository=repository, branch_creation=new_branch)
+        logger.info(f"Created new branch {branch_name!r} from branch {source_branch_name!r}.")
+    except ApiException:
+        pass
+
 
 class LakeFSFileSystem(AbstractFileSystem):
     """
@@ -138,7 +140,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         postcommit: bool = False,
         commithook: CommitHook = Default,
         precheck_files: bool = True,
-        create_branch_ok: bool = True
+        create_branch_ok: bool = True,
     ):
         """
         The LakeFS file system constructor.
@@ -189,7 +191,10 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     @contextmanager
     def scope(
-        self, postcommit: Optional[bool] = None, precheck_files: Optional[bool] = None, create_branch_ok: Optional[bool] = None
+        self,
+        postcommit: Optional[bool] = None,
+        precheck_files: Optional[bool] = None,
+        create_branch_ok: Optional[bool] = None,
     ) -> EmptyYield:
         """
         Creates a context manager scope in which the lakeFS file system behavior
@@ -339,7 +344,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         cache_options=None,
         **kwargs,
     ):
-        if mode !=  'rb':
+        if mode != "rb":
             raise NotImplementedError("only mode='rb' is supported for open()")
 
         return LakeFSFile(
@@ -396,7 +401,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         )
 
         if self.create_branch_ok:
-            ensure_branch(self.client,repository, branch)
+            ensure_branch(self.client, repository, branch)
 
         if self.postcommit:
             # TODO: This only works for string rpaths, fsspec allows rpath lists
@@ -404,7 +409,6 @@ class LakeFSFileSystem(AbstractFileSystem):
             self.client.commits.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
-        
 
     def rm_file(self, path):
         repository, branch, resource = parse(path)
