@@ -93,9 +93,7 @@ def parse(path: str) -> tuple[str, str, str]:
     return repo, ref, resource
 
 
-def ensure_branch(
-    client: LakeFSClient, repository: str, branch: str, source_branch: str
-) -> None:
+def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_branch: str) -> None:
     """
     Checks if a branch exists. If not, it is created.
     This implementation depends on server-side error handling.
@@ -462,14 +460,6 @@ class LakeFSFile(AbstractBufferedFile):
         size=None,
         **kwargs,
     ):
-        if mode == "wb":
-            warnings.warn(
-                "Calling open() in write mode results in unbuffered file uploads, "
-                "because the lakeFS Python client does not support multipart uploads."
-                "Note that uploading large files unbuffered can "
-                "have performance implications."
-            )
-
         super().__init__(
             fs,
             path,
@@ -482,6 +472,12 @@ class LakeFSFile(AbstractBufferedFile):
             **kwargs,
         )
         if mode == "wb":
+            warnings.warn(
+                "Calling open() in write mode results in unbuffered file uploads, "
+                "because the lakeFS Python client does not support multipart uploads."
+                "Note that uploading large files unbuffered can "
+                "have performance implications."
+            )
             repository, branch, resource = parse(path)
             ensure_branch(self.fs.client, repository, branch, self.fs.source_branch)
 
