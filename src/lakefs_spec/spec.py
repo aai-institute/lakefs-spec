@@ -91,7 +91,7 @@ def parse( path: str) -> tuple[str, str, str]:
     repo, ref, resource = results.groups()
     return repo, ref, resource
 
-def check_branch_exists_or_create(client, repository, new_branch_name:str, source_branch_name:str = 'main'):
+def ensure_branch(client, repository, new_branch_name:str, source_branch_name:str = 'main'):
         try:
             #TODO: (m.mynter) How to get the source branch in implicit branch creation? 
             new_branch = BranchCreation(name=new_branch_name, source=source_branch_name)
@@ -343,7 +343,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, branch, resource = parse(rpath)
 
         if self.create_branch_ok:
-            check_branch_exists_or_create(self.client, repository, branch)
+            ensure_branch(self.client, repository, branch)
 
         if self.precheck_files:
             # TODO (n.junge): Make this work for lpaths that are themselves lakeFS paths
@@ -377,7 +377,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         )
 
         if self.create_branch_ok:
-            check_branch_exists_or_create(self.client,repository, branch)
+            ensure_branch(self.client,repository, branch)
 
         if self.postcommit:
             # TODO: This only works for string rpaths, fsspec allows rpath lists
@@ -391,7 +391,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, branch, resource = parse(path)
 
         if self.create_branch_ok:
-            check_branch_exists_or_create(self.client, repository, branch)
+            ensure_branch(self.client, repository, branch)
 
         try:
             self.client.objects.delete_object(repository=repository, branch=branch, path=resource)
@@ -405,7 +405,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         super().rm(path, recursive=recursive, maxdepth=maxdepth)
         repository, branch, resource = parse(path)
         if self.create_branch_ok:
-            check_branch_exists_or_create(self.client, repository, branch)
+            ensure_branch(self.client, repository, branch)
         if self.postcommit:
             repository, branch, resource = parse(path)
             commit_creation = self.commithook("rm", resource)
@@ -442,7 +442,7 @@ class LakeFSFile(AbstractBufferedFile):
         )
         if mode == "wb":
             repository, branch, resource = parse(path)
-            check_branch_exists_or_create(self.fs.client, repository, branch)
+            ensure_branch(self.fs.client, repository, branch)
 
     def _upload_chunk(self, final=False):
         # Possibly blocked by https://github.com/treeverse/lakeFS/issues/6259
