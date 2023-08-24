@@ -117,7 +117,7 @@ def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_bra
     try:
         new_branch = BranchCreation(name=branch, source=source_branch)
         # client.branches_api.create_branch throws ApiException when branch exists
-        client.branches.create_branch(repository=repository, branch_creation=new_branch)
+        client.branches_api.create_branch(repository=repository, branch_creation=new_branch)
         logger.info(f"Created new branch {branch!r} from branch {source_branch!r}.")
     except ApiException:
         pass
@@ -416,7 +416,12 @@ class LakeFSFileSystem(AbstractFileSystem):
         )
 
         if self.postcommit:
-            # TODO: This only works for string rpaths, fsspec allows rpath lists
+            diff = self.client.branches_api.diff_branch(repository=repository, branch=branch)
+
+            if not diff.results:
+                logger.warning(f"No changes to commit on branch {branch!r}, aborting commit.")
+                return
+
             commit_creation = self.commithook("put", resource)
             self.client.commits_api.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
@@ -439,6 +444,12 @@ class LakeFSFileSystem(AbstractFileSystem):
         super().rm(path, recursive=recursive, maxdepth=maxdepth)
         if self.postcommit:
             repository, branch, resource = parse(path)
+            diff = self.client.branches_api.diff_branch(repository=repository, branch=branch)
+
+            if not diff.results:
+                logger.warning(f"No changes to commit on branch {branch!r}, aborting commit.")
+                return
+
             commit_creation = self.commithook("rm", resource)
             self.client.commits_api.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
