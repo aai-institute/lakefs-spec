@@ -1,16 +1,20 @@
-from lakefs_client.client import LakeFSClient
-
 from lakefs_spec import LakeFSFileSystem
+from tests.conftest import LakeFSOptions
 from tests.util import RandomFileFactory
 
 
 def test_put_with_default_commit_hook(
     random_file_factory: RandomFileFactory,
-    lakefs_client: LakeFSClient,
+    lakefs_options: LakeFSOptions,
     repository: str,
     temp_branch: str,
 ) -> None:
-    fs = LakeFSFileSystem(client=lakefs_client, postcommit=True)
+    fs = LakeFSFileSystem(
+        host=lakefs_options.host,
+        username=lakefs_options.username,
+        password=lakefs_options.password,
+        postcommit=True,
+    )
 
     random_file = random_file_factory.make()
 
@@ -28,12 +32,18 @@ def test_put_with_default_commit_hook(
 
 def test_no_change_postcommit(
     random_file_factory: RandomFileFactory,
-    lakefs_client: LakeFSClient,
+    lakefs_options: LakeFSOptions,
     repository: str,
     temp_branch: str,
 ) -> None:
     # we just push without pre-checks, otherwise the no-diff scenario does not happen
-    fs = LakeFSFileSystem(client=lakefs_client, precheck_files=False, postcommit=True)
+    fs = LakeFSFileSystem(
+        host=lakefs_options.host,
+        username=lakefs_options.username,
+        password=lakefs_options.password,
+        precheck_files=False,
+        postcommit=True,
+    )
 
     random_file = random_file_factory.make()
 

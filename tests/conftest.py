@@ -2,6 +2,7 @@ import logging
 import random
 import string
 import sys
+import typing
 from pathlib import Path
 from typing import Generator, TypeVar
 
@@ -23,16 +24,30 @@ T = TypeVar("T")
 YieldFixture = Generator[T, None, None]
 
 
+class LakeFSOptions(typing.NamedTuple):
+    host: str
+    username: str
+    password: str
+
+
 @pytest.fixture(scope="session")
-def lakefs_client() -> LakeFSClient:
-    """A lakeFS client with communication preferences set."""
-    host = "localhost:8000"
-    access_key_id = "AKIAIOSFOLQUICKSTART"
-    secret_access_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+def lakefs_options() -> LakeFSOptions:
+    """Raw configuration options for a lakeFS test instance."""
+    return LakeFSOptions(
+        host="localhost:8000",
+        username="AKIAIOSFOLQUICKSTART",
+        password="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    )
+
+
+@pytest.fixture(scope="session")
+def lakefs_client(lakefs_options: LakeFSOptions) -> LakeFSClient:
+    """A lakeFS client for API operations outside of the file system."""
+
     configuration = Configuration(
-        host=host,
-        username=access_key_id,
-        password=secret_access_key,
+        host=lakefs_options.host,
+        username=lakefs_options.username,
+        password=lakefs_options.password,
     )
     return LakeFSClient(configuration=configuration)
 

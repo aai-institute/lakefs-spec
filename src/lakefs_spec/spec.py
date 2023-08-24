@@ -1,6 +1,7 @@
 import hashlib
 import io
 import logging
+import os
 import re
 import sys
 import warnings
@@ -11,6 +12,7 @@ from typing import Any, Generator, Optional
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
+from lakefs_client import Configuration
 from lakefs_client.client import LakeFSClient
 from lakefs_client.exceptions import (
     ApiException,
@@ -125,7 +127,7 @@ def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_bra
 
 class LakeFSFileSystem(AbstractFileSystem):
     """
-    lakeFS file system spec implementation.
+    lakeFS file system implementation.
 
     The client is immutable in this implementation, so different users need different
     file systems.
@@ -135,7 +137,12 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def __init__(
         self,
-        client: LakeFSClient,
+        host: str | None = None,
+        username: str | None = None,
+        password: str | None = None,
+        api_key: str | None = None,
+        api_key_prefix: str | None = None,
+        access_token: str | None = None,
         postcommit: bool = False,
         commithook: CommitHook = Default,
         precheck_files: bool = True,
@@ -147,8 +154,18 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         Parameters
         ----------
-        client: LakeFSClient
-            The lakeFS client configured for (and authenticated with) the target instance.
+        host: str or None
+            The address of your lakeFS instance.
+        username: str or None
+            The access key name to use in case of access key authentication.
+        password: str or None
+            The access key secret to use in case of access key authentication.
+        api_key: str or None
+            The API key to use in case of authentication with an API key.
+        api_key_prefix: str or None
+            A string prefix to use for the API key in authentication.
+        access_token: str or None
+            An access token to use in case of access token authentication.
         postcommit: bool
             Whether to create lakeFS commits on the chosen branch after mutating operations,
             e.g. uploading or removing a file.
@@ -167,7 +184,15 @@ class LakeFSFileSystem(AbstractFileSystem):
             Source branch set as origin when a new branch is implicitly created.
         """
         super().__init__()
-        self.client = client
+        configuration = Configuration(
+            host=host or os.getenv("LAKEFS_HOST"),
+            api_key=api_key or os.getenv("LAKEFS_API_KEY"),
+            api_key_prefix=api_key_prefix or os.getenv("LAKEFS_API_KEY_PREFIX"),
+            access_token=access_token or os.getenv("LAKEFS_ACCESS_TOKEN"),
+            username=username or os.getenv("LAKEFS_USERNAME"),
+            password=password or os.getenv("LAKEFS_PASSWORD"),
+        )
+        self.client = LakeFSClient(configuration=configuration)
         self.postcommit = postcommit
         self.commithook = commithook
         self.precheck_files = precheck_files
