@@ -42,9 +42,7 @@ jobs:
           pyproject.toml
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        if [ -f dev-deps.lock ]; then pip install -r dev-deps.lock; fi
-        pip install -e . --no-deps
+        pip install -e . -r dev-deps.lock
     - name: Cache pre-commit tools
       uses: actions/cache@v3
       with:

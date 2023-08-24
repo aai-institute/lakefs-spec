@@ -21,6 +21,9 @@ jobs:
           cache-dependency-path: |
             dev-deps.lock
             pyproject.toml
+      - name: Install dependencies
+        run: |
+          pip install -e . -r dev-deps.lock
       - name: Build and check
         run: |
           python -m build
