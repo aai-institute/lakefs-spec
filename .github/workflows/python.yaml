@@ -26,6 +26,9 @@ jobs:
           LAKEFS_DATABASE_TYPE: "local"
           LAKEFS_AUTH_ENCRYPT_SECRET_KEY: "THIS_MUST_BE_CHANGED_IN_PRODUCTION"
           LAKEFS_BLOCKSTORE_TYPE: "local"
+    env:
+      MYPY_CACHE_DIR: "${{ github.workspace }}/.cache/mypy"
+      RUFF_CACHE_DIR: "${{ github.workspace }}/.cache/ruff"    
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.11
@@ -45,12 +48,12 @@ jobs:
       uses: actions/cache@v3
       with:
         path: |
-          ~/.cache/ruff/
-          ~/.cache/mypy/
+          ${{ env.MYPY_CACHE_DIR }}
+          ${{ env.RUFF_CACHE_DIR }}
         key: ${{ runner.os }}-${{ hashFiles('dev-deps.lock', 'pyproject.toml', '.pre-commit-config.yaml') }}-linter-cache
     - uses: pre-commit/action@v3.0.0
       with:
-        extra_args: --show-diff-on-failure
+        extra_args: --all-files
     - name: Test with pytest
       run: |
         pytest -s
