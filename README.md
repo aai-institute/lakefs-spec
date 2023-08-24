@@ -39,14 +39,15 @@ Then, run the following code to download the sample dataframe directly from the 
 
 ```python
 import pandas as pd
-from lakefs_client import Configuration
-from lakefs_client.client import LakeFSClient
 
-# change these settings to match your instance's credentials
-configuration = Configuration(host="localhost:8000", username="username", password="password")
-client = LakeFSClient(configuration=configuration)
+# change these settings to match your instance's address and credentials
+storage_options={
+    "host": "localhost:8000",
+    "username": "username",
+    "password": "password",
+}
 
-df = pd.read_parquet('lakefs://quickstart/main/lakes.parquet', storage_options={"client": client})
+df = pd.read_parquet('lakefs://quickstart/main/lakes.parquet', storage_options=storage_options)
 ```
 
 ### Paths and URIs
@@ -67,7 +68,7 @@ Client-side caching is enabled by default in the lakeFS file system, and can be 
 from lakefs_spec import LakeFSFileSystem
 
 # The default setting, precheck_files=False disables client-side caching.
-fs = LakeFSFileSystem(client, precheck_files=True)
+fs = LakeFSFileSystem(host="localhost:8000", precheck_files=True)
 ```
 
 ### Automatic commit creation with a commit hook
@@ -101,7 +102,7 @@ would like to use your own commit hook, supply a Python callable with the aforem
 from lakefs_spec import LakeFSFileSystem
 
 # use the example commit hook from above
-fs = LakeFSFileSystem(client, postcommit=True, commithook=my_commit_hook)
+fs = LakeFSFileSystem(host="localhost:8000", postcommit=True, commithook=my_commit_hook)
 ```
 
 ### Scoped filesystem behavior changes
@@ -111,7 +112,7 @@ To selectively enable or disable automatic commits or client-side caching, you c
 ```python
 from lakefs_spec import LakeFSFileSystem
 
-fs = LakeFSFileSystem(client)
+fs = LakeFSFileSystem(host="localhost:8000")
 
 with fs.scope(precheck_files=False):
     # get a fresh version of the file by disabling caching checks
