@@ -1,6 +1,6 @@
 from lakefs_client.client import LakeFSClient
 
-from lakefs_spec.spec import LakeFSFileSystem
+from lakefs_spec import LakeFSFileSystem
 
 
 def test_paginated_ls(lakefs_client: LakeFSClient, repository: str) -> None:

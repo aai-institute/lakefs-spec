@@ -2,7 +2,8 @@ import time
 
 from lakefs_client.client import LakeFSClient
 
-from lakefs_spec.spec import LakeFSFileSystem, md5_checksum
+from lakefs_spec import LakeFSFileSystem
+from lakefs_spec.spec import md5_checksum
 from tests.util import RandomFileFactory, with_counter
 
 

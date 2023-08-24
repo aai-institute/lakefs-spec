@@ -50,7 +50,7 @@ dev = [
 
 # Register lakeFS file system via the fsspec entry point
 [project.entry-points]
-"fsspec.specs" = { "lakefs" = "lakefs_spec.spec.LakeFSFileSystem" }
+"fsspec.specs" = { "lakefs" = "lakefs_spec.LakeFSFileSystem" }
 
 [tool.setuptools]
 package-dir = { "" = "src" }

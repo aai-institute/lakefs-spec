@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from lakefs_client.client import LakeFSClient
 
-from lakefs_spec.spec import LakeFSFileSystem
+from lakefs_spec import LakeFSFileSystem
 
 
 def test_get_nonexistent_file(lakefs_client: LakeFSClient, repository: str) -> None:
