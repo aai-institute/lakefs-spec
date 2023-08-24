@@ -50,10 +50,10 @@ jobs:
         path: |
           ${{ env.MYPY_CACHE_DIR }}
           ${{ env.RUFF_CACHE_DIR }}
-        key: ${{ runner.os }}-${{ hashFiles('dev-deps.lock', 'pyproject.toml', '.pre-commit-config.yaml') }}-linter-cache
-    - uses: pre-commit/action@v3.0.0
-      with:
-        extra_args: --all-files
+        key: ${{ runner.os }}-${{ hashFiles('dev-deps.lock', '.pre-commit-config.yaml') }}-linter-cache
+    - name: Run pre-commit checks
+      run: |
+        pre-commit run --all-files --verbose --show-diff-on-failure
     - name: Test with pytest
       run: |
         pytest -s
