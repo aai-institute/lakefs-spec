@@ -28,7 +28,8 @@ jobs:
           LAKEFS_BLOCKSTORE_TYPE: "local"
     env:
       MYPY_CACHE_DIR: "${{ github.workspace }}/.cache/mypy"
-      RUFF_CACHE_DIR: "${{ github.workspace }}/.cache/ruff"    
+      RUFF_CACHE_DIR: "${{ github.workspace }}/.cache/ruff"
+      PRE_COMMIT_HOME: "${{ github.workspace }}/.cache/pre-commit"
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.11
@@ -44,12 +45,13 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f dev-deps.lock ]; then pip install -r dev-deps.lock; fi
         pip install -e . --no-deps
-    - name: Cache linter tool caches
+    - name: Cache pre-commit tools
       uses: actions/cache@v3
       with:
         path: |
           ${{ env.MYPY_CACHE_DIR }}
           ${{ env.RUFF_CACHE_DIR }}
+          ${{ env.PRE_COMMIT_HOME }}
         key: ${{ runner.os }}-${{ hashFiles('dev-deps.lock', '.pre-commit-config.yaml') }}-linter-cache
     - name: Run pre-commit checks
       run: |
