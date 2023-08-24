@@ -485,7 +485,7 @@ class LakeFSFile(AbstractBufferedFile):
         if mode == "wb":
             warnings.warn(
                 "Calling open() in write mode results in unbuffered file uploads, "
-                "because the lakeFS Python client does not support multipart uploads."
+                "because the lakeFS Python client does not support multipart uploads. "
                 "Note that uploading large files unbuffered can "
                 "have performance implications."
             )
