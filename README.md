@@ -5,10 +5,10 @@ Its main goal is to facilitate versioned data operations in lakeFS directly from
 
 ## Installation
 
-To install the package via `pip`, run
+To install the package directly from PyPI via `pip`, run
 
 ```shell
-python3 -m pip install git+https://github.com/appliedAI-Initiative/lakefs-spec.git@v0.1.0
+python3 -m pip install lakefs-spec
 ```
 
 or, for the bleeding edge version,
@@ -18,6 +18,12 @@ python3 -m pip install git+https://github.com/appliedAI-Initiative/lakefs-spec.g
 ```
 
 To add the project as a dependency using `poetry`, use
+
+```shell
+poetry add lakefs-spec
+```
+
+or, for the development version,
 
 ```shell
 poetry add git+https://github.com/appliedAI-Initiative/lakefs-spec.git
@@ -58,7 +64,7 @@ If they match, the operations are cancelled, and no additional client-server com
 Client-side caching is enabled by default in the lakeFS file system, and can be controlled through the `precheck_files` argument in the constructor:
 
 ```python
-from lakefs_spec.spec import LakeFSFileSystem
+from lakefs_spec import LakeFSFileSystem
 
 # The default setting, precheck_files=False disables client-side caching.
 fs = LakeFSFileSystem(client, precheck_files=True)
@@ -92,7 +98,7 @@ To enable automatic commits after stateful filesystem operations, set `postcommi
 would like to use your own commit hook, supply a Python callable with the aforementioned signature as the `commithook` argument:
 
 ```python
-from lakefs_spec.spec import LakeFSFileSystem
+from lakefs_spec import LakeFSFileSystem
 
 # use the example commit hook from above
 fs = LakeFSFileSystem(client, postcommit=True, commithook=my_commit_hook)
@@ -103,7 +109,7 @@ fs = LakeFSFileSystem(client, postcommit=True, commithook=my_commit_hook)
 To selectively enable or disable automatic commits or client-side caching, you can use a `scope` context manager:
 
 ```python
-from lakefs_spec.spec import LakeFSFileSystem
+from lakefs_spec import LakeFSFileSystem
 
 fs = LakeFSFileSystem(client)
 

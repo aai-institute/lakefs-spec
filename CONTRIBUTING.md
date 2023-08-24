@@ -49,5 +49,5 @@ development, add the following to your `pyproject.toml` file:
 
 ```toml
 [tool.poetry.plugins."fsspec.specs"]
-"lakefs" = "lakefs_spec.spec.LakeFSFileSystem"
+"lakefs" = "lakefs_spec.LakeFSFileSystem"
 ```
