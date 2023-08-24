@@ -41,9 +41,16 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f dev-deps.lock ]; then pip install -r dev-deps.lock; fi
         pip install -e . --no-deps
-    - name: Lint with pre-commit
-      run: |
-        pre-commit run -av
+    - name: Cache linter tool caches
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/ruff/
+          ~/.cache/mypy/
+        key: ${{ runner.os }}-${{ hashFiles('dev-deps.lock', 'pyproject.toml', '.pre-commit-config.yaml') }}-linter-cache
+    - uses: pre-commit/action@v3.0.0
+      with:
+        extra_args: --show-diff-on-failure
     - name: Test with pytest
       run: |
         pytest -s
