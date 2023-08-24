@@ -17,6 +17,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
+          cache: 'pip'
+          cache-dependency-path: |
+            dev-deps.lock
+            pyproject.toml
       - name: Build and check
         run: |
           python -m build
