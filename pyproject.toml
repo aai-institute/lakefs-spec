@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=45", "setuptools-scm[toml]>=6.2", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -41,12 +41,7 @@ Repository = "https://github.com/appliedai-initiative/lakefs-spec.git"
 Issues = "https://github.com/appliedai-initiative/lakefs-spec/issues"
 
 [project.optional-dependencies]
-dev = [
-    "pre-commit>=3.3.3",
-    "pytest>=7.4.0",
-    "twine>=4.0.0",
-    "build>=0.10.0",
-]
+dev = ["pre-commit>=3.3.3", "pytest>=7.4.0", "twine>=4.0.0", "build>=0.10.0"]
 
 # Register lakeFS file system via the fsspec entry point
 [project.entry-points]
@@ -62,8 +57,8 @@ where = ["src"]
 [tool.setuptools.package-data]
 lakefs_spec = ["py.typed"]
 
-[tool.setuptools.dynamic]
-version = { attr = "lakefs_spec.version" }
+# Automatically determine version number from Git tags
+[tool.setuptools_scm]
 
 [tool.black]
 # Source https://github.com/psf/black#configuration-format
