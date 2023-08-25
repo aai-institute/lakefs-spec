@@ -1,4 +1,4 @@
-# This docker-compose file provides an ephemeral lakeFS quickstart instance for local development
+# This docker-compose file provides an ephemeral lakeFS quickstart instance for local development.
 
 version: "3"
 
