@@ -2,7 +2,7 @@ import logging
 import random
 import string
 import sys
-import typing
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Generator, TypeVar
 
@@ -11,6 +11,7 @@ from lakefs_client import Configuration
 from lakefs_client.client import LakeFSClient
 from lakefs_client.models import BranchCreation, RepositoryCreation
 
+from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory
 
 _TEST_REPO = "lakefs-spec-tests"
@@ -24,7 +25,8 @@ T = TypeVar("T")
 YieldFixture = Generator[T, None, None]
 
 
-class LakeFSOptions(typing.NamedTuple):
+@dataclass
+class LakeFSOptions:
     host: str
     username: str
     password: str
@@ -38,6 +40,11 @@ def lakefs_options() -> LakeFSOptions:
         username="AKIAIOSFOLQUICKSTART",
         password="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
     )
+
+
+@pytest.fixture
+def fs(lakefs_options: LakeFSOptions) -> LakeFSFileSystem:
+    return LakeFSFileSystem(**asdict(lakefs_options))
 
 
 @pytest.fixture(scope="session")

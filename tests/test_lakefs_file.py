@@ -1,10 +1,9 @@
 from lakefs_spec import LakeFSFileSystem
-from tests.conftest import LakeFSOptions
 from tests.util import RandomFileFactory
 
 
 def test_lakefs_file_open_read(
-    lakefs_options: LakeFSOptions,
+    fs: LakeFSFileSystem,
     repository: str,
     temp_branch: str,
     random_file_factory: RandomFileFactory,
@@ -12,12 +11,6 @@ def test_lakefs_file_open_read(
     random_file = random_file_factory.make()
     with open(random_file, "rb") as f:
         orig_text = f.read()
-
-    fs = LakeFSFileSystem(
-        host=lakefs_options.host,
-        username=lakefs_options.username,
-        password=lakefs_options.password,
-    )
 
     lpath = str(random_file)
     rpath = f"{repository}/{temp_branch}/{random_file.name}"
@@ -31,7 +24,7 @@ def test_lakefs_file_open_read(
 
 
 def test_lakefs_file_open_write(
-    lakefs_options: LakeFSOptions,
+    fs: LakeFSFileSystem,
     repository: str,
     temp_branch: str,
     random_file_factory: RandomFileFactory,
@@ -40,11 +33,6 @@ def test_lakefs_file_open_write(
     with open(random_file, "rb") as f:
         orig_text = f.read()
 
-    fs = LakeFSFileSystem(
-        host=lakefs_options.host,
-        username=lakefs_options.username,
-        password=lakefs_options.password,
-    )
     rpath = f"{repository}/{temp_branch}/{random_file.name}"
 
     # try opening the remote file and writing to it

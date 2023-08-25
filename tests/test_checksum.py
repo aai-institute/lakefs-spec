@@ -2,23 +2,17 @@ import time
 
 from lakefs_spec import LakeFSFileSystem
 from lakefs_spec.spec import md5_checksum
-from tests.conftest import LakeFSOptions
 from tests.util import RandomFileFactory, with_counter
 
 
 def test_checksum_matching(
     random_file_factory: RandomFileFactory,
-    lakefs_options: LakeFSOptions,
+    fs: LakeFSFileSystem,
     repository: str,
     temp_branch: str,
 ) -> None:
     random_file = random_file_factory.make()
 
-    fs = LakeFSFileSystem(
-        host=lakefs_options.host,
-        username=lakefs_options.username,
-        password=lakefs_options.password,
-    )
     fs.client, counter = with_counter(fs.client)
 
     lpath = str(random_file)

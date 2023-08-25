@@ -1,0 +1,16 @@
+# This docker-compose file provides an ephemeral lakeFS quickstart instance for local development.
+
+version: "3"
+
+services:
+  lakefs:
+    image: treeverse/lakefs:0.107.0
+    ports:
+      - 8000:8000
+    environment:
+      LAKEFS_INSTALLATION_USER_NAME: "quickstart"
+      LAKEFS_INSTALLATION_ACCESS_KEY_ID: "AKIAIOSFOLQUICKSTART"
+      LAKEFS_INSTALLATION_SECRET_ACCESS_KEY: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+      LAKEFS_DATABASE_TYPE: "local"
+      LAKEFS_AUTH_ENCRYPT_SECRET_KEY: "THIS_MUST_BE_CHANGED_IN_PRODUCTION"
+      LAKEFS_BLOCKSTORE_TYPE: "local"
