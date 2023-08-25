@@ -11,6 +11,7 @@ from lakefs_client import Configuration
 from lakefs_client.client import LakeFSClient
 from lakefs_client.models import BranchCreation, RepositoryCreation
 
+from lakefs_spec.spec import LakeFSFileSystem
 from tests.util import RandomFileFactory
 
 _TEST_REPO = "lakefs-spec-tests"
@@ -38,6 +39,11 @@ def lakefs_options() -> LakeFSOptions:
         username="AKIAIOSFOLQUICKSTART",
         password="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
     )
+
+
+@pytest.fixture
+def fs(lakefs_options: LakeFSOptions) -> LakeFSFileSystem:
+    return LakeFSFileSystem(**lakefs_options._asdict())
 
 
 @pytest.fixture(scope="session")

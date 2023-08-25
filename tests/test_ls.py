@@ -1,16 +1,10 @@
 from lakefs_spec import LakeFSFileSystem
-from tests.conftest import LakeFSOptions
 
 
-def test_paginated_ls(lakefs_options: LakeFSOptions, repository: str) -> None:
+def test_paginated_ls(fs: LakeFSFileSystem, repository: str) -> None:
     """
     Check that all results of an ``ls`` call are returned independently of page size.
     """
-    fs = LakeFSFileSystem(
-        host=lakefs_options.host,
-        username=lakefs_options.username,
-        password=lakefs_options.password,
-    )
     resource = f"{repository}/main/"
 
     # default amount of 100 objects per page
