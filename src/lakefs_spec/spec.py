@@ -22,7 +22,7 @@ from lakefs_client.exceptions import (
 )
 from lakefs_client.models import BranchCreation, ObjectStatsList
 
-from lakefs_spec.commithook import CommitHook, Default
+from lakefs_spec.commithook import CommitHook, Default, FSEvent, HookContext
 
 _DEFAULT_CALLBACK = NoOpCallback()
 
@@ -462,7 +462,8 @@ class LakeFSFileSystem(AbstractFileSystem):
                 logger.warning(f"No changes to commit on branch {branch!r}, aborting commit.")
                 return
 
-            commit_creation = self.commithook("put", resource)
+            ctx = HookContext(repository, branch, resource, diff)
+            commit_creation = self.commithook(FSEvent.PUT, ctx)
             self.client.commits_api.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
@@ -490,7 +491,8 @@ class LakeFSFileSystem(AbstractFileSystem):
                 logger.warning(f"No changes to commit on branch {branch!r}, aborting commit.")
                 return
 
-            commit_creation = self.commithook("rm", resource)
+            ctx = HookContext(repository, branch, resource, diff)
+            commit_creation = self.commithook(FSEvent.RM, ctx)
             self.client.commits_api.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
