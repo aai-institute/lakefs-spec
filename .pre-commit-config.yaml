@@ -12,7 +12,6 @@ repos:
       - id: check-json
       - id: check-toml
       - id: check-yaml
-        exclude: "^\\.gitlab-ci\\.yml"
       - id: end-of-file-fixer
       - id: mixed-line-ending
   - repo: https://github.com/pre-commit/mirrors-mypy
@@ -22,9 +21,6 @@ repos:
      - id: mypy
        types_or: [ python, pyi ]
        args: ["--ignore-missing-imports", "--scripts-are-modules"]
-        # exclude the lakeFS client stub to suppress duplicate module errors
-        # https://github.com/pre-commit/mirrors-mypy/issues/33#issuecomment-967247764
-       exclude: "^(src/lakefs_spec/client.py)"
   - repo: https://github.com/psf/black
     rev: 23.7.0
     hooks:
@@ -34,7 +30,7 @@ repos:
     hooks:
       - id: isort
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.284
+    rev: v0.0.286
     hooks:
       - id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
