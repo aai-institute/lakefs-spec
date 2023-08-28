@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "lakefs-spec"
 description = "An fsspec implementation for lakeFS."
+keywords = ["lakeFS", "fsspec"]
 requires-python = ">=3.9"
 readme = "README.md"
 license = { text = "Apache-2.0" }
@@ -31,7 +32,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 
-dependencies = ["fsspec >=2023.6.0", "lakefs-client>=0.105.0"]
+dependencies = ["fsspec>=2023.6.0", "lakefs-client>=0.105.0"]
 
 dynamic = ["version"]
 
@@ -41,7 +42,7 @@ Repository = "https://github.com/appliedai-initiative/lakefs-spec.git"
 Issues = "https://github.com/appliedai-initiative/lakefs-spec/issues"
 
 [project.optional-dependencies]
-dev = ["pre-commit>=3.3.3", "pytest>=7.4.0", "twine>=4.0.0", "build>=0.10.0"]
+dev = ["pre-commit>=3.3.3", "pytest>=7.4.0", "build>=0.10.0"]
 
 # Register lakeFS file system via the fsspec entry point
 [project.entry-points]
