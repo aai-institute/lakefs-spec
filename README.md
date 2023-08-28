@@ -77,20 +77,22 @@ Some operations, like `fs.put()` or `fs.rm()`, change the state of a lakeFS repo
 the lakeFS working model, these changes are tracked as _uncommitted changes_, similarly to the git version control system.
 
 With `lakefs-spec`, you can optionally commit changes caused by file system operations directly after they are made,
-by using a **commit hook**. A commit hook is a Python function taking the `fsspec` event name that caused the changes
-(e.g. `put` or `rm`), as well as the remote resource path, and returning a `CommitCreation` object that is then used by
-lakeFS to create a commit directly on the chosen branch.
+by using a **commit hook**. A commit hook is a Python function taking the `fsspec` event that caused the changes
+(e.g. `put` or `rm`), as well as a context object containing useful information like the repository, branch name,
+changed resource, and the lakeFS diff, and returning a `CommitCreation` object that is then used by
+lakeFS to create a commit on the chosen branch.
 
 An example of a commit hook:
 
 ```python
 from lakefs_client.models import CommitCreation
+from lakefs_spec.commithook import FSEvent, HookContext
 
-def my_commit_hook(event: str, rpath: str) -> CommitCreation:
-    if event == "rm":
-        message = f"❌ Remove file {rpath}"
+def my_commit_hook(event: FSEvent, ctx: HookContext) -> CommitCreation:
+    if event == FSEvent.RM:
+        message = f"❌ Remove file {ctx.resource}"
     else:
-        message = f"✅ Add file {rpath}"
+        message = f"✅ Add file {ctx.resource}"
     
     return CommitCreation(message=message)
 ```
