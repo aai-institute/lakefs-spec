@@ -35,8 +35,8 @@ def Default(fs_event: FSEvent, ctx: HookContext) -> CommitCreation:
     elif fs_event == FSEvent.RM:
         action = "Remove"
     else:
-        raise ValueError(f"unexpected file system event {str(fs_event)!r}")
+        raise ValueError(f"unexpected file system event '{str(fs_event)}'")
 
-    message = f"""{action} file {ctx.resource}"""
+    message = f"{action} file {ctx.resource}"
 
     return CommitCreation(message=message)
