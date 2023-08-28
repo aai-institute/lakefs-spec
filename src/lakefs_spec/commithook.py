@@ -1,12 +1,12 @@
-from enum import Enum
+from enum import StrEnum, auto
 from typing import Callable, NamedTuple
 
 from lakefs_client.models import CommitCreation, DiffList
 
 
-class FSEvent(Enum):
-    PUT = 1
-    RM = 2
+class FSEvent(StrEnum):
+    PUT = auto()
+    RM = auto()
 
 
 class HookContext(NamedTuple):
@@ -35,7 +35,7 @@ def Default(fs_event: FSEvent, ctx: HookContext) -> CommitCreation:
     elif fs_event == FSEvent.RM:
         action = "Remove"
     else:
-        raise ValueError(f"unexpected file system event {fs_event!r}")
+        raise ValueError(f"unexpected file system event {str(fs_event)!r}")
 
     message = f"""{action} file {ctx.resource}"""
 
