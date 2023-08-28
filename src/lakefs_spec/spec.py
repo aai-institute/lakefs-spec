@@ -143,6 +143,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         api_key: str | None = None,
         api_key_prefix: str | None = None,
         access_token: str | None = None,
+        verify_ssl: bool = True,
+        ssl_ca_cert: str | None = None,
+        proxy: str | None = None,
         postcommit: bool = False,
         commithook: CommitHook = Default,
         precheck_files: bool = True,
@@ -166,6 +169,12 @@ class LakeFSFileSystem(AbstractFileSystem):
             A string prefix to use for the API key in authentication.
         access_token: str or None
             An access token to use in case of access token authentication.
+        verify_ssl: bool
+            Whether to verify SSL certificates in API interactions. Do not disable in production.
+        ssl_ca_cert: str or None
+            A custom certificate PEM file to use to verify the peer in SSL connections.
+        proxy: str or None
+            Proxy address to use when connecting to a lakeFS server.
         postcommit: bool
             Whether to create lakeFS commits on the chosen branch after mutating operations,
             e.g. uploading or removing a file.
@@ -191,7 +200,13 @@ class LakeFSFileSystem(AbstractFileSystem):
             access_token=access_token or os.getenv("LAKEFS_ACCESS_TOKEN"),
             username=username or os.getenv("LAKEFS_USERNAME"),
             password=password or os.getenv("LAKEFS_PASSWORD"),
+            ssl_ca_cert=ssl_ca_cert or os.getenv("LAKEFS_SSL_CA_CERT"),
         )
+        # proxy address, not part of the constructor
+        configuration.proxy = proxy
+        # whether to verify SSL certs, not part of the constructor
+        configuration.verify_ssl = verify_ssl
+
         self.client = LakeFSClient(configuration=configuration)
         self.postcommit = postcommit
         self.commithook = commithook
