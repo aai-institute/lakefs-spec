@@ -75,21 +75,22 @@ def test_implicit_branch_creation(
         # Creates non-existing branch and then pushes to it.
         non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
         rpath = f"{repository}/{non_existing_branch}/{random_file.name}"
-        fs.put(lpath, rpath)
-        commits = fs.client.commits_api.log_branch_commits(
-            repository=repository,
-            branch=non_existing_branch,
-        )
-        latest_commit = commits.results[0]  # commit log is ordered branch-tip-first
-        assert latest_commit.message == f"Add file {random_file.name}"
-        assert len(commits.results) == 2  # 2 commits: Repository Created and File Added.
-        # Created a new branch with new commit
-
-        # Clean the test state and delete the implicitly created branch.
-        fs.client.branches_api.delete_branch(
-            repository=repository,
-            branch=non_existing_branch,
-        )
+        try:
+            fs.put(lpath, rpath)
+            commits = fs.client.commits_api.log_branch_commits(
+                repository=repository,
+                branch=non_existing_branch,
+            )
+            latest_commit = commits.results[0]  # commit log is ordered branch-tip-first
+            assert latest_commit.message == f"Add file {random_file.name}"
+            assert len(commits.results) == 2  # 2 commits: Repository Created and File Added.
+            # Created a new branch with new commit
+        finally:
+            # Clean the test state and delete the implicitly created branch.
+            fs.client.branches_api.delete_branch(
+                repository=repository,
+                branch=non_existing_branch,
+            )
 
     with fs.scope(create_branch_ok=False):
         # Throws Error for non-existing branch with create_branch_ok = False
