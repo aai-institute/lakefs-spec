@@ -93,8 +93,8 @@ def test_implicit_branch_creation(
             assert latest_commit.message == f"Add file {random_file.name}"
             assert (
                 len(commits.results) == n_commits + 1
-            )  # 2 commits: Repository Created and File Added.
-            # Created a new branch with new commit
+            )  # 2 commits: "Repository Created" and "File Added".
+            # Created a new branch with new commit.
         finally:
             # Clean the test state and delete the implicitly created branch.
             fs.client.branches_api.delete_branch(
@@ -103,7 +103,7 @@ def test_implicit_branch_creation(
             )
 
     with fs.scope(create_branch_ok=False):
-        # Throws Error for non-existing branch with create_branch_ok = False
+        # Throws error for non-existing branch with create_branch_ok = False
         another_non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
         rpath = f"{repository}/{another_non_existing_branch}/{random_file.name}"
         with pytest.raises(NotFoundException):
