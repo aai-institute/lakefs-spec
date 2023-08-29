@@ -56,4 +56,8 @@ jobs:
         pre-commit run --all-files --verbose --show-diff-on-failure
     - name: Test with pytest
       run: |
-        pytest -s
+        pytest -s --cov=src --cov-branch
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
