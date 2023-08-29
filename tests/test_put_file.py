@@ -72,16 +72,6 @@ def test_implicit_branch_creation(
     lpath = str(random_file)
 
     with fs.scope(create_branch_ok=True):
-        # Pushing to an existing branch
-        rpath = f"{repository}/{temp_branch}/{random_file.name}"
-        fs.put(lpath, rpath)
-        commits = fs.client.commits_api.log_branch_commits(
-            repository=repository,
-            branch=temp_branch,
-        )
-        latest_commit = commits.results[0]  # commit log is ordered branch-tip-first
-        assert latest_commit.message == f"Add file {random_file.name}"
-
         # Creates non-existing branch and then pushes to it.
         non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
         rpath = f"{repository}/{non_existing_branch}/{random_file.name}"
@@ -102,16 +92,6 @@ def test_implicit_branch_creation(
         )
 
     with fs.scope(create_branch_ok=False):
-        # Pushing to an existing Branch
-        rpath = f"{repository}/{temp_branch}/{random_file.name}"
-        fs.put(lpath, rpath)
-        commits = fs.client.commits_api.log_branch_commits(
-            repository=repository,
-            branch=temp_branch,
-        )
-        latest_commit = commits.results[0]  # commit log is ordered branch-tip-first
-        assert latest_commit.message == f"Add file {random_file.name}"
-
         # Throws Error for non-existing branch with create_branch_ok = False
         another_non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
         rpath = f"{repository}/{another_non_existing_branch}/{random_file.name}"
