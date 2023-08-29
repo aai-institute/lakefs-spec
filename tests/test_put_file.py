@@ -22,9 +22,9 @@ def test_put_with_default_commit_hook(
     rpath = f"{repository}/{temp_branch}/{random_file.name}"
     fs.put(lpath, rpath)
 
-    commits = fs.client.commits_api.log_branch_commits(
+    commits = fs.client.refs_api.log_commits(
         repository=repository,
-        branch=temp_branch,
+        ref=temp_branch,
     )
     latest_commit = commits.results[0]  # commit log is ordered branch-tip-first
     assert latest_commit.message == f"Add file {random_file.name}"
@@ -46,9 +46,9 @@ def test_no_change_postcommit(
     rpath = f"{repository}/{temp_branch}/{random_file.name}"
     fs.put(lpath, rpath)
 
-    commits = fs.client.commits_api.log_branch_commits(
+    commits = fs.client.refs_api.log_commits(
         repository=repository,
-        branch=temp_branch,
+        ref=temp_branch,
     )
     latest_commit = commits.results[0]  # commit log is ordered branch-tip-first
     assert latest_commit.message == f"Add file {random_file.name}"
@@ -56,9 +56,9 @@ def test_no_change_postcommit(
     # put the same file again, this time the diff is empty
     fs.put(lpath, rpath)
     # check that no other commit has happened.
-    commits = fs.client.commits_api.log_branch_commits(
+    commits = fs.client.refs_api.log_commits(
         repository=repository,
-        branch=temp_branch,
+        ref=temp_branch,
     )
     assert commits.results[0] == latest_commit
     # in particular, this test asserts that no API exception happens in postcommit.
@@ -74,24 +74,26 @@ def test_implicit_branch_creation(
     with fs.scope(create_branch_ok=True):
         # Creates non-existing branch and then pushes to it.
 
-        #Get number of commits on initial branch.
-        temp_branch_commits = fs.client.commits_api.log_branch_commits(
-                repository=repository,
-                branch=temp_branch,
-            )
+        # Get number of commits on initial branch.
+        temp_branch_commits = fs.client.refs_api.log_commits(
+            repository=repository,
+            ref=temp_branch,
+        )
         n_commits = len(temp_branch_commits.results)
-        
+
         non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
         rpath = f"{repository}/{non_existing_branch}/{random_file.name}"
         try:
             fs.put(lpath, rpath)
-            commits = fs.client.commits_api.log_branch_commits(
+            commits = fs.client.refs_api.log_commits(
                 repository=repository,
-                branch=non_existing_branch,
+                ref=non_existing_branch,
             )
             latest_commit = commits.results[0]  # commit log is ordered branch-tip-first
             assert latest_commit.message == f"Add file {random_file.name}"
-            assert len(commits.results) == n_commits + 1  # 2 commits: Repository Created and File Added.
+            assert (
+                len(commits.results) == n_commits + 1
+            )  # 2 commits: Repository Created and File Added.
             # Created a new branch with new commit
         finally:
             # Clean the test state and delete the implicitly created branch.
