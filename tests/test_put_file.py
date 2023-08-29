@@ -73,6 +73,14 @@ def test_implicit_branch_creation(
 
     with fs.scope(create_branch_ok=True):
         # Creates non-existing branch and then pushes to it.
+
+        #Get number of commits on initial branch.
+        temp_branch_commits = fs.client.commits_api.log_branch_commits(
+                repository=repository,
+                branch=temp_branch,
+            )
+        n_commits = len(temp_branch_commits.results)
+        
         non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
         rpath = f"{repository}/{non_existing_branch}/{random_file.name}"
         try:
@@ -83,7 +91,7 @@ def test_implicit_branch_creation(
             )
             latest_commit = commits.results[0]  # commit log is ordered branch-tip-first
             assert latest_commit.message == f"Add file {random_file.name}"
-            assert len(commits.results) == 2  # 2 commits: Repository Created and File Added.
+            assert len(commits.results) == n_commits + 1  # 2 commits: Repository Created and File Added.
             # Created a new branch with new commit
         finally:
             # Clean the test state and delete the implicitly created branch.
