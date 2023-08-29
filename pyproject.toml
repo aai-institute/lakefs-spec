@@ -42,7 +42,12 @@ Repository = "https://github.com/appliedai-initiative/lakefs-spec.git"
 Issues = "https://github.com/appliedai-initiative/lakefs-spec/issues"
 
 [project.optional-dependencies]
-dev = ["pre-commit>=3.3.3", "pytest>=7.4.0", "build>=0.10.0"]
+dev = [
+    "pre-commit>=3.3.3",
+    "pytest>=7.4.0",
+    "build>=0.10.0",
+    "pytest-cov>=4.1.0",
+]
 
 # Register lakeFS file system via the fsspec entry point
 [project.entry-points]
