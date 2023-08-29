@@ -25,7 +25,7 @@ pytest
 To spin up a local lakeFS instance quickly for testing, you can use the Docker Compose file bundled with this repository:
 
 ```shell
-docker-compose -f hack/docker-compose.yml
+docker-compose -f hack/docker-compose.yml up
 ```
 
 ### Updating dependencies
