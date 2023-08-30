@@ -114,3 +114,7 @@ syft-output.json
 
 .pre-commit-cache
 .ruff_cache
+
+# direnv
+.envrc
+.direnv
