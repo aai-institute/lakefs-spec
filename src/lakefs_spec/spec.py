@@ -7,7 +7,7 @@ import sys
 import warnings
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator, Optional
+from typing import Any, Generator, NamedTuple, Optional, Union
 
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
@@ -31,6 +31,30 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 EmptyYield = Generator[None, None, None]
+
+
+class LakectlConfig(NamedTuple):
+    host: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
+
+    @classmethod
+    def read(cls, path: Union[str, Path]) -> "LakectlConfig":
+        try:
+            import yaml
+        except ModuleNotFoundError:
+            return cls()
+
+        obj: dict[str, Any] = yaml.safe_load(Path(path).expanduser())
+
+        # config struct schema (Golang backend code):
+        # https://github.com/treeverse/lakeFS/blob/master/cmd/lakectl/cmd/root.go
+        creds: dict[str, str] = obj.get("credentials", {})
+        server: dict[str, str] = obj.get("server")
+        username = creds.get("access_key_id")
+        password = creds.get("secret_access_key")
+        host = server.get("endpoint_url")
+        return cls(host=host, username=username, password=password)
 
 
 @contextmanager
@@ -146,6 +170,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         verify_ssl: bool = True,
         ssl_ca_cert: str | None = None,
         proxy: str | None = None,
+        configfile: str = "~/.lakectl.yaml",
         postcommit: bool = False,
         commithook: CommitHook = Default,
         precheck_files: bool = True,
@@ -193,13 +218,20 @@ class LakeFSFileSystem(AbstractFileSystem):
             Source branch set as origin when a new branch is implicitly created.
         """
         super().__init__()
+
+        if Path(configfile).expanduser().exists():
+            lakectl_config = LakectlConfig.read(configfile)
+        else:
+            # empty config.
+            lakectl_config = LakectlConfig()
+
         configuration = Configuration(
-            host=host or os.getenv("LAKEFS_HOST"),
+            host=host or os.getenv("LAKEFS_HOST") or lakectl_config.host,
             api_key=api_key or os.getenv("LAKEFS_API_KEY"),
             api_key_prefix=api_key_prefix or os.getenv("LAKEFS_API_KEY_PREFIX"),
             access_token=access_token or os.getenv("LAKEFS_ACCESS_TOKEN"),
-            username=username or os.getenv("LAKEFS_USERNAME"),
-            password=password or os.getenv("LAKEFS_PASSWORD"),
+            username=username or os.getenv("LAKEFS_USERNAME") or lakectl_config.username,
+            password=password or os.getenv("LAKEFS_PASSWORD") or lakectl_config.password,
             ssl_ca_cert=ssl_ca_cert or os.getenv("LAKEFS_SSL_CA_CERT"),
         )
         # proxy address, not part of the constructor
