@@ -38,11 +38,13 @@ jobs:
         python-version: 3.11
         cache: 'pip'
         cache-dependency-path: |
-          dev-deps.lock
+          requirements.txt
+          requirements-dev.txt
           pyproject.toml
     - name: Install dependencies
       run: |
-        pip install -r dev-deps.lock -e .
+        pip install -r requirements.txt -r requirements-dev.txt
+        pip install -e . --no-deps
     - name: Cache pre-commit tools
       uses: actions/cache@v3
       with:

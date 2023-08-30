@@ -40,3 +40,17 @@ repos:
     - id: bandit
       args: [ "-c", "pyproject.toml" ]
       additional_dependencies: ["bandit[toml]"]
+  - repo: https://github.com/jazzband/pip-tools
+    rev: 7.3.0
+    hooks:
+      - id: pip-compile
+        name: pip-compile pyproject.toml
+        args: ["--strip-extras", pyproject.toml]
+        files: ^(pyproject\.toml|requirements\.txt)$
+      - id: pip-compile
+        name: pip-compile requirements-dev.txt
+        args:
+          - --extra=dev
+          - --output-file=requirements-dev.txt
+          - pyproject.toml
+        files: ^(pyproject\.toml|requirements-dev\.txt)$
