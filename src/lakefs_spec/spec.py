@@ -4,7 +4,6 @@ import logging
 import os
 import re
 import sys
-import warnings
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Generator, NamedTuple
@@ -43,6 +42,11 @@ class LakectlConfig(NamedTuple):
         try:
             import yaml
         except ModuleNotFoundError:
+            logger.warning(
+                f"Configuration '{path}' exists, but cannot be read "
+                f"because the `pyyaml package` is not installed. "
+                f"To fix, run `pip install --upgrade pyyaml`.",
+            )
             return cls()
 
         with open(path, "r") as f:
@@ -558,11 +562,10 @@ class LakeFSFile(AbstractBufferedFile):
             **kwargs,
         )
         if mode == "wb":
-            warnings.warn(
+            logger.warning(
                 "Calling open() in write mode results in unbuffered file uploads, "
                 "because the lakeFS Python client does not support multipart uploads. "
-                "Note that uploading large files unbuffered can "
-                "have performance implications."
+                "Note that uploading large files unbuffered can have performance implications."
             )
             repository, branch, resource = parse(path)
             ensure_branch(self.fs.client, repository, branch, self.fs.source_branch)
