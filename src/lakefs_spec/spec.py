@@ -7,7 +7,7 @@ import sys
 import warnings
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator, NamedTuple, Optional, Union
+from typing import Any, Generator, NamedTuple
 
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
@@ -34,12 +34,12 @@ EmptyYield = Generator[None, None, None]
 
 
 class LakectlConfig(NamedTuple):
-    host: Optional[str] = None
-    username: Optional[str] = None
-    password: Optional[str] = None
+    host: str | None = None
+    username: str | None = None
+    password: str | None = None
 
     @classmethod
-    def read(cls, path: Union[str, Path]) -> "LakectlConfig":
+    def read(cls, path: str | Path) -> "LakectlConfig":
         try:
             import yaml
         except ModuleNotFoundError:
@@ -267,10 +267,10 @@ class LakeFSFileSystem(AbstractFileSystem):
     @contextmanager
     def scope(
         self,
-        postcommit: Optional[bool] = None,
-        precheck_files: Optional[bool] = None,
-        create_branch_ok: Optional[bool] = None,
-        source_branch: Optional[str] = None,
+        postcommit: bool | None = None,
+        precheck_files: bool | None = None,
+        create_branch_ok: bool | None = None,
+        source_branch: str | None = None,
     ) -> EmptyYield:
         """
         Creates a context manager scope in which the lakeFS file system behavior
