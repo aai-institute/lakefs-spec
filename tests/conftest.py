@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Generator, TypeVar
 
 import pytest
+import yaml
 from lakefs_client import Configuration
 from lakefs_client.client import LakeFSClient
 from lakefs_client.models import BranchCreation, RepositoryCreation
@@ -107,3 +108,21 @@ def temp_branch(lakefs_client: LakeFSClient, repository: str) -> YieldFixture[st
 @pytest.fixture
 def random_file_factory(tmp_path: Path) -> RandomFileFactory:
     return RandomFileFactory(path=tmp_path)
+
+
+@pytest.fixture
+def temporary_lakectl_config() -> YieldFixture[str]:
+    d = {
+        "credentials": {"access_key_id": "hello", "secret_access_key": "world"},
+        "server": {"endpoint_url": "http://hello-world-xyz"},
+    }
+
+    loc = "~/.lakectl.yaml"
+    path = Path(loc).expanduser()
+
+    try:
+        with open(path, "w") as f:
+            yaml.dump(d, f)
+        yield loc
+    finally:
+        path.unlink()
