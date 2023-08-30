@@ -45,7 +45,8 @@ class LakectlConfig(NamedTuple):
         except ModuleNotFoundError:
             return cls()
 
-        obj: dict[str, Any] = yaml.safe_load(path)
+        with open(path, "r") as f:
+            obj: dict[str, Any] = yaml.safe_load(f)
 
         # config struct schema (Golang backend code):
         # https://github.com/treeverse/lakeFS/blob/master/cmd/lakectl/cmd/root.go
