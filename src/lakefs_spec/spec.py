@@ -45,12 +45,12 @@ class LakectlConfig(NamedTuple):
         except ModuleNotFoundError:
             return cls()
 
-        obj: dict[str, Any] = yaml.safe_load(Path(path).expanduser())
+        obj: dict[str, Any] = yaml.safe_load(path)
 
         # config struct schema (Golang backend code):
         # https://github.com/treeverse/lakeFS/blob/master/cmd/lakectl/cmd/root.go
         creds: dict[str, str] = obj.get("credentials", {})
-        server: dict[str, str] = obj.get("server")
+        server: dict[str, str] = obj.get("server", {})
         username = creds.get("access_key_id")
         password = creds.get("secret_access_key")
         host = server.get("endpoint_url")
@@ -219,8 +219,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         """
         super().__init__()
 
-        if Path(configfile).expanduser().exists():
-            lakectl_config = LakectlConfig.read(configfile)
+        if (p := Path(configfile).expanduser()).exists():
+            lakectl_config = LakectlConfig.read(p)
         else:
             # empty config.
             lakectl_config = LakectlConfig()
