@@ -48,6 +48,7 @@ dev = [
     "build>=0.10.0",
     "pytest-cov>=4.1.0",
 ]
+yaml = ["pyyaml"]
 
 # Register lakeFS file system via the fsspec entry point
 [project.entry-points]
@@ -85,6 +86,10 @@ pretty = true
 python_version = "3.11"
 strict_optional = false
 warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = ["yaml"]
+ignore_missing_imports = true
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.

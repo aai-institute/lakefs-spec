@@ -4,10 +4,9 @@ import logging
 import os
 import re
 import sys
-import warnings
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator, Optional
+from typing import Any, Generator, NamedTuple
 
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
@@ -31,6 +30,36 @@ logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 EmptyYield = Generator[None, None, None]
+
+
+class LakectlConfig(NamedTuple):
+    host: str | None = None
+    username: str | None = None
+    password: str | None = None
+
+    @classmethod
+    def read(cls, path: str | Path) -> "LakectlConfig":
+        try:
+            import yaml
+        except ModuleNotFoundError:
+            logger.warning(
+                f"Configuration '{path}' exists, but cannot be read "
+                f"because the `pyyaml package` is not installed. "
+                f"To fix, run `pip install --upgrade pyyaml`.",
+            )
+            return cls()
+
+        with open(path, "r") as f:
+            obj: dict[str, Any] = yaml.safe_load(f)
+
+        # config struct schema (Golang backend code):
+        # https://github.com/treeverse/lakeFS/blob/master/cmd/lakectl/cmd/root.go
+        creds: dict[str, str] = obj.get("credentials", {})
+        server: dict[str, str] = obj.get("server", {})
+        username = creds.get("access_key_id")
+        password = creds.get("secret_access_key")
+        host = server.get("endpoint_url")
+        return cls(host=host, username=username, password=password)
 
 
 @contextmanager
@@ -146,6 +175,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         verify_ssl: bool = True,
         ssl_ca_cert: str | None = None,
         proxy: str | None = None,
+        configfile: str = "~/.lakectl.yaml",
         postcommit: bool = False,
         commithook: CommitHook = Default,
         precheck_files: bool = True,
@@ -193,13 +223,20 @@ class LakeFSFileSystem(AbstractFileSystem):
             Source branch set as origin when a new branch is implicitly created.
         """
         super().__init__()
+
+        if (p := Path(configfile).expanduser()).exists():
+            lakectl_config = LakectlConfig.read(p)
+        else:
+            # empty config.
+            lakectl_config = LakectlConfig()
+
         configuration = Configuration(
-            host=host or os.getenv("LAKEFS_HOST"),
+            host=host or os.getenv("LAKEFS_HOST") or lakectl_config.host,
             api_key=api_key or os.getenv("LAKEFS_API_KEY"),
             api_key_prefix=api_key_prefix or os.getenv("LAKEFS_API_KEY_PREFIX"),
             access_token=access_token or os.getenv("LAKEFS_ACCESS_TOKEN"),
-            username=username or os.getenv("LAKEFS_USERNAME"),
-            password=password or os.getenv("LAKEFS_PASSWORD"),
+            username=username or os.getenv("LAKEFS_USERNAME") or lakectl_config.username,
+            password=password or os.getenv("LAKEFS_PASSWORD") or lakectl_config.password,
             ssl_ca_cert=ssl_ca_cert or os.getenv("LAKEFS_SSL_CA_CERT"),
         )
         # proxy address, not part of the constructor
@@ -235,10 +272,10 @@ class LakeFSFileSystem(AbstractFileSystem):
     @contextmanager
     def scope(
         self,
-        postcommit: Optional[bool] = None,
-        precheck_files: Optional[bool] = None,
-        create_branch_ok: Optional[bool] = None,
-        source_branch: Optional[str] = None,
+        postcommit: bool | None = None,
+        precheck_files: bool | None = None,
+        create_branch_ok: bool | None = None,
+        source_branch: str | None = None,
     ) -> EmptyYield:
         """
         Creates a context manager scope in which the lakeFS file system behavior
@@ -525,11 +562,10 @@ class LakeFSFile(AbstractBufferedFile):
             **kwargs,
         )
         if mode == "wb":
-            warnings.warn(
+            logger.warning(
                 "Calling open() in write mode results in unbuffered file uploads, "
                 "because the lakeFS Python client does not support multipart uploads. "
-                "Note that uploading large files unbuffered can "
-                "have performance implications."
+                "Note that uploading large files unbuffered can have performance implications."
             )
             repository, branch, resource = parse(path)
             ensure_branch(self.fs.client, repository, branch, self.fs.source_branch)
