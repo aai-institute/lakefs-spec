@@ -8,13 +8,14 @@ Its main goal is to facilitate versioned data operations in lakeFS directly from
 To install the package directly from PyPI via `pip`, run
 
 ```shell
-python3 -m pip install lakefs-spec
+pip install --upgrade pip
+pip install lakefs-spec
 ```
 
 or, for the bleeding edge version,
 
 ```shell
-python3 -m pip install git+https://github.com/appliedAI-Initiative/lakefs-spec.git
+pip install git+https://github.com/appliedAI-Initiative/lakefs-spec.git
 ```
 
 To add the project as a dependency using `poetry`, use
@@ -126,6 +127,74 @@ with fs.scope(precheck_files=False):
 # create a commit on upload by enabling automatic commits in a scoped section
 with fs.scope(postcommit=True):
     fs.put("my-file.txt", "lakefs://my-repo/my-branch/my-new-file.txt")
+```
+
+### Implicit initialization and instance caching
+
+Aside from explicit initialization, you can also use environment variables and a configuration file (by default `~/.lakectl.yaml`) to initialize a lakeFS file system.
+The environment variables for the lakeFS client arguments are the names of the constructor arguments prefixed with `LAKEFS_`:
+
+```python
+import os
+from lakefs_spec import LakeFSFileSystem
+
+os.environ["LAKEFS_HOST"] = "localhost:8000"
+os.environ["LAKEFS_USERNAME"] = "username"
+os.environ["LAKEFS_PASSWORD"] = "password"
+
+fs = LakeFSFileSystem()
+```
+
+To initialize the lakeFS file system from a `lakectl` YAML configuration file, you can specify the `configfile` argument.
+
+```python
+from lakefs_spec import LakeFSFileSystem
+
+# No argument means the default config (~/.lakectl.yaml) will be used.
+fs = LakeFSFileSystem(configfile="path/to/my/lakectl.yaml")
+```
+
+⚠️ To be able to read settings from a YAML configuration file, `pyyaml` has to be installed. You can do this by installing `lakefs-spec` together with the `yaml` extra:
+
+```shell
+pip install --upgrade lakefs-spec[yaml]
+```
+
+### A note on mixing environment variables and `lakectl` configuration files
+
+lakeFS file system instances are cached, and existing lakeFS instances are reused from an instance cache when requested.
+
+For implicit initialization from environment variables and configuration files as described above, this means that whichever initialization method is used first populates the cache -
+thus, when using the other method, a cache hit happens and no new instance is created. This can lead to surprising misconfigurations:
+
+```python
+import os
+from lakefs_spec import LakeFSFileSystem
+
+# set envvars
+os.environ["LAKEFS_HOST"] = "localhost:8000"
+os.environ["LAKEFS_USERNAME"] = "username"
+os.environ["LAKEFS_PASSWORD"] = "password"
+
+# creates a cache entry for the bare instance
+fs = LakeFSFileSystem()
+
+# ~/.lakectl.yaml
+#  server:
+#    endpoint_url: http://example-host
+
+# this time, try to read in the default lakectl config, with http://example-host set as host.
+fs = LakeFSFileSystem()
+print(fs.client._api.configuration.host) # <- prints localhost:8000!
+```
+
+The best way to avoid this is to commit to only using either environment variables or `lakectl` configuration files.
+If you do have to mix both methods, you can clear the instance cache like so:
+
+```python
+from lakefs_spec import LakeFSFileSystem
+
+LakeFSFileSystem._cache.clear()
 ```
 
 ## Developing and contributing to `lakefs-spec`
