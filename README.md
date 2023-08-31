@@ -1,4 +1,4 @@
-# lakefs-spec: An `fsspec` implementation for lakeFS 
+# lakefs-spec: An `fsspec` implementation for lakeFS
 
 This repository contains a [filesystem-spec](https://github.com/fsspec/filesystem_spec) implementation for the [lakeFS](https://lakefs.io/) project.
 Its main goal is to facilitate versioned data operations in lakeFS directly from Python code, for example using `pandas`. See the [examples](#usage) below for inspiration.
@@ -51,6 +51,26 @@ storage_options={
 df = pd.read_parquet('lakefs://quickstart/main/lakes.parquet', storage_options=storage_options)
 ```
 
+You can then update data in LakeFS like so:
+
+```python
+df.to_csv('lakefs://quickstart/main/lakes.parquet', storage_options=storage_options)
+```
+
+If the target file does not exist, it is created, otherwise, the existing file is updated.
+
+If the specified branch does not exist, it is created by default. This behaviour can be set in the filesystem constructor via the `create_branch_ok` flag.
+
+```python
+from lakefs_spec import LakeFSFileSystem
+
+# create_branch_ok=True (the default setting) enables implicit branch creation
+fs = LakeFSFileSystem(host="localhost:8000", create_branch_ok=False)
+```
+
+If set to `create_branch_ok = False`, adressing non-existing branches causes an error.
+The flag can also be set in [scoped filesystem behaviour changes](#scoped-filesystem-behavior-changes) .
+
 ### Paths and URIs
 
 The lakeFS filesystem expects URIs that follow the [lakeFS protocol](https://docs.lakefs.io/understand/model.html#lakefs-protocol-uris).
@@ -94,7 +114,7 @@ def my_commit_hook(event: FSEvent, ctx: HookContext) -> CommitCreation:
         message = f"❌ Remove file {ctx.resource}"
     else:
         message = f"✅ Add file {ctx.resource}"
-    
+
     return CommitCreation(message=message)
 ```
 
@@ -110,7 +130,7 @@ fs = LakeFSFileSystem(host="localhost:8000", postcommit=True, commithook=my_comm
 
 ### Scoped filesystem behavior changes
 
-To selectively enable or disable automatic commits or client-side caching, you can use a `scope` context manager:
+To selectively enable or disable automatic commits, client-side caching, or automatic branch creation, you can use a `scope` context manager:
 
 ```python
 from lakefs_spec import LakeFSFileSystem
