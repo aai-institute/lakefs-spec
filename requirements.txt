@@ -6,7 +6,7 @@
 #
 fsspec==2023.6.0
     # via lakefs-spec (pyproject.toml)
-lakefs-client==0.107.1
+lakefs-client==0.108.0
     # via lakefs-spec (pyproject.toml)
 python-dateutil==2.8.2
     # via lakefs-client
