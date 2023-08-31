@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       lakefs:
-        image: treeverse/lakefs:0.107.0
+        image: treeverse/lakefs:0.108.0
         ports:
           - 8000:8000
         env:
