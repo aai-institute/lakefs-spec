@@ -56,7 +56,7 @@ You can then update data in LakeFS like so:
 df.to_csv('lakefs://quickstart/main/lakes.parquet', storage_options=storage_options)
 ```
 
-If the target file does not exists, it is created, therwise, the existing file is updated.
+If the target file does not exist, it is created, otherwise, the existing file is updated.
 
 If the specified branch does not exist, it is created by default. This behaviour can be set in the filesystem constructor via the `create_branch_ok` flag.
 
