@@ -312,6 +312,19 @@ class LakeFSFileSystem(AbstractFileSystem):
         except FileNotFoundError:
             return None
 
+    def commit(self, fsevent: FSEvent, repository: str, branch: str, resource: str) -> None:
+        diff = self.client.branches_api.diff_branch(repository=repository, branch=branch)
+
+        if not diff.results:
+            logger.warning(f"No changes to commit on branch {branch!r}, aborting commit.")
+            return
+
+        ctx = HookContext(repository, branch, resource, diff)
+        commit_creation = self.commithook(fsevent, ctx)
+        self.client.commits_api.commit(
+            repository=repository, branch=branch, commit_creation=commit_creation
+        )
+
     def exists(self, path, **kwargs):
         repository, ref, resource = parse(path)
         try:
@@ -493,17 +506,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         )
 
         if self.postcommit:
-            diff = self.client.branches_api.diff_branch(repository=repository, branch=branch)
-
-            if not diff.results:
-                logger.warning(f"No changes to commit on branch {branch!r}, aborting commit.")
-                return
-
-            ctx = HookContext(repository, branch, resource, diff)
-            commit_creation = self.commithook(FSEvent.PUT, ctx)
-            self.client.commits_api.commit(
-                repository=repository, branch=branch, commit_creation=commit_creation
-            )
+            self.commit(FSEvent.PUT, repository=repository, branch=branch, resource=resource)
 
     def rm_file(self, path):
         repository, branch, resource = parse(path)
@@ -522,17 +525,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         super().rm(path, recursive=recursive, maxdepth=maxdepth)
         if self.postcommit:
             repository, branch, resource = parse(path)
-            diff = self.client.branches_api.diff_branch(repository=repository, branch=branch)
-
-            if not diff.results:
-                logger.warning(f"No changes to commit on branch {branch!r}, aborting commit.")
-                return
-
-            ctx = HookContext(repository, branch, resource, diff)
-            commit_creation = self.commithook(FSEvent.RM, ctx)
-            self.client.commits_api.commit(
-                repository=repository, branch=branch, commit_creation=commit_creation
-            )
+            self.commit(FSEvent.RM, repository=repository, branch=branch, resource=resource)
 
 
 class LakeFSFile(AbstractBufferedFile):
@@ -585,6 +578,10 @@ class LakeFSFile(AbstractBufferedFile):
                     path=resource,
                     content=self.buffer,
                 )
+                if self.fs.postcommit:
+                    self.fs.commit(
+                        FSEvent.PUT, repository=repository, branch=branch, resource=resource
+                    )
             except ApiException as e:
                 raise OSError(f"file upload {self.path!r} failed") from e
 
