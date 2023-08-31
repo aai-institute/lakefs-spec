@@ -20,7 +20,7 @@ identify==2.5.27
     # via pre-commit
 iniconfig==2.0.0
     # via pytest
-lakefs-client==0.107.1
+lakefs-client==0.108.0
     # via lakefs-spec (pyproject.toml)
 nodeenv==1.8.0
     # via pre-commit
