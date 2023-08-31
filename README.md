@@ -60,7 +60,7 @@ If the specified branch does not exist, it is created by default. This behaviour
 ```python
 from lakefs_spec import LakeFSFileSystem
 
-# The default setting, precheck_files=True enables implicit branch creation
+# create_branch_ok=True (the default setting) enables implicit branch creation
 fs = LakeFSFileSystem(host="localhost:8000", create_branch_ok=False)
 ```
 
