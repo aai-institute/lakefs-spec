@@ -107,6 +107,7 @@ def my_commit_hook(event: FSEvent, ctx: HookContext) -> CommitCreation:
         message = f"❌ Remove file {ctx.resource}"
     else:
         message = f"✅ Add file {ctx.resource}"
+        
     return CommitCreation(message=message)
 ```
 
