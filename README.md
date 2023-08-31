@@ -50,32 +50,31 @@ storage_options={
 df = pd.read_parquet('lakefs://quickstart/main/lakes.parquet', storage_options=storage_options)
 ```
 
-### Paths and URIs
-
-The lakeFS filesystem expects URIs that follow the [lakeFS protocol](https://docs.lakefs.io/understand/model.html#lakefs-protocol-uris).
-URIs need to have the form `lakefs://<repo>/<ref>/<resource>`, with the repository name, the ref name (either a branch name or a commit SHA, depending on the operation), and resource name.
-The resource can be a single file name, or a directory name for recursive operations.
-
-### Updating files
-
-You can update data in LakeFS like so:
+You can then update data in LakeFS like so:
 
 ```python
 df.to_csv('lakefs://quickstart/main/lakes.parquet', storage_options=storage_options)
 ```
 
-When the target file not exists, it is created. Otherwise, the existing file is updated.
+If the target file does not exists, it is created, therwise, the existing file is updated.
 
-If the specified branch does not exist, it is created. This behaviour can be set in the filesystem constructor via the `create_branch_ok` flag:
+If the specified branch does not exist, it is created by default. This behaviour can be set in the filesystem constructor via the `create_branch_ok` flag.
 
 ```python
 from lakefs_spec import LakeFSFileSystem
 
-# The default setting, precheck_files=False disables client-side caching.
-fs = LakeFSFileSystem(host="localhost:8000", create_branch_ok=True)
+# The default setting, precheck_files=True enables implicit branch creation
+fs = LakeFSFileSystem(host="localhost:8000", create_branch_ok=False)
 ```
 
-Alternatively, they can be set in [scoped filesystem behaviour changes](#scoped-filesystem-behavior-changes) .
+If set to `create_branch_ok = False`, adressing non-existing branches causes an error.
+The flag can also be set in [scoped filesystem behaviour changes](#scoped-filesystem-behavior-changes) .
+
+### Paths and URIs
+
+The lakeFS filesystem expects URIs that follow the [lakeFS protocol](https://docs.lakefs.io/understand/model.html#lakefs-protocol-uris).
+URIs need to have the form `lakefs://<repo>/<ref>/<resource>`, with the repository name, the ref name (either a branch name or a commit SHA, depending on the operation), and resource name.
+The resource can be a single file name, or a directory name for recursive operations.
 
 ### Client-side caching
 
@@ -129,7 +128,7 @@ fs = LakeFSFileSystem(host="localhost:8000", postcommit=True, commithook=my_comm
 
 ### Scoped filesystem behavior changes
 
-To selectively enable or disable automatic commits, client-side caching, or implicit branch creation you can use a `scope` context manager:
+To selectively enable or disable automatic commits, client-side caching, or automatic branch creation, you can use a `scope` context manager:
 
 ```python
 from lakefs_spec import LakeFSFileSystem
