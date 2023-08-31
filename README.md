@@ -1,8 +1,10 @@
 # lakefs-spec: An `fsspec` implementation for lakeFS
+
 This repository contains a [filesystem-spec](https://github.com/fsspec/filesystem_spec) implementation for the [lakeFS](https://lakefs.io/) project.
 Its main goal is to facilitate versioned data operations in lakeFS directly from Python code, for example using `pandas`. See the [examples](#usage) below for inspiration.
 
 ## Installation
+
 To install the package directly from PyPI via `pip`, run
 
 ```shell
@@ -28,6 +30,7 @@ poetry add git+https://github.com/appliedAI-Initiative/lakefs-spec.git
 ```
 
 ## Usage
+
 As an example showcase, we use the lakeFS file system to read a Pandas `DataFrame` directly from a branch. To follow
 this small tutorial, you should first complete Step 1 in the [lakeFS quickstart](https://docs.lakefs.io/quickstart/launch.html) by
 launching an instance, and then creating a pre-populated repository by clicking the green button on the login page.
@@ -68,11 +71,13 @@ If set to `create_branch_ok = False`, adressing non-existing branches causes an 
 The flag can also be set in [scoped filesystem behaviour changes](#scoped-filesystem-behavior-changes) .
 
 ### Paths and URIs
+
 The lakeFS filesystem expects URIs that follow the [lakeFS protocol](https://docs.lakefs.io/understand/model.html#lakefs-protocol-uris).
 URIs need to have the form `lakefs://<repo>/<ref>/<resource>`, with the repository name, the ref name (either a branch name or a commit SHA, depending on the operation), and resource name.
 The resource can be a single file name, or a directory name for recursive operations.
 
 ### Client-side caching
+
 In order to reduce the number of IO operations, you can enable client-side caching of both uploaded and downloaded files.
 Caching works by calculating the MD5 checksum of the local file, and comparing it to that of the lakeFS remote file.
 If they match, the operations are cancelled, and no additional client-server communication (including up- and downloads) happens.
@@ -87,6 +92,7 @@ fs = LakeFSFileSystem(host="localhost:8000", precheck_files=True)
 ```
 
 ### Automatic commit creation with a commit hook
+
 Some operations, like `fs.put()` or `fs.rm()`, change the state of a lakeFS repository by changing files. According to
 the lakeFS working model, these changes are tracked as _uncommitted changes_, similarly to the git version control system.
 
@@ -107,7 +113,7 @@ def my_commit_hook(event: FSEvent, ctx: HookContext) -> CommitCreation:
         message = f"❌ Remove file {ctx.resource}"
     else:
         message = f"✅ Add file {ctx.resource}"
-        
+
     return CommitCreation(message=message)
 ```
 
@@ -122,6 +128,7 @@ fs = LakeFSFileSystem(host="localhost:8000", postcommit=True, commithook=my_comm
 ```
 
 ### Scoped filesystem behavior changes
+
 To selectively enable or disable automatic commits, client-side caching, or automatic branch creation, you can use a `scope` context manager:
 
 ```python
@@ -142,4 +149,5 @@ with fs.scope(postcommit=True):
 ```
 
 ## Developing and contributing to `lakefs-spec`
+
 We welcome contributions to the project! For information on the general development workflow, head over to the [contribution guide](CONTRIBUTING.md).
