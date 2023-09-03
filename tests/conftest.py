@@ -119,10 +119,15 @@ def temporary_lakectl_config() -> YieldFixture[str]:
 
     loc = "~/.lakectl.yaml"
     path = Path(loc).expanduser()
+    backup_path = path.with_stem(path.stem + "_BAK")
 
     try:
+        if path.exists():
+            path.rename(backup_path)
         with open(path, "w") as f:
             yaml.dump(d, f)
         yield loc
     finally:
         path.unlink()
+        if backup_path.exists():
+            backup_path.rename(path)
