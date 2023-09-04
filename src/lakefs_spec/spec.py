@@ -328,7 +328,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     def exists(self, path, **kwargs):
         repository, ref, resource = parse(path)
         try:
-            self.client.objects_api.head_object(repository, ref, path)
+            self.client.objects_api.head_object(repository, ref, resource)
             return True
         except NotFoundException:
             return False
