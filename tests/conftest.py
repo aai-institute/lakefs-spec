@@ -78,6 +78,7 @@ def ensurerepo(lakefs_client: LakeFSClient) -> str:
             RepositoryCreation(
                 name=_TEST_REPO,
                 storage_namespace=storage_namespace,
+                sample_data=True,
             )
         )
     return _TEST_REPO
