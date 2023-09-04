@@ -18,7 +18,6 @@ def test_exists_on_staged_file(
     repository: str,
     temp_branch: str,
 ) -> None:
-
     random_file = random_file_factory.make()
 
     lpath = str(random_file)
