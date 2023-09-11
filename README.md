@@ -214,7 +214,7 @@ If you do have to mix both methods, you can clear the instance cache like so:
 ```python
 from lakefs_spec import LakeFSFileSystem
 
-LakeFSFileSystem._cache.clear()
+LakeFSFileSystem.clear_instance_cache()
 ```
 
 ## Developing and contributing to `lakefs-spec`

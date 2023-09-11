@@ -45,6 +45,7 @@ def lakefs_options() -> LakeFSOptions:
 
 @pytest.fixture
 def fs(lakefs_options: LakeFSOptions) -> LakeFSFileSystem:
+    LakeFSFileSystem.clear_instance_cache()
     return LakeFSFileSystem(**asdict(lakefs_options))
 
 
