@@ -13,15 +13,11 @@ from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
 from lakefs_client import Configuration
 from lakefs_client.client import LakeFSClient
-from lakefs_client.exceptions import (
-    ApiException,
-    ForbiddenException,
-    NotFoundException,
-    UnauthorizedException,
-)
+from lakefs_client.exceptions import ApiException, NotFoundException
 from lakefs_client.models import BranchCreation, ObjectStatsList
 
 from lakefs_spec.commithook import CommitHook, Default, FSEvent, HookContext
+from lakefs_spec.errors import translate_lakefs_error
 
 _DEFAULT_CALLBACK = NoOpCallback()
 
@@ -60,27 +56,6 @@ class LakectlConfig(NamedTuple):
         password = creds.get("secret_access_key")
         host = server.get("endpoint_url")
         return cls(host=host, username=username, password=password)
-
-
-@contextmanager
-def translate_exceptions(path: str) -> EmptyYield:
-    """
-    A context manager to translate lakeFS API exceptions / error codes
-    to file exceptions. This is convenience for the user to not have to
-    adjust their exception handling to any lakeFS specifics.
-
-    Specifically meant to be applied to lakeFS API endpoints.
-    """
-    try:
-        yield
-    except NotFoundException as e:
-        raise FileNotFoundError(path) from e
-    except ForbiddenException as e:
-        raise PermissionError(path) from e
-    except UnauthorizedException as e:
-        raise PermissionError(f"{path!r} (unauthorized)") from e
-    except ApiException as e:
-        raise IOError(f"HTTP {e.status}: {e.reason}")
 
 
 def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
@@ -251,23 +226,15 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
 
-    def _rm(self, path):
-        raise NotImplementedError
-
     @classmethod
     def _strip_protocol(cls, path):
         """Copied verbatim from the base class, save for the slash rstrip."""
         if isinstance(path, list):
             return [cls._strip_protocol(p) for p in path]
-        path = stringify_path(path)
-        protos = (cls.protocol,) if isinstance(cls.protocol, str) else cls.protocol
-        for protocol in protos:
-            if path.startswith(protocol + "://"):
-                path = path[len(protocol) + 3 :]
-            elif path.startswith(protocol + "::"):
-                path = path[len(protocol) + 2 :]
-        # use of root_marker to make minimum required path, e.g., "/"
-        return path or cls.root_marker
+        spath = super()._strip_protocol(path)
+        if stringify_path(path).endswith("/"):
+            return spath + "/"
+        return spath
 
     @contextmanager
     def scope(
@@ -332,6 +299,9 @@ class LakeFSFileSystem(AbstractFileSystem):
             return True
         except NotFoundException:
             return False
+        except ApiException as e:
+            err = translate_lakefs_error(e)
+            raise err
 
     def get_file(
         self,
@@ -367,21 +337,15 @@ class LakeFSFileSystem(AbstractFileSystem):
                 if not chunk:
                     break
                 outfile.write(chunk)
-        except NotFoundException:
-            raise FileNotFoundError(
-                f"resource {resource!r} does not exist on ref {ref!r} in repository {repository!r}"
-            )
         except ApiException as e:
-            raise FileNotFoundError(f"Error (HTTP{e.status}): {e.reason}") from e
+            from fsspec.implementations.local import LocalFileSystem
+
+            LocalFileSystem().rm_file(lpath)
+            err = translate_lakefs_error(e, message=str(rpath))
+            raise err
         finally:
             if not isfilelike(lpath):
                 outfile.close()
-
-            exc_type, _, __ = sys.exc_info()
-            if exc_type:
-                from fsspec.implementations.local import LocalFileSystem
-
-                LocalFileSystem().rm_file(lpath)
 
     def info(self, path, **kwargs):
         path = self._strip_protocol(path)
@@ -399,7 +363,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 "type": "directory",
             }
         else:
-            raise FileNotFoundError(resource)
+            raise FileNotFoundError(path)
 
     def ls(self, path, detail=True, amount=100, **kwargs):
         path = self._strip_protocol(path)
@@ -515,11 +479,9 @@ class LakeFSFileSystem(AbstractFileSystem):
             self.client.objects_api.delete_object(
                 repository=repository, branch=branch, path=resource
             )
-        except NotFoundException:
-            raise FileNotFoundError(
-                f"object {resource!r} does not exist on branch {branch!r} "
-                f"in repository {repository!r}"
-            )
+        except ApiException as e:
+            err = translate_lakefs_error(e, message=str(path))
+            raise err
 
     def rm(self, path, recursive=False, maxdepth=None):
         super().rm(path, recursive=recursive, maxdepth=maxdepth)
@@ -583,7 +545,8 @@ class LakeFSFile(AbstractBufferedFile):
                         FSEvent.PUT, repository=repository, branch=branch, resource=resource
                     )
             except ApiException as e:
-                raise OSError(f"file upload {self.path!r} failed") from e
+                err = translate_lakefs_error(e, message=str(self.path))
+                raise err
 
         return not final
 
@@ -599,4 +562,5 @@ class LakeFSFile(AbstractBufferedFile):
             )
             return res.read()
         except ApiException as e:
-            raise FileNotFoundError(f"Error (HTTP{e.status}): {e.reason}") from e
+            err = translate_lakefs_error(e, message=str(self.path))
+            raise err
