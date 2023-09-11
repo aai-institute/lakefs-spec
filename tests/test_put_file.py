@@ -2,7 +2,6 @@ import random
 import string
 
 import pytest
-from lakefs_client.exceptions import NotFoundException
 
 from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory
@@ -97,5 +96,5 @@ def test_implicit_branch_creation(
     with fs.scope(create_branch_ok=False):
         another_non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
         rpath = f"{repository}/{another_non_existing_branch}/{random_file.name}"
-        with pytest.raises(NotFoundException):
+        with pytest.raises(FileNotFoundError):
             fs.put(lpath, rpath)
