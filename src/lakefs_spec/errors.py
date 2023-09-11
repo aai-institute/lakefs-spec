@@ -1,5 +1,6 @@
 import errno
 import functools
+import json
 
 from lakefs_client import ApiException
 
@@ -36,9 +37,17 @@ def translate_lakefs_error(  # type: ignore
     An instantiated exception ready to be thrown. If the error code isn't
     recognized, an IOError with the original error message is returned.
     """
-    status, reason = error.status, error.reason
+    status, reason, body = error.status, error.reason, error.body
+
+    emsg = f"HTTP{status} ({reason})"
+    try:
+        lakefs_msg = json.loads(body)["message"]
+        emsg += f": {lakefs_msg}"
+    except json.JSONDecodeError:
+        pass
+
     constructor = HTTP_CODE_TO_ERROR.get(status, functools.partial(IOError, errno.EIO))
-    custom_exc = constructor(message or reason, *args)
+    custom_exc = constructor(message or emsg, *args)
     if set_cause:
         custom_exc.__cause__ = error
     return custom_exc
