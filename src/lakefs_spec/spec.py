@@ -288,9 +288,14 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         ctx = HookContext(repository, branch, resource, diff)
         commit_creation = self.commithook(fsevent, ctx)
-        self.client.commits_api.commit(
-            repository=repository, branch=branch, commit_creation=commit_creation
-        )
+
+        try:
+            self.client.commits_api.commit(
+                repository=repository, branch=branch, commit_creation=commit_creation
+            )
+        except ApiException as e:
+            err = translate_lakefs_error(e)
+            raise err
 
     def exists(self, path, **kwargs):
         repository, ref, resource = parse(path)
@@ -383,11 +388,10 @@ class LakeFSFileSystem(AbstractFileSystem):
                     prefix=prefix,
                     amount=amount,
                 )
-            except NotFoundException:
-                raise FileNotFoundError(
-                    f"resource {prefix!r} does not exist on ref {ref!r} "
-                    f"in repository {repository!r}"
-                )
+            except ApiException as e:
+                err = translate_lakefs_error(e)
+                raise err
+
             has_more, after = res.pagination.has_more, res.pagination.next_offset
             for obj in res.results:
                 info.append(
@@ -448,9 +452,13 @@ class LakeFSFileSystem(AbstractFileSystem):
                 return
 
         with open(lpath, "rb") as f:
-            self.client.objects_api.upload_object(
-                repository=repository, branch=branch, path=resource, content=f
-            )
+            try:
+                self.client.objects_api.upload_object(
+                    repository=repository, branch=branch, path=resource, content=f
+                )
+            except ApiException as e:
+                err = translate_lakefs_error(e)
+                raise err
 
     def put(
         self,
@@ -480,7 +488,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 repository=repository, branch=branch, path=resource
             )
         except ApiException as e:
-            err = translate_lakefs_error(e, message=str(path))
+            err = translate_lakefs_error(e)
             raise err
 
     def rm(self, path, recursive=False, maxdepth=None):
@@ -545,7 +553,7 @@ class LakeFSFile(AbstractBufferedFile):
                         FSEvent.PUT, repository=repository, branch=branch, resource=resource
                     )
             except ApiException as e:
-                err = translate_lakefs_error(e, message=str(self.path))
+                err = translate_lakefs_error(e)
                 raise err
 
         return not final
@@ -562,5 +570,5 @@ class LakeFSFile(AbstractBufferedFile):
             )
             return res.read()
         except ApiException as e:
-            err = translate_lakefs_error(e, message=str(self.path))
+            err = translate_lakefs_error(e)
             raise err

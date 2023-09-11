@@ -1,3 +1,5 @@
+import pytest
+
 from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory
 
@@ -48,3 +50,10 @@ def test_lakefs_file_open_write(
 
     # round-trip assert.
     assert new_text == orig_text
+
+
+def test_lakefs_file_unknown_mode(fs: LakeFSFileSystem) -> None:
+    """Test that a NotImplementedError is raised on unknown mode encounter."""
+
+    with pytest.raises(NotImplementedError, match="unsupported mode .*"):
+        fs.open("hello.py", mode="ab")
