@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from lakefs_spec import LakeFSFileSystem
+from tests.util import RandomFileFactory, with_counter
 
 
 def test_get_nonexistent_file(fs: LakeFSFileSystem, repository: str) -> None:
@@ -42,3 +43,25 @@ def test_get_from_nonexistent_branch(fs: LakeFSFileSystem, repository: str) -> N
         fs.get(rpath, "out.txt")
 
     assert not Path("out.txt").exists()
+
+
+def test_get_client_caching(
+    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
+) -> None:
+    """
+    Tests that the `precheck_files` branch stops a download of a previously uploaded
+    identical file via checksum matching.
+    """
+    fs.client, counter = with_counter(fs.client)
+
+    random_file = random_file_factory.make()
+    lpath = str(random_file)
+    rpath = f"{repository}/{temp_branch}/{random_file.name}"
+    fs.put(lpath, rpath)
+    assert fs.exists(rpath)
+
+    # try to get file, should not initiate a download due to checksum matching.
+    fs.get(rpath, lpath)
+    print(list(counter.named_counts()))
+    assert counter.count("objects_api.upload_object") == 1
+    assert counter.count("objects_api.get_object") == 0

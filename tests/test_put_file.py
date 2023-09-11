@@ -4,7 +4,7 @@ import string
 import pytest
 
 from lakefs_spec import LakeFSFileSystem
-from tests.util import RandomFileFactory
+from tests.util import RandomFileFactory, with_counter
 
 
 def test_put_with_default_commit_hook(
@@ -69,7 +69,7 @@ def test_implicit_branch_creation(
     random_file = random_file_factory.make()
     lpath = str(random_file)
 
-    with fs.scope(create_branch_ok=True):
+    with fs.scope(create_branch_ok=True, postcommit=True):
         temp_branch_commits = fs.client.refs_api.log_commits(
             repository=repository,
             ref=temp_branch,
@@ -98,3 +98,24 @@ def test_implicit_branch_creation(
         rpath = f"{repository}/{another_non_existing_branch}/{random_file.name}"
         with pytest.raises(FileNotFoundError):
             fs.put(lpath, rpath)
+
+
+def test_put_client_caching(
+    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
+) -> None:
+    """
+    Tests that the `precheck_files` branch stops a second upload of an
+    identical file via checksum matching.
+    """
+    fs.client, counter = with_counter(fs.client)
+
+    random_file = random_file_factory.make()
+    lpath = str(random_file)
+    rpath = f"{repository}/{temp_branch}/{random_file.name}"
+    fs.put(lpath, rpath)
+    assert fs.exists(rpath)
+
+    # second put, should not happen.
+    fs.put(lpath, rpath)
+    print(list(counter.named_counts()))
+    assert counter.count("objects_api.upload_object") == 1
