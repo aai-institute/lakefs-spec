@@ -286,9 +286,19 @@ class LakeFSFileSystem(AbstractFileSystem):
         except FileNotFoundError:
             return None
 
-    def commit(self, fsevent: FSEvent, repository: str, branch: str, resource: str) -> None:
-        diff = self.client.branches_api.diff_branch(repository=repository, branch=branch)
+    def commit(self, path, action="modify"):
+        repository, ref, resource = parse(path)
+        if action == "modify":
+            fsaction = FSEvent.PUT
+        elif action == "delete":
+            fsaction = FSEvent.RM
+        else:
+            logger.warning(f"Unkown action {action}. Aborting, changes not commited.")
+            return
+        self._commit(fsaction, repository, ref, resource)
 
+    def _commit(self, fsevent: FSEvent, repository: str, branch: str, resource: str) -> None:
+        diff = self.client.branches_api.diff_branch(repository=repository, branch=branch)
         if not diff.results:
             logger.warning(f"No changes to commit on branch {branch!r}, aborting commit.")
             return
@@ -473,7 +483,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         )
 
         if self.postcommit:
-            self.commit(FSEvent.PUT, repository=repository, branch=branch, resource=resource)
+            self._commit(FSEvent.PUT, repository=repository, branch=branch, resource=resource)
 
     def rm_file(self, path):
         repository, branch, resource = parse(path)
@@ -487,7 +497,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         super().rm(path, recursive=recursive, maxdepth=maxdepth)
         if self.postcommit:
             repository, branch, resource = parse(path)
-            self.commit(FSEvent.RM, repository=repository, branch=branch, resource=resource)
+            self._commit(FSEvent.RM, repository=repository, branch=branch, resource=resource)
 
 
 class LakeFSFile(AbstractBufferedFile):
@@ -541,7 +551,7 @@ class LakeFSFile(AbstractBufferedFile):
                     content=self.buffer,
                 )
                 if self.fs.postcommit:
-                    self.fs.commit(
+                    self.fs._commit(
                         FSEvent.PUT, repository=repository, branch=branch, resource=resource
                     )
 
