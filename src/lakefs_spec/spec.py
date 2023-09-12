@@ -237,6 +237,14 @@ class LakeFSFileSystem(AbstractFileSystem):
         return spath
 
     @contextmanager
+    def _wrapped_api_call(self, message: str | None = None, set_cause: bool = True) -> EmptyYield:
+        try:
+            yield
+        except ApiException as e:
+            err = translate_lakefs_error(e, message=message, set_cause=set_cause)
+            raise err
+
+    @contextmanager
     def scope(
         self,
         postcommit: bool | None = None,
@@ -289,24 +297,19 @@ class LakeFSFileSystem(AbstractFileSystem):
         ctx = HookContext(repository, branch, resource, diff)
         commit_creation = self.commithook(fsevent, ctx)
 
-        try:
+        with self._wrapped_api_call():
             self.client.commits_api.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
-        except ApiException as e:
-            err = translate_lakefs_error(e)
-            raise err
 
     def exists(self, path, **kwargs):
         repository, ref, resource = parse(path)
-        try:
-            self.client.objects_api.head_object(repository, ref, resource)
-            return True
-        except NotFoundException:
-            return False
-        except ApiException as e:
-            err = translate_lakefs_error(e)
-            raise err
+        with self._wrapped_api_call():
+            try:
+                self.client.objects_api.head_object(repository, ref, resource)
+                return True
+            except NotFoundException:
+                return False
 
     def get_file(
         self,
@@ -346,7 +349,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             from fsspec.implementations.local import LocalFileSystem
 
             LocalFileSystem().rm_file(lpath)
-            err = translate_lakefs_error(e, message=str(rpath))
+            err = translate_lakefs_error(e)
             raise err
         finally:
             if not isfilelike(lpath):
@@ -378,8 +381,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         info: list[Any] = []
 
-        while has_more:
-            try:
+        with self._wrapped_api_call():
+            while has_more:
                 res: ObjectStatsList = self.client.objects_api.list_objects(
                     repository,
                     ref,
@@ -388,22 +391,18 @@ class LakeFSFileSystem(AbstractFileSystem):
                     prefix=prefix,
                     amount=amount,
                 )
-            except ApiException as e:
-                err = translate_lakefs_error(e)
-                raise err
-
-            has_more, after = res.pagination.has_more, res.pagination.next_offset
-            for obj in res.results:
-                info.append(
-                    {
-                        "checksum": obj.checksum,
-                        "content-type": obj.content_type,
-                        "mtime": obj.mtime,
-                        "name": obj.path,
-                        "size": obj.size_bytes,
-                        "type": "file",
-                    }
-                )
+                has_more, after = res.pagination.has_more, res.pagination.next_offset
+                for obj in res.results:
+                    info.append(
+                        {
+                            "checksum": obj.checksum,
+                            "content-type": obj.content_type,
+                            "mtime": obj.mtime,
+                            "name": obj.path,
+                            "size": obj.size_bytes,
+                            "type": "file",
+                        }
+                    )
 
         if not detail:
             return [o["name"] for o in info]
@@ -452,13 +451,10 @@ class LakeFSFileSystem(AbstractFileSystem):
                 return
 
         with open(lpath, "rb") as f:
-            try:
+            with self._wrapped_api_call():
                 self.client.objects_api.upload_object(
                     repository=repository, branch=branch, path=resource, content=f
                 )
-            except ApiException as e:
-                err = translate_lakefs_error(e)
-                raise err
 
     def put(
         self,
@@ -483,13 +479,10 @@ class LakeFSFileSystem(AbstractFileSystem):
     def rm_file(self, path):
         repository, branch, resource = parse(path)
 
-        try:
+        with self._wrapped_api_call():
             self.client.objects_api.delete_object(
                 repository=repository, branch=branch, path=resource
             )
-        except ApiException as e:
-            err = translate_lakefs_error(e)
-            raise err
 
     def rm(self, path, recursive=False, maxdepth=None):
         super().rm(path, recursive=recursive, maxdepth=maxdepth)
@@ -538,7 +531,7 @@ class LakeFSFile(AbstractBufferedFile):
         if final:
             repository, branch, resource = parse(self.path)
 
-            try:
+            with self.fs._wrapped_api_call():
                 # single-shot upload.
                 # empty buffer is equivalent to a touch()
                 self.buffer.seek(0)
@@ -552,9 +545,6 @@ class LakeFSFile(AbstractBufferedFile):
                     self.fs.commit(
                         FSEvent.PUT, repository=repository, branch=branch, resource=resource
                     )
-            except ApiException as e:
-                err = translate_lakefs_error(e)
-                raise err
 
         return not final
 
@@ -564,11 +554,8 @@ class LakeFSFile(AbstractBufferedFile):
 
     def _fetch_range(self, start: int, end: int) -> bytes:
         repository, ref, resource = parse(self.path)
-        try:
+        with self.fs._wrapped_api_call():
             res: io.BufferedReader = self.fs.client.objects.get_object(
                 repository, ref, resource, range=f"bytes={start}-{end - 1}"
             )
             return res.read()
-        except ApiException as e:
-            err = translate_lakefs_error(e)
-            raise err
