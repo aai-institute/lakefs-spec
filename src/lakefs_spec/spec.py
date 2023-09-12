@@ -39,9 +39,8 @@ class LakectlConfig(NamedTuple):
             import yaml
         except ModuleNotFoundError:
             logger.warning(
-                f"Configuration '{path}' exists, but cannot be read "
-                f"because the `pyyaml package` is not installed. "
-                f"To fix, run `pip install --upgrade pyyaml`.",
+                f"Configuration '{path}' exists, but cannot be read because the `pyyaml` package "
+                f"is not installed. To fix, run `python -m pip install --upgrade pyyaml`.",
             )
             return cls()
 
