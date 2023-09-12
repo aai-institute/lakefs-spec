@@ -237,7 +237,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         return spath
 
     @contextmanager
-    def _wrapped_api_call(self, message: str | None = None, set_cause: bool = True) -> EmptyYield:
+    def wrapped_api_call(self, message: str | None = None, set_cause: bool = True) -> EmptyYield:
         try:
             yield
         except ApiException as e:
@@ -297,14 +297,14 @@ class LakeFSFileSystem(AbstractFileSystem):
         ctx = HookContext(repository, branch, resource, diff)
         commit_creation = self.commithook(fsevent, ctx)
 
-        with self._wrapped_api_call():
+        with self.wrapped_api_call():
             self.client.commits_api.commit(
                 repository=repository, branch=branch, commit_creation=commit_creation
             )
 
     def exists(self, path, **kwargs):
         repository, ref, resource = parse(path)
-        with self._wrapped_api_call():
+        with self.wrapped_api_call():
             try:
                 self.client.objects_api.head_object(repository, ref, resource)
                 return True
@@ -381,7 +381,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         info: list[Any] = []
 
-        with self._wrapped_api_call():
+        with self.wrapped_api_call():
             while has_more:
                 res: ObjectStatsList = self.client.objects_api.list_objects(
                     repository,
@@ -451,7 +451,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 return
 
         with open(lpath, "rb") as f:
-            with self._wrapped_api_call():
+            with self.wrapped_api_call():
                 self.client.objects_api.upload_object(
                     repository=repository, branch=branch, path=resource, content=f
                 )
@@ -479,7 +479,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     def rm_file(self, path):
         repository, branch, resource = parse(path)
 
-        with self._wrapped_api_call():
+        with self.wrapped_api_call():
             self.client.objects_api.delete_object(
                 repository=repository, branch=branch, path=resource
             )
@@ -531,7 +531,7 @@ class LakeFSFile(AbstractBufferedFile):
         if final:
             repository, branch, resource = parse(self.path)
 
-            with self.fs._wrapped_api_call():
+            with self.fs.wrapped_api_call():
                 # single-shot upload.
                 # empty buffer is equivalent to a touch()
                 self.buffer.seek(0)
@@ -554,7 +554,7 @@ class LakeFSFile(AbstractBufferedFile):
 
     def _fetch_range(self, start: int, end: int) -> bytes:
         repository, ref, resource = parse(self.path)
-        with self.fs._wrapped_api_call():
+        with self.fs.wrapped_api_call():
             res: io.BufferedReader = self.fs.client.objects.get_object(
                 repository, ref, resource, range=f"bytes={start}-{end - 1}"
             )
