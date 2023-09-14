@@ -104,8 +104,7 @@ def test_put_client_caching(
     random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
 ) -> None:
     """
-    Tests that the `precheck_files` branch stops a second upload of an
-    identical file via checksum matching.
+    Tests that `precheck=True` prevents a second upload of an identical file by matching checksums.
     """
     fs.client, counter = with_counter(fs.client)
 
