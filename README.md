@@ -81,15 +81,18 @@ The resource can be a single file name, or a directory name for recursive operat
 
 In order to reduce the number of IO operations, you can enable client-side caching of both uploaded and downloaded files.
 Caching works by calculating the MD5 checksum of the local file, and comparing it to that of the lakeFS remote file.
-If they match, the operations are cancelled, and no additional client-server communication (including up- and downloads) happens.
+If they match, the operations are cancelled, and no file up- or downloads happen.
 
-Client-side caching is enabled by default in the lakeFS file system, and can be controlled through the `precheck_files` argument in the constructor:
+Client-side caching can be controlled through the boolean `precheck` argument in the `fs.get` and `fs_put` methods and
+their more granular single-file counterparts `fs.get_file` and `fs.put_file`.
 
 ```python
 from lakefs_spec import LakeFSFileSystem
 
-# The default setting, precheck_files=False disables client-side caching.
-fs = LakeFSFileSystem(host="localhost:8000", precheck_files=True)
+fs = LakeFSFileSystem(host="localhost:8000")
+
+# The default is precheck=True, you can force the operation by setting precheck=False.
+fs.get_file("my-repo/my-ref/file.txt", "file.txt", precheck=True)
 ```
 
 ### Automatic commit creation with a commit hook
@@ -130,23 +133,22 @@ fs = LakeFSFileSystem(host="localhost:8000", postcommit=True, commithook=my_comm
 
 ### Scoped filesystem behavior changes
 
-To selectively enable or disable automatic commits, client-side caching, or automatic branch creation, you can use a `scope` context manager:
+To selectively enable or disable automatic commits and automatic branch creation, you can use a `scope` context manager.
+The following example illustrates how you can create scoped commits on single file uploads:
 
 ```python
 from lakefs_spec import LakeFSFileSystem
 
 fs = LakeFSFileSystem(host="localhost:8000")
 
-with fs.scope(precheck_files=False):
-    # get a fresh version of the file by disabling caching checks
-    fs.get("lakefs://my-repo/my-branch/my-file.txt", "my-file.txt")
+fs.get("my-repo/my-branch/my-file.txt", "my-file.txt")
 
 # do something with the text file...
 ...
 
 # create a commit on upload by enabling automatic commits in a scoped section
 with fs.scope(postcommit=True):
-    fs.put("my-file.txt", "lakefs://my-repo/my-branch/my-new-file.txt")
+    fs.put("my-file.txt", "my-repo/my-branch/my-new-file.txt")
 ```
 
 ### Implicit initialization and instance caching

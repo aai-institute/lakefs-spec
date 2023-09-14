@@ -152,7 +152,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         configfile: str = "~/.lakectl.yaml",
         postcommit: bool = False,
         commithook: CommitHook = Default,
-        precheck_files: bool = True,
         create_branch_ok: bool = True,
         source_branch: str = "main",
     ):
@@ -188,9 +187,6 @@ class LakeFSFileSystem(AbstractFileSystem):
              a ``CommitCreation`` object, which is used to create a lakeFS commit
              for the previous file operation. Only applies to mutating operations, and when
              ``postcommit = True``.
-        precheck_files: bool
-            Whether to compare MD5 checksums of local and remote objects before file
-            operations, and skip these operations if checksums match.
         create_branch_ok: bool
             Whether to create branches implicitly when not-existing branches are referenced on file uploads.
         source_branch: str
@@ -221,7 +217,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.client = LakeFSClient(configuration=configuration)
         self.postcommit = postcommit
         self.commithook = commithook
-        self.precheck_files = precheck_files
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
 
@@ -247,28 +242,21 @@ class LakeFSFileSystem(AbstractFileSystem):
     def scope(
         self,
         postcommit: bool | None = None,
-        precheck_files: bool | None = None,
         create_branch_ok: bool | None = None,
         source_branch: str | None = None,
     ) -> EmptyYield:
         """
-        Creates a context manager scope in which the lakeFS file system behavior
+        A context manager yielding scope in which the lakeFS file system behavior
         is changed from defaults.
-
-        Either post-write-operation commits, pre-operation checksum verification,
-        or both can be selectively enabled or disabled.
         """
-        curr_postcommit, curr_precheck_files, curr_create_branch_ok, curr_source_branch = (
+        curr_postcommit, curr_create_branch_ok, curr_source_branch = (
             self.postcommit,
-            self.precheck_files,
             self.create_branch_ok,
             self.source_branch,
         )
         try:
             if postcommit is not None:
                 self.postcommit = postcommit
-            if precheck_files is not None:
-                self.precheck_files = precheck_files
             if create_branch_ok is not None:
                 self.create_branch_ok = create_branch_ok
             if source_branch is not None:
@@ -276,7 +264,6 @@ class LakeFSFileSystem(AbstractFileSystem):
             yield
         finally:
             self.postcommit = curr_postcommit
-            self.precheck_files = curr_precheck_files
             self.create_branch_ok = curr_create_branch_ok
             self.source_branch = curr_source_branch
 
@@ -316,13 +303,12 @@ class LakeFSFileSystem(AbstractFileSystem):
         lpath,
         callback=_DEFAULT_CALLBACK,
         outfile=None,
+        precheck=True,
         **kwargs,
     ):
-        # no call to self._strip_protocol here, since that is handled by the
-        # AbstractFileSystem.get() implementation
         repository, ref, resource = parse(rpath)
 
-        if self.precheck_files and Path(lpath).exists():
+        if precheck and Path(lpath).exists():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
             if local_checksum == remote_checksum:
@@ -431,12 +417,12 @@ class LakeFSFileSystem(AbstractFileSystem):
         lpath,
         rpath,
         callback=_DEFAULT_CALLBACK,
+        precheck=True,
         **kwargs,
     ):
         repository, branch, resource = parse(rpath)
 
-        if self.precheck_files:
-            # TODO (n.junge): Make this work for lpaths that are themselves lakeFS paths
+        if precheck:
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
             if local_checksum == remote_checksum:
