@@ -49,8 +49,7 @@ def test_get_client_caching(
     random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
 ) -> None:
     """
-    Tests that the `precheck_files` branch stops a download of a previously uploaded
-    identical file via checksum matching.
+    Tests that `precheck=True` prevents the download of a previously uploaded identical file.
     """
     fs.client, counter = with_counter(fs.client)
 
