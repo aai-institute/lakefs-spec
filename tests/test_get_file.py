@@ -61,6 +61,5 @@ def test_get_client_caching(
 
     # try to get file, should not initiate a download due to checksum matching.
     fs.get(rpath, lpath)
-    print(list(counter.named_counts()))
     assert counter.count("objects_api.upload_object") == 1
     assert counter.count("objects_api.get_object") == 0
