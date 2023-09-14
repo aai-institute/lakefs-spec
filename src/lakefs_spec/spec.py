@@ -344,21 +344,35 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def info(self, path, **kwargs):
         path = self._strip_protocol(path)
-        out = self.ls(path, detail=True, **kwargs)
 
-        resource = path.split("/", maxsplit=2)[-1]
-        # input path is a file name
-        if len(out) == 1:
-            return out[0]
         # input path is a directory name
-        elif len(out) > 1:
+        if path.endswith("/"):
+            out = self.ls(path, detail=True, **kwargs)
+            if not out:
+                raise FileNotFoundError(path)
+
+            resource = path.split("/", maxsplit=2)[-1]
             return {
                 "name": resource,
                 "size": sum(o.get("size", 0) for o in out),
                 "type": "directory",
             }
+        # input path is a file name
         else:
-            raise FileNotFoundError(path)
+            with self.wrapped_api_call():
+                repository, ref, resource = parse(path)
+                res = self.client.objects_api.stat_object(
+                    repository=repository, ref=ref, path=resource, **kwargs
+                )
+
+            return {
+                "checksum": res.checksum,
+                "content-type": res.content_type,
+                "mtime": res.mtime,
+                "name": res.path,
+                "size": res.size_bytes,
+                "type": "file",
+            }
 
     def ls(self, path, detail=True, **kwargs):
         path = self._strip_protocol(path)
