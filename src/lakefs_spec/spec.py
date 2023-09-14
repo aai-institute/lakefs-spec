@@ -305,7 +305,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, ref, resource = parse(path)
         with self.wrapped_api_call():
             try:
-                self.client.objects_api.head_object(repository, ref, resource)
+                self.client.objects_api.head_object(repository, ref, resource, **kwargs)
                 return True
             except NotFoundException:
                 return False
@@ -338,7 +338,9 @@ class LakeFSFileSystem(AbstractFileSystem):
             outfile = open(lpath, "wb")
 
         try:
-            res: io.BufferedReader = self.client.objects_api.get_object(repository, ref, resource)
+            res: io.BufferedReader = self.client.objects_api.get_object(
+                repository, ref, resource, **kwargs
+            )
             while True:
                 chunk = res.read(self.blocksize)
                 if not chunk:
@@ -372,7 +374,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         else:
             raise FileNotFoundError(path)
 
-    def ls(self, path, detail=True, amount=100, **kwargs):
+    def ls(self, path, detail=True, **kwargs):
         path = self._strip_protocol(path)
         repository, ref, prefix = parse(path)
 
@@ -383,12 +385,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call():
             while has_more:
                 res: ObjectStatsList = self.client.objects_api.list_objects(
-                    repository,
-                    ref,
-                    user_metadata=detail,
-                    after=after,
-                    prefix=prefix,
-                    amount=amount,
+                    repository, ref, after=after, prefix=prefix, **kwargs
                 )
                 has_more, after = res.pagination.has_more, res.pagination.next_offset
                 for obj in res.results:
@@ -452,7 +449,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         with open(lpath, "rb") as f:
             with self.wrapped_api_call():
                 self.client.objects_api.upload_object(
-                    repository=repository, branch=branch, path=resource, content=f
+                    repository=repository, branch=branch, path=resource, content=f, **kwargs
                 )
 
     def put(
