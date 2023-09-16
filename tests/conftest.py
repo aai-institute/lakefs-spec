@@ -69,8 +69,8 @@ def ensurerepo(lakefs_client: LakeFSClient) -> str:
     if _TEST_REPO in reponames:
         logger.info(f"Test repository {_TEST_REPO!r} already exists.")
     else:
-        storage_config = lakefs_client.config_api.get_storage_config()
-        storage_namespace = f"{storage_config.default_namespace_prefix}/{_TEST_REPO}"
+        storage_prefix: str = lakefs_client.config_api.get_storage_config().default_namespace_prefix
+        storage_namespace = f"{storage_prefix.rstrip('/')}/{_TEST_REPO}"
         logger.info(
             f"Creating test repository {_TEST_REPO!r} "
             f"with associated storage namespace {storage_namespace!r}."
