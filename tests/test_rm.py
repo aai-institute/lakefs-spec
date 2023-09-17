@@ -5,6 +5,11 @@ from lakefs_spec.client_helpers import commit
 from lakefs_spec.hooks import FSEvent, HookContext
 
 
+def commit_after_rm(client: LakeFSClient, ctx: HookContext) -> None:
+    message = f"Remove file {ctx.resource}"
+    commit(client, repository=ctx.repository, branch=ctx.ref, message=message)
+
+
 def test_rm(
     fs: LakeFSFileSystem,
     repository: str,
@@ -21,10 +26,6 @@ def test_rm_with_postcommit(
     repository: str,
     temp_branch: str,
 ) -> None:
-    def commit_after_rm(client: LakeFSClient, ctx: HookContext) -> None:
-        message = f"Remove file {ctx.resource}"
-        commit(client, repository=ctx.repository, branch=ctx.ref, message=message)
-
     fs.register_hook(FSEvent.RM, commit_after_rm)
 
     path = f"{repository}/{temp_branch}/README.md"

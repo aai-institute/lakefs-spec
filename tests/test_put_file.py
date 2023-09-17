@@ -10,16 +10,17 @@ from lakefs_spec.hooks import FSEvent, HookContext
 from tests.util import RandomFileFactory, with_counter
 
 
+def commit_after_put(client: LakeFSClient, ctx: HookContext) -> None:
+    message = f"Add file {ctx.resource}"
+    commit(client, repository=ctx.repository, branch=ctx.ref, message=message)
+
+
 def test_put_with_commit_helper(
     random_file_factory: RandomFileFactory,
     fs: LakeFSFileSystem,
     repository: str,
     temp_branch: str,
 ) -> None:
-    def commit_after_put(client: LakeFSClient, ctx: HookContext) -> None:
-        message = f"Add file {ctx.resource}"
-        commit(client, repository=ctx.repository, branch=ctx.ref, message=message)
-
     fs.register_hook(FSEvent.PUT, commit_after_put)
     random_file = random_file_factory.make()
 
@@ -41,10 +42,6 @@ def test_no_change_postcommit(
     repository: str,
     temp_branch: str,
 ) -> None:
-    def commit_after_put(client: LakeFSClient, ctx: HookContext) -> None:
-        message = f"Add file {ctx.resource}"
-        commit(client, repository=ctx.repository, branch=ctx.ref, message=message)
-
     fs.register_hook(FSEvent.PUT, commit_after_put)
 
     random_file = random_file_factory.make()
@@ -73,10 +70,6 @@ def test_no_change_postcommit(
 def test_implicit_branch_creation(
     random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
 ) -> None:
-    def commit_after_put(client: LakeFSClient, ctx: HookContext) -> None:
-        message = f"Add file {ctx.resource}"
-        commit(client, repository=ctx.repository, branch=ctx.ref, message=message)
-
     fs.register_hook(FSEvent.PUT, commit_after_put)
 
     random_file = random_file_factory.make()
