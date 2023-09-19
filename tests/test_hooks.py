@@ -23,3 +23,14 @@ def test_deregister_hook(fs: LakeFSFileSystem) -> None:
 
     fs.deregister_hook(FSEvent.LS)
     assert FSEvent.LS not in fs._hooks
+
+
+def test_scoped_disable_hooks(fs: LakeFSFileSystem) -> None:
+    fs.register_hook(FSEvent.LS, print_hello)
+
+    assert FSEvent.LS in fs._hooks
+
+    with fs.scope(disable_hooks=True):
+        assert FSEvent.LS not in fs._hooks
+
+    assert FSEvent.LS in fs._hooks

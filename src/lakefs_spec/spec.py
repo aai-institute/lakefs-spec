@@ -188,24 +188,29 @@ class LakeFSFileSystem(AbstractFileSystem):
         self,
         create_branch_ok: bool | None = None,
         source_branch: str | None = None,
+        disable_hooks: bool = False,
     ) -> EmptyYield:
         """
         A context manager yielding scope in which the lakeFS file system behavior
         is changed from defaults.
         """
-        curr_create_branch_ok, curr_source_branch = (
+        curr_create_branch_ok, curr_source_branch, curr_hooks = (
             self.create_branch_ok,
             self.source_branch,
+            self._hooks,
         )
         try:
             if create_branch_ok is not None:
                 self.create_branch_ok = create_branch_ok
             if source_branch is not None:
                 self.source_branch = source_branch
+            if disable_hooks:
+                self._hooks = {}
             yield
         finally:
             self.create_branch_ok = curr_create_branch_ok
             self.source_branch = curr_source_branch
+            self._hooks = curr_hooks
 
     def checksum(self, path: str) -> str | None:
         try:
