@@ -234,6 +234,20 @@ class LakeFSFileSystem(AbstractFileSystem):
                 self.run_hook(FSEvent.EXISTS, ctx)
                 return exists
 
+    def get(
+        self,
+        rpath,
+        lpath,
+        recursive=False,
+        callback=_DEFAULT_CALLBACK,
+        maxdepth=None,
+        **kwargs,
+    ):
+        super().get(
+            rpath, lpath, recursive=recursive, callback=callback, maxdepth=maxdepth, **kwargs
+        )
+        self.run_hook(FSEvent.GET, HookContext.new(rpath))
+
     def get_file(
         self,
         rpath,
