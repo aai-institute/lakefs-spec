@@ -150,7 +150,8 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         self._hooks: dict[FSEvent, LakeFSHook] = {}
 
-    def register_hook(self, fsevent: FSEvent, hook: LakeFSHook, clobber: bool = False) -> None:
+    def register_hook(self, fsevent: str, hook: LakeFSHook, clobber: bool = False) -> None:
+        fsevent = FSEvent.canonicalize(fsevent)
         if not clobber and fsevent in self._hooks:
             raise RuntimeError(
                 f"hook already registered for FS event '{str(fsevent)}'. "
@@ -158,11 +159,11 @@ class LakeFSFileSystem(AbstractFileSystem):
             )
         self._hooks[fsevent] = hook
 
-    def deregister_hook(self, fsevent: FSEvent) -> None:
-        self._hooks.pop(fsevent, None)
+    def deregister_hook(self, fsevent: str) -> None:
+        self._hooks.pop(FSEvent.canonicalize(fsevent), None)
 
-    def run_hook(self, fsevent: FSEvent, ctx: HookContext) -> None:
-        hook = self._hooks.get(fsevent, noop)
+    def run_hook(self, fsevent: str, ctx: HookContext) -> None:
+        hook = self._hooks.get(FSEvent.canonicalize(fsevent), noop)
         hook(self.client, ctx)
 
     @classmethod

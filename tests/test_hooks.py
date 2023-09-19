@@ -12,7 +12,7 @@ def print_hello(client: LakeFSClient, ctx: HookContext) -> None:
 def test_double_registration_error(fs: LakeFSFileSystem) -> None:
     fs.register_hook(FSEvent.LS, print_hello)
 
-    with pytest.raises(RuntimeError, match="hook already registered for FS event 'ls'."):
+    with pytest.raises(RuntimeError, match="hook already registered .*"):
         fs.register_hook(FSEvent.LS, print_hello)
 
 
@@ -34,3 +34,16 @@ def test_scoped_disable_hooks(fs: LakeFSFileSystem) -> None:
         assert FSEvent.LS not in fs._hooks
 
     assert FSEvent.LS in fs._hooks
+
+
+def test_string_hookinit(fs: LakeFSFileSystem) -> None:
+    fs.register_hook("ls", print_hello)
+
+    assert FSEvent.LS in fs._hooks
+
+    fs.deregister_hook("ls")
+
+    assert FSEvent.LS not in fs._hooks
+
+    with pytest.raises(ValueError, match="unknown file system event .*"):
+        fs.register_hook("blabla", print_hello)

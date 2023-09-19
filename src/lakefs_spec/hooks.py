@@ -18,6 +18,16 @@ class FSEvent(StrEnum):
     RM_FILE = auto()
     RM = auto()
 
+    @classmethod
+    def canonicalize(cls, s: str) -> "FSEvent":
+        if isinstance(s, FSEvent):
+            return s
+
+        try:
+            return cls[s.upper()]
+        except KeyError:
+            raise ValueError(f"unknown file system event {s!r}")
+
 
 class HookContext(NamedTuple):
     repository: str
