@@ -2,19 +2,26 @@ import random
 import string
 
 import pytest
+from lakefs_client.client import LakeFSClient
 
 from lakefs_spec import LakeFSFileSystem
+from lakefs_spec.client_helpers import commit
+from lakefs_spec.hooks import FSEvent, HookContext
 from tests.util import RandomFileFactory, with_counter
 
 
-def test_put_with_default_commit_hook(
+def commit_after_put(client: LakeFSClient, ctx: HookContext) -> None:
+    message = f"Add file {ctx.resource}"
+    commit(client, repository=ctx.repository, branch=ctx.ref, message=message)
+
+
+def test_put_with_commit_helper(
     random_file_factory: RandomFileFactory,
     fs: LakeFSFileSystem,
     repository: str,
     temp_branch: str,
 ) -> None:
-    fs.postcommit = True
-
+    fs.register_hook(FSEvent.PUT, commit_after_put)
     random_file = random_file_factory.make()
 
     lpath = str(random_file)
@@ -35,15 +42,13 @@ def test_no_change_postcommit(
     repository: str,
     temp_branch: str,
 ) -> None:
-    # we just push without pre-checks, otherwise the no-diff scenario does not happen
-    fs.postcommit = True
-    fs.precheck_files = False
+    fs.register_hook(FSEvent.PUT, commit_after_put)
 
     random_file = random_file_factory.make()
 
     lpath = str(random_file)
     rpath = f"{repository}/{temp_branch}/{random_file.name}"
-    fs.put(lpath, rpath)
+    fs.put(lpath, rpath, precheck=False)
 
     commits = fs.client.refs_api.log_commits(
         repository=repository,
@@ -53,23 +58,24 @@ def test_no_change_postcommit(
     assert latest_commit.message == f"Add file {random_file.name}"
 
     # put the same file again, this time the diff is empty
-    fs.put(lpath, rpath)
+    fs.put(lpath, rpath, precheck=False)
     # check that no other commit has happened.
     commits = fs.client.refs_api.log_commits(
         repository=repository,
         ref=temp_branch,
     )
     assert commits.results[0] == latest_commit
-    # in particular, this test asserts that no API exception happens in postcommit.
 
 
 def test_implicit_branch_creation(
     random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
 ) -> None:
+    fs.register_hook(FSEvent.PUT, commit_after_put)
+
     random_file = random_file_factory.make()
     lpath = str(random_file)
 
-    with fs.scope(create_branch_ok=True, postcommit=True):
+    with fs.scope(create_branch_ok=True):
         temp_branch_commits = fs.client.refs_api.log_commits(
             repository=repository,
             ref=temp_branch,

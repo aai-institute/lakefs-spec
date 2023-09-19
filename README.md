@@ -95,60 +95,32 @@ fs = LakeFSFileSystem(host="localhost:8000")
 fs.get_file("my-repo/my-ref/file.txt", "file.txt", precheck=True)
 ```
 
-### Automatic commit creation with a commit hook
+### Creating lakeFS automations in Python with `LakeFSFileSystem` hooks
 
-Some operations, like `fs.put()` or `fs.rm()`, change the state of a lakeFS repository by changing files. According to
-the lakeFS working model, these changes are tracked as _uncommitted changes_, similarly to the git version control system.
+LakeFS has a variety of administrative APIs available through its Python client library.
+Within `lakefs-spec`, you can register hooks to your `LakeFSFileSystem` to run code after file system operations.
+A hook needs to have the signature `(client, context) -> None`, where the `client` argument holds the 
+file system's lakeFS API client, and the `context` object contains information about the requested resource (repository, ref/branch, name).
 
-With `lakefs-spec`, you can optionally commit changes caused by file system operations directly after they are made,
-by using a **commit hook**. A commit hook is a Python function taking the `fsspec` event that caused the changes
-(e.g. `put` or `rm`), as well as a context object containing useful information like the repository, branch name,
-changed resource, and the lakeFS diff, and returning a `CommitCreation` object that is then used by
-lakeFS to create a commit on the chosen branch.
-
-An example of a commit hook:
+As an example, the following snippet installs a lakeFS hook that creates a commit on the lakeFS branch after a file upload:
 
 ```python
-from lakefs_client.models import CommitCreation
-from lakefs_spec.commithook import FSEvent, HookContext
+from lakefs_client.client import LakeFSClient
 
-def my_commit_hook(event: FSEvent, ctx: HookContext) -> CommitCreation:
-    if event == FSEvent.RM:
-        message = f"❌ Remove file {ctx.resource}"
-    else:
-        message = f"✅ Add file {ctx.resource}"
-
-    return CommitCreation(message=message)
-```
-
-To enable automatic commits after stateful filesystem operations, set `postcommit = True` in the filesystem constructor. If you
-would like to use your own commit hook, supply a Python callable with the aforementioned signature as the `commithook` argument:
-
-```python
 from lakefs_spec import LakeFSFileSystem
+from lakefs_spec.client_helpers import commit
+from lakefs_spec.hooks import FSEvent, HookContext
 
-# use the example commit hook from above
-fs = LakeFSFileSystem(host="localhost:8000", postcommit=True, commithook=my_commit_hook)
-```
+def create_commit_on_put(client: LakeFSClient, ctx: HookContext) -> None:
+    message = f"Add file {ctx.resource}"
+    commit(client, repository=ctx.repository, branch=ctx.ref, message=message)
 
-### Scoped filesystem behavior changes
+fs = LakeFSFileSystem()
 
-To selectively enable or disable automatic commits and automatic branch creation, you can use a `scope` context manager.
-The following example illustrates how you can create scoped commits on single file uploads:
+fs.register_hook(FSEvent.PUT_FILE, create_commit_on_put)
 
-```python
-from lakefs_spec import LakeFSFileSystem
-
-fs = LakeFSFileSystem(host="localhost:8000")
-
-fs.get("my-repo/my-branch/my-file.txt", "my-file.txt")
-
-# do something with the text file...
-...
-
-# create a commit on upload by enabling automatic commits in a scoped section
-with fs.scope(postcommit=True):
-    fs.put("my-file.txt", "my-repo/my-branch/my-new-file.txt")
+# creates a commit with the message "Add file my-file.txt" after the file put.
+fs.put_file("my-file.txt", "my-repo/my-branch/my-file.txt")
 ```
 
 ### Implicit initialization and instance caching
