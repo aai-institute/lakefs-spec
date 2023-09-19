@@ -12,7 +12,7 @@ def print_hello(client: LakeFSClient, ctx: HookContext) -> None:
 def test_double_registration_error(fs: LakeFSFileSystem) -> None:
     fs.register_hook(FSEvent.LS, print_hello)
 
-    with pytest.raises(RuntimeError, match="hook already registered .*"):
+    with pytest.raises(RuntimeError, match="hook already registered for file system event .*"):
         fs.register_hook(FSEvent.LS, print_hello)
 
 

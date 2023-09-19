@@ -154,7 +154,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         fsevent = FSEvent.canonicalize(fsevent)
         if not clobber and fsevent in self._hooks:
             raise RuntimeError(
-                f"hook already registered for FS event '{str(fsevent)}'. "
+                f"hook already registered for file system event '{str(fsevent)}'. "
                 f"To force registration, rerun with `clobber=True`."
             )
         self._hooks[fsevent] = hook
