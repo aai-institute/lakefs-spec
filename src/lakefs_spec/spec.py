@@ -2,11 +2,10 @@ import hashlib
 import io
 import logging
 import os
-import re
 import sys
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator, NamedTuple
+from typing import Any, Generator
 
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
@@ -16,8 +15,10 @@ from lakefs_client.client import LakeFSClient
 from lakefs_client.exceptions import ApiException, NotFoundException
 from lakefs_client.models import BranchCreation, ObjectStatsList
 
-from lakefs_spec.commithook import CommitHook, Default, FSEvent, HookContext
+from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
+from lakefs_spec.hooks import FSEvent, HookContext, LakeFSHook, noop
+from lakefs_spec.util import parse
 
 _DEFAULT_CALLBACK = NoOpCallback()
 
@@ -28,36 +29,6 @@ logger.addHandler(logging.StreamHandler(sys.stdout))
 EmptyYield = Generator[None, None, None]
 
 
-class LakectlConfig(NamedTuple):
-    host: str | None = None
-    username: str | None = None
-    password: str | None = None
-
-    @classmethod
-    def read(cls, path: str | Path) -> "LakectlConfig":
-        try:
-            import yaml
-        except ModuleNotFoundError:
-            logger.warning(
-                f"Configuration '{path}' exists, but cannot be read "
-                f"because the `pyyaml package` is not installed. "
-                f"To fix, run `pip install --upgrade pyyaml`.",
-            )
-            return cls()
-
-        with open(path, "r") as f:
-            obj: dict[str, Any] = yaml.safe_load(f)
-
-        # config struct schema (Golang backend code):
-        # https://github.com/treeverse/lakeFS/blob/master/cmd/lakectl/cmd/root.go
-        creds: dict[str, str] = obj.get("credentials", {})
-        server: dict[str, str] = obj.get("server", {})
-        username = creds.get("access_key_id")
-        password = creds.get("secret_access_key")
-        host = server.get("endpoint_url")
-        return cls(host=host, username=username, password=password)
-
-
 def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
     with open(lpath, "rb") as f:
         file_hash = hashlib.md5(usedforsecurity=False)
@@ -66,37 +37,6 @@ def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
             file_hash.update(chunk)
             chunk = f.read(blocksize)
     return file_hash.hexdigest()
-
-
-def parse(path: str) -> tuple[str, str, str]:
-    """
-    Parses a lakeFS URI in the form ``<repo>/<ref>/<resource>``.
-
-    Parameters
-    ----------
-    path: str
-     String path, needs to conform to the lakeFS URI format described above.
-     The ``<resource>`` part can be the empty string.
-
-    Returns
-    -------
-    str
-       A 3-tuple of repository name, reference, and resource name.
-    """
-
-    # First regex reflects the lakeFS repository naming rules:
-    # only lowercase letters, digits and dash, no leading dash,
-    # minimum 3, maximum 63 characters
-    # https://docs.lakefs.io/understand/model.html#repository
-    # Second regex is the branch: Only letters, digits, underscores
-    # and dash, no leading dash
-    path_regex = re.compile(r"([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-]*)/(.*)")
-    results = path_regex.fullmatch(path)
-    if results is None:
-        raise ValueError(f"expected path with structure <repo>/<ref>/<resource>, got {path!r}")
-
-    repo, ref, resource = results.groups()
-    return repo, ref, resource
 
 
 def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_branch: str) -> None:
@@ -151,9 +91,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         ssl_ca_cert: str | None = None,
         proxy: str | None = None,
         configfile: str = "~/.lakectl.yaml",
-        postcommit: bool = False,
-        commithook: CommitHook = Default,
-        precheck_files: bool = True,
         create_branch_ok: bool = True,
         source_branch: str = "main",
     ):
@@ -180,18 +117,6 @@ class LakeFSFileSystem(AbstractFileSystem):
             A custom certificate PEM file to use to verify the peer in SSL connections.
         proxy: str or None
             Proxy address to use when connecting to a lakeFS server.
-        postcommit: bool
-            Whether to create lakeFS commits on the chosen branch after mutating operations,
-            e.g. uploading or removing a file.
-        commithook: CommitHook
-            A function taking the fsspec event name (e.g. ``put_file`` for file uploads)
-             and the rpath (path relative to the repository root). Must return
-             a ``CommitCreation`` object, which is used to create a lakeFS commit
-             for the previous file operation. Only applies to mutating operations, and when
-             ``postcommit = True``.
-        precheck_files: bool
-            Whether to compare MD5 checksums of local and remote objects before file
-            operations, and skip these operations if checksums match.
         create_branch_ok: bool
             Whether to create branches implicitly when not-existing branches are referenced on file uploads.
         source_branch: str
@@ -220,11 +145,26 @@ class LakeFSFileSystem(AbstractFileSystem):
         configuration.verify_ssl = verify_ssl
 
         self.client = LakeFSClient(configuration=configuration)
-        self.postcommit = postcommit
-        self.commithook = commithook
-        self.precheck_files = precheck_files
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
+
+        self._hooks: dict[FSEvent, LakeFSHook] = {}
+
+    def register_hook(self, fsevent: str, hook: LakeFSHook, clobber: bool = False) -> None:
+        fsevent = FSEvent.canonicalize(fsevent)
+        if not clobber and fsevent in self._hooks:
+            raise RuntimeError(
+                f"hook already registered for file system event '{str(fsevent)}'. "
+                f"To force registration, rerun with `clobber=True`."
+            )
+        self._hooks[fsevent] = hook
+
+    def deregister_hook(self, fsevent: str) -> None:
+        self._hooks.pop(FSEvent.canonicalize(fsevent), None)
+
+    def run_hook(self, fsevent: str, ctx: HookContext) -> None:
+        hook = self._hooks.get(FSEvent.canonicalize(fsevent), noop)
+        hook(self.client, ctx)
 
     @classmethod
     def _strip_protocol(cls, path):
@@ -237,76 +177,77 @@ class LakeFSFileSystem(AbstractFileSystem):
         return spath
 
     @contextmanager
+    def wrapped_api_call(self, message: str | None = None, set_cause: bool = True) -> EmptyYield:
+        try:
+            yield
+        except ApiException as e:
+            err = translate_lakefs_error(e, message=message, set_cause=set_cause)
+            raise err
+
+    @contextmanager
     def scope(
         self,
-        postcommit: bool | None = None,
-        precheck_files: bool | None = None,
         create_branch_ok: bool | None = None,
         source_branch: str | None = None,
+        disable_hooks: bool = False,
     ) -> EmptyYield:
         """
-        Creates a context manager scope in which the lakeFS file system behavior
+        A context manager yielding scope in which the lakeFS file system behavior
         is changed from defaults.
-
-        Either post-write-operation commits, pre-operation checksum verification,
-        or both can be selectively enabled or disabled.
         """
-        curr_postcommit, curr_precheck_files, curr_create_branch_ok, curr_source_branch = (
-            self.postcommit,
-            self.precheck_files,
+        curr_create_branch_ok, curr_source_branch, curr_hooks = (
             self.create_branch_ok,
             self.source_branch,
+            self._hooks,
         )
         try:
-            if postcommit is not None:
-                self.postcommit = postcommit
-            if precheck_files is not None:
-                self.precheck_files = precheck_files
             if create_branch_ok is not None:
                 self.create_branch_ok = create_branch_ok
             if source_branch is not None:
                 self.source_branch = source_branch
+            if disable_hooks:
+                self._hooks = {}
             yield
         finally:
-            self.postcommit = curr_postcommit
-            self.precheck_files = curr_precheck_files
             self.create_branch_ok = curr_create_branch_ok
             self.source_branch = curr_source_branch
+            self._hooks = curr_hooks
 
-    def checksum(self, path):
+    def checksum(self, path: str) -> str | None:
         try:
-            return self.info(path).get("checksum", None)
+            checksum = self.info(path).get("checksum", None)
         except FileNotFoundError:
-            return None
+            checksum = None
 
-    def commit(self, fsevent: FSEvent, repository: str, branch: str, resource: str) -> None:
-        diff = self.client.branches_api.diff_branch(repository=repository, branch=branch)
+        self.run_hook(FSEvent.CHECKSUM, HookContext.new(path))
+        return checksum
 
-        if not diff.results:
-            logger.warning(f"No changes to commit on branch {branch!r}, aborting commit.")
-            return
-
-        ctx = HookContext(repository, branch, resource, diff)
-        commit_creation = self.commithook(fsevent, ctx)
-
-        try:
-            self.client.commits_api.commit(
-                repository=repository, branch=branch, commit_creation=commit_creation
-            )
-        except ApiException as e:
-            err = translate_lakefs_error(e)
-            raise err
-
-    def exists(self, path, **kwargs):
+    def exists(self, path: str, **kwargs: Any) -> bool:
         repository, ref, resource = parse(path)
-        try:
-            self.client.objects_api.head_object(repository, ref, resource)
-            return True
-        except NotFoundException:
-            return False
-        except ApiException as e:
-            err = translate_lakefs_error(e)
-            raise err
+        with self.wrapped_api_call():
+            try:
+                self.client.objects_api.head_object(repository, ref, resource, **kwargs)
+                exists = True
+            except NotFoundException:
+                exists = False
+            finally:
+                ctx = HookContext(repository=repository, ref=ref, resource=resource)
+                self.run_hook(FSEvent.EXISTS, ctx)
+                return exists
+
+    def get(
+        self,
+        rpath,
+        lpath,
+        recursive=False,
+        callback=_DEFAULT_CALLBACK,
+        maxdepth=None,
+        **kwargs,
+    ):
+        super().get(
+            rpath, lpath, recursive=recursive, callback=callback, maxdepth=maxdepth, **kwargs
+        )
+        self.run_hook(FSEvent.GET, HookContext.new(rpath))
 
     def get_file(
         self,
@@ -314,13 +255,12 @@ class LakeFSFileSystem(AbstractFileSystem):
         lpath,
         callback=_DEFAULT_CALLBACK,
         outfile=None,
+        precheck=True,
         **kwargs,
     ):
-        # no call to self._strip_protocol here, since that is handled by the
-        # AbstractFileSystem.get() implementation
         repository, ref, resource = parse(rpath)
 
-        if self.precheck_files and Path(lpath).exists():
+        if precheck and Path(lpath).exists():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
             if local_checksum == remote_checksum:
@@ -336,7 +276,9 @@ class LakeFSFileSystem(AbstractFileSystem):
             outfile = open(lpath, "wb")
 
         try:
-            res: io.BufferedReader = self.client.objects_api.get_object(repository, ref, resource)
+            res: io.BufferedReader = self.client.objects_api.get_object(
+                repository, ref, resource, **kwargs
+            )
             while True:
                 chunk = res.read(self.blocksize)
                 if not chunk:
@@ -346,31 +288,51 @@ class LakeFSFileSystem(AbstractFileSystem):
             from fsspec.implementations.local import LocalFileSystem
 
             LocalFileSystem().rm_file(lpath)
-            err = translate_lakefs_error(e, message=str(rpath))
+            err = translate_lakefs_error(e)
             raise err
         finally:
             if not isfilelike(lpath):
                 outfile.close()
 
-    def info(self, path, **kwargs):
-        path = self._strip_protocol(path)
-        out = self.ls(path, detail=True, **kwargs)
+            ctx = HookContext(repository=repository, ref=ref, resource=resource)
+            self.run_hook(FSEvent.GET_FILE, ctx)
 
-        resource = path.split("/", maxsplit=2)[-1]
-        # input path is a file name
-        if len(out) == 1:
-            return out[0]
+    def info(self, path: str, **kwargs: Any) -> dict[str, Any]:
+        path = self._strip_protocol(path)
+
         # input path is a directory name
-        elif len(out) > 1:
-            return {
+        if path.endswith("/"):
+            out = self.ls(path, detail=True, **kwargs)
+            if not out:
+                raise FileNotFoundError(path)
+
+            resource = path.split("/", maxsplit=2)[-1]
+            statobj = {
                 "name": resource,
                 "size": sum(o.get("size", 0) for o in out),
                 "type": "directory",
             }
+        # input path is a file name
         else:
-            raise FileNotFoundError(path)
+            with self.wrapped_api_call():
+                repository, ref, resource = parse(path)
+                res = self.client.objects_api.stat_object(
+                    repository=repository, ref=ref, path=resource, **kwargs
+                )
 
-    def ls(self, path, detail=True, amount=100, **kwargs):
+            statobj = {
+                "checksum": res.checksum,
+                "content-type": res.content_type,
+                "mtime": res.mtime,
+                "name": res.path,
+                "size": res.size_bytes,
+                "type": "file",
+            }
+
+        self.run_hook(FSEvent.INFO, HookContext.new(path))
+        return statobj
+
+    def ls(self, path, detail=True, **kwargs):
         path = self._strip_protocol(path)
         repository, ref, prefix = parse(path)
 
@@ -378,35 +340,30 @@ class LakeFSFileSystem(AbstractFileSystem):
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         info: list[Any] = []
 
-        while has_more:
-            try:
+        with self.wrapped_api_call():
+            while has_more:
                 res: ObjectStatsList = self.client.objects_api.list_objects(
-                    repository,
-                    ref,
-                    user_metadata=detail,
-                    after=after,
-                    prefix=prefix,
-                    amount=amount,
+                    repository, ref, after=after, prefix=prefix, **kwargs
                 )
-            except ApiException as e:
-                err = translate_lakefs_error(e)
-                raise err
-
-            has_more, after = res.pagination.has_more, res.pagination.next_offset
-            for obj in res.results:
-                info.append(
-                    {
-                        "checksum": obj.checksum,
-                        "content-type": obj.content_type,
-                        "mtime": obj.mtime,
-                        "name": obj.path,
-                        "size": obj.size_bytes,
-                        "type": "file",
-                    }
-                )
+                has_more, after = res.pagination.has_more, res.pagination.next_offset
+                for obj in res.results:
+                    info.append(
+                        {
+                            "checksum": obj.checksum,
+                            "content-type": obj.content_type,
+                            "mtime": obj.mtime,
+                            "name": obj.path,
+                            "size": obj.size_bytes,
+                            "type": "file",
+                        }
+                    )
 
         if not detail:
-            return [o["name"] for o in info]
+            info = [o["name"] for o in info]
+
+        ctx = HookContext(repository=repository, ref=ref, resource=prefix)
+        self.run_hook(FSEvent.LS, ctx)
+
         return info
 
     def _open(
@@ -436,12 +393,12 @@ class LakeFSFileSystem(AbstractFileSystem):
         lpath,
         rpath,
         callback=_DEFAULT_CALLBACK,
+        precheck=True,
         **kwargs,
     ):
         repository, branch, resource = parse(rpath)
 
-        if self.precheck_files:
-            # TODO (n.junge): Make this work for lpaths that are themselves lakeFS paths
+        if precheck:
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
             if local_checksum == remote_checksum:
@@ -452,13 +409,13 @@ class LakeFSFileSystem(AbstractFileSystem):
                 return
 
         with open(lpath, "rb") as f:
-            try:
+            with self.wrapped_api_call():
                 self.client.objects_api.upload_object(
-                    repository=repository, branch=branch, path=resource, content=f
+                    repository=repository, branch=branch, path=resource, content=f, **kwargs
                 )
-            except ApiException as e:
-                err = translate_lakefs_error(e)
-                raise err
+
+        ctx = HookContext(repository=repository, ref=branch, resource=resource)
+        self.run_hook(FSEvent.PUT_FILE, ctx)
 
     def put(
         self,
@@ -477,25 +434,24 @@ class LakeFSFileSystem(AbstractFileSystem):
             lpath, rpath, recursive=recursive, callback=callback, maxdepth=maxdepth, **kwargs
         )
 
-        if self.postcommit:
-            self.commit(FSEvent.PUT, repository=repository, branch=branch, resource=resource)
+        ctx = HookContext(repository=repository, ref=branch, resource=resource)
+        self.run_hook(FSEvent.PUT, ctx)
 
     def rm_file(self, path):
         repository, branch, resource = parse(path)
 
-        try:
+        with self.wrapped_api_call():
             self.client.objects_api.delete_object(
                 repository=repository, branch=branch, path=resource
             )
-        except ApiException as e:
-            err = translate_lakefs_error(e)
-            raise err
+
+        ctx = HookContext(repository=repository, ref=branch, resource=resource)
+        self.run_hook(FSEvent.RM_FILE, ctx)
 
     def rm(self, path, recursive=False, maxdepth=None):
         super().rm(path, recursive=recursive, maxdepth=maxdepth)
-        if self.postcommit:
-            repository, branch, resource = parse(path)
-            self.commit(FSEvent.RM, repository=repository, branch=branch, resource=resource)
+
+        self.run_hook(FSEvent.RM, HookContext.new(path))
 
 
 class LakeFSFile(AbstractBufferedFile):
@@ -538,7 +494,7 @@ class LakeFSFile(AbstractBufferedFile):
         if final:
             repository, branch, resource = parse(self.path)
 
-            try:
+            with self.fs.wrapped_api_call():
                 # single-shot upload.
                 # empty buffer is equivalent to a touch()
                 self.buffer.seek(0)
@@ -548,13 +504,8 @@ class LakeFSFile(AbstractBufferedFile):
                     path=resource,
                     content=self.buffer,
                 )
-                if self.fs.postcommit:
-                    self.fs.commit(
-                        FSEvent.PUT, repository=repository, branch=branch, resource=resource
-                    )
-            except ApiException as e:
-                err = translate_lakefs_error(e)
-                raise err
+                ctx = HookContext(repository=repository, ref=branch, resource=resource)
+                self.fs.run_hook(FSEvent.PUT_FILE, ctx)
 
         return not final
 
@@ -564,11 +515,8 @@ class LakeFSFile(AbstractBufferedFile):
 
     def _fetch_range(self, start: int, end: int) -> bytes:
         repository, ref, resource = parse(self.path)
-        try:
+        with self.fs.wrapped_api_call():
             res: io.BufferedReader = self.fs.client.objects.get_object(
                 repository, ref, resource, range=f"bytes={start}-{end - 1}"
             )
             return res.read()
-        except ApiException as e:
-            err = translate_lakefs_error(e)
-            raise err

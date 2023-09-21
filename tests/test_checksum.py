@@ -27,14 +27,10 @@ def test_checksum_matching(
         # this test sometimes fails because of a race condition in the client
         time.sleep(0.1)
 
-    # we expect to get one `ls` call per upload attempt,
-    # but only one actual upload.
-    assert counter.count("objects_api.list_objects") == len(blocksizes) + 1
+    # we expect to get one `info` call per upload attempt, but only one actual upload.
+    assert counter.count("objects_api.stat_object") == len(blocksizes) + 1
     assert counter.count("objects_api.upload_object") == 1
 
     # force overwrite this time, assert the `upload` API was called again
-    with fs.scope(precheck_files=False):
-        fs.put_file(lpath, rpath)
-
-    assert fs.precheck_files is True
+    fs.put_file(lpath, rpath, precheck=False)
     assert counter.count("objects_api.upload_object") == 2

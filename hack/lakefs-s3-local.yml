@@ -1,0 +1,40 @@
+# This docker-compose file provides an ephemeral lakeFS quickstart instance for local development.
+
+version: "3"
+
+services:
+  seaweedfs:
+      container_name: sandbox-s3
+      image: chrislusf/seaweedfs:3.56
+      ports:
+        - 9001:9001
+      network_mode: host
+      command: server -ip.bind 0.0.0.0 -master.volumeSizeLimitMB=1024 -volume.port=9000 -filer.collection=sandbox -s3 -s3.port 9001 -s3.config=/etc/seaweedfs/s3.json -s3.allowEmptyFolder=true -s3.allowDeleteBucketNotEmpty=true
+      volumes:
+          - seaweedfs-data:/data
+          - ./config/s3.json:/etc/seaweedfs/s3.json
+      restart: always
+
+  lakefs:
+    image: treeverse/lakefs:0.110.0
+    ports:
+      - 8000:8000
+    network_mode: host
+    depends_on:
+      - seaweedfs
+    environment:
+      LAKEFS_INSTALLATION_USER_NAME: "quickstart"
+      LAKEFS_INSTALLATION_ACCESS_KEY_ID: "AKIAIOSFOLQUICKSTART"
+      LAKEFS_INSTALLATION_SECRET_ACCESS_KEY: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+      LAKEFS_DATABASE_TYPE: "local"
+      LAKEFS_AUTH_ENCRYPT_SECRET_KEY: "THIS_MUST_BE_CHANGED_IN_PRODUCTION"
+      LAKEFS_BLOCKSTORE_TYPE: s3
+      LAKEFS_BLOCKSTORE_S3_FORCE_PATH_STYLE: true
+      LAKEFS_BLOCKSTORE_S3_ENDPOINT: http://127.0.0.1:9001
+      LAKEFS_BLOCKSTORE_S3_DISCOVER_BUCKET_REGION: false
+      LAKEFS_BLOCKSTORE_S3_CREDENTIALS_ACCESS_KEY_ID: sandbox
+      LAKEFS_BLOCKSTORE_S3_CREDENTIALS_SECRET_ACCESS_KEY: sandbox
+      LAKEFS_BLOCKSTORE_DEFAULT_NAMESPACE_PREFIX: s3://sandbox/lakefs/
+
+volumes:
+    seaweedfs-data: {}

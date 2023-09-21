@@ -1,3 +1,6 @@
+import sys
+
+from _pytest.logging import LogCaptureFixture
 from pytest import MonkeyPatch
 
 from lakefs_spec import LakeFSFileSystem
@@ -49,7 +52,7 @@ def test_initialization(monkeypatch: MonkeyPatch, temporary_lakectl_config: str)
     # Case 2: Instantiation from envvars.
     # Clear the instance cache first, since we otherwise would get a cache hit
     # due to the instantiation being the same as from `.lakectl.yaml` above.
-    LakeFSFileSystem._cache.clear()
+    LakeFSFileSystem.clear_instance_cache()
     envvar_fs = LakeFSFileSystem()
     config = envvar_fs.client._api.configuration
     assert config.host == "http://localhost:1000/api/v1"
@@ -62,3 +65,17 @@ def test_initialization(monkeypatch: MonkeyPatch, temporary_lakectl_config: str)
     assert config.host == "http://lakefs.hello/api/v1"
     assert config.username == "my-user"
     assert config.password == "my-password"
+
+
+def test_lakectl_config_parsing_without_yaml(
+    monkeypatch: MonkeyPatch, caplog: LogCaptureFixture, temporary_lakectl_config: str
+) -> None:
+    LakeFSFileSystem.clear_instance_cache()
+
+    # unset YAML module from sys.modules.
+    monkeypatch.setitem(sys.modules, "yaml", None)
+    LakeFSFileSystem()
+
+    # look for the log record, assert that it has the `pyyaml` install instruction.
+    assert len(caplog.records) > 0
+    assert "`python -m pip install --upgrade pyyaml`." in caplog.records[0].message
