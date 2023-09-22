@@ -13,7 +13,7 @@ joblib==1.3.2
 jupyter_client==8.3.1
 jupyter_core==5.3.1
 lakefs-client==0.109.0
-lakefs-spec @ git+https://github.com/appliedAI-Initiative/lakefs-spec.git@d50a3816f570429d4a6c239a8c282edb8706ccff
+lakefs-spec @ git+https://github.com/appliedAI-Initiative/lakefs-spec.git@e2d188c937310b6053759e7db56804235c64e352
 matplotlib-inline==0.1.6
 nest-asyncio==1.5.7
 numpy==1.25.2
