@@ -509,9 +509,47 @@ class LakeFSFile(AbstractBufferedFile):
 
         return not final
 
-    def _initiate_upload(self):
-        """No-op."""
-        return
+    def flush(self, force: bool = False) -> None:
+        """
+        Write buffered data to backend store.
+
+        Writes the current buffer, if it is larger than the block-size, or if
+        the file is being closed.
+
+        In contrast to the abstract class, this implementation does NOT unload the buffer
+        if it is larger than the block size, because the lakeFS server does not support
+        multipart uploads.
+
+        Parameters
+        ----------
+        force: bool
+            When closing, write the last block even if it is smaller than
+            blocks are allowed to be. Disallows further writing to this file.
+        """
+
+        if self.closed:
+            raise ValueError("Flush on closed file")
+        self.forced: bool
+        if force and self.forced:
+            raise ValueError("Force flush cannot be called more than once")
+        if force:
+            self.forced = True
+
+        if self.mode != "wb":
+            # no-op to flush on read-mode
+            return
+
+        if not force and self.buffer.tell() < self.blocksize:
+            # Defer write on small block
+            return
+
+        self.offset: int
+        if self.offset is None:
+            # Initialize an upload
+            self.offset = 0
+
+        if self._upload_chunk(final=force) is not False:
+            self.offset += self.buffer.seek(0, 2)
 
     def _fetch_range(self, start: int, end: int) -> bytes:
         repository, ref, resource = parse(self.path)
