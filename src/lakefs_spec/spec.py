@@ -28,6 +28,8 @@ logger.addHandler(logging.StreamHandler(sys.stdout))
 
 EmptyYield = Generator[None, None, None]
 
+_warn_on_fileupload = True
+
 
 def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
     with open(lpath, "rb") as f:
@@ -480,12 +482,15 @@ class LakeFSFile(AbstractBufferedFile):
             size=size,
             **kwargs,
         )
-        if mode == "wb":
+
+        global _warn_on_fileupload
+        if mode == "wb" and _warn_on_fileupload:
             logger.warning(
-                "Calling open() in write mode results in unbuffered file uploads, "
-                "because the lakeFS Python client does not support multipart uploads. "
-                "Note that uploading large files unbuffered can have performance implications."
+                f"Calling `{self.__class__.__name__}.open()` in write mode results in unbuffered "
+                "file uploads, because the lakeFS Python client does not support multipart "
+                "uploads. Uploading large files unbuffered can have performance implications."
             )
+            _warn_on_fileupload = False
             repository, branch, resource = parse(path)
             ensure_branch(self.fs.client, repository, branch, self.fs.source_branch)
 
