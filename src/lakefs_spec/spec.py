@@ -382,7 +382,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             self,
             path=path,
             mode=mode,
-            block_size=block_size,
+            block_size=block_size or self.blocksize,
             autocommit=autocommit,
             cache_options=cache_options,
             **kwargs,
