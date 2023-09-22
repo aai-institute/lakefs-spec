@@ -69,7 +69,13 @@ fs = LakeFSFileSystem(host="localhost:8000", create_branch_ok=False)
 ```
 
 If set to `create_branch_ok = False`, adressing non-existing branches causes an error.
-The flag can also be set in [scoped filesystem behaviour changes](#scoped-filesystem-behavior-changes) .
+The flag can also be set in scoped filesystem behaviour changes. Like so 
+
+```python
+with fs.scope(create_branch_ok=False)
+    fs.put('lakefs://quickstart/test/lakes.parquet')
+```
+This code throws an error should the `test` branch not exist. 
 
 ### Paths and URIs
 
