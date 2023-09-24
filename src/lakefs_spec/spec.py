@@ -1,6 +1,7 @@
 import hashlib
 import io
 import logging
+import operator
 import os
 import sys
 from contextlib import contextmanager
@@ -95,6 +96,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         configfile: str = "~/.lakectl.yaml",
         create_branch_ok: bool = True,
         source_branch: str = "main",
+        **storage_options: Any,
     ):
         """
         The LakeFS file system constructor.
@@ -123,8 +125,10 @@ class LakeFSFileSystem(AbstractFileSystem):
             Whether to create branches implicitly when not-existing branches are referenced on file uploads.
         source_branch: str
             Source branch set as origin when a new branch is implicitly created.
+        storage_options: Any
+            Configuration options to pass to the file system's directory cache.
         """
-        super().__init__()
+        super().__init__(**storage_options)
 
         if (p := Path(configfile).expanduser()).exists():
             lakectl_config = LakectlConfig.read(p)
@@ -183,8 +187,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         try:
             yield
         except ApiException as e:
-            err = translate_lakefs_error(e, message=message, set_cause=set_cause)
-            raise err
+            raise translate_lakefs_error(e, message=message, set_cause=set_cause)
 
     @contextmanager
     def scope(
@@ -290,8 +293,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             from fsspec.implementations.local import LocalFileSystem
 
             LocalFileSystem().rm_file(lpath)
-            err = translate_lakefs_error(e)
-            raise err
+            raise translate_lakefs_error(e)
         finally:
             if not isfilelike(lpath):
                 outfile.close()
@@ -338,6 +340,18 @@ class LakeFSFileSystem(AbstractFileSystem):
         path = self._strip_protocol(path)
         repository, ref, prefix = parse(path)
 
+        try:
+            cache_entry: list[Any] | None = self._ls_from_cache(prefix)
+        except FileNotFoundError:
+            # we patch files missing from an ls call in the cache entry below,
+            # so this should not be an error.
+            cache_entry = None
+
+        if cache_entry is not None:
+            if not detail:
+                return [e["name"] for e in cache_entry]
+            return cache_entry
+
         has_more, after = True, ""
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         info: list[Any] = []
@@ -359,6 +373,25 @@ class LakeFSFileSystem(AbstractFileSystem):
                             "type": "file",
                         }
                     )
+
+        # cache the info if not empty.
+        pp = self._parent(prefix)
+        if info and pp in self.dircache:
+            # ls info has files not in cache, so we add/update them in the cache entry.
+            cache_entry = self.dircache[pp]
+            for obj in info:
+                try:
+                    names = [e["name"] for e in cache_entry]
+                    idx = names.index(obj["name"])
+                    cache_entry.pop(idx)
+                    cache_entry.insert(idx, obj)
+                except IndexError:
+                    # file has been newly added, append and sort by name.
+                    cache_entry.append(obj)
+
+            self.dircache[pp] = sorted(cache_entry, key=operator.itemgetter("name"))
+        elif info and pp not in self.dircache:
+            self.dircache[pp] = info
 
         if not detail:
             info = [o["name"] for o in info]
