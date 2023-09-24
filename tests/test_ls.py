@@ -48,7 +48,6 @@ def test_ls_stale_cache_entry(
 
     fs.ls(resource)
     assert counter.count("objects_api.list_objects") == 1
-    assert len(fs.dircache) == 1
     assert tuple(fs.dircache.keys()) == ("data",)
 
     cache_entry = fs.dircache["data"]
@@ -62,3 +61,19 @@ def test_ls_stale_cache_entry(
     assert counter.count("objects_api.list_objects") == 2
     # is the file now added to the cache entry?
     assert res[0] in cache_entry
+
+
+def test_ls_no_detail(fs: LakeFSFileSystem, repository: str) -> None:
+    fs.client, counter = with_counter(fs.client)
+
+    # TODO: This fails without the trailing slash - because of `cls._parent` (?).
+    resource = f"{repository}/main/data"
+
+    expected = ["data/lakes.source.md"]
+    # first, verify the API fetch does the expected...
+    assert fs.ls(resource, detail=False) == expected
+    assert list(fs.dircache.keys()) == ["data"]
+
+    # ...as well as the cache fetch.
+    assert fs.ls(resource, detail=False) == expected
+    assert counter.count("objects_api.list_objects") == 1
