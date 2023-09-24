@@ -509,8 +509,6 @@ class LakeFSFile(AbstractBufferedFile):
                     path=resource,
                     content=self.buffer,
                 )
-                ctx = HookContext(repository=repository, ref=branch, resource=resource)
-                self.fs.run_hook(FSEvent.PUT_FILE, ctx)
 
         return not final
 
@@ -563,3 +561,10 @@ class LakeFSFile(AbstractBufferedFile):
                 repository, ref, resource, range=f"bytes={start}-{end - 1}"
             )
             return res.read()
+
+    def close(self):
+        super().close()
+        if self.mode == "wb":
+            self.fs.run_hook(FSEvent.FILEUPLOAD, HookContext.new(self.path))
+        elif self.mode == "rb":
+            self.fs.run_hook(FSEvent.FILEDOWNLOAD, HookContext.new(self.path))
