@@ -13,7 +13,7 @@ from fsspec.utils import isfilelike, stringify_path
 from lakefs_client import Configuration
 from lakefs_client.client import LakeFSClient
 from lakefs_client.exceptions import ApiException, NotFoundException
-from lakefs_client.models import BranchCreation, ObjectStatsList
+from lakefs_client.models import BranchCreation, ObjectCopyCreation, ObjectStatsList
 
 from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
@@ -236,6 +236,32 @@ class LakeFSFileSystem(AbstractFileSystem):
                 ctx = HookContext(repository=repository, ref=ref, resource=resource)
                 self.run_hook(FSEvent.EXISTS, ctx)
                 return exists
+
+    def cp_file(self, path1, path2, **kwargs):
+        if path1 == path2:
+            return
+
+        orig_repo, orig_ref, orig_path = parse(path1)
+        dest_repo, dest_ref, dest_path = parse(path2)
+
+        if orig_repo != dest_repo:
+            raise ValueError(
+                "can only copy objects within a repository, but got source "
+                f"repository {orig_repo!r} and destination repository "
+                f"{dest_repo!r}"
+            )
+
+        with self.wrapped_api_call():
+            object_copy_creation = ObjectCopyCreation(src_path=orig_path, src_ref=orig_ref)
+            self.client.objects_api.copy_object(
+                repository=dest_repo,
+                branch=dest_ref,
+                dest_path=dest_path,
+                object_copy_creation=object_copy_creation,
+                **kwargs,
+            )
+
+        self.run_hook(FSEvent.CP_FILE, HookContext.new(path1))
 
     def get(
         self,
