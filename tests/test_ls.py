@@ -1,5 +1,5 @@
 from lakefs_spec import LakeFSFileSystem
-from tests.util import with_counter
+from tests.util import RandomFileFactory, with_counter
 
 
 def test_paginated_ls(fs: LakeFSFileSystem, repository: str) -> None:
@@ -32,3 +32,33 @@ def test_ls_caching(fs: LakeFSFileSystem, repository: str) -> None:
 
     # assert the second `ls` call hits the cache
     assert counter.count("objects_api.list_objects") == 1
+
+
+def test_ls_stale_cache_entry(
+    fs: LakeFSFileSystem,
+    repository: str,
+    random_file_factory: RandomFileFactory,
+    temp_branch: str,
+) -> None:
+    fs.client, counter = with_counter(fs.client)
+
+    random_file = random_file_factory.make()
+
+    resource = f"{repository}/main/data/"
+
+    fs.ls(resource)
+    assert counter.count("objects_api.list_objects") == 1
+    assert len(fs.dircache) == 1
+    assert tuple(fs.dircache.keys()) == ("data",)
+
+    cache_entry = fs.dircache["data"]
+
+    lpath = str(random_file)
+    rpath = f"{repository}/{temp_branch}/data/{random_file.name}"
+
+    fs.put_file(lpath, rpath)
+
+    res = fs.ls(rpath)
+    assert counter.count("objects_api.list_objects") == 2
+    # is the file now added to the cache entry?
+    assert res[0] in cache_entry

@@ -377,18 +377,19 @@ class LakeFSFileSystem(AbstractFileSystem):
         # cache the info if not empty.
         pp = self._parent(prefix)
         if info and pp in self.dircache:
-            # ls info has files not in cache, so we add/update them in the cache entry.
+            # ls info has files not in cache, so we update them in the cache entry.
             cache_entry = self.dircache[pp]
             for obj in info:
                 try:
                     names = [e["name"] for e in cache_entry]
                     idx = names.index(obj["name"])
+                    # remove stale info in entry
                     cache_entry.pop(idx)
-                    cache_entry.insert(idx, obj)
-                except IndexError:
-                    # file has been newly added, append and sort by name.
-                    cache_entry.append(obj)
+                except ValueError:
+                    pass
 
+            # extend the entry by the new ls results
+            cache_entry.extend(info)
             self.dircache[pp] = sorted(cache_entry, key=operator.itemgetter("name"))
         elif info and pp not in self.dircache:
             self.dircache[pp] = info
