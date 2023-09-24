@@ -1,10 +1,11 @@
+import contextlib
 import logging
 import random
 import string
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Generator, TypeVar
+from typing import Any, Generator, TypeVar
 
 import pytest
 import yaml
@@ -88,6 +89,25 @@ def ensurerepo(lakefs_client: LakeFSClient) -> str:
 @pytest.fixture(scope="session")
 def repository(ensurerepo: str) -> str:
     return ensurerepo
+
+
+@pytest.fixture
+def temporary_branch_context(lakefs_client: LakeFSClient, repository: str) -> Any:
+    @contextlib.contextmanager
+    def _wrapper(name: str) -> YieldFixture[str]:
+        try:
+            lakefs_client.branches_api.create_branch(
+                repository=repository,
+                branch_creation=BranchCreation(name=name, source="main"),
+            )
+            yield name
+        finally:
+            lakefs_client.branches_api.delete_branch(
+                repository=repository,
+                branch=name,
+            )
+
+    return _wrapper
 
 
 @pytest.fixture
