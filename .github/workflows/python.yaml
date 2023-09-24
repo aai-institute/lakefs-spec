@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       lakefs:
-        image: treeverse/lakefs:0.108.0
+        image: treeverse/lakefs:0.110.0
         ports:
           - 8000:8000
         env:
@@ -52,7 +52,7 @@ jobs:
           ${{ env.MYPY_CACHE_DIR }}
           ${{ env.RUFF_CACHE_DIR }}
           ${{ env.PRE_COMMIT_HOME }}
-        key: ${{ runner.os }}-${{ hashFiles('dev-deps.lock', '.pre-commit-config.yaml') }}-linter-cache
+        key: ${{ runner.os }}-${{ hashFiles('requirements-dev.txt', '.pre-commit-config.yaml') }}-linter-cache
     - name: Run pre-commit checks
       run: |
         pre-commit run --all-files --verbose --show-diff-on-failure
