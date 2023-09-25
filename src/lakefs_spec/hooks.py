@@ -8,6 +8,7 @@ from lakefs_spec.util import parse
 
 class FSEvent(StrEnum):
     CHECKSUM = auto()
+    CP_FILE = auto()
     EXISTS = auto()
     FILEDOWNLOAD = auto()
     FILEUPLOAD = auto()
