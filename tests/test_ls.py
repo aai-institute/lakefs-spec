@@ -66,7 +66,6 @@ def test_ls_stale_cache_entry(
 def test_ls_no_detail(fs: LakeFSFileSystem, repository: str) -> None:
     fs.client, counter = with_counter(fs.client)
 
-    # TODO: This fails without the trailing slash - because of `cls._parent` (?).
     resource = f"{repository}/main/data"
 
     expected = ["data/lakes.source.md"]
@@ -77,3 +76,9 @@ def test_ls_no_detail(fs: LakeFSFileSystem, repository: str) -> None:
     # ...as well as the cache fetch.
     assert fs.ls(resource, detail=False) == expected
     assert counter.count("objects_api.list_objects") == 1
+
+    # test the same thing with a subfolder + file prefix
+    resource = f"{repository}/main/images/duckdb"
+    fs.ls(resource, detail=False)
+
+    assert list(fs.dircache.keys()) == ["data", "images"]
