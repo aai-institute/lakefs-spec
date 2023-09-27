@@ -149,3 +149,17 @@ def test_rev_parse_error_on_commit_not_found(fs: LakeFSFileSystem, repository: s
         client_helpers.rev_parse(
             client=fs.client, repository=repository, ref=non_existent_ref, parent=0
         )
+
+
+def test_rev_parse_error_on_parent_does_not_exist(
+    fs: LakeFSFileSystem, repository: str, temp_branch: str
+) -> None:
+    n_commits = len(fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results)
+    non_existent_parent = n_commits + 1
+    with pytest.raises(
+        ValueError,
+        match=f"cannot fetch revision {temp_branch}~{non_existent_parent}: {temp_branch} only has {n_commits} parents",
+    ):
+        client_helpers.rev_parse(
+            client=fs.client, repository=repository, ref=temp_branch, parent=non_existent_parent
+        )

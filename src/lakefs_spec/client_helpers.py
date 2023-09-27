@@ -78,8 +78,12 @@ def rev_parse(
         revisions = client.refs_api.log_commits(
             repository=repository, ref=ref, limit=True, amount=2 * (parent + 1)
         ).results
+        if len(revisions) <= parent:
+            raise ValueError(
+                f"cannot fetch revision {ref}~{parent}: {ref} only has {len(revisions)} parents"
+            )
+        return revisions[parent].id
     except NotFoundException:
         raise RuntimeError(
             f"{ref!r} does not match any revision in lakeFS repository {repository!r}"
         )
-    return revisions[parent].id
