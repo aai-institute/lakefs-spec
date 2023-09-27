@@ -157,7 +157,7 @@ def test_rev_parse_error_on_parent_does_not_exist(
     n_commits = len(fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results)
     non_existent_parent = n_commits + 1
     with pytest.raises(
-        IndexError,
+        ValueError,
         match=f"cannot fetch revision {temp_branch}~{non_existent_parent}: {temp_branch} only has {n_commits} parents",
     ):
         client_helpers.rev_parse(
