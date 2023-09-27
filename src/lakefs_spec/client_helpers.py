@@ -79,7 +79,7 @@ def rev_parse(
             repository=repository, ref=ref, limit=True, amount=2 * (parent + 1)
         ).results
         if len(revisions) <= parent:
-            raise ValueError(
+            raise IndexError(
                 f"cannot fetch revision {ref}~{parent}: {ref} only has {len(revisions)} parents"
             )
         return revisions[parent].id
