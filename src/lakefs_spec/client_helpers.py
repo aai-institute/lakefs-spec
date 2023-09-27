@@ -2,6 +2,7 @@ import logging
 import sys
 
 from lakefs_client.client import LakeFSClient
+from lakefs_client.exceptions import NotFoundException
 from lakefs_client.model.commit_creation import CommitCreation
 from lakefs_client.model.revert_creation import RevertCreation
 from lakefs_client.model.tag_creation import TagCreation
@@ -63,3 +64,22 @@ def revert(client: LakeFSClient, repository: str, branch: str, parent_number: in
     client.branches_api.revert_branch(
         repository=repository, branch=branch, revert_creation=revert_creation
     )
+
+
+def rev_parse(
+    client: LakeFSClient,
+    repository: str,
+    ref: str,
+    parent: int = 0,
+) -> str:
+    if parent < 0:
+        raise ValueError(f"Parent cannot be negative, got {parent}")
+    try:
+        revisions = client.refs_api.log_commits(
+            repository=repository, ref=ref, limit=2 * (parent + 1)
+        ).results
+    except NotFoundException:
+        raise RuntimeError(
+            "{ref!r} does not match any revision in lakeFS repository {repository!r}"
+        )
+    return revisions[parent].id
