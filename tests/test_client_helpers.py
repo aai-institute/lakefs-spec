@@ -112,3 +112,54 @@ def test_revert(
         )
         == 0
     )
+
+
+def test_rev_parse(
+    fs: LakeFSFileSystem, random_file_factory: RandomFileFactory, repository: str, temp_branch: str
+) -> None:
+    current_head_commit = (
+        fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results[0].id
+    )
+    random_file = random_file_factory.make()
+    fs.put(str(random_file), f"{repository}/{temp_branch}/{random_file.name}")
+    client_helpers.commit(
+        client=fs.client, repository=repository, branch=temp_branch, message="New Commit"
+    )
+
+    next_head_commit = (
+        fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results[0].id
+    )
+
+    assert (
+        client_helpers.rev_parse(client=fs.client, repository=repository, ref=temp_branch, parent=0)
+        == next_head_commit
+    )
+    assert (
+        client_helpers.rev_parse(client=fs.client, repository=repository, ref=temp_branch, parent=1)
+        == current_head_commit
+    )
+
+
+def test_rev_parse_error_on_commit_not_found(fs: LakeFSFileSystem, repository: str) -> None:
+    non_existent_ref = f"{uuid.uuid4()}"
+    with pytest.raises(
+        RuntimeError,
+        match=f"{non_existent_ref!r} does not match any revision in lakeFS repository {repository!r}",
+    ):
+        client_helpers.rev_parse(
+            client=fs.client, repository=repository, ref=non_existent_ref, parent=0
+        )
+
+
+def test_rev_parse_error_on_parent_does_not_exist(
+    fs: LakeFSFileSystem, repository: str, temp_branch: str
+) -> None:
+    n_commits = len(fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results)
+    non_existent_parent = n_commits + 1
+    with pytest.raises(
+        ValueError,
+        match=f"cannot fetch revision {temp_branch}~{non_existent_parent}: {temp_branch} only has {n_commits} parents",
+    ):
+        client_helpers.rev_parse(
+            client=fs.client, repository=repository, ref=temp_branch, parent=non_existent_parent
+        )
