@@ -76,10 +76,10 @@ def rev_parse(
         raise ValueError(f"Parent cannot be negative, got {parent}")
     try:
         revisions = client.refs_api.log_commits(
-            repository=repository, ref=ref, limit=2 * (parent + 1)
+            repository=repository, ref=ref, limit=True, amount=2 * (parent + 1)
         ).results
     except NotFoundException:
         raise RuntimeError(
-            "{ref!r} does not match any revision in lakeFS repository {repository!r}"
+            f"{ref!r} does not match any revision in lakeFS repository {repository!r}"
         )
     return revisions[parent].id
