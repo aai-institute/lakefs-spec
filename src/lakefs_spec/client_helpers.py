@@ -1,5 +1,4 @@
 import logging
-import sys
 
 from lakefs_client.client import LakeFSClient
 from lakefs_client.model.commit_creation import CommitCreation
@@ -8,7 +7,6 @@ from lakefs_client.model.tag_creation import TagCreation
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 def commit(

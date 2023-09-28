@@ -3,7 +3,6 @@ import io
 import logging
 import operator
 import os
-import sys
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Generator
@@ -25,7 +24,6 @@ _DEFAULT_CALLBACK = NoOpCallback()
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler(sys.stdout))
 
 EmptyYield = Generator[None, None, None]
 

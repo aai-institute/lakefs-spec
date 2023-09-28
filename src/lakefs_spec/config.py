@@ -1,11 +1,9 @@
 import logging
-import sys
 from pathlib import Path
 from typing import Any, NamedTuple
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 class LakectlConfig(NamedTuple):
