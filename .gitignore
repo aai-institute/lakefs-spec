@@ -118,3 +118,6 @@ syft-output.json
 # direnv
 .envrc
 .direnv
+
+#demo-files
+/demos/data
