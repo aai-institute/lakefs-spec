@@ -1,18 +1,23 @@
 import hashlib
 import io
 import logging
+import mimetypes
 import operator
 import os
+import urllib.error
+import urllib.request
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Generator
 
+from fsspec import filesystem
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
 from lakefs_client import Configuration
 from lakefs_client.client import LakeFSClient
 from lakefs_client.exceptions import ApiException, NotFoundException
+from lakefs_client.model.staging_metadata import StagingMetadata
 from lakefs_client.models import BranchCreation, ObjectCopyCreation, ObjectStatsList
 
 from lakefs_spec.config import LakectlConfig
@@ -441,31 +446,85 @@ class LakeFSFileSystem(AbstractFileSystem):
             **kwargs,
         )
 
+    def put_file_to_blockstore(self, lpath, repository, branch, resource, presign, storage_options):
+        blockstore_type = self.client.config_api.get_storage_config().blockstore_type
+        if blockstore_type == "local":
+            raise ValueError(
+                "Cannot write to blockstore of type 'local'. Disable use_blockstore or configure remote blockstore."
+            )
+
+        staging_location = self.client.staging_api.get_physical_address(
+            repository, branch, resource, presign=presign
+        )
+
+        if presign:
+            remote_url = staging_location.presigned_url
+            content_type, _ = mimetypes.guess_type(lpath)
+            if content_type is None:
+                content_type = "application/octet-stream"
+            with open(lpath, "rb") as f:
+                headers = {
+                    "Content-Type": content_type,
+                }
+                request = urllib.request.Request(
+                    url=remote_url, data=f, headers=headers, method="PUT"
+                )
+                try:
+                    if not remote_url.lower().startswith("http"):
+                        raise ValueError("Wrong protocol for remote connection")
+                    else:
+                        with urllib.request.urlopen(
+                            request
+                        ):  # nosec [B310:blacklist] # We catch faulty protocols above.
+                            logger.info(f"Successfully uploaded: {lpath} ")
+                except urllib.error.HTTPError as e:
+                    print(f"Failed to upload file: {lpath}", e.code, e.reason)
+        else:
+            remote_url = staging_location.physical_address
+            remote = filesystem(blockstore_type, **storage_options)
+            remote.put_file(lpath, remote_url)
+
+        staging_metadata = StagingMetadata(
+            staging=staging_location,
+            checksum=md5_checksum(lpath, blocksize=self.blocksize),
+            size_bytes=1,
+        )
+        self.client.staging_api.link_physical_address(
+            repository, branch, resource, staging_metadata
+        )
+
     def put_file(
         self,
         lpath,
         rpath,
         callback=_DEFAULT_CALLBACK,
         precheck=True,
+        use_blockstore=False,
+        presign=False,
+        storage_options={},
         **kwargs,
     ):
         repository, branch, resource = parse(rpath)
 
         if precheck:
-            local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
+            local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             if local_checksum == remote_checksum:
                 logger.info(
                     f"Skipping upload of resource {lpath!r} to remote path {rpath!r}: "
                     f"Resource {rpath!r} exists and checksums match."
                 )
                 return
-
-        with open(lpath, "rb") as f:
-            with self.wrapped_api_call():
-                self.client.objects_api.upload_object(
-                    repository=repository, branch=branch, path=resource, content=f, **kwargs
-                )
+        if use_blockstore:
+            self.put_file_to_blockstore(
+                lpath, repository, branch, resource, presign, storage_options
+            )
+        else:
+            with open(lpath, "rb") as f:
+                with self.wrapped_api_call():
+                    self.client.objects_api.upload_object(
+                        repository=repository, branch=branch, path=resource, content=f, **kwargs
+                    )
 
         ctx = HookContext(repository=repository, ref=branch, resource=resource)
         self.run_hook(FSEvent.PUT_FILE, ctx)
