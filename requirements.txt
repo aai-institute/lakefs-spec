@@ -4,13 +4,13 @@
 #
 #    pip-compile --strip-extras pyproject.toml
 #
-fsspec==2023.9.1
+fsspec==2023.9.2
     # via lakefs-spec (pyproject.toml)
-lakefs-client==0.110.0
+lakefs-client==0.112.1
     # via lakefs-spec (pyproject.toml)
 python-dateutil==2.8.2
     # via lakefs-client
 six==1.16.0
     # via python-dateutil
-urllib3==2.0.5
+urllib3==2.0.6
     # via lakefs-client
