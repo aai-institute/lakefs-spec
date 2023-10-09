@@ -14,7 +14,7 @@ from lakefs_client import Configuration
 from lakefs_client.client import LakeFSClient
 from lakefs_client.models import BranchCreation, RepositoryCreation
 
-from lakefs_spec import LakeFSFileSystem
+from lakefs_spec import LakeFSFileSystem, lakefs_client_version
 from tests.util import RandomFileFactory
 
 _TEST_REPO = "lakefs-spec-tests"
@@ -71,7 +71,11 @@ def ensurerepo(lakefs_client: LakeFSClient) -> str:
     if _TEST_REPO in reponames:
         logger.info(f"Test repository {_TEST_REPO!r} already exists.")
     else:
-        storage_config = lakefs_client.config_api.get_storage_config()
+        # TODO (n.junge): Remove when the required `lakefs-client` version is at least v0.111.0.
+        if lakefs_client_version < (0, 111, 0):
+            storage_config = lakefs_client.config_api.get_storage_config()
+        else:
+            storage_config = lakefs_client.config_api.get_config().storage_config
         storage_namespace = f"{storage_config.default_namespace_prefix}/{_TEST_REPO}"
         logger.info(
             f"Creating test repository {_TEST_REPO!r} "
