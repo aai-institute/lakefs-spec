@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+cd /tmp
+LAKEFS_VERSION=0.112.1
+curl -fsSL -o lakefs.tgz https://github.com/treeverse/lakeFS/releases/download/v${LAKEFS_VERSION}/lakeFS_${LAKEFS_VERSION}_Linux_x86_64.tar.gz 
+tar xf lakefs.tgz -C /usr/local/bin lakefs
