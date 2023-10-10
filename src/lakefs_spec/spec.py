@@ -15,6 +15,7 @@ from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
 from lakefs_client import Configuration
+from lakefs_client import __version__ as __lakefs_client_version__
 from lakefs_client.client import LakeFSClient
 from lakefs_client.exceptions import ApiException, NotFoundException
 from lakefs_client.model.staging_metadata import StagingMetadata
@@ -446,8 +447,18 @@ class LakeFSFileSystem(AbstractFileSystem):
             **kwargs,
         )
 
-    def put_file_to_blockstore(self, lpath, repository, branch, resource, presign, storage_options):
-        blockstore_type = self.client.config_api.get_storage_config().blockstore_type
+    def put_file_to_blockstore(
+        self, lpath, repository, branch, resource, presign=True, storage_options={}
+    ):
+        print("In Blockstore")
+        if tuple(int(v) for v in __lakefs_client_version__.split(".")) < (0, 111, 0):
+            blockstore_type = self.client.config_api.get_storage_config().blockstore_type
+        else:
+            print("OOOKS")
+            print(self.client.config_api.get_config())
+            print(self.client.config_api.get_config().storage_config)
+            blockstore_type = self.client.config_api.get_config().storage_config.blockstore_type
+            print(blockstore_type)
         if blockstore_type == "local":
             raise ValueError(
                 "Cannot write to blockstore of type 'local'. Disable use_blockstore or configure remote blockstore."

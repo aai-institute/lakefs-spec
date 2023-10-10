@@ -6,6 +6,7 @@ import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Generator, TypeVar
+from unittest.mock import MagicMock
 
 import pytest
 import yaml
@@ -153,3 +154,10 @@ def temporary_lakectl_config() -> YieldFixture[str]:
         path.unlink()
         if backup_path.exists():
             backup_path.rename(path)
+
+
+@pytest.fixture()
+def mock_urlopen(monkeypatch: pytest.MonkeyPatch) -> MagicMock:
+    mock = MagicMock()
+    monkeypatch.setattr("urllib.request.urlopen", mock)
+    return mock
