@@ -11,6 +11,6 @@ export LAKEFS_AUTH_ENCRYPT_SECRET_KEY="THIS_MUST_BE_CHANGED_IN_PRODUCTION"
 export LAKEFS_BLOCKSTORE_TYPE="local"
 export LAKEFS_LOGGING_OUTPUT="/tmp/lakefs.log"
 
-/tmp/lakefs run --quickstart &
+nohup /tmp/lakefs run --quickstart >/dev/null 2>&1 &
 
 exec "$@"
