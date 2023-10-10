@@ -3,6 +3,14 @@
 set -ex
 
 cd /tmp
-LAKEFS_VERSION=0.112.1
+LAKEFS_VERSION="0.112.1"
 curl -fsSL -o lakefs.tgz https://github.com/treeverse/lakeFS/releases/download/v${LAKEFS_VERSION}/lakeFS_${LAKEFS_VERSION}_Linux_x86_64.tar.gz 
-tar xf lakefs.tgz lakefs
+tar xf lakefs.tgz
+
+cat > ~/.lakectl.yaml <<EOF
+credentials:
+    access_key_id: AKIAIOSFOLQUICKSTART
+    secret_access_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+server:
+    endpoint_url: http://127.0.0.1:8000
+EOF
