@@ -1,5 +1,7 @@
 #!/bin/bash
 
-set -e
+set -ex
 
-/usr/local/bin/lakefs run --quickstart
+/tmp/lakefs run --quickstart &
+
+exec "$@"
