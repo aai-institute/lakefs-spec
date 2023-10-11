@@ -1,2 +1,2 @@
 jupyter-server-proxy
--r ../requirements.txt
+-e ..
