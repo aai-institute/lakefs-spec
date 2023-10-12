@@ -22,6 +22,7 @@ c.ServerProxy.servers = {
        "command": ["/tmp/lakefs", "run", "--quickstart"],
        "port": 8000,
        "timeout": 10,
+       "absolute_url": True,
        "environment": {
         "LAKEFS_INSTALLATION_USER_NAME": "quickstart",
         "LAKEFS_INSTALLATION_ACCESS_KEY_ID": "AKIAIOSFOLQUICKSTART",
