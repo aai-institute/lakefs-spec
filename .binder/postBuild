@@ -20,6 +20,8 @@ cat > ~/.jupyter/jupyter_server_config.py <<EOF
 c.ServerProxy.servers = {
    "lakefs": {
        "command": ["/tmp/lakefs", "run", "--quickstart"],
+       "port": 8000,
+       "timeout": 10,
        "environment": {
         "LAKEFS_INSTALLATION_USER_NAME": "quickstart",
         "LAKEFS_INSTALLATION_ACCESS_KEY_ID": "AKIAIOSFOLQUICKSTART",
