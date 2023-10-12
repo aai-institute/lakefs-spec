@@ -54,7 +54,7 @@ df = pd.read_parquet('lakefs://quickstart/main/lakes.parquet', storage_options=s
 You can then update data in LakeFS like so:
 
 ```python
-df.to_csv('lakefs://quickstart/main/lakes.parquet', storage_options=storage_options)
+df.to_parquet('lakefs://quickstart/main/lakes.parquet', storage_options=storage_options)
 ```
 
 If the target file does not exist, it is created, otherwise, the existing file is updated.
@@ -72,8 +72,8 @@ If set to `create_branch_ok = False`, adressing non-existing branches causes an 
 The flag can also be set in scoped filesystem behaviour changes. Like so 
 
 ```python
-with fs.scope(create_branch_ok=False)
-    fs.put('lakefs://quickstart/test/lakes.parquet')
+with fs.scope(create_branch_ok=False):
+    fs.put("lakes.parquet", 'quickstart/test/lakes.parquet')
 ```
 This code throws an error should the `test` branch not exist. 
 
