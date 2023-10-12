@@ -21,15 +21,15 @@ c.ServerProxy.servers = {
    "lakefs": {
        "command": ["/tmp/lakefs", "run", "--quickstart"],
        "environment": {
-        "LAKEFS_INSTALLATION_USER_NAME": "quickstart"
-        "LAKEFS_INSTALLATION_ACCESS_KEY_ID": "AKIAIOSFOLQUICKSTART"
-        "LAKEFS_INSTALLATION_SECRET_ACCESS_KEY": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-        "LAKEFS_STATS_ENABLED": "false"
-        "LAKEFS_DATABASE_TYPE": "local"
-        "LAKEFS_AUTH_ENCRYPT_SECRET_KEY": "THIS_MUST_BE_CHANGED_IN_PRODUCTION"
-        "LAKEFS_BLOCKSTORE_TYPE": "local"
-        "LAKEFS_LOGGING_OUTPUT": "/tmp/lakefs.log"
-       }
-   }
+        "LAKEFS_INSTALLATION_USER_NAME": "quickstart",
+        "LAKEFS_INSTALLATION_ACCESS_KEY_ID": "AKIAIOSFOLQUICKSTART",
+        "LAKEFS_INSTALLATION_SECRET_ACCESS_KEY": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+        "LAKEFS_STATS_ENABLED": "false",
+        "LAKEFS_DATABASE_TYPE": "local",
+        "LAKEFS_AUTH_ENCRYPT_SECRET_KEY": "THIS_MUST_BE_CHANGED_IN_PRODUCTION",
+        "LAKEFS_BLOCKSTORE_TYPE": "local",
+        "LAKEFS_LOGGING_OUTPUT": "/tmp/lakefs.log",
+       },
+   },
 }
 EOF
