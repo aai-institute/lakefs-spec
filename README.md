@@ -1,7 +1,11 @@
 # lakefs-spec: An `fsspec` implementation for lakeFS
 
 This repository contains a [filesystem-spec](https://github.com/fsspec/filesystem_spec) implementation for the [lakeFS](https://lakefs.io/) project.
-Its main goal is to facilitate versioned data operations in lakeFS directly from Python code, for example using `pandas`. See the [examples](#usage) below for inspiration.
+Its main goal is to facilitate versioned data operations in lakeFS directly from Python code, for example using `pandas`. Data versioning enables reproducibility of experiments - a best practice in machine learning.
+
+See the examples below ([features](#usage), [versioning best-practices](#reproducibility-through-data-versioning-with-lakefs-and-lakefs-spec)) below for inspiration.
+
+A more detailed example is in the notebook in the [`/demos` directory](/demos/rain_prediction.ipynb).
 
 ## Installation
 
@@ -54,7 +58,7 @@ df = pd.read_parquet('lakefs://quickstart/main/lakes.parquet', storage_options=s
 You can then update data in LakeFS like so:
 
 ```python
-df.to_csv('lakefs://quickstart/main/lakes.parquet', storage_options=storage_options)
+df.to_parquet('lakefs://quickstart/main/lakes.parquet', storage_options=storage_options)
 ```
 
 If the target file does not exist, it is created, otherwise, the existing file is updated.
@@ -64,18 +68,19 @@ If the specified branch does not exist, it is created by default. This behaviour
 ```python
 from lakefs_spec import LakeFSFileSystem
 
-# create_branch_ok=True (the default setting) enables implicit branch creation
-fs = LakeFSFileSystem(host="localhost:8000", create_branch_ok=False)
+# create_branch_ok=True (the default setting) enables implicit branch creation.
+fs = LakeFSFileSystem(create_branch_ok=False)
 ```
 
 If set to `create_branch_ok = False`, adressing non-existing branches causes an error.
-The flag can also be set in scoped filesystem behaviour changes. Like so 
+The flag can also be set in scoped filesystem behaviour changes:
 
 ```python
-with fs.scope(create_branch_ok=False)
-    fs.put('lakefs://quickstart/test/lakes.parquet')
+with fs.scope(create_branch_ok=False):
+    fs.put("lakes.parquet", 'quickstart/test/lakes.parquet')
 ```
-This code throws an error should the `test` branch not exist. 
+
+This code throws an error should the `test` branch not exist.
 
 ### Paths and URIs
 
@@ -95,7 +100,7 @@ their more granular single-file counterparts `fs.get_file` and `fs.put_file`.
 ```python
 from lakefs_spec import LakeFSFileSystem
 
-fs = LakeFSFileSystem(host="localhost:8000")
+fs = LakeFSFileSystem()
 
 # The default is precheck=True, you can force the operation by setting precheck=False.
 fs.get_file("my-repo/my-ref/file.txt", "file.txt", precheck=True)
@@ -105,7 +110,7 @@ fs.get_file("my-repo/my-ref/file.txt", "file.txt", precheck=True)
 
 LakeFS has a variety of administrative APIs available through its Python client library.
 Within `lakefs-spec`, you can register hooks to your `LakeFSFileSystem` to run code after file system operations.
-A hook needs to have the signature `(client, context) -> None`, where the `client` argument holds the 
+A hook needs to have the signature `(client, context) -> None`, where the `client` argument holds the
 file system's lakeFS API client, and the `context` object contains information about the requested resource (repository, ref/branch, name).
 
 As an example, the following snippet installs a lakeFS hook that creates a commit on the lakeFS branch after a file upload:
@@ -154,10 +159,10 @@ from lakefs_spec import LakeFSFileSystem
 fs = LakeFSFileSystem(configfile="path/to/my/lakectl.yaml")
 ```
 
-⚠️ To be able to read settings from a YAML configuration file, `pyyaml` has to be installed. You can do this by installing `lakefs-spec` together with the `yaml` extra:
+⚠️ To be able to read settings from a YAML configuration file, `pyyaml` has to be installed, for example using `pip`:
 
 ```shell
-pip install --upgrade lakefs-spec[yaml]
+pip install --upgrade pyyaml
 ```
 
 ### A note on mixing environment variables and `lakectl` configuration files
@@ -196,6 +201,40 @@ from lakefs_spec import LakeFSFileSystem
 
 LakeFSFileSystem.clear_instance_cache()
 ```
+
+## Reproducibility through data versioning with lakeFS and lakeFS-spec
+
+Here we briefly show an example how data versioning for the reproducibility of machine learning experiments can be achieved using lakeFS-spec. We do this via python-like pseudocode.
+
+First, we ingest the data into our versioning system.
+
+```python
+
+# Data ingestion
+import pandas as pd
+from lakefs_spec.client_helpers import commit
+
+raw = pd.read_csv('local-path-to.csv')
+raw.to_csv('lakefs://<lakeFS-uri')
+commit('raw data ingestion')
+```
+
+This commit function creates a commit with a unique SHA which you can get from the lakeFS user interface or withthe `lakefs_spec.client_helpers.get_tags` function.
+
+The SHA points to a specific state of the dataset.
+
+```python
+raw_df = pd.read_csv('lakefs://<lakeFS-commit-SHA>')
+prep_df = preprocess(raw_df)
+trained_model = model.fit(prep_df)
+acc = trained_model.eval()
+
+experiment_tracking.log('Data version','lakefs://<lakeFS-commit-SHA>')
+experiment_tracking.log('Code version','<git commit SHA of this code>')
+experiment_tracking.log('Accuracy', acc)
+```
+
+Now, with the data and code version identified by a specific commit sha you will always reproduce the same experiment outcomes, e.g. `acc`.
 
 ## Developing and contributing to `lakefs-spec`
 

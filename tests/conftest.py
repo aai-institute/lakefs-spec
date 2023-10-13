@@ -16,6 +16,7 @@ from lakefs_client.models import BranchCreation, RepositoryCreation
 
 from lakefs_spec import LakeFSFileSystem
 from lakefs_spec.util import lakefs_client_version
+
 from tests.util import RandomFileFactory
 
 _TEST_REPO = "lakefs-spec-tests"

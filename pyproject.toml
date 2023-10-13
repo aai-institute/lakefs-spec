@@ -48,7 +48,6 @@ dev = [
     "build>=0.10.0",
     "pytest-cov>=4.1.0",
 ]
-yaml = ["pyyaml"]
 
 # Register lakeFS file system via the fsspec entry point
 [project.entry-points]

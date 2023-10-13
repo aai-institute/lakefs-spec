@@ -312,6 +312,10 @@ class LakeFSFileSystem(AbstractFileSystem):
     ):
         repository, ref, resource = parse(rpath)
 
+        def run_get_file_hook():
+            ctx = HookContext(repository=repository, ref=ref, resource=resource)
+            self.run_hook(FSEvent.GET_FILE, ctx)
+
         if precheck and Path(lpath).exists():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
@@ -320,6 +324,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                     f"Skipping download of resource {rpath!r} to local path {lpath!r}: "
                     f"Resource {lpath!r} exists and checksums match."
                 )
+                run_get_file_hook()
                 return
 
         if isfilelike(lpath):
@@ -344,9 +349,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         finally:
             if not isfilelike(lpath):
                 outfile.close()
-
-            ctx = HookContext(repository=repository, ref=ref, resource=resource)
-            self.run_hook(FSEvent.GET_FILE, ctx)
+            run_get_file_hook()
 
     def info(self, path: str, **kwargs: Any) -> dict[str, Any]:
         path = self._strip_protocol(path)
@@ -530,6 +533,10 @@ class LakeFSFileSystem(AbstractFileSystem):
     ):
         repository, branch, resource = parse(rpath)
 
+        def run_put_file_hook():
+            ctx = HookContext(repository=repository, ref=branch, resource=resource)
+            self.run_hook(FSEvent.PUT_FILE, ctx)
+
         if precheck:
             remote_checksum = self.checksum(rpath)
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
@@ -538,6 +545,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                     f"Skipping upload of resource {lpath!r} to remote path {rpath!r}: "
                     f"Resource {rpath!r} exists and checksums match."
                 )
+                run_put_file_hook()
                 return
         if use_blockstore:
             self.put_file_to_blockstore(
@@ -550,8 +558,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                         repository=repository, branch=branch, path=resource, content=f, **kwargs
                     )
 
-        ctx = HookContext(repository=repository, ref=branch, resource=resource)
-        self.run_hook(FSEvent.PUT_FILE, ctx)
+        run_put_file_hook()
 
     def put(
         self,
