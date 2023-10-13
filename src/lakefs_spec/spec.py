@@ -452,12 +452,6 @@ class LakeFSFileSystem(AbstractFileSystem):
     def put_file_to_blockstore(
         self, lpath, repository, branch, resource, presign=True, storage_options=None
     ):
-        blockstore_type = get_blockstore_type(self.client)
-        if blockstore_type not in ["s3", "gs", "azure"]:
-            raise ValueError(
-                f"Blockstore writes not implemented for blockstore type '{blockstore_type}'"
-            )
-
         staging_location = self.client.staging_api.get_physical_address(
             repository, branch, resource, presign=presign
         )
@@ -489,11 +483,18 @@ class LakeFSFileSystem(AbstractFileSystem):
                     )
                     translate_lakefs_error(error=urllib_http_error_as_lakefs_api_exception)
         else:
+            blockstore_type = get_blockstore_type(self.client)
+            # lakeFS blockstore name is "azure", but Azure's fsspec registry entry is "az".
+            if blockstore_type == "azure":
+                blockstore_type = "az"
+
+            if blockstore_type not in ["s3", "gs", "az"]:
+                raise ValueError(
+                    f"Blockstore writes are not implemented for blockstore type {blockstore_type!r}"
+                )
+
             remote_url = staging_location.physical_address
-            # fsspec registry entry is "az", lakeFS blockstore name is "azure"
-            remote = filesystem(
-                "az" if blockstore_type == "azure" else blockstore_type, **(storage_options or {})
-            )
+            remote = filesystem(blockstore_type, **(storage_options or {}))
             remote.put_file(lpath, remote_url)
 
         staging_metadata = StagingMetadata(
@@ -513,7 +514,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         precheck=True,
         use_blockstore=False,
         presign=False,
-        storage_options={},
+        storage_options=None,
         **kwargs,
     ):
         repository, branch, resource = parse(rpath)
@@ -534,7 +535,12 @@ class LakeFSFileSystem(AbstractFileSystem):
                 return
         if use_blockstore:
             self.put_file_to_blockstore(
-                lpath, repository, branch, resource, presign, storage_options
+                lpath,
+                repository,
+                branch,
+                resource,
+                presign=presign,
+                storage_options=storage_options,
             )
         else:
             with open(lpath, "rb") as f:
