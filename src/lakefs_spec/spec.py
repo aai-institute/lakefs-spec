@@ -450,7 +450,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         )
 
     def put_file_to_blockstore(
-        self, lpath, repository, branch, resource, presign=True, storage_options=None
+        self, lpath, repository, branch, resource, presign=False, storage_options=None
     ):
         staging_location = self.client.staging_api.get_physical_address(
             repository, branch, resource, presign=presign

@@ -17,9 +17,8 @@ def test_local_blockstore_type(
         "lakefs_spec.spec.get_blockstore_type", new_callable=MagicMock
     ) as mock_get_client_blockstore_type:
         mock_get_client_blockstore_type.return_value = "local"
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(ValueError, match="not implemented for blockstore type 'local'"):
             fs.put_file_to_blockstore(lpath, repository, temp_branch, random_file.name)
-    assert str(exc_info.value) == "Blockstore writes not implemented for blockstore type 'local'"
 
 
 def test_presigned_url(
