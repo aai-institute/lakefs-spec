@@ -15,7 +15,6 @@ from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
 from lakefs_client import Configuration
-from lakefs_client import __version__ as __lakefs_client_version__
 from lakefs_client.client import LakeFSClient
 from lakefs_client.exceptions import ApiException, NotFoundException
 from lakefs_client.model.staging_metadata import StagingMetadata
@@ -24,7 +23,7 @@ from lakefs_client.models import BranchCreation, ObjectCopyCreation, ObjectStats
 from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.hooks import FSEvent, HookContext, LakeFSHook, noop
-from lakefs_spec.util import parse
+from lakefs_spec.util import lakefs_client_version, parse
 
 _DEFAULT_CALLBACK = NoOpCallback()
 
@@ -74,6 +73,24 @@ def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_bra
         logger.info(f"Created new branch {branch!r} from branch {source_branch!r}.")
     except ApiException:
         pass
+
+
+def get_blockstore_type(client: LakeFSClient) -> str:
+    """
+    Get the blockstore of the lakeFS server.
+    Backwards compatible to breaking config_api change in lakeFSClient version 0.110.1.
+
+    Args:
+        client (LakeFSClient): The lakefs client.
+
+    Returns:
+        str: The lakeFS server's blockstore type.
+    """
+    if lakefs_client_version < (0, 111, 0):
+        blockstore_type = client.config_api.get_storage_config().blockstore_type
+    else:
+        blockstore_type = client.config_api.get_config().storage_config.blockstore_type
+    return blockstore_type
 
 
 class LakeFSFileSystem(AbstractFileSystem):
@@ -448,20 +465,12 @@ class LakeFSFileSystem(AbstractFileSystem):
         )
 
     def put_file_to_blockstore(
-        self, lpath, repository, branch, resource, presign=True, storage_options={}
+        self, lpath, repository, branch, resource, presign=True, storage_options=None
     ):
-        print("In Blockstore")
-        if tuple(int(v) for v in __lakefs_client_version__.split(".")) < (0, 111, 0):
-            blockstore_type = self.client.config_api.get_storage_config().blockstore_type
-        else:
-            print("OOOKS")
-            print(self.client.config_api.get_config())
-            print(self.client.config_api.get_config().storage_config)
-            blockstore_type = self.client.config_api.get_config().storage_config.blockstore_type
-            print(blockstore_type)
-        if blockstore_type == "local":
+        blockstore_type = get_blockstore_type(self.client)
+        if blockstore_type not in ["s3", "gs", "azure"]:
             raise ValueError(
-                "Cannot write to blockstore of type 'local'. Disable use_blockstore or configure remote blockstore."
+                f"Blockstore writes not implemented for blockstore type '{blockstore_type}'"
             )
 
         staging_location = self.client.staging_api.get_physical_address(
@@ -484,21 +493,25 @@ class LakeFSFileSystem(AbstractFileSystem):
                     if not remote_url.lower().startswith("http"):
                         raise ValueError("Wrong protocol for remote connection")
                     else:
+                        logger.info(f"Begin upload of {lpath}")
                         with urllib.request.urlopen(
                             request
                         ):  # nosec [B310:blacklist] # We catch faulty protocols above.
-                            logger.info(f"Successfully uploaded: {lpath} ")
+                            logger.info(f"Successfully uploaded {lpath}")
                 except urllib.error.HTTPError as e:
-                    print(f"Failed to upload file: {lpath}", e.code, e.reason)
+                    urllib_http_error_as_lakefs_api_exception = ApiException(
+                        status=e.code, reason=e.reason
+                    )
+                    translate_lakefs_error(error=urllib_http_error_as_lakefs_api_exception)
         else:
             remote_url = staging_location.physical_address
-            remote = filesystem(blockstore_type, **storage_options)
+            remote = filesystem(blockstore_type, **(storage_options or {}))
             remote.put_file(lpath, remote_url)
 
         staging_metadata = StagingMetadata(
             staging=staging_location,
             checksum=md5_checksum(lpath, blocksize=self.blocksize),
-            size_bytes=1,
+            size_bytes=os.path.getsize(lpath),
         )
         self.client.staging_api.link_physical_address(
             repository, branch, resource, staging_metadata

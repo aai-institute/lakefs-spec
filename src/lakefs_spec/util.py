@@ -1,5 +1,7 @@
 import re
 
+from lakefs_client import __version__ as __lakefs_client_version__
+
 
 def parse(path: str) -> tuple[str, str, str]:
     """
@@ -30,3 +32,7 @@ def parse(path: str) -> tuple[str, str, str]:
 
     repo, ref, resource = results.groups()
     return repo, ref, resource
+
+
+lakefs_client_version = tuple(int(v) for v in __lakefs_client_version__.split("."))
+del __lakefs_client_version__
