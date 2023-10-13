@@ -490,7 +490,10 @@ class LakeFSFileSystem(AbstractFileSystem):
                     translate_lakefs_error(error=urllib_http_error_as_lakefs_api_exception)
         else:
             remote_url = staging_location.physical_address
-            remote = filesystem(blockstore_type, **(storage_options or {}))
+            # fsspec registry entry is "az", lakeFS blockstore name is "azure"
+            remote = filesystem(
+                "az" if blockstore_type == "azure" else blockstore_type, **(storage_options or {})
+            )
             remote.put_file(lpath, remote_url)
 
         staging_metadata = StagingMetadata(
