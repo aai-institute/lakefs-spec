@@ -23,7 +23,7 @@ from lakefs_client.models import BranchCreation, ObjectCopyCreation, ObjectStats
 from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.hooks import FSEvent, HookContext, LakeFSHook, noop
-from lakefs_spec.util import lakefs_client_version, parse
+from lakefs_spec.util import get_blockstore_type, parse
 
 _DEFAULT_CALLBACK = NoOpCallback()
 
@@ -73,24 +73,6 @@ def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_bra
         logger.info(f"Created new branch {branch!r} from branch {source_branch!r}.")
     except ApiException:
         pass
-
-
-def get_blockstore_type(client: LakeFSClient) -> str:
-    """
-    Get the blockstore of the lakeFS server.
-    Backwards compatible to breaking config_api change in lakeFSClient version 0.110.1.
-
-    Args:
-        client (LakeFSClient): The lakefs client.
-
-    Returns:
-        str: The lakeFS server's blockstore type.
-    """
-    if lakefs_client_version < (0, 111, 0):
-        blockstore_type = client.config_api.get_storage_config().blockstore_type
-    else:
-        blockstore_type = client.config_api.get_config().storage_config.blockstore_type
-    return blockstore_type
 
 
 class LakeFSFileSystem(AbstractFileSystem):
