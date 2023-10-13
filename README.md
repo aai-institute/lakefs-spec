@@ -68,12 +68,12 @@ If the specified branch does not exist, it is created by default. This behaviour
 ```python
 from lakefs_spec import LakeFSFileSystem
 
-# create_branch_ok=True (the default setting) enables implicit branch creation
-fs = LakeFSFileSystem(host="localhost:8000", create_branch_ok=False)
+# create_branch_ok=True (the default setting) enables implicit branch creation.
+fs = LakeFSFileSystem(create_branch_ok=False)
 ```
 
 If set to `create_branch_ok = False`, adressing non-existing branches causes an error.
-The flag can also be set in scoped filesystem behaviour changes. Like so
+The flag can also be set in scoped filesystem behaviour changes:
 
 ```python
 with fs.scope(create_branch_ok=False):
@@ -100,7 +100,7 @@ their more granular single-file counterparts `fs.get_file` and `fs.put_file`.
 ```python
 from lakefs_spec import LakeFSFileSystem
 
-fs = LakeFSFileSystem(host="localhost:8000")
+fs = LakeFSFileSystem()
 
 # The default is precheck=True, you can force the operation by setting precheck=False.
 fs.get_file("my-repo/my-ref/file.txt", "file.txt", precheck=True)
@@ -159,10 +159,10 @@ from lakefs_spec import LakeFSFileSystem
 fs = LakeFSFileSystem(configfile="path/to/my/lakectl.yaml")
 ```
 
-⚠️ To be able to read settings from a YAML configuration file, `pyyaml` has to be installed. You can do this by installing `lakefs-spec` together with the `yaml` extra:
+⚠️ To be able to read settings from a YAML configuration file, `pyyaml` has to be installed, for example using `pip`:
 
 ```shell
-pip install --upgrade lakefs-spec[yaml]
+pip install --upgrade pyyaml
 ```
 
 ### A note on mixing environment variables and `lakectl` configuration files
