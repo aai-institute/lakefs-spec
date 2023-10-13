@@ -1,24 +1,29 @@
 import hashlib
 import io
 import logging
+import mimetypes
 import operator
 import os
+import urllib.error
+import urllib.request
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Generator
 
+from fsspec import filesystem
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
 from lakefs_client import Configuration
 from lakefs_client.client import LakeFSClient
 from lakefs_client.exceptions import ApiException, NotFoundException
+from lakefs_client.model.staging_metadata import StagingMetadata
 from lakefs_client.models import BranchCreation, ObjectCopyCreation, ObjectStatsList
 
 from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.hooks import FSEvent, HookContext, LakeFSHook, noop
-from lakefs_spec.util import parse
+from lakefs_spec.util import get_blockstore_type, parse
 
 _DEFAULT_CALLBACK = NoOpCallback()
 
@@ -444,12 +449,71 @@ class LakeFSFileSystem(AbstractFileSystem):
             **kwargs,
         )
 
+    def put_file_to_blockstore(
+        self, lpath, repository, branch, resource, presign=True, storage_options=None
+    ):
+        blockstore_type = get_blockstore_type(self.client)
+        if blockstore_type not in ["s3", "gs", "azure"]:
+            raise ValueError(
+                f"Blockstore writes not implemented for blockstore type '{blockstore_type}'"
+            )
+
+        staging_location = self.client.staging_api.get_physical_address(
+            repository, branch, resource, presign=presign
+        )
+
+        if presign:
+            remote_url = staging_location.presigned_url
+            content_type, _ = mimetypes.guess_type(lpath)
+            if content_type is None:
+                content_type = "application/octet-stream"
+            with open(lpath, "rb") as f:
+                headers = {
+                    "Content-Type": content_type,
+                }
+                request = urllib.request.Request(
+                    url=remote_url, data=f, headers=headers, method="PUT"
+                )
+                try:
+                    if not remote_url.lower().startswith("http"):
+                        raise ValueError("Wrong protocol for remote connection")
+                    else:
+                        logger.info(f"Begin upload of {lpath}")
+                        with urllib.request.urlopen(
+                            request
+                        ):  # nosec [B310:blacklist] # We catch faulty protocols above.
+                            logger.info(f"Successfully uploaded {lpath}")
+                except urllib.error.HTTPError as e:
+                    urllib_http_error_as_lakefs_api_exception = ApiException(
+                        status=e.code, reason=e.reason
+                    )
+                    translate_lakefs_error(error=urllib_http_error_as_lakefs_api_exception)
+        else:
+            remote_url = staging_location.physical_address
+            # fsspec registry entry is "az", lakeFS blockstore name is "azure"
+            remote = filesystem(
+                "az" if blockstore_type == "azure" else blockstore_type, **(storage_options or {})
+            )
+            remote.put_file(lpath, remote_url)
+
+        staging_metadata = StagingMetadata(
+            staging=staging_location,
+            checksum=md5_checksum(lpath, blocksize=self.blocksize),
+            size_bytes=os.path.getsize(lpath),
+        )
+        self.client.staging_api.link_physical_address(
+            repository, branch, resource, staging_metadata
+        )
+
     def put_file(
         self,
         lpath,
         rpath,
         callback=_DEFAULT_CALLBACK,
         precheck=True,
+        use_blockstore=False,
+        presign=False,
+        storage_options={},
         **kwargs,
     ):
         repository, branch, resource = parse(rpath)
@@ -459,8 +523,8 @@ class LakeFSFileSystem(AbstractFileSystem):
             self.run_hook(FSEvent.PUT_FILE, ctx)
 
         if precheck:
-            local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.checksum(rpath)
+            local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             if local_checksum == remote_checksum:
                 logger.info(
                     f"Skipping upload of resource {lpath!r} to remote path {rpath!r}: "
@@ -468,12 +532,16 @@ class LakeFSFileSystem(AbstractFileSystem):
                 )
                 run_put_file_hook()
                 return
-
-        with open(lpath, "rb") as f:
-            with self.wrapped_api_call():
-                self.client.objects_api.upload_object(
-                    repository=repository, branch=branch, path=resource, content=f, **kwargs
-                )
+        if use_blockstore:
+            self.put_file_to_blockstore(
+                lpath, repository, branch, resource, presign, storage_options
+            )
+        else:
+            with open(lpath, "rb") as f:
+                with self.wrapped_api_call():
+                    self.client.objects_api.upload_object(
+                        repository=repository, branch=branch, path=resource, content=f, **kwargs
+                    )
 
         run_put_file_hook()
 
