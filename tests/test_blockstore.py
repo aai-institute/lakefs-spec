@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-from lakefs_client.model.staging_location import StagingLocation
+from lakefs_sdk.models.staging_location import StagingLocation
 
 from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory
