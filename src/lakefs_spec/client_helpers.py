@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 
 from lakefs_client.client import LakeFSClient
