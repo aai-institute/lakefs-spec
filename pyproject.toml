@@ -49,10 +49,6 @@ dev = [
     "pytest-cov>=4.1.0",
 ]
 
-# Register lakeFS file system via the fsspec entry point
-[project.entry-points]
-"fsspec.specs" = { "lakefs" = "lakefs_spec.LakeFSFileSystem" }
-
 [tool.setuptools]
 package-dir = { "" = "src" }
 zip-safe = false
