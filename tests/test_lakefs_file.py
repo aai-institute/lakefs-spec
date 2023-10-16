@@ -39,7 +39,7 @@ def test_lakefs_file_open_write(
 
     with pytest.warns(
         UserWarning,
-        match=r"Calling `LakeFSFile\.open\(\)` in write mode results in unbuffered file uploads, because the lakeFS Python client does not support multipart uploads\. Uploading large files unbuffered can have performance implications\.",
+        match=r"Calling `LakeFSFile\.open\(\)` in write mode results in unbuffered file uploads.*",
     ):
         # try opening the remote file and writing to it
         with fs.open(rpath, "wb") as fp:

@@ -618,8 +618,8 @@ class LakeFSFile(AbstractBufferedFile):
             **kwargs,
         )
 
-        global _warn_on_fileupload
         if mode == "wb":
+            global _warn_on_fileupload
             if _warn_on_fileupload:
                 warnings.warn(
                     f"Calling `{self.__class__.__name__}.open()` in write mode results in unbuffered "
