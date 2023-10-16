@@ -1,3 +1,5 @@
+[![](https://img.shields.io/pypi/v/lakefs-spec)](https://pypi.org/project/lakefs-spec) ![GitHub](https://img.shields.io/github/license/appliedAI-Initiative/lakefs-spec) ![GitHub](https://img.shields.io/github/stars/appliedAI-Initiative/lakefs-spec)
+
 # lakefs-spec: An `fsspec` implementation for lakeFS
 
 This repository contains a [filesystem-spec](https://github.com/fsspec/filesystem_spec) implementation for the [lakeFS](https://lakefs.io/) project.
