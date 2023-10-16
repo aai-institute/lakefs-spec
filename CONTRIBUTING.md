@@ -65,14 +65,3 @@ pip-compile --extra=dev --output-file=requirements-dev.txt pyproject.toml
 ```
 
 ⚠️ Since the official development version is Python 3.11, please run the above `pip-compile` command in a virtual environment with Python 3.11.
-
-## A note on local development with poetry
-
-Since `lakefs-spec` relies on a `setuptools` entry point for registration, it will not be registered by `poetry` upon installation, since that uses a different build backend.
-
-To register the lakeFS filesystem with poetry in local development, add the following to your `pyproject.toml` file:
-
-```toml
-[tool.poetry.plugins."fsspec.specs"]
-"lakefs" = "lakefs_spec.LakeFSFileSystem"
-```
