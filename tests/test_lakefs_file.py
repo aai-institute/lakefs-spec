@@ -37,9 +37,13 @@ def test_lakefs_file_open_write(
 
     rpath = f"{repository}/{temp_branch}/{random_file.name}"
 
-    # try opening the remote file and writing to it
-    with fs.open(rpath, "wb") as fp:
-        fp.write(orig_text)
+    with pytest.warns(
+        UserWarning,
+        match=r"Calling `LakeFSFile\.open\(\)` in write mode results in unbuffered file uploads.*",
+    ):
+        # try opening the remote file and writing to it
+        with fs.open(rpath, "wb") as fp:
+            fp.write(orig_text)
 
     # pulling the written file down again, using ONLY built-in open (!)
     lpath = random_file.with_name(random_file.name + "_copy")

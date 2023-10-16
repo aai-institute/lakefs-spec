@@ -8,6 +8,7 @@ import operator
 import os
 import urllib.error
 import urllib.request
+import warnings
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Generator
@@ -617,14 +618,16 @@ class LakeFSFile(AbstractBufferedFile):
             **kwargs,
         )
 
-        global _warn_on_fileupload
-        if mode == "wb" and _warn_on_fileupload:
-            logger.warning(
-                f"Calling `{self.__class__.__name__}.open()` in write mode results in unbuffered "
-                "file uploads, because the lakeFS Python client does not support multipart "
-                "uploads. Uploading large files unbuffered can have performance implications."
-            )
-            _warn_on_fileupload = False
+        if mode == "wb":
+            global _warn_on_fileupload
+            if _warn_on_fileupload:
+                warnings.warn(
+                    f"Calling `{self.__class__.__name__}.open()` in write mode results in unbuffered "
+                    "file uploads, because the lakeFS Python client does not support multipart "
+                    "uploads. Uploading large files unbuffered can have performance implications.",
+                    UserWarning,
+                )
+                _warn_on_fileupload = False
             repository, branch, resource = parse(path)
             ensure_branch(self.fs.client, repository, branch, self.fs.source_branch)
 
