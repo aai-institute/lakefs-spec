@@ -4,23 +4,27 @@
 #
 #    pip-compile --extra=dev --output-file=requirements-dev.txt pyproject.toml
 #
+aenum==3.1.15
+    # via lakefs-sdk
 build==1.0.3
     # via lakefs-spec (pyproject.toml)
 cfgv==3.4.0
     # via pre-commit
 coverage[toml]==7.3.2
-    # via pytest-cov
+    # via
+    #   coverage
+    #   pytest-cov
 distlib==0.3.7
     # via virtualenv
 filelock==3.12.4
     # via virtualenv
-fsspec==2023.9.2
+fsspec==2023.10.0
     # via lakefs-spec (pyproject.toml)
 identify==2.5.30
     # via pre-commit
 iniconfig==2.0.0
     # via pytest
-lakefs-client==1.0.0
+lakefs-sdk==1.0.0
     # via lakefs-spec (pyproject.toml)
 nodeenv==1.8.0
     # via pre-commit
@@ -35,6 +39,8 @@ pluggy==1.3.0
     # via pytest
 pre-commit==3.5.0
     # via lakefs-spec (pyproject.toml)
+pydantic==1.10.13
+    # via lakefs-sdk
 pyproject-hooks==1.0.0
     # via build
 pytest==7.4.2
@@ -44,20 +50,24 @@ pytest==7.4.2
 pytest-cov==4.1.0
     # via lakefs-spec (pyproject.toml)
 python-dateutil==2.8.2
-    # via lakefs-client
+    # via lakefs-sdk
 pyyaml==6.0.1
     # via
     #   lakefs-spec (pyproject.toml)
     #   pre-commit
 setuptools-scm[toml]==8.0.4
-    # via lakefs-spec (pyproject.toml)
+    # via
+    #   lakefs-spec (pyproject.toml)
+    #   setuptools-scm
 six==1.16.0
     # via python-dateutil
 typing-extensions==4.8.0
-    # via setuptools-scm
+    # via
+    #   pydantic
+    #   setuptools-scm
 urllib3==2.0.7
-    # via lakefs-client
-virtualenv==20.24.5
+    # via lakefs-sdk
+virtualenv==20.24.6
     # via pre-commit
 
 # The following packages are considered to be unsafe in a requirements file:

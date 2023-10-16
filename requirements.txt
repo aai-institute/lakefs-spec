@@ -4,13 +4,19 @@
 #
 #    pip-compile --strip-extras pyproject.toml
 #
-fsspec==2023.9.2
+aenum==3.1.15
+    # via lakefs-sdk
+fsspec==2023.10.0
     # via lakefs-spec (pyproject.toml)
-lakefs-client==1.0.0
+lakefs-sdk==1.0.0
     # via lakefs-spec (pyproject.toml)
+pydantic==1.10.13
+    # via lakefs-sdk
 python-dateutil==2.8.2
-    # via lakefs-client
+    # via lakefs-sdk
 six==1.16.0
     # via python-dateutil
+typing-extensions==4.8.0
+    # via pydantic
 urllib3==2.0.7
-    # via lakefs-client
+    # via lakefs-sdk
