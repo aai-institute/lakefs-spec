@@ -1,7 +1,7 @@
 import re
 
-from lakefs_client import __version__ as __lakefs_client_version__
-from lakefs_client.client import LakeFSClient
+from lakefs_sdk import __version__ as __lakefs_sdk_version__
+from lakefs_sdk.client import LakeFSClient
 
 
 def parse(path: str) -> tuple[str, str, str]:
@@ -35,8 +35,8 @@ def parse(path: str) -> tuple[str, str, str]:
     return repo, ref, resource
 
 
-lakefs_client_version = tuple(int(v) for v in __lakefs_client_version__.split("."))
-del __lakefs_client_version__
+lakefs_client_version = tuple(int(v) for v in __lakefs_sdk_version__.split("."))
+del __lakefs_sdk_version__
 
 
 def get_blockstore_type(client: LakeFSClient) -> str:

@@ -2,11 +2,9 @@ from __future__ import annotations
 
 import logging
 
-from lakefs_client.client import LakeFSClient
-from lakefs_client.exceptions import NotFoundException
-from lakefs_client.model.commit_creation import CommitCreation
-from lakefs_client.model.revert_creation import RevertCreation
-from lakefs_client.model.tag_creation import TagCreation
+from lakefs_sdk.client import LakeFSClient
+from lakefs_sdk.exceptions import NotFoundException
+from lakefs_sdk.models import CommitCreation, RevertCreation, TagCreation
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

@@ -4,7 +4,7 @@ import errno
 import functools
 import json
 
-from lakefs_client import ApiException
+from lakefs_sdk import ApiException
 
 HTTP_CODE_TO_ERROR: dict[int, type[OSError]] = {
     401: PermissionError,

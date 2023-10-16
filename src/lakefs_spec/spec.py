@@ -17,11 +17,10 @@ from fsspec import filesystem
 from fsspec.callbacks import NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
-from lakefs_client import Configuration
-from lakefs_client.client import LakeFSClient
-from lakefs_client.exceptions import ApiException, NotFoundException
-from lakefs_client.model.staging_metadata import StagingMetadata
-from lakefs_client.models import BranchCreation, ObjectCopyCreation, ObjectStatsList
+from lakefs_sdk import Configuration
+from lakefs_sdk.client import LakeFSClient
+from lakefs_sdk.exceptions import ApiException, NotFoundException
+from lakefs_sdk.models import BranchCreation, ObjectCopyCreation, ObjectStatsList, StagingMetadata
 
 from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
