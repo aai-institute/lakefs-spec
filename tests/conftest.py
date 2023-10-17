@@ -6,6 +6,7 @@ import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Generator, TypeVar
+from unittest.mock import MagicMock
 
 import pytest
 import yaml
@@ -13,7 +14,8 @@ from lakefs_client import Configuration
 from lakefs_client.client import LakeFSClient
 from lakefs_client.models import BranchCreation, RepositoryCreation
 
-from lakefs_spec import LakeFSFileSystem, lakefs_client_version
+from lakefs_spec import LakeFSFileSystem
+from lakefs_spec.util import lakefs_client_version
 from tests.util import RandomFileFactory
 
 _TEST_REPO = "lakefs-spec-tests"
@@ -157,3 +159,10 @@ def temporary_lakectl_config() -> YieldFixture[str]:
         path.unlink()
         if backup_path.exists():
             backup_path.rename(path)
+
+
+@pytest.fixture()
+def mock_urlopen(monkeypatch: pytest.MonkeyPatch) -> MagicMock:
+    mock = MagicMock()
+    monkeypatch.setattr("urllib.request.urlopen", mock)
+    return mock

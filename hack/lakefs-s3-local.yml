@@ -4,21 +4,16 @@ version: "3"
 
 services:
   seaweedfs:
-      container_name: sandbox-s3
-      image: chrislusf/seaweedfs:3.56
-      ports:
-        - 9001:9001
-      network_mode: host
-      command: server -ip.bind 0.0.0.0 -master.volumeSizeLimitMB=1024 -volume.port=9000 -filer.collection=sandbox -s3 -s3.port 9001 -s3.config=/etc/seaweedfs/s3.json -s3.allowEmptyFolder=true -s3.allowDeleteBucketNotEmpty=true
-      volumes:
-          - seaweedfs-data:/data
-          - ./config/s3.json:/etc/seaweedfs/s3.json
-      restart: always
+    container_name: sandbox-s3
+    image: chrislusf/seaweedfs:3.56
+    network_mode: host
+    command: server -ip.bind 0.0.0.0 -master.volumeSizeLimitMB=1024 -volume.port=9000 -filer.collection=sandbox -s3 -s3.port 9001 -s3.config=/etc/seaweedfs/s3.json -s3.allowEmptyFolder=true -s3.allowDeleteBucketNotEmpty=true
+    volumes:
+      - seaweedfs-data:/data
+      - ./config/s3.json:/etc/seaweedfs/s3.json
 
   lakefs:
     image: treeverse/lakefs:0.112.1
-    ports:
-      - 8000:8000
     network_mode: host
     depends_on:
       - seaweedfs
@@ -37,4 +32,4 @@ services:
       LAKEFS_BLOCKSTORE_DEFAULT_NAMESPACE_PREFIX: s3://sandbox/lakefs/
 
 volumes:
-    seaweedfs-data: {}
+  seaweedfs-data: {}

@@ -1,4 +1,14 @@
-from enum import StrEnum, auto
+import sys
+
+if sys.version_info >= (3, 11):
+    from enum import StrEnum, auto
+else:
+    from enum import Enum, auto
+
+    class StrEnum(str, Enum):
+        pass
+
+
 from typing import Callable, NamedTuple
 
 from lakefs_client.client import LakeFSClient
