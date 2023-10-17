@@ -1,0 +1,68 @@
+site_name: lakefs-spec
+site_dir: public/docs
+site_url: https://lakefs-spec.github.io
+repo_url: https://github.com/appliedAI-Initiative/lakefs-spec
+edit_uri: -/edit/main/docs/
+
+# To validate all internal links exist. Does not work in ipynb files
+strict: true
+
+plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: numpy
+            show_root_heading: true
+            show_submodules: true
+            show_signature_annotations: true
+  - mknotebooks:
+      execute: true
+      # https://github.com/greenape/mknotebooks/blob/master/examples/cell_tag_remove/mkdocs.yml
+      # See the following for how to add the tags to cells: https://jupyterbook.org/en/stable/content/metadata.html#jupyter-cell-tags
+      tag_remove_configs:
+        remove_cell_tags:
+          - Remove_cell
+        remove_all_outputs_tags:
+          - Remove_all_output
+        remove_single_output_tags:
+          - Remove_single_output
+        remove_input_tags:
+          - Remove_input
+  - search:
+  - git-revision-date-localized:
+      type: iso_date
+  - include_dir_to_nav:
+      file_pattern: '.*\.(md|ipynb)$'
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true 
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+theme:
+  name: "material"
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+extra_css:
+  - mkdocs_customization/extra.css

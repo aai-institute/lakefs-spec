@@ -1,0 +1,6 @@
+mkdocs
+mkdocs-material
+mkdocstrings-python
+mkdocs-git-revision-date-localized-plugin
+mkdocs-include-dir-to-nav
+mknotebooks
