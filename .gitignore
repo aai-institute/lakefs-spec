@@ -120,4 +120,4 @@ syft-output.json
 .direnv
 
 #demo-files
-/demos/data
+/demos/data/*
