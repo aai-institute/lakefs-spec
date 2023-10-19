@@ -28,7 +28,7 @@ plugins:
           options:
             docstring_style: numpy
             docstring_section_style: spacy
-            line_length: 88
+            line_length: 100
             show_bases: true
             members_order: source
             separate_signature: true
