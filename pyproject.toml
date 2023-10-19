@@ -49,6 +49,19 @@ dev = [
     "pytest-cov>=4.1.0",
     "pyyaml>=6.0.1",
 ]
+docs = [
+    "mkdocs",
+    "mkdocs-gen-files",
+    "mkdocs-literate-nav",
+    "mkdocs-section-index",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+    "mkdocs-git-revision-date-localized-plugin",
+    "mkdocs-include-dir-to-nav",
+    "mknotebooks",
+    "jupyter",
+    "mike@git+https://github.com/jimporter/mike.git",
+]
 
 [tool.setuptools]
 package-dir = { "" = "src" }
