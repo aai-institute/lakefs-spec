@@ -48,7 +48,7 @@ plugins:
         remove_input_tags:
           - Remove_input
   - mike:
-      canonical_version: stable
+      canonical_version: latest
   - search:
   - git-revision-date-localized:
       type: iso_date
@@ -93,7 +93,7 @@ extra:
   copyright_link: https://appliedai.de
   version:
     provider: mike
-    default: stable
+    default: latest
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/appliedAI-Initiative/lakefs-spec
