@@ -25,6 +25,12 @@ jobs:
         with:
           name: dist
           path: dist
+      - name: Publish documentation
+        uses: ./.github/actions/mike-docs
+        with:
+          version: ${{ github.ref_name }}
+          alias: latest
+          push: true
   publish_pypi:
     name: Publish wheels to PyPI
     needs: [ build ]

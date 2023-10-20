@@ -67,8 +67,9 @@ jobs:
       uses: codecov/codecov-action@v3
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-    - name: Deploy Docs
+    - name: Documentation
       uses: ./.github/actions/mike-docs
       with:
         version: ${{ env.CURRENT_VERSION }}
         alias: development
+        push: ${{ github.ref == 'main' }}  # build always, publish on 'main' only to prevent version clutter

@@ -1,5 +1,5 @@
-name: Deploy Docs
-description: Deploy documentation using mike
+name: Documentation
+description: Build and publish documentation using mike
 inputs:
   version:
     description: Version number
@@ -8,6 +8,10 @@ inputs:
     description: Alias name
     default: latest
     required: true
+  push:
+    description: Whether to push the built documentation to the repository
+    required: true
+    default: "false"
 runs:
   using: "composite"
   steps:
@@ -20,5 +24,10 @@ runs:
       git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
     shell: bash
   - run: |
-        mike deploy ${{ inputs.version }} ${{ inputs.alias }} --push --update-aliases
+      MIKE_OPTIONS=()
+      if [ "true" = "${{ inputs.push }}"" ]; then
+        MIKE_OPTIONS+=( "--push" )
+      fi
+      
+      mike deploy ${{ inputs.version }} ${{ inputs.alias }} --push --update-aliases
     shell: bash
