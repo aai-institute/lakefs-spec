@@ -1,4 +1,5 @@
-[![](https://img.shields.io/pypi/v/lakefs-spec)](https://pypi.org/project/lakefs-spec) ![GitHub](https://img.shields.io/github/license/appliedAI-Initiative/lakefs-spec) ![GitHub](https://img.shields.io/github/stars/appliedAI-Initiative/lakefs-spec)
+[![](https://img.shields.io/pypi/v/lakefs-spec)](https://pypi.org/project/lakefs-spec) ![GitHub](https://img.shields.io/github/license/appliedAI-Initiative/lakefs-spec) [![docs](https://img.shields.io/badge/docs-latest-blue)](https://appliedai-initiative.github.io/lakefs-spec/)
+ ![GitHub](https://img.shields.io/github/stars/appliedAI-Initiative/lakefs-spec)
 
 # lakefs-spec: An `fsspec` implementation for lakeFS
 
