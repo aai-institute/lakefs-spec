@@ -1,1 +1,9 @@
-[{"version": "0.2.1.dev6+g15aba20", "title": "0.2.1.dev6+g15aba20", "aliases": ["development"]}, {"version": "0.2.1.dev5+geffc0bd", "title": "0.2.1.dev5+geffc0bd", "aliases": []}, {"version": "0.2.1.dev4+g0f7d2cb", "title": "0.2.1.dev4+g0f7d2cb", "aliases": []}, {"version": "v0.2.1", "title": "v0.2.1", "aliases": ["latest"]}]
+[
+  {
+    "version": "v0.2.1",
+    "title": "v0.2.1",
+    "aliases": [
+      "latest"
+    ]
+  }
+]
