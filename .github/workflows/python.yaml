@@ -9,7 +9,7 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   test:
@@ -32,6 +32,8 @@ jobs:
       PRE_COMMIT_HOME: "${{ github.workspace }}/.cache/pre-commit"
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # for documentation builds
     - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
