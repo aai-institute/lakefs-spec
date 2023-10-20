@@ -27,7 +27,7 @@ def translate_lakefs_error(  # type: ignore
         An error message to use for the returned exception. If not given, the
         error message returned by the lakeFS server is used instead.
     set_cause : bool
-        Whether to set the __cause__ attribute to the previous exception if the
+        Whether to set the ``__cause__`` attribute to the previous exception if the
         exception is translated.
     *args:
         Additional arguments to pass to the exception constructor, after the
@@ -35,9 +35,9 @@ def translate_lakefs_error(  # type: ignore
 
     Returns
     -------
-
-    An instantiated exception ready to be thrown. If the error code isn't
-    recognized, an IOError with the original error message is returned.
+    OSError
+        An instantiated exception ready to be thrown. If the error code isn't
+        recognized, an ``IOError`` with the original error message is returned.
     """
     status, reason, body = error.status, error.reason, error.body
 
