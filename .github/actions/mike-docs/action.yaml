@@ -24,10 +24,10 @@ runs:
       git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
     shell: bash
   - run: |
-      MIKE_OPTIONS=()
+      MIKE_OPTIONS=( "--update-aliases" )
       if [ "true" = "${{ inputs.push }}"" ]; then
         MIKE_OPTIONS+=( "--push" )
       fi
       
-      mike deploy ${{ inputs.version }} ${{ inputs.alias }} --push --update-aliases
+      mike deploy ${{ inputs.version }} ${{ inputs.alias }} "${MIKE_OPTIONS[@]}"
     shell: bash
