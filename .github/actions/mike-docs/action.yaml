@@ -25,7 +25,7 @@ runs:
     shell: bash
   - run: |
       MIKE_OPTIONS=( "--update-aliases" )
-      if [ "true" = "${{ inputs.push }}"" ]; then
+      if [ "true" = "${{ inputs.push }}" ]; then
         MIKE_OPTIONS+=( "--push" )
       fi
       
