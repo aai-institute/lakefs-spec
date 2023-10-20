@@ -6,11 +6,11 @@
 #
 fsspec==2023.9.2
     # via lakefs-spec (pyproject.toml)
-lakefs-client==0.112.1
+lakefs-client==1.0.0
     # via lakefs-spec (pyproject.toml)
 python-dateutil==2.8.2
     # via lakefs-client
 six==1.16.0
     # via python-dateutil
-urllib3==2.0.6
+urllib3==2.0.7
     # via lakefs-client

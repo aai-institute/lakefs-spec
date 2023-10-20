@@ -20,7 +20,7 @@ identify==2.5.30
     # via pre-commit
 iniconfig==2.0.0
     # via pytest
-lakefs-client==0.112.1
+lakefs-client==1.0.0
     # via lakefs-spec (pyproject.toml)
 nodeenv==1.8.0
     # via pre-commit
@@ -33,7 +33,7 @@ platformdirs==3.11.0
     # via virtualenv
 pluggy==1.3.0
     # via pytest
-pre-commit==3.4.0
+pre-commit==3.5.0
     # via lakefs-spec (pyproject.toml)
 pyproject-hooks==1.0.0
     # via build
@@ -55,7 +55,7 @@ six==1.16.0
     # via python-dateutil
 typing-extensions==4.8.0
     # via setuptools-scm
-urllib3==2.0.6
+urllib3==2.0.7
     # via lakefs-client
 virtualenv==20.24.5
     # via pre-commit
