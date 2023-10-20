@@ -1,9 +1,14 @@
 [
   {
-    "version": "0.2.1.dev4+g0f7d2cb",
-    "title": "0.2.1.dev4+g0f7d2cb",
+    "version": "0.2.1.dev5+geffc0bd",
+    "title": "0.2.1.dev5+geffc0bd",
     "aliases": [
       "development"
     ]
+  },
+  {
+    "version": "0.2.1.dev4+g0f7d2cb",
+    "title": "0.2.1.dev4+g0f7d2cb",
+    "aliases": []
   }
 ]
