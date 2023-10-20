@@ -699,11 +699,79 @@
   <div class="doc doc-contents ">
   
       <p>Reverts the commit on the specified branch to the parent specified by parent_number.</p>
-<p>Args:
-    client (LakeFSClient): The client to interact with.
-    repository (str): Repository in which the specified branch is located.
-    branch (str): Branch on which the commit should be reverted.
-    parent_number (int, optional): If there are multiple parents to a commit, specify to which parent the commit should be reverted. Index starts at 1. Defaults to 1.</p>
+
+
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>PARAMETER</b></th>
+        <th><b> DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>client</code></td>
+          <td class="doc-param-details">
+            <div class="doc-md-description">
+              <p>The client to interact with.</p>
+            </div>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><span title="lakefs_client.client.LakeFSClient">LakeFSClient</span></code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>repository</code></td>
+          <td class="doc-param-details">
+            <div class="doc-md-description">
+              <p>Repository in which the specified branch is located.</p>
+            </div>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code>str</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>branch</code></td>
+          <td class="doc-param-details">
+            <div class="doc-md-description">
+              <p>Branch on which the commit should be reverted.</p>
+            </div>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code>str</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>parent_number</code></td>
+          <td class="doc-param-details">
+            <div class="doc-md-description">
+              <p>If there are multiple parents to a commit, specify to which parent the commit should be reverted. Index starts at 1. Defaults to 1.</p>
+            </div>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code>int</code>
+                </span>
+                <span class="doc-param-default">
+                  <b>DEFAULT:</b> 
+                    <code>1</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
           <details class="quote">
             <summary>Source code in <code>src/lakefs_spec/client_helpers.py</code></summary>
@@ -719,14 +787,24 @@
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
-<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">revert</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">LakeFSClient</span><span class="p">,</span> <span class="n">repository</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">revert</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">LakeFSClient</span><span class="p">,</span> <span class="n">repository</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reverts the commit on the specified branch to the parent specified by parent_number.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        client (LakeFSClient): The client to interact with.</span>
-<span class="sd">        repository (str): Repository in which the specified branch is located.</span>
-<span class="sd">        branch (str): Branch on which the commit should be reverted.</span>
-<span class="sd">        parent_number (int, optional): If there are multiple parents to a commit, specify to which parent the commit should be reverted. Index starts at 1. Defaults to 1.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    client: LakeFSClient</span>
+<span class="sd">        The client to interact with.</span>
+<span class="sd">    repository: str</span>
+<span class="sd">        Repository in which the specified branch is located.</span>
+<span class="sd">    branch: str</span>
+<span class="sd">        Branch on which the commit should be reverted.</span>
+<span class="sd">    parent_number: int, optional</span>
+<span class="sd">        If there are multiple parents to a commit, specify to which parent the commit should be reverted. Index starts at 1. Defaults to 1.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">revert_creation</span> <span class="o">=</span> <span class="n">RevertCreation</span><span class="p">(</span><span class="n">ref</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span> <span class="n">parent_number</span><span class="o">=</span><span class="n">parent_number</span><span class="p">)</span>
     <span class="n">client</span><span class="o">.</span><span class="n">branches_api</span><span class="o">.</span><span class="n">revert_branch</span><span class="p">(</span>

@@ -747,7 +747,7 @@ error message returned by the lakeFS server is used instead.</p>
           <td><code>set_cause</code></td>
           <td class="doc-param-details">
             <div class="doc-md-description">
-              <p>Whether to set the <strong>cause</strong> attribute to the previous exception if the
+              <p>Whether to set the <code>__cause__</code> attribute to the previous exception if the
 exception is translated.</p>
             </div>
             <p>
@@ -793,24 +793,13 @@ error message. Useful for passing the filename arguments to <code>IOError</code>
         <tr>
           <td>
               <span class="doc-returns-annotation">
-                  <code>An instantiated exception ready to be thrown. If the error code isn&#39;t</code>
+                  <code>OSError</code>
               </span>
           </td>
           <td class="doc-returns-details">
             <div class="doc-md-description">
-              
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-              <span class="doc-returns-annotation">
-                  <code>recognized, an IOError with the original error message is returned.</code>
-              </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              
+              <p>An instantiated exception ready to be thrown. If the error code isn't
+recognized, an <code>IOError</code> with the original error message is returned.</p>
             </div>
           </td>
         </tr>
@@ -872,7 +861,7 @@ error message. Useful for passing the filename arguments to <code>IOError</code>
 <span class="sd">        An error message to use for the returned exception. If not given, the</span>
 <span class="sd">        error message returned by the lakeFS server is used instead.</span>
 <span class="sd">    set_cause : bool</span>
-<span class="sd">        Whether to set the __cause__ attribute to the previous exception if the</span>
+<span class="sd">        Whether to set the ``__cause__`` attribute to the previous exception if the</span>
 <span class="sd">        exception is translated.</span>
 <span class="sd">    *args:</span>
 <span class="sd">        Additional arguments to pass to the exception constructor, after the</span>
@@ -880,9 +869,9 @@ error message. Useful for passing the filename arguments to <code>IOError</code>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-
-<span class="sd">    An instantiated exception ready to be thrown. If the error code isn&#39;t</span>
-<span class="sd">    recognized, an IOError with the original error message is returned.</span>
+<span class="sd">    OSError</span>
+<span class="sd">        An instantiated exception ready to be thrown. If the error code isn&#39;t</span>
+<span class="sd">        recognized, an ``IOError`` with the original error message is returned.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">status</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">error</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="n">error</span><span class="o">.</span><span class="n">reason</span><span class="p">,</span> <span class="n">error</span><span class="o">.</span><span class="n">body</span>
 
