@@ -61,7 +61,8 @@ docs = [
     "mkdocs-include-dir-to-nav",
     "mknotebooks",
     "jupyter",
-    "mike@git+https://github.com/jimporter/mike.git",
+    "black",                                          # formatting of signatures in docs
+    "mike@git+https://github.com/jimporter/mike.git", # no recent PyPI releases
 ]
 
 [tool.setuptools]
