@@ -54,11 +54,16 @@ def merge(client: LakeFSClient, repository: str, source_ref: str, target_branch:
 def revert(client: LakeFSClient, repository: str, branch: str, parent_number: int = 1) -> None:
     """Reverts the commit on the specified branch to the parent specified by parent_number.
 
-    Args:
-        client (LakeFSClient): The client to interact with.
-        repository (str): Repository in which the specified branch is located.
-        branch (str): Branch on which the commit should be reverted.
-        parent_number (int, optional): If there are multiple parents to a commit, specify to which parent the commit should be reverted. Index starts at 1. Defaults to 1.
+    Parameters
+    ----------
+    client: LakeFSClient
+        The client to interact with.
+    repository: str
+        Repository in which the specified branch is located.
+    branch: str
+        Branch on which the commit should be reverted.
+    parent_number: int, optional
+        If there are multiple parents to a commit, specify to which parent the commit should be reverted. Index starts at 1. Defaults to 1.
     """
     revert_creation = RevertCreation(ref=branch, parent_number=parent_number)
     client.branches_api.revert_branch(

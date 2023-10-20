@@ -1,0 +1,106 @@
+site_name: lakefs-spec
+site_dir: public/docs
+site_url: https://lakefs-spec.github.io
+repo_url: https://github.com/appliedAI-Initiative/lakefs-spec
+edit_uri: -/edit/main/docs/
+
+# To validate all internal links exist. Does not work in ipynb files
+strict: false
+
+nav:
+  - Introduction: README.md
+  - Use Cases: use-cases.md
+  - User Guide: guides/
+  - API Reference: reference/
+  - CONTRIBUTING.md
+
+plugins:
+  - gen-files:
+      scripts:
+        - docs/_scripts/gen_api_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - section-index
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: numpy
+            docstring_section_style: spacy
+            line_length: 100
+            show_bases: true
+            members_order: source
+            separate_signature: true
+            signature_crossrefs: true
+            merge_init_into_class: false
+  - mknotebooks:
+      execute: true
+      # https://github.com/greenape/mknotebooks/blob/master/examples/cell_tag_remove/mkdocs.yml
+      # See the following for how to add the tags to cells: https://jupyterbook.org/en/stable/content/metadata.html#jupyter-cell-tags
+      tag_remove_configs:
+        remove_cell_tags:
+          - Remove_cell
+        remove_all_outputs_tags:
+          - Remove_all_output
+        remove_single_output_tags:
+          - Remove_single_output
+        remove_input_tags:
+          - Remove_input
+  - mike:
+      canonical_version: latest
+  - search:
+  - git-revision-date-localized:
+      type: iso_date
+  - include_dir_to_nav:
+      file_pattern: '.*\.(md|ipynb)$'
+
+markdown_extensions:
+  # python-markdown extensions: https://python-markdown.github.io/extensions/
+  - admonition
+  - attr_list
+  - sane_lists
+  - toc:
+      permalink: true
+      toc_depth: 3
+  # pymdown-extensions: https://facelessuser.github.io/pymdown-extensions/
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true 
+
+theme:
+  name: "material"
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+extra:
+  copyright_link: https://appliedai.de
+  version:
+    provider: mike
+    default: latest
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/appliedAI-Initiative/lakefs-spec
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/lakefs-spec
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/applied-ai-initiative/
+
+extra_css:
+  - mkdocs_customization/extra.css

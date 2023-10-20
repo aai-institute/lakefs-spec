@@ -1,3 +1,5 @@
+"""lakefs-spec is an fsspec file system integration for the lakeFS data lake."""
+
 from importlib.metadata import PackageNotFoundError, version
 
 from lakefs_client import __version__ as __lakefs_client_version__

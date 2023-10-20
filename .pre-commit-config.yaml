@@ -12,6 +12,7 @@ repos:
       - id: check-json
       - id: check-toml
       - id: check-yaml
+        exclude: "mkdocs.yml"
       - id: end-of-file-fixer
       - id: mixed-line-ending
   - repo: https://github.com/pre-commit/mirrors-mypy
@@ -54,3 +55,10 @@ repos:
           - --output-file=requirements-dev.txt
           - pyproject.toml
         files: ^(pyproject\.toml|requirements-dev\.txt)$
+      - id: pip-compile
+        name: pip-compile requirements-docs.txt
+        args:
+          - --extra=docs
+          - --output-file=requirements-docs.txt
+          - pyproject.toml
+        files: ^(pyproject\.toml|requirements-docs\.txt)$

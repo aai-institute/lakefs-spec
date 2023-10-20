@@ -121,3 +121,6 @@ syft-output.json
 
 #demo-files
 /demos/data/*
+
+# Generated documentation
+public/

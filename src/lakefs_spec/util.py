@@ -11,13 +11,13 @@ def parse(path: str) -> tuple[str, str, str]:
     Parameters
     ----------
     path: str
-     String path, needs to conform to the lakeFS URI format described above.
-     The ``<resource>`` part can be the empty string.
+        String path, needs to conform to the lakeFS URI format described above.
+        The ``<resource>`` part can be the empty string.
 
     Returns
     -------
     str
-       A 3-tuple of repository name, reference, and resource name.
+        A 3-tuple of repository name, reference, and resource name.
     """
 
     # First regex reflects the lakeFS repository naming rules:
