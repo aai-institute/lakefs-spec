@@ -10,5 +10,12 @@
     "version": "0.2.1.dev4+g0f7d2cb",
     "title": "0.2.1.dev4+g0f7d2cb",
     "aliases": []
+  },
+  {
+    "version": "v0.2.1",
+    "title": "v0.2.1",
+    "aliases": [
+      "latest"
+    ]
   }
 ]
