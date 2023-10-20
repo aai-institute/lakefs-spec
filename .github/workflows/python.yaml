@@ -40,10 +40,11 @@ jobs:
         cache-dependency-path: |
           requirements.txt
           requirements-dev.txt
+          requirements-docs.txt
           pyproject.toml
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt -r requirements-dev.txt
+        pip install -r requirements.txt -r requirements-dev.txt -r requirements-docs.txt
         pip install -e . --no-deps
     - name: Cache pre-commit tools
       uses: actions/cache@v3
@@ -69,3 +70,13 @@ jobs:
       uses: codecov/codecov-action@v3
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - name: Get current package version
+      run: |
+        export CURRENT_VERSION=$(python -m setuptools_scm)
+        echo CURRENT_VERSION=$CURRENT_VERSION >> $GITHUB_ENV
+      shell: bash
+    - name: Deploy Docs
+      uses: ./.github/actions/mike-docs
+      with:
+        version: ${{ env.CURRENT_VERSION }}
+        alias: development

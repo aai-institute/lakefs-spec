@@ -1,0 +1,24 @@
+name: Deploy Docs
+description: Deploy documentation using mike
+inputs:
+  version:
+    description: Version number
+    required: true
+  alias:
+    description: Alias name
+    default: latest
+    required: true
+runs:
+  using: "composite"
+  steps:
+  - run: |
+      # https://github.com/jimporter/mike#deploying-via-ci
+      git fetch origin gh-pages --depth=1
+
+      # For proper UI integration: https://github.com/actions/checkout/pull/1184
+      git config user.name "github-actions[bot]"
+      git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+    shell: bash
+  - run: |
+        mike deploy ${{ inputs.version }} ${{ inputs.alias }} --push --update-aliases
+    shell: bash
