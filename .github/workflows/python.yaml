@@ -34,20 +34,10 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0  # for documentation builds
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v4
+    - name: Set up Python and dependencies
+      uses: ./github/actions/python-deps
       with:
-        python-version: 3.11
-        cache: 'pip'
-        cache-dependency-path: |
-          requirements.txt
-          requirements-dev.txt
-          requirements-docs.txt
-          pyproject.toml
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt -r requirements-dev.txt -r requirements-docs.txt
-        pip install -e . --no-deps
+        pythonVersion: 3.11
     - name: Cache pre-commit tools
       uses: actions/cache@v3
       with:
