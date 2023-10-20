@@ -1,4 +1,7 @@
-"""Generate API reference pages."""
+"""Automatically generate API reference pages from source files.
+
+Source: https://mkdocstrings.github.io/recipes/#automatic-code-reference-pages
+"""
 
 from pathlib import Path
 
