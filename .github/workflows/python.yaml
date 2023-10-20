@@ -72,4 +72,4 @@ jobs:
       with:
         version: ${{ env.CURRENT_VERSION }}
         alias: development
-        push: ${{ github.ref == 'main' }}  # build always, publish on 'main' only to prevent version clutter
+        push: ${{ github.ref == 'refs/heads/main' }}  # build always, publish on 'main' only to prevent version clutter
