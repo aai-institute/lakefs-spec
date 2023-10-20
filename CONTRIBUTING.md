@@ -74,7 +74,7 @@ In addition to these manual steps, we also provide `pre-commit` hooks that autom
 
 Improvements or additions to the project's documentation are highly appreciated.
 
-The documentation is based on the [`mkdocs`](https://mkdocs.org) and [`mkdocs-material`](https://squidfunk.github.io/mkdocs-material/) projects, see their homepages for in-depth guides on their features and usage.
+The documentation is based on the [`mkdocs`](https://mkdocs.org) and [`mkdocs-material`](https://squidfunk.github.io/mkdocs-material/) projects, see their homepages for in-depth guides on their features and usage. We use the [Numpy documentation style](https://numpydoc.readthedocs.io/en/latest/format.html) for Python docstrings.
 
 To build the documentation locally, you need to first install the optional `docs` dependencies from `requirements-docs.txt`,
 e.g., with `pip install -r requirements-docs.txt`. You can then start a local documentation server with `mkdocs serve`, or
