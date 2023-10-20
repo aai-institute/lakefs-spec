@@ -55,6 +55,7 @@ If you have to update a dependency during development, you should do the followi
 
 1. If it is a core dependency needed for the package, add it to the `dependencies` section in the `pyproject.toml`.
 2. In case of a development dependency, add it to the `dev` section of the `project.optional-dependencies` table instead.
+3. Dependencies needed for documentation generation are found in the `docs` sections of `project.optional-dependencies`.
 
 After adding the dependency in either of these sections, run `pip-compile` to pin all dependencies again:
 
@@ -62,6 +63,23 @@ After adding the dependency in either of these sections, run `pip-compile` to pi
 python -m pip install --upgrade pip-tools
 pip-compile --strip-extras pyproject.toml
 pip-compile --extra=dev --output-file=requirements-dev.txt pyproject.toml
+pip-compile --extra=docs --output-file=requirements-docs.txt pyproject.toml
 ```
 
+In addition to these manual steps, we also provide `pre-commit` hooks that automatically lock the dependencies whenever `pyproject.toml` is changed.
+
 ⚠️ Since the official development version is Python 3.11, please run the above `pip-compile` command in a virtual environment with Python 3.11.
+
+## Working on Documentation
+
+Improvements or additions to the project's documentation are highly appreciated.
+
+The documentation is based on the [`mkdocs`](https://mkdocs.org) and [`mkdocs-material`](https://squidfunk.github.io/mkdocs-material/) projects, see their homepages for in-depth guides on their features and usage.
+
+To build the documentation locally, you need to first install the optional `docs` dependencies from `requirements-docs.txt`,
+e.g., with `pip install -r requirements-docs.txt`. You can then start a local documentation server with `mkdocs serve`, or
+build the documentation into its output folder in `public/`.
+
+In order to maintain documentation for multiple versions of this library, we use the [`mike`](https://github.com/jimporter/mike) tool, which automatically maintains individual documentation builds per version and publishes them to the `gh-pages` branch.
+
+The GitHub CI pipeline automatically invokes `mike` as part of the release process with the correct version and updates the GitHub pages branch for the project.
