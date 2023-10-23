@@ -235,12 +235,18 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def exists(self, path: str, **kwargs: Any) -> bool:
         repository, ref, resource = parse(path)
+
+        exists = False
         with self.wrapped_api_call():
             try:
                 self.client.objects_api.head_object(repository, ref, resource, **kwargs)
                 exists = True
             except NotFoundException:
-                exists = False
+                pass
+            except ApiException as e:
+                # in case of an error other than "not found", existence cannot be
+                # decided, so raise the translated error.
+                raise translate_lakefs_error(e)
             finally:
                 ctx = HookContext(repository=repository, ref=ref, resource=resource)
                 self.run_hook(FSEvent.EXISTS, ctx)
