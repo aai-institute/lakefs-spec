@@ -13,7 +13,7 @@ services:
       - ./config/s3.json:/etc/seaweedfs/s3.json
 
   lakefs:
-    image: treeverse/lakefs:0.112.1
+    image: treeverse/lakefs:1.0.0
     network_mode: host
     depends_on:
       - seaweedfs
