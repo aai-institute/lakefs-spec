@@ -9,8 +9,8 @@ and (mostly) works as advertised, it has its issues - the developer experience b
 typing information, and the woes of reading lots of raw client code, for example when downloading a file to load into a data frame:
 
 ```python
-from lakefs_client import Configuration
-from lakefs_client.client import LakeFSClient
+from lakefs_sdk import Configuration
+from lakefs_sdk.client import LakeFSClient
 
 # painful!
 configuration = Configuration(host="my-host")
@@ -85,7 +85,7 @@ A concrete example of this is creating lakeFS commits after a successful file up
 Commits provide a snapshot of a lakeFS repository, similarly to version control systems like git.
 
 ```python
-from lakefs_client.client import LakeFSClient
+from lakefs_sdk.client import LakeFSClient
 
 from lakefs_spec import LakeFSFileSystem
 from lakefs_spec.client_helpers import commit
