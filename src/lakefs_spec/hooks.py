@@ -11,7 +11,7 @@ else:
 
 from typing import Callable, NamedTuple
 
-from lakefs_client.client import LakeFSClient
+from lakefs_sdk.client import LakeFSClient
 
 from lakefs_spec.util import parse
 

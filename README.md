@@ -119,7 +119,7 @@ file system's lakeFS API client, and the `context` object contains information a
 As an example, the following snippet installs a lakeFS hook that creates a commit on the lakeFS branch after a file upload:
 
 ```python
-from lakefs_client.client import LakeFSClient
+from lakefs_sdk.client import LakeFSClient
 
 from lakefs_spec import LakeFSFileSystem
 from lakefs_spec.client_helpers import commit

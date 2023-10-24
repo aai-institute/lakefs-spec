@@ -4,6 +4,8 @@
 #
 #    pip-compile --extra=docs --output-file=requirements-docs.txt pyproject.toml
 #
+aenum==3.1.15
+    # via lakefs-sdk
 anyio==4.0.0
     # via jupyter-server
 argon2-cffi==23.1.0
@@ -29,7 +31,7 @@ backcall==0.2.0
     # via ipython
 beautifulsoup4==4.12.2
     # via nbconvert
-black==23.10.0
+black==23.10.1
     # via lakefs-spec (pyproject.toml)
 bleach==6.1.0
     # via nbconvert
@@ -37,7 +39,7 @@ certifi==2023.7.22
     # via requests
 cffi==1.16.0
     # via argon2-cffi-bindings
-charset-normalizer==3.3.0
+charset-normalizer==3.3.1
     # via requests
 click==8.1.7
     # via
@@ -63,11 +65,11 @@ fastjsonschema==2.18.1
     # via nbformat
 fqdn==1.5.1
     # via jsonschema
-fsspec==2023.9.2
+fsspec==2023.10.0
     # via lakefs-spec (pyproject.toml)
 ghp-import==2.1.0
     # via mkdocs
-gitdb==4.0.10
+gitdb==4.0.11
     # via gitpython
 gitpython==3.1.40
     # via
@@ -166,7 +168,7 @@ jupyterlab-server==2.25.0
     #   notebook
 jupyterlab-widgets==3.0.9
     # via ipywidgets
-lakefs-client==1.0.0
+lakefs-sdk==1.0.0
     # via lakefs-spec (pyproject.toml)
 markdown==3.5
     # via
@@ -299,6 +301,8 @@ pure-eval==0.2.2
     # via stack-data
 pycparser==2.21
     # via cffi
+pydantic==1.10.13
+    # via lakefs-sdk
 pygments==2.16.1
     # via
     #   ipython
@@ -315,7 +319,7 @@ python-dateutil==2.8.2
     #   arrow
     #   ghp-import
     #   jupyter-client
-    #   lakefs-client
+    #   lakefs-sdk
 python-json-logger==2.0.7
     # via jupyter-events
 pytz==2023.3.post1
@@ -338,7 +342,7 @@ pyzmq==25.1.1
     #   qtconsole
 qtconsole==5.4.4
     # via jupyter
-qtpy==2.4.0
+qtpy==2.4.1
     # via qtconsole
 referencing==0.30.2
     # via
@@ -412,11 +416,13 @@ traitlets==5.11.2
     #   qtconsole
 types-python-dateutil==2.8.19.14
     # via arrow
+typing-extensions==4.8.0
+    # via pydantic
 uri-template==1.3.0
     # via jsonschema
 urllib3==2.0.7
     # via
-    #   lakefs-client
+    #   lakefs-sdk
     #   requests
 verspec==0.1.0
     # via mike

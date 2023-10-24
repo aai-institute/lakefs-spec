@@ -10,9 +10,9 @@ from unittest.mock import MagicMock
 
 import pytest
 import yaml
-from lakefs_client import Configuration
-from lakefs_client.client import LakeFSClient
-from lakefs_client.models import BranchCreation, RepositoryCreation
+from lakefs_sdk import Configuration
+from lakefs_sdk.client import LakeFSClient
+from lakefs_sdk.models import BranchCreation, RepositoryCreation
 
 from lakefs_spec import LakeFSFileSystem
 from lakefs_spec.util import lakefs_client_version

@@ -2,11 +2,9 @@ from __future__ import annotations
 
 import logging
 
-from lakefs_client.client import LakeFSClient
-from lakefs_client.exceptions import NotFoundException
-from lakefs_client.model.commit_creation import CommitCreation
-from lakefs_client.model.revert_creation import RevertCreation
-from lakefs_client.model.tag_creation import TagCreation
+from lakefs_sdk.client import LakeFSClient
+from lakefs_sdk.exceptions import NotFoundException
+from lakefs_sdk.models import CommitCreation, RevertCreation, TagCreation
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -31,7 +29,7 @@ def commit(
 
 
 def create_tag(client: LakeFSClient, repository: str, ref: str, tag: str) -> None:
-    tag_creation = TagCreation(tag, ref=ref)
+    tag_creation = TagCreation(id=tag, ref=ref)
     client.tags_api.create_tag(repository=repository, tag_creation=tag_creation)
 
 

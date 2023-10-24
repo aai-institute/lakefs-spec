@@ -1,5 +1,5 @@
 import pytest
-from lakefs_client.client import LakeFSClient
+from lakefs_sdk.client import LakeFSClient
 
 from lakefs_spec import LakeFSFileSystem
 from lakefs_spec.hooks import FSEvent, HookContext

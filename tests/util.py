@@ -6,7 +6,7 @@ from inspect import ismethod
 from pathlib import Path
 from typing import Optional, Union
 
-from lakefs_client.client import LakeFSClient
+from lakefs_sdk.client import LakeFSClient
 
 
 class APICounter:

@@ -2,7 +2,7 @@
 
 from importlib.metadata import PackageNotFoundError, version
 
-from lakefs_client import __version__ as __lakefs_client_version__
+from lakefs_sdk import __version__ as __lakefs_sdk_version__
 
 from .spec import LakeFSFile, LakeFSFileSystem
 
@@ -12,5 +12,5 @@ except PackageNotFoundError:
     # package is not installed
     pass
 
-lakefs_client_version = tuple(int(v) for v in __lakefs_client_version__.split("."))
-del __lakefs_client_version__
+lakefs_sdk_version = tuple(int(v) for v in __lakefs_sdk_version__.split("."))
+del __lakefs_sdk_version__
