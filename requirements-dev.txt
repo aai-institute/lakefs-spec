@@ -11,9 +11,7 @@ build==1.0.3
 cfgv==3.4.0
     # via pre-commit
 coverage[toml]==7.3.2
-    # via
-    #   coverage
-    #   pytest-cov
+    # via pytest-cov
 distlib==0.3.7
     # via virtualenv
 filelock==3.12.4
@@ -56,9 +54,7 @@ pyyaml==6.0.1
     #   lakefs-spec (pyproject.toml)
     #   pre-commit
 setuptools-scm[toml]==8.0.4
-    # via
-    #   lakefs-spec (pyproject.toml)
-    #   setuptools-scm
+    # via lakefs-spec (pyproject.toml)
 six==1.16.0
     # via python-dateutil
 typing-extensions==4.8.0
