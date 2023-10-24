@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import io
 import logging
 import mimetypes
 import operator
@@ -300,9 +299,11 @@ class LakeFSFileSystem(AbstractFileSystem):
             ctx = HookContext(repository=repository, ref=ref, resource=resource)
             self.run_hook(FSEvent.GET_FILE, ctx)
 
+        info = self.info(rpath)
+
         if precheck and Path(lpath).exists():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
-            remote_checksum = self.checksum(rpath)
+            remote_checksum = info.get("checksum")
             if local_checksum == remote_checksum:
                 logger.info(
                     f"Skipping download of resource {rpath!r} to local path {lpath!r}: "
@@ -317,14 +318,19 @@ class LakeFSFileSystem(AbstractFileSystem):
             outfile = open(lpath, "wb")
 
         try:
-            res: io.BufferedReader = self.client.objects_api.get_object(
-                repository, ref, resource, **kwargs
-            )
+            offset, filesize = 0, info.get("size")
             while True:
-                chunk = res.read(self.blocksize)
-                if not chunk:
-                    break
+                next_offset = max(offset + self.blocksize, filesize)
+                byterange = f"bytes={offset}-{next_offset - 1}"
+
+                chunk = self.client.objects_api.get_object(
+                    repository, ref, resource, range=byterange, **kwargs
+                )
                 outfile.write(chunk)
+
+                offset += self.blocksize
+                if next_offset >= filesize:
+                    break
         except ApiException as e:
             from fsspec.implementations.local import LocalFileSystem
 
@@ -545,11 +551,10 @@ class LakeFSFileSystem(AbstractFileSystem):
                 storage_options=storage_options,
             )
         else:
-            with open(lpath, "rb") as f:
-                with self.wrapped_api_call():
-                    self.client.objects_api.upload_object(
-                        repository=repository, branch=branch, path=resource, content=f, **kwargs
-                    )
+            with self.wrapped_api_call():
+                self.client.objects_api.upload_object(
+                    repository=repository, branch=branch, path=resource, content=lpath, **kwargs
+                )
 
         run_put_file_hook()
 
@@ -639,11 +644,11 @@ class LakeFSFile(AbstractBufferedFile):
                 # single-shot upload.
                 # empty buffer is equivalent to a touch()
                 self.buffer.seek(0)
-                self.fs.client.objects.upload_object(
+                self.fs.client.objects_api.upload_object(
                     repository=repository,
                     branch=branch,
                     path=resource,
-                    content=self.buffer,
+                    content=self.buffer.read(),
                 )
 
         return not final
@@ -693,10 +698,9 @@ class LakeFSFile(AbstractBufferedFile):
     def _fetch_range(self, start: int, end: int) -> bytes:
         repository, ref, resource = parse(self.path)
         with self.fs.wrapped_api_call():
-            res: io.BufferedReader = self.fs.client.objects.get_object(
+            return self.fs.client.objects_api.get_object(
                 repository, ref, resource, range=f"bytes={start}-{end - 1}"
             )
-            return res.read()
 
     def close(self):
         super().close()

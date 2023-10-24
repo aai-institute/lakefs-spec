@@ -47,7 +47,11 @@ def test_lakefs_file_open_write(
 
     # pulling the written file down again, using ONLY built-in open (!)
     lpath = random_file.with_name(random_file.name + "_copy")
+
+    blocksize = fs.blocksize
+    fs.blocksize = 256
     fs.get(rpath, str(lpath))
+    fs.blocksize = blocksize
 
     with open(lpath, "rb") as f:
         new_text = f.read()
