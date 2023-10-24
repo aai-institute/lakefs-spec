@@ -18,18 +18,14 @@ def test_create_tag(
     client_helpers.commit(
         client=fs.client, repository=repository, branch=temp_branch, message="Commit File Factory"
     )
-    try:
-        tag_name = f"Change_{uuid.uuid4()}"
-        client_helpers.create_tag(
-            client=fs.client, repository=repository, ref=temp_branch, tag=tag_name
-        )
 
-        assert any(
-            commit.get("id") == tag_name
-            for commit in fs.client.tags_api.list_tags(repository).results
-        )
+    tag = f"Change_{uuid.uuid4()}"
+    try:
+        client_helpers.create_tag(client=fs.client, repository=repository, ref=temp_branch, tag=tag)
+
+        assert any(commit.id == tag for commit in fs.client.tags_api.list_tags(repository).results)
     finally:
-        fs.client.tags_api.delete_tag(repository=repository, tag=tag_name)
+        fs.client.tags_api.delete_tag(repository=repository, tag=tag)
 
 
 def test_merge_into_branch(

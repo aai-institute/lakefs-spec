@@ -29,7 +29,7 @@ def commit(
 
 
 def create_tag(client: LakeFSClient, repository: str, ref: str, tag: str) -> None:
-    tag_creation = TagCreation(tag, ref=ref)
+    tag_creation = TagCreation(id=tag, ref=ref)
     client.tags_api.create_tag(repository=repository, tag_creation=tag_creation)
 
 
