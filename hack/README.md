@@ -31,10 +31,6 @@ docker compose -f hack/lakefs-s3-local.yml up
 
 To stop the containers again, exit with `Ctrl-C`.
 
-```shell
-docker compose -f hack/lakefs-s3-local.yml down
-```
-
 To clean the created volume, e.g. for when you want to remove created storage namespaces after repository deletions,
 you can nuke the deployment like so:
 
