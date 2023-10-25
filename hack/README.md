@@ -39,7 +39,25 @@ docker compose -f hack/lakefs-s3-local.yml rm -v
 ```
 
 In order to write to the local S3 blockstore using `LakeFSFileSystem.put_file_to_blockstore`, you can use the following
-mock credentials:
+environment variables and values:
+
+```shell
+export AWS_ENDPOINT_URL="http://localhost:9001"
+export AWS_ACCESS_KEY_ID=sandbox
+export AWS_SECRET_ACCESS_KEY=sandbox
+```
+
+or, in Python directly,
+
+```python
+import os
+
+os.environ["AWS_ENDPOINT_URL"] = "http://localhost:9001"
+os.environ["AWS_ACCESS_KEY_ID"] = "sandbox"
+os.environ["AWS_SECRET_ACCESS_KEY"] = "sandbox"
+```
+
+If you prefer working with AWS credential files, you can run the following setup command:
 
 ```shell
 cat > $HOME/.aws/credentials <<EOL
@@ -47,7 +65,6 @@ cat > $HOME/.aws/credentials <<EOL
 endpoint_url = http://localhost:9001
 aws_access_key_id = sandbox
 aws_secret_access_key = sandbox
-EOL
 ```
 
-Beware that this will overwrite any existing credential files, so it is recommended to back those up first.
+Beware that this will overwrite an existing AWS credential file, so it is recommended to back it up first.
