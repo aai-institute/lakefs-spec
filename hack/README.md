@@ -16,16 +16,12 @@ To bootstrap, run the following command:
 docker compose -f hack/docker-compose.yml up
 ```
 
-To stop the container again, run
-
-```shell
-docker compose -f hack/docker-compose.yml down
-```
+To stop the container again, exit with `Ctrl-c`.
 
 ## `lakefs-s3-local.yml` - lakeFS with a local, SeaweedFS-backed S3 blockstore
 
 For simulating a lakeFS deployment with a remote blockstore, the `lakefs-s3-local.yml` Docker Compose file contains a
-recipe mocking an S3 blockstore using SeaweedFS.
+recipe with a local S3 blockstore implementation using [SeaweedFS](https://github.com/seaweedfs/seaweedfs/wiki).
 
 To bootstrap this setup, run the command
 
@@ -33,7 +29,7 @@ To bootstrap this setup, run the command
 docker compose -f hack/lakefs-s3-local.yml up
 ```
 
-To stop the containers again, run
+To stop the containers again, exit with `Ctrl-C`.
 
 ```shell
 docker compose -f hack/lakefs-s3-local.yml down
@@ -43,11 +39,8 @@ To clean the created volume, e.g. for when you want to remove created storage na
 you can nuke the deployment like so:
 
 ```shell
-docker compose -f hack/lakefs-s3-local.yml rm
-docker volume rm hack_seaweedfs-data
+docker compose -f hack/lakefs-s3-local.yml rm -v
 ```
-
-## Mock credentials for direct blockstore writes with the `LakeFSFileSystem`
 
 In order to write to the local S3 blockstore using `LakeFSFileSystem.put_file_to_blockstore`, you can use the following
 mock credentials:
