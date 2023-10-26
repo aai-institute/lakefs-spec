@@ -159,3 +159,16 @@ def test_rev_parse_error_on_parent_does_not_exist(
         client_helpers.rev_parse(
             client=fs.client, repository=repository, ref=temp_branch, parent=non_existent_parent
         )
+
+
+def test_repository_creation(fs: LakeFSFileSystem) -> None:
+    non_existent_repo = f"{uuid.uuid4()}"
+    try:
+        client_helpers.create_repository(
+            client=fs.client,
+            repository_name=non_existent_repo,
+            storage_namespace=f"local://{non_existent_repo}",
+        )
+        assert fs.client.repositories_api.get_repository(repository=non_existent_repo)
+    finally:
+        fs.client.repositories_api.delete_repository(repository=non_existent_repo)
