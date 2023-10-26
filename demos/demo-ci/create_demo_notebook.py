@@ -61,15 +61,27 @@ Authenticate with the credentials provided https://docs.lakefs.io/quickstart/lau
     Access Key ID    : AKIAIOSFOLQUICKSTART
     Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 
-As an email, you can enter anything, we won't need it in this example. 
+As an email, you can enter anything, we won't need it in this example.
 
-Proceed to create an empty repository and call it 'weather'.
-
-In your jupyter notebook create variable REPO_NAME and set its value to the name of the repo you have just created in lakeFS web  interface:
+We begin by instantiating the filesystem connector `LakeFSFilesystem` and fixing the name of the repository we are about to create. 
 """
 
 # %%
+from lakefs_spec import LakeFSFileSystem
+
+fs = LakeFSFileSystem()
+
 REPO_NAME = 'weather'
+
+# %% [markdown]
+"""
+We will create a repository using a helper function provided by `lakefs-spec`. If you created one in the UI, make sure to set the `REPO_NAME` variable in the cell above accordingly. You can re-execute if necessary.
+Otherwise, execute the next cell.
+"""
+# %%
+from lakefs_spec.client_helpers import create_repository
+
+create_repository(client=fs.client,repository_name=REPO_NAME, storage_namespace='local://weather')
 
 # %% [markdown]
 """
@@ -113,12 +125,7 @@ For now, we will `put` the file we have. Therefore, we will create a new branch,
 """
 
 # %% 
-from lakefs_spec import LakeFSFileSystem
-
 NEW_BRANCH_NAME = 'transform-raw-data'
-
-
-fs = LakeFSFileSystem()
 fs.put('./data/weather-2010s.json',  f'{REPO_NAME}/{NEW_BRANCH_NAME}/weather-2010.json')
 
 

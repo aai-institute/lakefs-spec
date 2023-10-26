@@ -4,7 +4,7 @@ import logging
 
 from lakefs_sdk.client import LakeFSClient
 from lakefs_sdk.exceptions import NotFoundException
-from lakefs_sdk.models import CommitCreation, RevertCreation, TagCreation
+from lakefs_sdk.models import CommitCreation, RepositoryCreation, RevertCreation, TagCreation
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -35,6 +35,13 @@ def create_tag(client: LakeFSClient, repository: str, ref: str, tag: str) -> Non
 
 def get_tags(client: LakeFSClient, repository: str) -> dict:
     return client.tags_api.list_tags(repository=repository)
+
+
+def create_repository(client: LakeFSClient, repository_name: str, storage_namespace: str) -> None:
+    repository_creation = RepositoryCreation(
+        name=repository_name, storage_namespace=storage_namespace
+    )
+    client.repositories_api.create_repository(repository_creation=repository_creation)
 
 
 def merge(client: LakeFSClient, repository: str, source_ref: str, target_branch: str) -> None:
