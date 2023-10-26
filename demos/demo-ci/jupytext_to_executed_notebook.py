@@ -30,9 +30,7 @@ def jupytext_to_executed_notebook(
 
     executed_notebook_path.parent.mkdir(exist_ok=True, parents=True)
 
-    nbformat.write(
-        nb=jupytext_code, fp=str(executed_notebook_path.with_suffix(".ipynb"))
-    )
+    nbformat.write(nb=jupytext_code, fp=str(executed_notebook_path.with_suffix(".ipynb")))
 
 
 def main() -> None:
@@ -44,9 +42,7 @@ def main() -> None:
     """
     if len(sys.argv) < 3:
         logger.error("Not enough arguments provided")
-        logger.info(
-            "Usage: python jupytext_to_executed_notebook.py in_file_or_dir out_file_or_dir"
-        )
+        logger.info("Usage: python jupytext_to_executed_notebook.py in_file_or_dir out_file_or_dir")
         sys.exit(1)
 
     in_path = Path(sys.argv[1])

@@ -79,4 +79,4 @@ jobs:
           source .demovenv/bin/activate
           pip install -r demos/requirements.txt
           python demos/demo-ci/jupytext_to_executed_notebook.py ./demos/demo-ci/create_demo_notebook.py ./demos/demo_data_science_project.ipynb
-          rm -rf data .lakectl.yaml
+          rm -rf data .lakectl.yaml .demovenv
