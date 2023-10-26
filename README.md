@@ -8,7 +8,7 @@ Its main goal is to facilitate versioned data operations in lakeFS directly from
 
 See the examples below ([features](#usage), [versioning best-practices](#reproducibility-through-data-versioning-with-lakefs-and-lakefs-spec)) below for inspiration.
 
-A more detailed example is in the notebook in the [`/demos` directory](/demos/rain_prediction.ipynb).
+A more detailed example is in the notebook in the [`/demos` directory](/demos/demo_data_science_project.ipynb).
 
 ## Installation
 
