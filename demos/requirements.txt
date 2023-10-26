@@ -24,7 +24,7 @@ jupyter_core==5.3.1
 jupyterlab-pygments==0.2.2
 jupytext==1.15.2
 lakefs-sdk==1.0.0
-lakefs-spec @ git+https://github.com/appliedAI-Initiative/lakefs-spec.git@ce1b44c513a994f46800fbdc0c673ee17817e299
+lakefs-spec @ git+https://github.com/appliedAI-Initiative/lakefs-spec.git@2cfc68c3062b65d3bb01a12f4aaa1988baac3c04
 loguru==0.7.2
 markdown-it-py==3.0.0
 MarkupSafe==2.1.3
