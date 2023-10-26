@@ -173,13 +173,10 @@ In this notebook, we follow a simple toy example to predict whether it is rainin
 We will skip a lot of possible feature engineering etc. in order to focus on the application of lakeFS and the `LakeFSFileSystem`.
 """
 
-import json
-
-import numpy as np
-
 # %% 
 import pandas as pd
-
+import json
+import numpy as np
 
 def transform_json_weather_data(filepath):
     with open(filepath,"r") as f:
