@@ -136,8 +136,10 @@ To commit changes programmatically, we can register a hook. This hook needs to h
 
 # %% 
 from lakefs_sdk.client import LakeFSClient
+
 from lakefs_spec.client_helpers import commit
 from lakefs_spec.hooks import FSEvent, HookContext
+
 
 # Define the commit hook
 def commit_on_put(client: LakeFSClient, ctx:HookContext) -> None:
@@ -171,10 +173,13 @@ In this notebook, we follow a simple toy example to predict whether it is rainin
 We will skip a lot of possible feature engineering etc. in order to focus on the application of lakeFS and the `LakeFSFileSystem`.
 """
 
+import json
+
+import numpy as np
+
 # %% 
 import pandas as pd
-import numpy as np
-import json 
+
 
 def transform_json_weather_data(filepath):
     with open(filepath,"r") as f:
