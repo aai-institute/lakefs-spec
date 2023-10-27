@@ -19,10 +19,10 @@ repos:
     rev: v1.5.1
     hooks:
       # See https://github.com/pre-commit/mirrors-mypy/blob/main/.pre-commit-hooks.yaml
-      - id: mypy
-        types_or: [python, pyi]
-        args: ["--ignore-missing-imports", "--scripts-are-modules"]
-        exclude: "demos/demo-ci/create_demo_notebook.py"
+    - id: mypy
+      types_or: [python, pyi]
+      args: ["--ignore-missing-imports", "--scripts-are-modules"]
+      exclude: "demos/demo-ci/create_demo_notebook.py"
   - repo: https://github.com/psf/black
     rev: 23.9.1
     hooks:
@@ -36,14 +36,14 @@ repos:
     rev: v0.0.292
     hooks:
       - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]
-        exclude: "demos/demo-ci/create_demo_notebook.py"
+      args: [--fix, --exit-non-zero-on-fix]
+      exclude: "demos/demo-ci/create_demo_notebook.py"
   - repo: https://github.com/PyCQA/bandit
     rev: 1.7.5
     hooks:
       - id: bandit
-        args: ["-c", "pyproject.toml"]
-        additional_dependencies: ["bandit[toml]"]
+      args: ["-c", "pyproject.toml"]
+      additional_dependencies: ["bandit[toml]"]
   - repo: https://github.com/jazzband/pip-tools
     rev: 7.3.0
     hooks:
