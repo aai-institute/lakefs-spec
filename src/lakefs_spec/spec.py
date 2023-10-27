@@ -307,9 +307,6 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         info = self.info(rpath)
 
-        filesize = info["size"]
-        callback.set_size(filesize)
-
         if precheck and Path(lpath).exists():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = info.get("checksum")
@@ -320,6 +317,9 @@ class LakeFSFileSystem(AbstractFileSystem):
                 )
                 run_get_file_hook()
                 return
+
+        filesize = info["size"]
+        callback.set_size(filesize)
 
         if isfilelike(lpath):
             outfile = lpath
@@ -558,6 +558,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 )
                 run_put_file_hook()
                 return
+
         if use_blockstore:
             self.put_file_to_blockstore(
                 lpath,
