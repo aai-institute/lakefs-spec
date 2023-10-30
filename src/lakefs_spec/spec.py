@@ -318,13 +318,16 @@ class LakeFSFileSystem(AbstractFileSystem):
                 run_get_file_hook()
                 return
 
+        filesize = info["size"]
+        callback.set_size(filesize)
+
         if isfilelike(lpath):
             outfile = lpath
         else:
             outfile = open(lpath, "wb")
 
         try:
-            offset, filesize = 0, info.get("size")
+            offset = 0
             while True:
                 next_offset = max(offset + self.blocksize, filesize)
                 byterange = f"bytes={offset}-{next_offset - 1}"
@@ -332,7 +335,8 @@ class LakeFSFileSystem(AbstractFileSystem):
                 chunk = self.client.objects_api.get_object(
                     repository, ref, resource, range=byterange, **kwargs
                 )
-                outfile.write(chunk)
+                res = outfile.write(chunk)
+                callback.relative_update(res)
 
                 offset += self.blocksize
                 if next_offset >= filesize:
@@ -464,7 +468,14 @@ class LakeFSFileSystem(AbstractFileSystem):
         )
 
     def put_file_to_blockstore(
-        self, lpath, repository, branch, resource, presign=False, storage_options=None
+        self,
+        lpath,
+        repository,
+        branch,
+        resource,
+        callback=_DEFAULT_CALLBACK,
+        presign=False,
+        storage_options=None,
     ):
         staging_location = self.client.staging_api.get_physical_address(
             repository, branch, resource, presign=presign
@@ -509,7 +520,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
             remote_url = staging_location.physical_address
             remote = filesystem(blockstore_type, **(storage_options or {}))
-            remote.put_file(lpath, remote_url)
+            remote.put_file(lpath, remote_url, callback=callback)
 
         staging_metadata = StagingMetadata(
             staging=staging_location,
@@ -547,6 +558,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 )
                 run_put_file_hook()
                 return
+
         if use_blockstore:
             self.put_file_to_blockstore(
                 lpath,
@@ -554,13 +566,20 @@ class LakeFSFileSystem(AbstractFileSystem):
                 branch,
                 resource,
                 presign=presign,
+                callback=callback,
                 storage_options=storage_options,
             )
         else:
+            size = Path(lpath).stat().st_size
+            callback.set_size(size)
+
             with self.wrapped_api_call():
                 self.client.objects_api.upload_object(
                     repository=repository, branch=branch, path=resource, content=lpath, **kwargs
                 )
+
+            # this is stupid, but the best we can do without multipart uploads.
+            callback.relative_update(size)
 
         run_put_file_hook()
 
