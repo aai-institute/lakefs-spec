@@ -11,7 +11,7 @@ from tests.util import RandomFileFactory
 # we only query the block store type for now, we can add more attributes later if needed.
 # we define these mock types because it is way easier than initializing the proper
 # pydantic models with mock data.
-StorageConfig = collections.namedtuple("StorageConfig", ["blockstore_type"], defaults=["local"])
+StorageConfig = collections.namedtuple("StorageConfig", ["blockstore_type"])
 ConfigMock = collections.namedtuple("ConfigMock", ["storage_config"])
 
 
