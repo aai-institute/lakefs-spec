@@ -84,12 +84,6 @@ include = "\\.pyi?$"
 line-length = 100
 target-version = ["py311"]
 
-# Black-compatible settings for isort
-# See https://black.readthedocs.io/en/stable/
-[tool.isort]
-line_length = "100"
-profile = "black"
-
 [tool.mypy]
 check_untyped_defs = true
 disallow_incomplete_defs = true
@@ -103,17 +97,20 @@ module = ["yaml"]
 ignore_missing_imports = true
 
 [tool.ruff]
-# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
-select = ["E", "F", "W"]
+# explicitly set src folder for isort to understand first-party imports correctly.
+src = ["src"]
+line-length = 100
+# Enable pycodestyle errors & warnings (`E`, `W`), Pyflakes (`F`), and isort (`I`) codes by default.
+select = ["E", "F", "I", "W"]
 ignore = [
     # whitespace before colon (:), rely on black for formatting (in particular, allow spaces before ":" in list/array slices)
     "E203",
+    # Multiple spaces before operator
+    "E221",
     # line too long, rely on black for reformatting of these, since sometimes URLs or comments can be longer
     "E501",
     # Allow capitalized variable names, necessary for e.g., `X_train = get_train_data()`
     "F841",
-    # Multiple spaces before operator
-    "E221",
 ]
 
 # Ignore `F401` (unused imports) in all `__init__.py` files
@@ -122,9 +119,3 @@ ignore = [
 
 [tool.bandit]
 exclude_dirs = ["tests"]
-
-[tool.pytest.ini_options]
-filterwarnings = [
-    # OpenAPI-generated code contains deprecated urllib3 calls
-    "ignore::DeprecationWarning:lakefs_client.*:",
-]
