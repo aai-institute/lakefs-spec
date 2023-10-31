@@ -49,7 +49,10 @@ def with_counter(client: LakeFSClient) -> tuple[LakeFSClient, APICounter]:
             continue
 
         for ep_name in filter(
-            lambda op: not op.startswith("_") and ismethod(getattr(api, op)), dir(api)
+            lambda op: not op.startswith("_")
+            and not op.endswith("with_http_info")
+            and ismethod(getattr(api, op)),
+            dir(api),
         ):
             endpoint = getattr(api, ep_name)
             setattr(api, ep_name, patch(endpoint, f"{api_name}.{ep_name}"))

@@ -119,3 +119,7 @@ ignore = [
 
 [tool.bandit]
 exclude_dirs = ["tests"]
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "WARNING"
