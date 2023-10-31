@@ -1,0 +1,4 @@
+/*Remove leading `!` from code cells, which use the cell magic for shell commands*/
+code>.err:first-of-type {
+    display: none;
+}
