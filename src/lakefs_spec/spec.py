@@ -10,7 +10,7 @@ import urllib.request
 import warnings
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator, Literal
+from typing import Any, Generator, Literal, overload
 
 from fsspec import filesystem
 from fsspec.callbacks import Callback, NoOpCallback
@@ -32,6 +32,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 EmptyYield = Generator[None, None, None]
+FileSystemPath = str | os.PathLike[str] | Path
 
 _warn_on_fileupload = True
 
@@ -177,14 +178,26 @@ class LakeFSFileSystem(AbstractFileSystem):
         hook(self.client, ctx)
 
     @classmethod
+    @overload
+    def _strip_protocol(cls, path: FileSystemPath) -> str:
+        ...
+
+    @classmethod
+    @overload
+    def _strip_protocol(cls, path: list[FileSystemPath]) -> list[str]:
+        ...
+
+    @classmethod
     def _strip_protocol(cls, path):
         """Copied verbatim from the base class, save for the slash rstrip."""
         if isinstance(path, list):
-            return [cls._strip_protocol(p) for p in path]
-        spath = super()._strip_protocol(path)
-        if stringify_path(path).endswith("/"):
-            return spath + "/"
-        return spath
+            paths: list[str] = [cls._strip_protocol(p) for p in path]
+            return paths
+        else:
+            spath: str = super()._strip_protocol(path)
+            if stringify_path(path).endswith("/"):
+                return spath + "/"
+            return spath
 
     @contextmanager
     def wrapped_api_call(self, message: str | None = None, set_cause: bool = True) -> EmptyYield:
@@ -386,7 +399,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.run_hook(FSEvent.INFO, HookContext.new(path))
         return statobj
 
-    def ls(self, path: str, detail: bool = True, **kwargs: Any) -> list[Any]:
+    def ls(self, path: str, detail: bool = True, **kwargs: Any) -> list:
         path = self._strip_protocol(path)
         repository, ref, prefix = parse(path)
 
@@ -727,7 +740,7 @@ class LakeFSFile(AbstractBufferedFile):
                 repository, ref, resource, range=f"bytes={start}-{end - 1}"
             )
 
-    def close(self):
+    def close(self) -> None:
         super().close()
         if self.mode == "wb":
             self.fs.run_hook(FSEvent.FILEUPLOAD, HookContext.new(self.path))
