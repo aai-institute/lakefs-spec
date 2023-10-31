@@ -32,7 +32,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 EmptyYield = Generator[None, None, None]
-FileSystemPath = str | os.PathLike[str] | Path
 
 _warn_on_fileupload = True
 
@@ -179,25 +178,23 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     @classmethod
     @overload
-    def _strip_protocol(cls, path: FileSystemPath) -> str:
+    def _strip_protocol(cls, path: str | os.PathLike[str] | Path) -> str:
         ...
 
     @classmethod
     @overload
-    def _strip_protocol(cls, path: list[FileSystemPath]) -> list[str]:
+    def _strip_protocol(cls, path: list[str | os.PathLike[str] | Path]) -> list[str]:
         ...
 
     @classmethod
     def _strip_protocol(cls, path):
         """Copied verbatim from the base class, save for the slash rstrip."""
         if isinstance(path, list):
-            paths: list[str] = [cls._strip_protocol(p) for p in path]
-            return paths
-        else:
-            spath: str = super()._strip_protocol(path)
-            if stringify_path(path).endswith("/"):
-                return spath + "/"
-            return spath
+            return [cls._strip_protocol(p) for p in path]
+        spath = super()._strip_protocol(path)
+        if stringify_path(path).endswith("/"):
+            return spath + "/"
+        return spath
 
     @contextmanager
     def wrapped_api_call(self, message: str | None = None, set_cause: bool = True) -> EmptyYield:
