@@ -24,7 +24,7 @@ from lakefs_sdk.models import BranchCreation, ObjectCopyCreation, ObjectStatsLis
 from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.hooks import FSEvent, HookContext, LakeFSHook, noop
-from lakefs_spec.util import get_blockstore_type, parse
+from lakefs_spec.util import parse
 
 _DEFAULT_CALLBACK = NoOpCallback()
 
@@ -508,7 +508,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                     )
                     translate_lakefs_error(error=urllib_http_error_as_lakefs_api_exception)
         else:
-            blockstore_type = get_blockstore_type(self.client)
+            blockstore_type = self.client.config_api.get_config().storage_config.blockstore_type
             # lakeFS blockstore name is "azure", but Azure's fsspec registry entry is "az".
             if blockstore_type == "azure":
                 blockstore_type = "az"
