@@ -3,6 +3,7 @@ from __future__ import annotations
 import errno
 import functools
 import json
+from typing import Any
 
 from lakefs_sdk import ApiException
 
@@ -13,8 +14,11 @@ HTTP_CODE_TO_ERROR: dict[int, type[OSError]] = {
 }
 
 
-def translate_lakefs_error(  # type: ignore
-    error: ApiException, message: str | None = None, set_cause: bool = True, *args
+def translate_lakefs_error(
+    error: ApiException,
+    message: str | None = None,
+    set_cause: bool = True,
+    *args: Any,
 ) -> OSError:
     """Convert a lakeFS client ApiException into a Python exception.
 

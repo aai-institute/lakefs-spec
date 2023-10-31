@@ -10,10 +10,10 @@ import urllib.request
 import warnings
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any, Generator, Literal, overload
 
 from fsspec import filesystem
-from fsspec.callbacks import NoOpCallback
+from fsspec.callbacks import Callback, NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import isfilelike, stringify_path
 from lakefs_sdk import Configuration
@@ -177,6 +177,16 @@ class LakeFSFileSystem(AbstractFileSystem):
         hook(self.client, ctx)
 
     @classmethod
+    @overload
+    def _strip_protocol(cls, path: str | os.PathLike[str] | Path) -> str:
+        ...
+
+    @classmethod
+    @overload
+    def _strip_protocol(cls, path: list[str | os.PathLike[str] | Path]) -> list[str]:
+        ...
+
+    @classmethod
     def _strip_protocol(cls, path):
         """Copied verbatim from the base class, save for the slash rstrip."""
         if isinstance(path, list):
@@ -250,7 +260,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 self.run_hook(FSEvent.EXISTS, ctx)
                 return exists
 
-    def cp_file(self, path1, path2, **kwargs):
+    def cp_file(self, path1: str, path2: str, **kwargs: Any) -> None:
         if path1 == path2:
             return
 
@@ -278,13 +288,13 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def get(
         self,
-        rpath,
-        lpath,
-        recursive=False,
-        callback=_DEFAULT_CALLBACK,
-        maxdepth=None,
-        **kwargs,
-    ):
+        rpath: str,
+        lpath: str,
+        recursive: bool = False,
+        callback: Callback = _DEFAULT_CALLBACK,
+        maxdepth: int = None,
+        **kwargs: Any,
+    ) -> None:
         super().get(
             rpath, lpath, recursive=recursive, callback=callback, maxdepth=maxdepth, **kwargs
         )
@@ -292,13 +302,13 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def get_file(
         self,
-        rpath,
-        lpath,
-        callback=_DEFAULT_CALLBACK,
-        outfile=None,
-        precheck=True,
-        **kwargs,
-    ):
+        rpath: str,
+        lpath: str,
+        callback: Callback = _DEFAULT_CALLBACK,
+        outfile: Any = None,
+        precheck: bool = True,
+        **kwargs: Any,
+    ) -> None:
         repository, ref, resource = parse(rpath)
 
         def run_get_file_hook():
@@ -386,7 +396,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.run_hook(FSEvent.INFO, HookContext.new(path))
         return statobj
 
-    def ls(self, path, detail=True, **kwargs):
+    def ls(self, path: str, detail: bool = True, **kwargs: Any) -> list:
         path = self._strip_protocol(path)
         repository, ref, prefix = parse(path)
 
@@ -447,14 +457,14 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def _open(
         self,
-        path,
-        mode="rb",
-        block_size=None,
-        autocommit=True,
-        cache_options=None,
-        **kwargs,
-    ):
-        if mode not in {"wb", "rb"}:
+        path: str,
+        mode: Literal["rb", "wb"] = "rb",
+        block_size: int | None = None,
+        autocommit: bool = True,
+        cache_options: dict[str, str] | None = None,
+        **kwargs: Any,
+    ) -> LakeFSFile:
+        if mode not in {"rb", "wb"}:
             raise NotImplementedError(f"unsupported mode {mode!r}")
 
         return LakeFSFile(
@@ -469,14 +479,14 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def put_file_to_blockstore(
         self,
-        lpath,
-        repository,
-        branch,
-        resource,
-        callback=_DEFAULT_CALLBACK,
-        presign=False,
-        storage_options=None,
-    ):
+        lpath: str,
+        repository: str,
+        branch: str,
+        resource: str,
+        callback: Callback = _DEFAULT_CALLBACK,
+        presign: bool = False,
+        storage_options: dict[str, Any] | None = None,
+    ) -> None:
         staging_location = self.client.staging_api.get_physical_address(
             repository, branch, resource, presign=presign
         )
@@ -533,15 +543,15 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def put_file(
         self,
-        lpath,
-        rpath,
-        callback=_DEFAULT_CALLBACK,
-        precheck=True,
-        use_blockstore=False,
-        presign=False,
-        storage_options=None,
-        **kwargs,
-    ):
+        lpath: str,
+        rpath: str,
+        callback: Callback = _DEFAULT_CALLBACK,
+        precheck: bool = True,
+        use_blockstore: bool = False,
+        presign: bool = False,
+        storage_options: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ) -> None:
         repository, branch, resource = parse(rpath)
 
         def run_put_file_hook():
@@ -585,13 +595,13 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def put(
         self,
-        lpath,
-        rpath,
-        recursive=False,
-        callback=_DEFAULT_CALLBACK,
-        maxdepth=None,
-        **kwargs,
-    ):
+        lpath: str,
+        rpath: str,
+        recursive: bool = False,
+        callback: Callback = _DEFAULT_CALLBACK,
+        maxdepth: int | None = None,
+        **kwargs: Any,
+    ) -> None:
         repository, branch, resource = parse(rpath)
         if self.create_branch_ok:
             ensure_branch(self.client, repository, branch, self.source_branch)
@@ -603,7 +613,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         ctx = HookContext(repository=repository, ref=branch, resource=resource)
         self.run_hook(FSEvent.PUT, ctx)
 
-    def rm_file(self, path):
+    def rm_file(self, path: str) -> None:
         repository, branch, resource = parse(path)
 
         with self.wrapped_api_call():
@@ -614,7 +624,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         ctx = HookContext(repository=repository, ref=branch, resource=resource)
         self.run_hook(FSEvent.RM_FILE, ctx)
 
-    def rm(self, path, recursive=False, maxdepth=None):
+    def rm(self, path: str, recursive: bool = False, maxdepth: int | None = None) -> None:
         super().rm(path, recursive=recursive, maxdepth=maxdepth)
 
         self.run_hook(FSEvent.RM, HookContext.new(path))
@@ -625,15 +635,15 @@ class LakeFSFile(AbstractBufferedFile):
 
     def __init__(
         self,
-        fs,
-        path,
-        mode="rb",
-        block_size="default",
-        autocommit=True,
-        cache_type="readahead",
-        cache_options=None,
-        size=None,
-        **kwargs,
+        fs: LakeFSFileSystem,
+        path: str,
+        mode: Literal["rb", "wb"] = "rb",
+        block_size: int | str = "default",
+        autocommit: bool = True,
+        cache_type: str = "readahead",
+        cache_options: dict[str, Any] | None = None,
+        size: int | None = None,
+        **kwargs: Any,
     ):
         super().__init__(
             fs,
@@ -660,7 +670,7 @@ class LakeFSFile(AbstractBufferedFile):
             repository, branch, resource = parse(path)
             ensure_branch(self.fs.client, repository, branch, self.fs.source_branch)
 
-    def _upload_chunk(self, final=False):
+    def _upload_chunk(self, final: bool = False) -> bool:
         """Single-chunk (unbuffered) upload, on final (i.e. during file.close())."""
         if final:
             repository, branch, resource = parse(self.path)
@@ -727,7 +737,7 @@ class LakeFSFile(AbstractBufferedFile):
                 repository, ref, resource, range=f"bytes={start}-{end - 1}"
             )
 
-    def close(self):
+    def close(self) -> None:
         super().close()
         if self.mode == "wb":
             self.fs.run_hook(FSEvent.FILEUPLOAD, HookContext.new(self.path))
