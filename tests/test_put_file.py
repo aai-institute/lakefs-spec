@@ -118,9 +118,9 @@ def test_put_client_caching(
     lpath = str(random_file)
     rpath = f"{repository}/{temp_branch}/{random_file.name}"
     fs.put(lpath, rpath)
+    assert counter.count("objects_api.upload_object") == 1
     assert fs.exists(rpath)
 
     # second put, should not happen.
     fs.put(lpath, rpath)
-    print(list(counter.named_counts()))
     assert counter.count("objects_api.upload_object") == 1
