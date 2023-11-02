@@ -20,7 +20,7 @@ If you want `lakefs-spec` to automatically discover and load credentials from an
 
 ## Usage
 
-### As a `fsspec` filesystem 
+### Low-level: As a `fsspec` filesystem 
 
 The following example shows how to upload a file and create a commit using the bare lakeFS filesystem implementation.
 It assumes you have already created a repository named `repo` and have `lakectl` credentials set up on your machine (see the lakeFS quickstart guide for details).
@@ -48,7 +48,7 @@ f = fs.open(repo_path, "rt")
 print(f.readline())  # "Hello, lakeFS!"
 ```
 
-### Via third-party libraries
+### High-level: Via third-party libraries
 
 A variety of widely-used data science tools are building on `fsspec` to access remote storage resources and can thus work with lakeFS data lakes directly through `lakefs-spec`:
 
@@ -76,7 +76,7 @@ res = duckdb.read_parquet("lakefs://quickstart/main/lakes.parquet")
 res.show()
 ```
 
-For a more comprehensive overview of third-party tools using `fsspec`, see the [TODO: Docs link]().
+For a more comprehensive overview of third-party tools integrating with `fsspec` (and therefore by extension `lakefs-spec`), see the [user guide](https://lakefs-spec.org/latest/guides/overview/) in the documentation.
 
 ## Contributing
 
