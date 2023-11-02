@@ -16,21 +16,22 @@ $ pip install lakefs-spec
 $ poetry add lakefs-spec
 ```
 
-If you want `lakefs-spec` to automatically discover and load credentials from an existing `lakectl` credentials file on your machine, additionally install the `PyYAML` library.
+If you want `lakefs-spec` to automatically discover and load credentials from an existing `~/.lakectl.yaml` credentials file on your machine, additionally install the `PyYAML` library.
 
 ## Usage
 
 ### As a `fsspec` filesystem 
 
 The following example shows how to upload a file and create a commit using the bare lakeFS filesystem implementation.
-It assumes you have already created a repository and have `lakectl` credentials set up on your machine (see the lakeFS quickstart guide for details).
+It assumes you have already created a repository named `repo` and have `lakectl` credentials set up on your machine (see the lakeFS quickstart guide for details).
 
 ```python
-from lakefs_spec import LakeFSFileSystem
-from lakefs_spec.client_helpers import commit
 from pathlib import Path
 
-REPO, BRANCH = "quickstart", "main"
+from lakefs_spec import LakeFSFileSystem
+from lakefs_spec.client_helpers import commit
+
+REPO, BRANCH = "repo", "main"
 
 # Prepare example local data
 local_path = Path("demo.txt")
@@ -38,8 +39,13 @@ local_path.write_text("Hello, lakeFS!")
 
 # Upload to lakeFS and create a commit
 fs = LakeFSFileSystem()  # will auto-discover config from ~/.lakectl.yaml
-fs.put(str(local_path), f"{REPO}/{BRANCH}/{local_path.name}")
+repo_path = f"{REPO}/{BRANCH}/{local_path.name}"
+fs.put(str(local_path), repo_path)
 commit(fs.client, REPO, BRANCH, "Add demo data")
+
+# Read back committed file
+f = fs.open(repo_path, "rt")
+print(f.readline())  # "Hello, lakeFS!"
 ```
 
 ### Via third-party libraries
