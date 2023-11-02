@@ -70,7 +70,7 @@ res = duckdb.read_parquet("lakefs://quickstart/main/lakes.parquet")
 res.show()
 ```
 
-For a more comprehensive overview of third-party tools using `fsspec, see the [TODO: Docs link]().
+For a more comprehensive overview of third-party tools using `fsspec`, see the [TODO: Docs link]().
 
 ## Contributing
 
