@@ -66,4 +66,5 @@ jobs:
       uses: ./.github/actions/mike-docs
       with:
         version: development
+        alias: development
         push: ${{ github.ref == 'refs/heads/main' }}  # build always, publish on 'main' only to prevent version clutter
