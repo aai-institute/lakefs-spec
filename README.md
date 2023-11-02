@@ -87,4 +87,4 @@ For information on the general development workflow, see the [contribution guide
 
 ## License
 
-The `lakefs-spec` project is distributed under the [Apache-2 license](https://github.com/appliedAI-Initiative/lakefs-spec/blob/main/LICENSE).
+The `lakefs-spec` library is distributed under the [Apache-2 license](https://github.com/appliedAI-Initiative/lakefs-spec/blob/main/LICENSE).
