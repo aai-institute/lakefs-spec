@@ -721,14 +721,16 @@ If you have to update a dependency during development, you should do the followi
 <li>In case of a development dependency, add it to the <code>dev</code> section of the <code>project.optional-dependencies</code> table instead.</li>
 <li>Dependencies needed for documentation generation are found in the <code>docs</code> sections of <code>project.optional-dependencies</code>.</li>
 </ol>
-<p>After adding the dependency in either of these sections, run <code>pip-compile</code> to pin all dependencies again:</p>
+<p>After adding the dependency in either of these sections, run the helper script <code>hack/lock-deps.sh</code> (which in turn uses <code>pip-compile</code>) to pin all dependencies again:</p>
 <div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip-tools
-pip-compile<span class="w"> </span>--strip-extras<span class="w"> </span>pyproject.toml
-pip-compile<span class="w"> </span>--extra<span class="o">=</span>dev<span class="w"> </span>--output-file<span class="o">=</span>requirements-dev.txt<span class="w"> </span>pyproject.toml
-pip-compile<span class="w"> </span>--extra<span class="o">=</span>docs<span class="w"> </span>--output-file<span class="o">=</span>requirements-docs.txt<span class="w"> </span>pyproject.toml
+hack/lock-deps.sh
 </code></pre></div>
 <p>In addition to these manual steps, we also provide <code>pre-commit</code> hooks that automatically lock the dependencies whenever <code>pyproject.toml</code> is changed.</p>
-<p>⚠️ Since the official development version is Python 3.11, please run the above <code>pip-compile</code> command in a virtual environment with Python 3.11.</p>
+<p>Selective package upgrade for existing dependencies are also handled by the helper script above.
+If you want to update the <code>lakefs-sdk</code> dependency, for example, simply run:</p>
+<div class="highlight"><pre><span></span><code>hack/lock-deps.sh<span class="w"> </span>lakefs-sdk
+</code></pre></div>
+<p>⚠️ Since the official development version is Python 3.11, please run the above commands in a virtual environment with Python 3.11.</p>
 <h2 id="working-on-documentation">Working on Documentation<a class="headerlink" href="#working-on-documentation" title="Permanent link">&para;</a></h2>
 <p>Improvements or additions to the project's documentation are highly appreciated.</p>
 <p>The documentation is based on the <a href="https://mkdocs.org"><code>mkdocs</code></a> and <a href="https://squidfunk.github.io/mkdocs-material/"><code>mkdocs-material</code></a> projects, see their homepages for in-depth guides on their features and usage. We use the <a href="https://numpydoc.readthedocs.io/en/latest/format.html">Numpy documentation style</a> for Python docstrings.</p>
@@ -743,7 +745,7 @@ build the documentation into its output folder in <code>public/</code>.</p>
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-10-20</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-03</span>
       
     
   </small>
