@@ -63,6 +63,7 @@ docs = [
     "jupyter",
     "black",                                     # formatting of signatures in docs
     "mike",
+    "appnope",                                   # required only on Darwin, but need to include in lockfile
 ]
 
 [tool.setuptools]

@@ -57,18 +57,23 @@ If you have to update a dependency during development, you should do the followi
 2. In case of a development dependency, add it to the `dev` section of the `project.optional-dependencies` table instead.
 3. Dependencies needed for documentation generation are found in the `docs` sections of `project.optional-dependencies`.
 
-After adding the dependency in either of these sections, run `pip-compile` to pin all dependencies again:
+After adding the dependency in either of these sections, run the helper script `hack/lock-deps.sh` (which in turn uses `pip-compile`) to pin all dependencies again:
 
 ```shell
 python -m pip install --upgrade pip-tools
-pip-compile --strip-extras pyproject.toml
-pip-compile --extra=dev --output-file=requirements-dev.txt pyproject.toml
-pip-compile --extra=docs --output-file=requirements-docs.txt pyproject.toml
+hack/lock-deps.sh
 ```
 
 In addition to these manual steps, we also provide `pre-commit` hooks that automatically lock the dependencies whenever `pyproject.toml` is changed.
 
-⚠️ Since the official development version is Python 3.11, please run the above `pip-compile` command in a virtual environment with Python 3.11.
+Selective package upgrade for existing dependencies are also handled by the helper script above.
+If you want to update the `lakefs-sdk` dependency, for example, simply run:
+
+```shell
+hack/lock-deps.sh lakefs-sdk
+```
+
+⚠️ Since the official development version is Python 3.11, please run the above commands in a virtual environment with Python 3.11.
 
 ## Working on Documentation
 
