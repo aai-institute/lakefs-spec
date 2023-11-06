@@ -4,7 +4,15 @@
 # `lakefs-spec`: An `fsspec` backend for lakeFS
 
 Welcome to `lakefs-spec`, a [filesystem-spec](https://github.com/fsspec/filesystem_spec) backend implementation for the [lakeFS](https://lakefs.io/) data lake.
-Our primary goal is to streamline versioned data operations in lakeFS, enabling seamless integration with popular data science tools such as pandas, polars, and DuckDB directly from Python.
+Our primary goal is to streamline versioned data operations in lakeFS, enabling seamless integration with popular data science tools such as Pandas, Polars, and DuckDB directly from Python.
+
+Highlights:
+
+- high-level abstraction over basic lakeFS repository operations
+- seamless integration into the `fsspec` ecosystem
+- zero-config option through config autodiscovery
+- automatic up-/download management to avoid unnecessary transfers for unchanged files
+- extensibility through event hooks
 
 ## Installation
 
@@ -19,6 +27,10 @@ $ poetry add lakefs-spec
 If you want `lakefs-spec` to automatically discover and load credentials from an existing `~/.lakectl.yaml` credentials file on your machine, additionally install the `PyYAML` library.
 
 ## Usage
+
+The following usage examples showcase two major ways of using `lakefs-spec`: as a low-level filesystem abstraction, and through third-party (data science) libraries.
+
+For a more thorough overview of the features and use cases for `lakefs-spec`, see the [user guide](https://lakefs-spec.org/latest/guides/overview/) and [tutorials](https://lakefs-spec.org/latest/guides/tutorials/) sections in the documentation.
 
 ### Low-level: As a `fsspec` filesystem 
 
@@ -50,7 +62,8 @@ print(f.readline())  # "Hello, lakeFS!"
 
 ### High-level: Via third-party libraries
 
-A variety of widely-used data science tools are building on `fsspec` to access remote storage resources and can thus work with lakeFS data lakes directly through `lakefs-spec`:
+A variety of widely-used data science tools are building on `fsspec` to access remote storage resources and can thus work with lakeFS data lakes directly through `lakefs-spec`.
+The examples assume a lakeFS instance with the [official `quickstart` repo](https://docs.lakefs.io/quickstart/launch.html) containing a sample dataset.
 
 ```python
 # Pandas -- see https://pandas.pydata.org/docs/user_guide/io.html#reading-writing-remote-files
