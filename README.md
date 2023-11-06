@@ -1,4 +1,4 @@
-[![](https://img.shields.io/pypi/v/lakefs-spec)](https://pypi.org/project/lakefs-spec) ![GitHub](https://img.shields.io/github/license/appliedAI-Initiative/lakefs-spec) [![docs](https://img.shields.io/badge/docs-latest-blue)](https://appliedai-initiative.github.io/lakefs-spec/)
+[![](https://img.shields.io/pypi/v/lakefs-spec)](https://pypi.org/project/lakefs-spec) ![GitHub](https://img.shields.io/github/license/appliedAI-Initiative/lakefs-spec) [![docs](https://img.shields.io/badge/docs-latest-blue)](https://lakefs-spec.org)
  ![GitHub](https://img.shields.io/github/stars/appliedAI-Initiative/lakefs-spec)
 
 # `lakefs-spec`: An `fsspec` backend for lakeFS
@@ -34,8 +34,8 @@ For a more thorough overview of the features and use cases for `lakefs-spec`, se
 
 ### Low-level: As a `fsspec` filesystem 
 
-The following example shows how to upload a file and create a commit using the bare lakeFS filesystem implementation.
-It assumes you have already created a repository named `repo` and have `lakectl` credentials set up on your machine (see the lakeFS quickstart guide for details).
+The following example shows how to upload a file, create a commit, and read back the committed data using the bare lakeFS filesystem implementation.
+It assumes you have already created a repository named `repo` and have `lakectl` credentials set up on your machine (see the [lakeFS quickstart guide](https://docs.lakefs.io/quickstart/) if you are new to lakeFS and need guidance).
 
 ```python
 from pathlib import Path
@@ -63,7 +63,7 @@ print(f.readline())  # "Hello, lakeFS!"
 ### High-level: Via third-party libraries
 
 A variety of widely-used data science tools are building on `fsspec` to access remote storage resources and can thus work with lakeFS data lakes directly through `lakefs-spec`.
-The examples assume a lakeFS instance with the [official `quickstart` repo](https://docs.lakefs.io/quickstart/launch.html) containing a sample dataset.
+The examples assume you have a lakeFS instance with the [`quickstart` repository](https://docs.lakefs.io/quickstart/launch.html) containing sample data available.
 
 ```python
 # Pandas -- see https://pandas.pydata.org/docs/user_guide/io.html#reading-writing-remote-files
