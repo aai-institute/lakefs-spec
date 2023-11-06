@@ -6,8 +6,6 @@ inputs:
     required: true
   alias:
     description: Alias name
-    default: latest
-    required: true
   push:
     description: Whether to push the built documentation to the repository
     required: true
