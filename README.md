@@ -8,11 +8,11 @@ Our primary goal is to streamline versioned data operations in lakeFS, enabling 
 
 Highlights:
 
-- high-level abstraction over basic lakeFS repository operations
-- seamless integration into the `fsspec` ecosystem
-- zero-config option through config autodiscovery
-- automatic up-/download management to avoid unnecessary transfers for unchanged files
-- extensibility through event hooks
+- High-level abstraction over basic lakeFS repository operations
+- Seamless integration into the `fsspec` ecosystem
+- Zero-config option through config autodiscovery
+- Automatic up-/download management to avoid unnecessary transfers for unchanged files
+- Extensibility through event hooks
 
 ## Installation
 
