@@ -121,6 +121,8 @@ syft-output.json
 
 #demo-files
 /demos/data/*
+.lakectl.yaml 
+.demovenv
 
 # Generated documentation
 public/
