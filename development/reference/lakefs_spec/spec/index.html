@@ -1347,9 +1347,7 @@ file systems.</p>
 <span class="normal">625</span>
 <span class="normal">626</span>
 <span class="normal">627</span>
-<span class="normal">628</span>
-<span class="normal">629</span>
-<span class="normal">630</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">LakeFSFileSystem</span><span class="p">(</span><span class="n">AbstractFileSystem</span><span class="p">):</span>
+<span class="normal">628</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">LakeFSFileSystem</span><span class="p">(</span><span class="n">AbstractFileSystem</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    lakeFS file system implementation.</span>
 
@@ -1781,9 +1779,7 @@ file systems.</p>
                         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong protocol for remote connection&quot;</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Begin upload of </span><span class="si">{</span><span class="n">lpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                        <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span>
-                            <span class="n">request</span>
-                        <span class="p">):</span>  <span class="c1"># nosec [B310:blacklist] # We catch faulty protocols above.</span>
+                        <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>  <span class="c1"># nosec [B310:blacklist] # We catch faulty protocols above.</span>
                             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Successfully uploaded </span><span class="si">{</span><span class="n">lpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">except</span> <span class="n">urllib</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="n">urllib_http_error_as_lakefs_api_exception</span> <span class="o">=</span> <span class="n">ApiException</span><span class="p">(</span>
@@ -2441,7 +2437,9 @@ is changed from defaults.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">633</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">631</span>
+<span class="normal">632</span>
+<span class="normal">633</span>
 <span class="normal">634</span>
 <span class="normal">635</span>
 <span class="normal">636</span>
@@ -2551,9 +2549,7 @@ is changed from defaults.</p>
 <span class="normal">740</span>
 <span class="normal">741</span>
 <span class="normal">742</span>
-<span class="normal">743</span>
-<span class="normal">744</span>
-<span class="normal">745</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">LakeFSFile</span><span class="p">(</span><span class="n">AbstractBufferedFile</span><span class="p">):</span>
+<span class="normal">743</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">LakeFSFile</span><span class="p">(</span><span class="n">AbstractBufferedFile</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;lakeFS file implementation. Buffered in reads, unbuffered in writes.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -2738,7 +2734,9 @@ blocks are allowed to be. Disallows further writing to this file.</p>
 
           <details class="quote">
             <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">691</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">689</span>
+<span class="normal">690</span>
+<span class="normal">691</span>
 <span class="normal">692</span>
 <span class="normal">693</span>
 <span class="normal">694</span>
@@ -2776,9 +2774,7 @@ blocks are allowed to be. Disallows further writing to this file.</p>
 <span class="normal">726</span>
 <span class="normal">727</span>
 <span class="normal">728</span>
-<span class="normal">729</span>
-<span class="normal">730</span>
-<span class="normal">731</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">729</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write buffered data to backend store.</span>
 
