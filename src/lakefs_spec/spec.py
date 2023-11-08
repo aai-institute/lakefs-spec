@@ -23,8 +23,7 @@ from lakefs_sdk.client import LakeFSClient
 from lakefs_sdk.exceptions import ApiException, NotFoundException
 from lakefs_sdk.models import ObjectCopyCreation, ObjectStatsList, StagingMetadata
 
-from lakefs_spec.client_helpers import commit as create_commit
-from lakefs_spec.client_helpers import create_tag, ensure_branch
+from lakefs_spec.client_helpers import commit, create_tag, ensure_branch, merge, revert
 from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.hooks import FSEvent, HookContext, LakeFSHook, noop
@@ -41,21 +40,31 @@ _warn_on_fileupload = True
 
 
 class LakeFSTransaction(Transaction):
+    """A lakeFS transaction model capable of versioning operations in between file uploads."""
+
     def __init__(self, fs: LakeFSFileSystem):
         """
-        A lakeFS transaction model. The base class' `file` stack can also contain
-        versioning callbacks here.
+        Initialize a lakeFS transaction. The base class' `file` stack can also contain
+        versioning operations.
         """
         super().__init__(fs=fs)
         self.fs: LakeFSFileSystem
         self.files: list[AbstractBufferedFile | Callable[[LakeFSClient], None]]
 
+    def __enter__(self):
+        self.start()
+        return self
+
     def commit(
         self, repository: str, branch: str, message: str, metadata: dict[str, str] | None = None
     ) -> None:
+        """
+        Create a commit on a branch in a repository with a commit message and attached metadata.
+        """
+
         # bind all arguments to the client helper function, and then add it to the file-/callstack.
         op = partial(
-            create_commit, repository=repository, branch=branch, message=message, metadata=metadata
+            commit, repository=repository, branch=branch, message=message, metadata=metadata
         )
         self.files.append(op)
 
@@ -78,13 +87,28 @@ class LakeFSTransaction(Transaction):
         self.files = []
         self.fs._intrans = False
 
-    def __enter__(self):
-        self.start()
-        return self
+    def create_branch(self, repository: str, branch: str, source_branch: str) -> str:
+        op = partial(
+            ensure_branch, repository=repository, branch=branch, source_branch=source_branch
+        )
+        self.files.append(op)
+        return branch
 
-    def tag(self, repository: str, ref: str, tag: str) -> None:
+    def merge(self, repository: str, source_ref: str, into: str) -> None:
+        """Merge a branch into another branch in a repository."""
+        op = partial(merge, repository=repository, source_ref=source_ref, target_branch=into)
+        self.files.append(op)
+
+    def revert(self, repository: str, branch: str, parent_number: int = 1) -> None:
+        """Revert a previous commit on a branch."""
+        op = partial(revert, repository=repository, branch=branch, parent_number=parent_number)
+        self.files.append(op)
+
+    def tag(self, repository: str, ref: str, tag: str) -> str:
+        """Create a tag referencing a commit in a repository."""
         op = partial(create_tag, repository=repository, ref=ref, tag=tag)
         self.files.append(op)
+        return tag
 
 
 class LakeFSFileSystem(AbstractFileSystem):
