@@ -100,3 +100,30 @@ def test_transaction_revert(
     )
     latest_commit = commits.results[0]
     assert latest_commit.message == f"Revert {temp_branch}"
+
+
+def test_transaction_branch(fs: LakeFSFileSystem, repository: str) -> None:
+    branch = "new-hello"
+
+    try:
+        with fs.transaction as tx:
+            tx.create_branch(repository=repository, branch=branch, source_branch="main")
+
+        branches = [
+            b.id for b in fs.client.branches_api.list_branches(repository=repository).results
+        ]
+
+        # existence check for a newly created branch.
+        assert branch in branches
+
+    finally:
+        fs.client.branches_api.delete_branch(
+            repository=repository,
+            branch=branch,
+        )
+
+
+def test_transaction_entry(fs: LakeFSFileSystem) -> None:
+    fs.start_transaction()
+    assert fs._intrans
+    assert fs._transaction is not None
