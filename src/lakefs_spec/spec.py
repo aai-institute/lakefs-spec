@@ -635,16 +635,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 storage_options=storage_options,
             )
         else:
-            size = Path(lpath).stat().st_size
-            callback.set_size(size)
-
-            with self.wrapped_api_call():
-                self.client.objects_api.upload_object(
-                    repository=repository, branch=branch, path=resource, content=lpath, **kwargs
-                )
-
-            # this is stupid, but the best we can do without multipart uploads.
-            callback.relative_update(size)
+            super().put_file(lpath=lpath, rpath=rpath, callback=callback, **kwargs)
 
         run_put_file_hook()
 

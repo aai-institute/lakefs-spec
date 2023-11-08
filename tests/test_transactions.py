@@ -1,7 +1,7 @@
 from typing import Any
 
 from lakefs_spec import LakeFSFileSystem
-from tests.util import RandomFileFactory
+from tests.util import RandomFileFactory, with_counter
 
 
 def test_transaction_commit(
@@ -18,8 +18,10 @@ def test_transaction_commit(
     message = f"Add file {random_file.name}"
 
     with fs.transaction as tx:
-        fs.put_file(lpath, rpath)
+        fs.put_file(lpath, rpath, autocommit=False)
         tx.commit(repository, temp_branch, message=message)
+        # stack contains the file to upload, and the commit op.
+        assert len(tx.files) == 2
 
     commits = fs.client.refs_api.log_commits(
         repository=repository,
@@ -55,7 +57,7 @@ def test_transaction_merge(
 
         with fs.transaction as tx:
             # stage a file on new_branch...
-            fs.put(str(random_file), resource)
+            fs.put_file(str(random_file), resource, autocommit=False)
             # ... commit it with the above message
             tx.commit(
                 repository=repository,
@@ -64,6 +66,9 @@ def test_transaction_merge(
             )
             # ... and merge it into temp_branch.
             tx.merge(repository=repository, source_ref=new_branch, into=temp_branch)
+
+            # stack contents: file upload, commit, merge to temp.
+            assert len(tx.files) == 3
 
         # at last, verify temp_branch@HEAD is the merge commit.
         commits = fs.client.refs_api.log_commits(
@@ -90,7 +95,7 @@ def test_transaction_revert(
     message = f"Add file {random_file.name}"
 
     with fs.transaction as tx:
-        fs.put_file(lpath, rpath)
+        fs.put_file(lpath, rpath, autocommit=False)
         tx.commit(repository, temp_branch, message=message)
         tx.revert(repository=repository, branch=temp_branch)
 
@@ -127,3 +132,29 @@ def test_transaction_entry(fs: LakeFSFileSystem) -> None:
     fs.start_transaction()
     assert fs._intrans
     assert fs._transaction is not None
+
+
+def test_transaction_failure(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: str,
+    temp_branch: str,
+) -> None:
+    random_file = random_file_factory.make()
+
+    lpath = str(random_file)
+    rpath = f"{repository}/{temp_branch}/{random_file.name}"
+
+    message = f"Add file {random_file.name}"
+
+    fs.client, counter = with_counter(fs.client)
+    try:
+        with fs.transaction as tx:
+            fs.put_file(lpath, rpath, autocommit=False)
+            tx.commit(repository, temp_branch, message=message)
+            raise RuntimeError("something went wrong")
+    except RuntimeError:
+        pass
+
+    # assert that no commit was attempted because of the exception.
+    assert counter.count("commits_api.commit") == 0
