@@ -73,6 +73,9 @@ class LakeFSTransaction(Transaction):
         Finish transaction: Unwind file+versioning op stack via
          1. Committing or discarding in case of a file, and
          2. Conducting versioning operations using the file system's client.
+
+         No operations happen and all files are discarded if `commit` is False,
+         which is the case e.g. if an exception happens in the context manager.
         """
         for f in self.files:
             if isinstance(f, AbstractBufferedFile):
@@ -83,7 +86,8 @@ class LakeFSTransaction(Transaction):
             else:
                 # member is a client helper, with everything but the client bound
                 # via `functools.partial`.
-                f(self.fs.client)
+                if commit:
+                    f(self.fs.client)
         self.files = []
         self.fs._intrans = False
 
