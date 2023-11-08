@@ -524,6 +524,17 @@ class LakeFSFileSystem(AbstractFileSystem):
         if mode not in {"rb", "wb"}:
             raise NotImplementedError(f"unsupported mode {mode!r}")
 
+        if mode == "wb":
+            global _warn_on_fileupload
+            if _warn_on_fileupload:
+                warnings.warn(
+                    f"Calling `{self.__class__.__name__}.open()` in write mode results in unbuffered "
+                    "file uploads, because the lakeFS Python client does not support multipart "
+                    "uploads. Uploading large files unbuffered can have performance implications.",
+                    UserWarning,
+                )
+                _warn_on_fileupload = False
+
         return LakeFSFile(
             self,
             path=path,
@@ -704,17 +715,7 @@ class LakeFSFile(AbstractBufferedFile):
         )
 
         self.buffer: io.BytesIO
-
-        if mode == "wb":
-            global _warn_on_fileupload
-            if _warn_on_fileupload:
-                warnings.warn(
-                    f"Calling `{self.__class__.__name__}.open()` in write mode results in unbuffered "
-                    "file uploads, because the lakeFS Python client does not support multipart "
-                    "uploads. Uploading large files unbuffered can have performance implications.",
-                    UserWarning,
-                )
-                _warn_on_fileupload = False
+        if mode == "wb" and self.fs.create_branch_ok:
             repository, branch, resource = parse(path)
             ensure_branch(self.fs.client, repository, branch, self.fs.source_branch)
 
