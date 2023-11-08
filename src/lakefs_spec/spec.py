@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import functools
 import io
 import logging
 import mimetypes
@@ -10,8 +9,9 @@ import urllib.error
 import urllib.request
 import warnings
 from contextlib import contextmanager
+from functools import partial
 from pathlib import Path
-from typing import Any, Generator, Literal, overload
+from typing import Any, Callable, Generator, Literal, overload
 
 from fsspec import filesystem
 from fsspec.callbacks import Callback, NoOpCallback
@@ -47,20 +47,23 @@ class LakeFSTransaction(Transaction):
         versioning callbacks here.
         """
         super().__init__(fs=fs)
-        self.files: list[AbstractBufferedFile | tuple]
+        self.fs: LakeFSFileSystem
+        self.files: list[AbstractBufferedFile | Callable[[LakeFSClient], None]]
 
     def commit(
         self, repository: str, branch: str, message: str, metadata: dict[str, str] | None = None
     ) -> None:
-        op = functools.partial(create_commit, client=self.fs.client)
-        kw = {"repository": repository, "branch": branch, "message": message, "metadata": metadata}
-        self.files.append((op, kw))
+        # bind all arguments to the client helper function, and then add it to the file-/callstack.
+        op = partial(
+            create_commit, repository=repository, branch=branch, message=message, metadata=metadata
+        )
+        self.files.append(op)
 
-    def complete(self, commit=True):
+    def complete(self, commit: bool = True) -> None:
         """
         Finish transaction: Unwind file+versioning op stack via
          1. Committing or discarding in case of a file, and
-         2. Conducting versioning operations with keyword arguments.
+         2. Conducting versioning operations using the file system's client.
         """
         for f in self.files:
             if isinstance(f, AbstractBufferedFile):
@@ -69,8 +72,9 @@ class LakeFSTransaction(Transaction):
                 else:
                     f.discard()
             else:
-                op, kw = f
-                op(**kw)
+                # member is a client helper, with everything but the client bound
+                # via `functools.partial`.
+                f(self.fs.client)
         self.files = []
         self.fs._intrans = False
 
@@ -79,9 +83,8 @@ class LakeFSTransaction(Transaction):
         return self
 
     def tag(self, repository: str, ref: str, tag: str) -> None:
-        op = functools.partial(create_tag, client=self.fs.client)
-        kw = {"repository": repository, "ref": ref, "tag": tag}
-        self.files.append((op, kw))
+        op = partial(create_tag, repository=repository, ref=ref, tag=tag)
+        self.files.append(op)
 
 
 class LakeFSFileSystem(AbstractFileSystem):
