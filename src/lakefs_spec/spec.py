@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-import hashlib
+import functools
+import io
 import logging
 import mimetypes
 import operator
@@ -15,16 +16,19 @@ from typing import Any, Generator, Literal, overload
 from fsspec import filesystem
 from fsspec.callbacks import Callback, NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
+from fsspec.transaction import Transaction
 from fsspec.utils import isfilelike, stringify_path
 from lakefs_sdk import Configuration
 from lakefs_sdk.client import LakeFSClient
 from lakefs_sdk.exceptions import ApiException, NotFoundException
-from lakefs_sdk.models import BranchCreation, ObjectCopyCreation, ObjectStatsList, StagingMetadata
+from lakefs_sdk.models import ObjectCopyCreation, ObjectStatsList, StagingMetadata
 
+from lakefs_spec.client_helpers import commit as create_commit
+from lakefs_spec.client_helpers import create_tag, ensure_branch
 from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.hooks import FSEvent, HookContext, LakeFSHook, noop
-from lakefs_spec.util import parse
+from lakefs_spec.util import md5_checksum, parse
 
 _DEFAULT_CALLBACK = NoOpCallback()
 
@@ -36,44 +40,48 @@ EmptyYield = Generator[None, None, None]
 _warn_on_fileupload = True
 
 
-def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
-    with open(lpath, "rb") as f:
-        file_hash = hashlib.md5(usedforsecurity=False)
-        chunk = f.read(blocksize)
-        while chunk:
-            file_hash.update(chunk)
-            chunk = f.read(blocksize)
-    return file_hash.hexdigest()
+class LakeFSTransaction(Transaction):
+    def __init__(self, fs: LakeFSFileSystem):
+        """
+        A lakeFS transaction model. The base class' `file` stack can also contain
+        versioning callbacks here.
+        """
+        super().__init__(fs=fs)
+        self.files: list[AbstractBufferedFile | tuple]
 
+    def commit(
+        self, repository: str, branch: str, message: str, metadata: dict[str, str] | None = None
+    ) -> None:
+        op = functools.partial(create_commit, client=self.fs.client)
+        kw = {"repository": repository, "branch": branch, "message": message, "metadata": metadata}
+        self.files.append((op, kw))
 
-def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_branch: str) -> None:
-    """
-    Checks if a branch exists. If not, it is created.
-    This implementation depends on server-side error handling.
+    def complete(self, commit=True):
+        """
+        Finish transaction: Unwind file+versioning op stack via
+         1. Committing or discarding in case of a file, and
+         2. Conducting versioning operations with keyword arguments.
+        """
+        for f in self.files:
+            if isinstance(f, AbstractBufferedFile):
+                if commit:
+                    f.commit()
+                else:
+                    f.discard()
+            else:
+                op, kw = f
+                op(**kw)
+        self.files = []
+        self.fs._intrans = False
 
-    Parameters
-    ----------
-    client: LakeFSClient
-        The lakeFS client configured for (and authenticated with) the target instance.
-    repository: str
-        Repository name.
-    branch: str
-        Name of the branch.
-    source_branch: str
-        Name of the source branch the new branch is created from.
+    def __enter__(self):
+        self.start()
+        return self
 
-    Returns
-    -------
-    None
-    """
-
-    try:
-        new_branch = BranchCreation(name=branch, source=source_branch)
-        # client.branches_api.create_branch throws ApiException when branch exists
-        client.branches_api.create_branch(repository=repository, branch_creation=new_branch)
-        logger.info(f"Created new branch {branch!r} from branch {source_branch!r}.")
-    except ApiException:
-        pass
+    def tag(self, repository: str, ref: str, tag: str) -> None:
+        op = functools.partial(create_tag, client=self.fs.client)
+        kw = {"repository": repository, "ref": ref, "tag": tag}
+        self.files.append((op, kw))
 
 
 class LakeFSFileSystem(AbstractFileSystem):
@@ -195,6 +203,24 @@ class LakeFSFileSystem(AbstractFileSystem):
         if stringify_path(path).endswith("/"):
             return spath + "/"
         return spath
+
+    @property
+    def transaction(self):
+        """A context within which files are committed together upon exit
+
+        Requires the file class to implement `.commit()` and `.discard()`
+        for the normal and exception cases.
+        """
+        self._transaction: LakeFSTransaction | None
+        if self._transaction is None:
+            self._transaction = LakeFSTransaction(self)
+        return self._transaction
+
+    def start_transaction(self):
+        """Begin write transaction for deferring files, non-context version"""
+        self._intrans = True
+        self._transaction = LakeFSTransaction(self)
+        return self.transaction
 
     @contextmanager
     def wrapped_api_call(self, message: str | None = None, set_cause: bool = True) -> EmptyYield:
@@ -655,6 +681,8 @@ class LakeFSFile(AbstractBufferedFile):
             **kwargs,
         )
 
+        self.buffer: io.BytesIO
+
         if mode == "wb":
             global _warn_on_fileupload
             if _warn_on_fileupload:
@@ -669,22 +697,29 @@ class LakeFSFile(AbstractBufferedFile):
             ensure_branch(self.fs.client, repository, branch, self.fs.source_branch)
 
     def _upload_chunk(self, final: bool = False) -> bool:
-        """Single-chunk (unbuffered) upload, on final (i.e. during file.close())."""
-        if final:
-            repository, branch, resource = parse(self.path)
-
-            with self.fs.wrapped_api_call():
-                # single-shot upload.
-                # empty buffer is equivalent to a touch()
-                self.buffer.seek(0)
-                self.fs.client.objects_api.upload_object(
-                    repository=repository,
-                    branch=branch,
-                    path=resource,
-                    content=self.buffer.read(),
-                )
-
+        """Commits the file on final chunk via single-shot upload, no-op otherwise."""
+        if final and self.autocommit:
+            self.commit()
         return not final
+
+    def commit(self):
+        """Commit the file via single-shot upload."""
+        repository, branch, resource = parse(self.path)
+
+        with self.fs.wrapped_api_call():
+            # empty buffer is equivalent to a touch()
+            self.buffer.seek(0)
+            self.fs.client.objects_api.upload_object(
+                repository=repository,
+                branch=branch,
+                path=resource,
+                content=self.buffer.read(),
+            )
+
+        self.buffer = io.BytesIO()
+
+    def discard(self):
+        self.buffer = io.BytesIO()  # discards the data, but in a type-safe way.
 
     def flush(self, force: bool = False) -> None:
         """
