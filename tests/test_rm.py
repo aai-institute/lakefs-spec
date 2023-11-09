@@ -1,13 +1,4 @@
-from lakefs_sdk.client import LakeFSClient
-
 from lakefs_spec import LakeFSFileSystem
-from lakefs_spec.client_helpers import commit
-from lakefs_spec.hooks import FSEvent, HookContext
-
-
-def commit_after_rm(client: LakeFSClient, ctx: HookContext) -> None:
-    message = f"Remove file {ctx.resource}"
-    commit(client, repository=ctx.repository, branch=ctx.ref, message=message)
 
 
 def test_rm(
@@ -26,11 +17,12 @@ def test_rm_with_postcommit(
     repository: str,
     temp_branch: str,
 ) -> None:
-    fs.register_hook(FSEvent.RM, commit_after_rm)
-
     path = f"{repository}/{temp_branch}/README.md"
+    msg = "Remove file README.md"
 
-    fs.rm(path)
+    with fs.transaction as tx:
+        fs.rm(path)
+        tx.commit(repository=repository, branch=temp_branch, message=msg)
     assert not fs.exists(path)
 
     commits = fs.client.refs_api.log_commits(
@@ -38,4 +30,4 @@ def test_rm_with_postcommit(
         ref=temp_branch,
     )
     latest_commit = commits.results[0]
-    assert latest_commit.message == "Remove file README.md"
+    assert latest_commit.message == msg
