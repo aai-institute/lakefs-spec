@@ -17,7 +17,7 @@ from fsspec import filesystem
 from fsspec.callbacks import Callback, NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.transaction import Transaction
-from fsspec.utils import isfilelike, stringify_path
+from fsspec.utils import stringify_path
 from lakefs_sdk import Configuration
 from lakefs_sdk.client import LakeFSClient
 from lakefs_sdk.exceptions import ApiException, NotFoundException
@@ -302,20 +302,19 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, ref, resource = parse(path)
 
         exists = False
-        with self.wrapped_api_call():
-            try:
-                self.client.objects_api.head_object(repository, ref, resource, **kwargs)
-                exists = True
-            except NotFoundException:
-                pass
-            except ApiException as e:
-                # in case of an error other than "not found", existence cannot be
-                # decided, so raise the translated error.
-                raise translate_lakefs_error(e)
-            finally:
-                ctx = HookContext(repository=repository, ref=ref, resource=resource)
-                self.run_hook(FSEvent.EXISTS, ctx)
-                return exists
+        try:
+            self.client.objects_api.head_object(repository, ref, resource, **kwargs)
+            exists = True
+        except NotFoundException:
+            pass
+        except ApiException as e:
+            # in case of an error other than "not found", existence cannot be
+            # decided, so raise the translated error.
+            raise translate_lakefs_error(e)
+        finally:
+            ctx = HookContext(repository=repository, ref=ref, resource=resource)
+            self.run_hook(FSEvent.EXISTS, ctx)
+            return exists
 
     def cp_file(self, path1: str, path2: str, **kwargs: Any) -> None:
         if path1 == path2:
@@ -372,11 +371,9 @@ class LakeFSFileSystem(AbstractFileSystem):
             ctx = HookContext(repository=repository, ref=ref, resource=resource)
             self.run_hook(FSEvent.GET_FILE, ctx)
 
-        info = self.info(rpath)
-
         if precheck and Path(lpath).exists():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
-            remote_checksum = info.get("checksum")
+            remote_checksum = self.info(rpath).get("checksum")
             if local_checksum == remote_checksum:
                 logger.info(
                     f"Skipping download of resource {rpath!r} to local path {lpath!r}: "
@@ -385,37 +382,9 @@ class LakeFSFileSystem(AbstractFileSystem):
                 run_get_file_hook()
                 return
 
-        filesize = info["size"]
-        callback.set_size(filesize)
-
-        if isfilelike(lpath):
-            outfile = lpath
-        else:
-            outfile = open(lpath, "wb")
-
         try:
-            offset = 0
-            while True:
-                next_offset = max(offset + self.blocksize, filesize)
-                byterange = f"bytes={offset}-{next_offset - 1}"
-
-                chunk = self.client.objects_api.get_object(
-                    repository, ref, resource, range=byterange, **kwargs
-                )
-                res = outfile.write(chunk)
-                callback.relative_update(res)
-
-                offset += self.blocksize
-                if next_offset >= filesize:
-                    break
-        except ApiException as e:
-            from fsspec.implementations.local import LocalFileSystem
-
-            LocalFileSystem().rm_file(lpath)
-            raise translate_lakefs_error(e)
+            super().get_file(rpath=rpath, lpath=lpath, callback=callback, outfile=outfile, **kwargs)
         finally:
-            if not isfilelike(lpath):
-                outfile.close()
             run_get_file_hook()
 
     def info(self, path: str, **kwargs: Any) -> dict[str, Any]:
