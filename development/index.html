@@ -339,8 +339,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#creating-lakefs-automations-in-python-with-lakefsfilesystem-hooks" class="md-nav__link">
-    Creating lakeFS automations in Python with LakeFSFileSystem hooks
+  <a href="#creating-lakefs-automations-in-python-with-lakefsfilesystem-transactions" class="md-nav__link">
+    Creating lakeFS automations in Python with LakeFSFileSystem transactions
   </a>
   
 </li>
@@ -570,26 +570,6 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/lakefs_spec/hooks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    hooks
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
       <a href="reference/lakefs_spec/spec/" class="md-nav__link">
         
   
@@ -714,8 +694,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#creating-lakefs-automations-in-python-with-lakefsfilesystem-hooks" class="md-nav__link">
-    Creating lakeFS automations in Python with LakeFSFileSystem hooks
+  <a href="#creating-lakefs-automations-in-python-with-lakefsfilesystem-transactions" class="md-nav__link">
+    Creating lakeFS automations in Python with LakeFSFileSystem transactions
   </a>
   
 </li>
@@ -841,28 +821,18 @@ their more granular single-file counterparts <code>fs.get_file</code> and <code>
 <span class="c1"># The default is precheck=True, you can force the operation by setting precheck=False.</span>
 <span class="n">fs</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="s2">&quot;my-repo/my-ref/file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;file.txt&quot;</span><span class="p">,</span> <span class="n">precheck</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
-<h3 id="creating-lakefs-automations-in-python-with-lakefsfilesystem-hooks">Creating lakeFS automations in Python with <code>LakeFSFileSystem</code> hooks<a class="headerlink" href="#creating-lakefs-automations-in-python-with-lakefsfilesystem-hooks" title="Permanent link">&para;</a></h3>
+<h3 id="creating-lakefs-automations-in-python-with-lakefsfilesystem-transactions">Creating lakeFS automations in Python with <code>LakeFSFileSystem</code> transactions<a class="headerlink" href="#creating-lakefs-automations-in-python-with-lakefsfilesystem-transactions" title="Permanent link">&para;</a></h3>
 <p>LakeFS has a variety of administrative APIs available through its Python client library.
-Within <code>lakefs-spec</code>, you can register hooks to your <code>LakeFSFileSystem</code> to run code after file system operations.
-A hook needs to have the signature <code>(client, context) -&gt; None</code>, where the <code>client</code> argument holds the
-file system's lakeFS API client, and the <code>context</code> object contains information about the requested resource (repository, ref/branch, name).</p>
-<p>As an example, the following snippet installs a lakeFS hook that creates a commit on the lakeFS branch after a file upload:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
-
-<span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-<span class="kn">from</span> <span class="nn">lakefs_spec.client_helpers</span> <span class="kn">import</span> <span class="n">commit</span>
-<span class="kn">from</span> <span class="nn">lakefs_spec.hooks</span> <span class="kn">import</span> <span class="n">FSEvent</span><span class="p">,</span> <span class="n">HookContext</span>
-
-<span class="k">def</span> <span class="nf">create_commit_on_put</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">LakeFSClient</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">HookContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Add file </span><span class="si">{</span><span class="n">ctx</span><span class="o">.</span><span class="n">resource</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">commit</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">repository</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">repository</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">)</span>
+Within <code>lakefs-spec</code>, you can use transactions to define a versioning workflow in your file uploads.</p>
+<p>As an example, the following snippet creates a transaction that creates a commit on the given lakeFS branch after a file upload:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
 
 <span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
 
-<span class="n">fs</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="n">FSEvent</span><span class="o">.</span><span class="n">PUT_FILE</span><span class="p">,</span> <span class="n">create_commit_on_put</span><span class="p">)</span>
-
-<span class="c1"># creates a commit with the message &quot;Add file my-file.txt&quot; after the file put.</span>
-<span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;my-repo/my-branch/my-file.txt&quot;</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+    <span class="c1"># creates a commit with the message &quot;Add file my-file.txt&quot; after the file put.</span>
+    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;my-repo/my-branch/my-file.txt&quot;</span><span class="p">,</span> <span class="n">autocommit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;my-repo&quot;</span><span class="p">,</span> <span class="s2">&quot;my-branch&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add file my-file.txt&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="implicit-initialization-and-instance-caching">Implicit initialization and instance caching<a class="headerlink" href="#implicit-initialization-and-instance-caching" title="Permanent link">&para;</a></h3>
 <p>Aside from explicit initialization, you can also use environment variables and a configuration file (by default <code>~/.lakectl.yaml</code>) to initialize a lakeFS file system.
@@ -945,7 +915,7 @@ If you do have to mix both methods, you can clear the instance cache like so:</p
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-10-26</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-09</span>
       
     
   </small>
