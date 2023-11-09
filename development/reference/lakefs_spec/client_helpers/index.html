@@ -456,6 +456,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#lakefs_spec.client_helpers.ensure_branch" class="md-nav__link">
+    ensure_branch()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#lakefs_spec.client_helpers.revert" class="md-nav__link">
     revert()
   </a>
@@ -637,6 +644,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#lakefs_spec.client_helpers.ensure_branch" class="md-nav__link">
+    ensure_branch()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#lakefs_spec.client_helpers.revert" class="md-nav__link">
     revert()
   </a>
@@ -681,6 +695,182 @@
 
 
 
+
+
+<div class="doc doc-object doc-function">
+
+
+
+
+<h2 id="lakefs_spec.client_helpers.ensure_branch" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">ensure_branch</span>
+
+
+<a href="#lakefs_spec.client_helpers.ensure_branch" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">ensure_branch</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">repository</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">source_branch</span><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Checks if a branch exists. If not, it is created.
+This implementation depends on server-side error handling.</p>
+
+
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>PARAMETER</b></th>
+        <th><b> DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>client</code></td>
+          <td class="doc-param-details">
+            <div class="doc-md-description">
+              <p>The lakeFS client configured for (and authenticated with) the target instance.</p>
+            </div>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code><span title="lakefs_sdk.client.LakeFSClient">LakeFSClient</span></code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>repository</code></td>
+          <td class="doc-param-details">
+            <div class="doc-md-description">
+              <p>Repository name.</p>
+            </div>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code>str</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>branch</code></td>
+          <td class="doc-param-details">
+            <div class="doc-md-description">
+              <p>Name of the branch.</p>
+            </div>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code>str</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td><code>source_branch</code></td>
+          <td class="doc-param-details">
+            <div class="doc-md-description">
+              <p>Name of the source branch the new branch is created from.</p>
+            </div>
+            <p>
+                <span class="doc-param-annotation">
+                  <b>TYPE:</b>
+                    <code>str</code>
+                </span>
+            </p>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <table>
+    <thead>
+      <tr>
+        <th><b>RETURNS</b></th>
+        <th><b>DESCRIPTION</b></th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+              <span class="doc-returns-annotation">
+                  <code>None</code>
+              </span>
+          </td>
+          <td class="doc-returns-details">
+            <div class="doc-md-description">
+              
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+          <details class="quote">
+            <summary>Source code in <code>src/lakefs_spec/client_helpers.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ensure_branch</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">LakeFSClient</span><span class="p">,</span> <span class="n">repository</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if a branch exists. If not, it is created.</span>
+<span class="sd">    This implementation depends on server-side error handling.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    client: LakeFSClient</span>
+<span class="sd">        The lakeFS client configured for (and authenticated with) the target instance.</span>
+<span class="sd">    repository: str</span>
+<span class="sd">        Repository name.</span>
+<span class="sd">    branch: str</span>
+<span class="sd">        Name of the branch.</span>
+<span class="sd">    source_branch: str</span>
+<span class="sd">        Name of the source branch the new branch is created from.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">new_branch</span> <span class="o">=</span> <span class="n">BranchCreation</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source_branch</span><span class="p">)</span>
+        <span class="c1"># client.branches_api.create_branch throws ApiException when branch exists</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">branches_api</span><span class="o">.</span><span class="n">create_branch</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">repository</span><span class="p">,</span> <span class="n">branch_creation</span><span class="o">=</span><span class="n">new_branch</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created new branch </span><span class="si">{</span><span class="n">branch</span><span class="si">!r}</span><span class="s2"> from branch </span><span class="si">{</span><span class="n">source_branch</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ApiException</span><span class="p">:</span>
+        <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
 
 
 <div class="doc doc-object doc-function">
@@ -775,24 +965,24 @@
 
           <details class="quote">
             <summary>Source code in <code>src/lakefs_spec/client_helpers.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">revert</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">LakeFSClient</span><span class="p">,</span> <span class="n">repository</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">revert</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">LakeFSClient</span><span class="p">,</span> <span class="n">repository</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reverts the commit on the specified branch to the parent specified by parent_number.</span>
 
 <span class="sd">    Parameters</span>
@@ -829,7 +1019,7 @@
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-07</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-09</span>
       
     
   </small>
