@@ -109,32 +109,22 @@ fs = LakeFSFileSystem()
 fs.get_file("my-repo/my-ref/file.txt", "file.txt", precheck=True)
 ```
 
-### Creating lakeFS automations in Python with `LakeFSFileSystem` hooks
+### Creating lakeFS automations in Python with `LakeFSFileSystem` transactions
 
 LakeFS has a variety of administrative APIs available through its Python client library.
-Within `lakefs-spec`, you can register hooks to your `LakeFSFileSystem` to run code after file system operations.
-A hook needs to have the signature `(client, context) -> None`, where the `client` argument holds the
-file system's lakeFS API client, and the `context` object contains information about the requested resource (repository, ref/branch, name).
+Within `lakefs-spec`, you can use transactions to define a versioning workflow in your file uploads.
 
-As an example, the following snippet installs a lakeFS hook that creates a commit on the lakeFS branch after a file upload:
+As an example, the following snippet creates a transaction that creates a commit on the given lakeFS branch after a file upload:
 
 ```python
-from lakefs_sdk.client import LakeFSClient
-
 from lakefs_spec import LakeFSFileSystem
-from lakefs_spec.client_helpers import commit
-from lakefs_spec.hooks import FSEvent, HookContext
-
-def create_commit_on_put(client: LakeFSClient, ctx: HookContext) -> None:
-    message = f"Add file {ctx.resource}"
-    commit(client, repository=ctx.repository, branch=ctx.ref, message=message)
 
 fs = LakeFSFileSystem()
 
-fs.register_hook(FSEvent.PUT_FILE, create_commit_on_put)
-
-# creates a commit with the message "Add file my-file.txt" after the file put.
-fs.put_file("my-file.txt", "my-repo/my-branch/my-file.txt")
+with fs.transaction as tx:
+    # creates a commit with the message "Add file my-file.txt" after the file put.
+    fs.put_file("my-file.txt", "my-repo/my-branch/my-file.txt", autocommit=False)
+    tx.commit("my-repo", "my-branch", message="Add file my-file.txt")
 ```
 
 ### Implicit initialization and instance caching
