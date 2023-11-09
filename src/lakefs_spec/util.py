@@ -1,9 +1,20 @@
+import hashlib
 import re
 
 from lakefs_sdk import __version__ as __lakefs_sdk_version__
 
 lakefs_sdk_version = tuple(int(v) for v in __lakefs_sdk_version__.split("."))
 del __lakefs_sdk_version__
+
+
+def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
+    with open(lpath, "rb") as f:
+        file_hash = hashlib.md5(usedforsecurity=False)
+        chunk = f.read(blocksize)
+        while chunk:
+            file_hash.update(chunk)
+            chunk = f.read(blocksize)
+    return file_hash.hexdigest()
 
 
 def parse(path: str) -> tuple[str, str, str]:
