@@ -87,18 +87,19 @@ After the container has finished initializing, you can access the [web UI](http:
 
 ### Create a lakeFS repository
 
-Once you have logged into the web UI of the lakeFS server for the first time, you can create a quickstart repository containing sample data on the next page. Click the _Create Sample Repository_ button to proceed:
+Once you have logged into the web UI of the lakeFS server for the first time, you can create an empty repository on the next page.
+Click the small _Click here_ link at the bottom of the page to proceed and create a repository named `repo` (we don't want to add the sample data for this guide):
 
 ![](_images/quickstart-lakefs-sample-repo.png)
 
 ??? tip "Tip: Creating a repository later"
 
-    If you have inadvertently skipped over the quickstart repository creation page, you can always create a new repository on the [_Repositories_ tab](http://localhost:8000/repositories) in the lakeFS web UI (and optionally choose to add the same sample data):
+    If you have inadvertently skipped over the quickstart repository creation page, you can always create a new repository on the [_Repositories_ tab](http://localhost:8000/repositories) in the lakeFS web UI (and optionally choose to add the sample data):
 
     ![](_images/quickstart-lakefs-repositories.png)
 
 !!! success
-    You have successfully created a lakeFS repository named `quickstart`, ready to be used with `lakefs-spec`.
+    You have successfully created a lakeFS repository named `repo`, ready to be used with `lakefs-spec`.
 
 ### Using the lakeFS `fsspec` file system
 
@@ -107,13 +108,13 @@ While the `quickstart` repository already contains some files, we won't be using
 To get started, create a file called `quickstart.py` with the following contents:
 
 ```python
---8<-- "docs/_code/quickstart.py::13"
+--8<-- "docs/_code/quickstart.py::9"
 ```
 
 This code snippet prepares a file `demo.txt` on your machine, ready to be added to the lakeFS repository, so let's do just that:
 
 ```python
---8<-- "docs/_code/quickstart.py:14:16"
+--8<-- "docs/_code/quickstart.py:10:16"
 ```
 
 If you execute the `quickstart.py` script at this point, you can already see the [committed file](http://localhost:8000/repositories/repo/object?ref=main&path=demo.txt) in the lakeFS web UI:
@@ -142,6 +143,6 @@ Note that executing the same code multiple times will only result in a single co
 
 After this walkthrough of the installation and an introduction to basic file system operations using `lakefs-spec`, you might want to consider more advanced topics:
 
-- [Use Cases for `lakefs-spec`](/use-cases)
-- [API Reference](/reference/lakefs_spec)
-- [TODO: User Guide](/guides/overview/)
+- [Use Cases for `lakefs-spec`](use-cases.md)
+- [API Reference](reference/lakefs_spec/spec.md)
+- [TODO: User Guide](guides/overview.md)

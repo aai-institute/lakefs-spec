@@ -8,7 +8,7 @@ REPO, BRANCH = "repo", "main"
 local_path = Path("demo.txt")
 local_path.write_text("Hello, lakeFS!")
 
-fs = LakeFSFileSystem()  # will auto-discover config from ~/.lakectl.yaml
+fs = LakeFSFileSystem()  # will auto-discover credentials from ~/.lakectl.yaml
 repo_path = f"{REPO}/{BRANCH}/{local_path.name}"
 
 with fs.transaction as tx:
