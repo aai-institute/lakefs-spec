@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import warnings
 from pathlib import Path
 from typing import Any, NamedTuple
+
+import yaml
 
 
 class LakectlConfig(NamedTuple):
@@ -14,16 +15,6 @@ class LakectlConfig(NamedTuple):
     def read(cls, path: str | Path) -> "LakectlConfig":
         if not Path(path).exists():
             raise FileNotFoundError(path)
-
-        try:
-            import yaml
-        except ModuleNotFoundError:
-            warnings.warn(
-                f"Configuration '{path}' cannot be read because `pyyaml` is not installed. "
-                f"To fix, run `python -m pip install --upgrade pyyaml`.",
-                UserWarning,
-            )
-            return cls()
 
         with open(path, "r") as f:
             obj: dict[str, Any] = yaml.safe_load(f)
