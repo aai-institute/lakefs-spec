@@ -1,12 +1,23 @@
 # Quickstart
 
-This quickstart guide will show you how to
+Welcome! This quickstart guide will get you up and running with `lakefs-spec` by showing you how to
 
 1. [Install the `lakefs-spec` package](#installing),
 1. [spin up a local lakeFS server](#spinning-up-a-local-lakefs-instance),
 1. [create a lakeFS repository for experimentation](#create-a-lakefs-repository), and
 1. [perform basic file system operations](#using-the-lakefs-fsspec-file-system)
 in a lakeFS repository using `lakefs-spec`.
+
+??? info "Prerequisites"
+
+    To follow along with this guide, you will need a few prerequisites ready on your machine:
+
+    - `lakefs-spec` supports Windows, macOS, or Linux
+    - [Docker](https://www.docker.com/), with Docker Compose (although Podman should work as well, but is untested)
+    - [Python 3.9](https://python.org) or later
+    - optionally, [`lakectl`](https://docs.lakefs.io/reference/cli.html), the lakeFS command line tool
+
+    Please take a moment to make sure you have these tools available before proceeding with the next steps.
 
 ## Installing `lakefs-spec`
 
@@ -40,7 +51,7 @@ Or, if you want to try the latest pre-release version directly from GitHub:
     poetry add git+https://github.com/appliedAI-Initiative/lakefs-spec.git
     ```
 
-??? tip "Virtual Environments"
+??? tip "A note on virtual environments"
 
     Consider installing the library in a separate virtual environment.
 
@@ -54,6 +65,7 @@ Or, if you want to try the latest pre-release version directly from GitHub:
 
 !!! warning
     This setup is not recommended for production uses, since it does not store the data persistently.
+
     Please check out the [lakeFS docs](https://docs.lakefs.io/howto/deploy/) for production-ready deployment options.
 
 If you don't already have access to a lakeFS server, you can quickly start a local instance using Docker Compose with a [configuration file](https://github.com/appliedAI-Initiative/lakefs-spec/blob/main/hack/docker-compose.yml) provided in the `lakefs-spec` repository:
