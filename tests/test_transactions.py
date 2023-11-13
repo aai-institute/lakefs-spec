@@ -18,26 +18,38 @@ def test_transaction_commit(
     message = f"Add file {random_file.name}"
 
     with fs.transaction as tx:
-        fs.put_file(lpath, rpath, autocommit=False)
-        tx.commit(repository, temp_branch, message=message)
+        fs.put_file(lpath, rpath)
+        assert len(tx.files) == 1
+        # sha is a placeholder for the actual SHA created on transaction completion.
+        sha = tx.commit(repository, temp_branch, message=message)
         # stack contains the file to upload, and the commit op.
         assert len(tx.files) == 2
+        assert not sha.available()
+
+    assert sha.available()
 
     commits = fs.client.refs_api.log_commits(
         repository=repository,
         ref=temp_branch,
     )
     latest_commit = commits.results[0]
+
     assert latest_commit.message == message
+    assert latest_commit.id == sha.value.id
 
 
 def test_transaction_tag(fs: LakeFSFileSystem, repository: str) -> None:
     try:
         # tag gets created on exit of the context.
         with fs.transaction as tx:
-            tag = tx.tag(repository=repository, ref="main", tag="v2")
+            sha = tx.rev_parse(repository, "main")
+            tag = tx.tag(repository=repository, ref=sha, tag="v2")
 
-        assert any(commit.id == tag for commit in fs.client.tags_api.list_tags(repository).results)
+        assert sha.available()
+
+        tags = fs.client.tags_api.list_tags(repository).results
+        assert tags[0].id == tag
+        assert tags[0].commit_id == sha.value.id
     finally:
         fs.client.tags_api.delete_tag(repository=repository, tag=tag)
 
@@ -57,7 +69,7 @@ def test_transaction_merge(
 
         with fs.transaction as tx:
             # stage a file on new_branch...
-            fs.put_file(str(random_file), resource, autocommit=False)
+            fs.put_file(str(random_file), resource)
             # ... commit it with the above message
             tx.commit(
                 repository=repository,
@@ -66,9 +78,6 @@ def test_transaction_merge(
             )
             # ... and merge it into temp_branch.
             tx.merge(repository=repository, source_ref=new_branch, into=temp_branch)
-
-            # stack contents: file upload, commit, merge to temp.
-            assert len(tx.files) == 3
 
         # at last, verify temp_branch@HEAD is the merge commit.
         commits = fs.client.refs_api.log_commits(
@@ -150,11 +159,11 @@ def test_transaction_failure(
     fs.client, counter = with_counter(fs.client)
     try:
         with fs.transaction as tx:
-            fs.put_file(lpath, rpath, autocommit=False)
+            fs.put_file(lpath, rpath)
             tx.commit(repository, temp_branch, message=message)
             raise RuntimeError("something went wrong")
     except RuntimeError:
         pass
 
-    # assert that no commit was attempted because of the exception.
+    # assert that no second commit was attempted because of the exception.
     assert counter.count("commits_api.commit") == 0
