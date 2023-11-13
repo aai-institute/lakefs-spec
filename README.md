@@ -62,7 +62,7 @@ print(f.readline())  # "Hello, lakeFS!"
 
 ### High-level: Via third-party libraries
 
-A variety of widely-used data science tools are building on `fsspec` to access remote storage resources and can thus work with lakeFS data lakes directly through `lakefs-spec`.
+A variety of widely-used data science tools are building on `fsspec` to access remote storage resources and can thus work with lakeFS data lakes directly through `lakefs-spec` (see the [`fsspec` docs](https://filesystem-spec.readthedocs.io/en/latest/#who-uses-fsspec) for details).
 The examples assume you have a lakeFS instance with the [`quickstart` repository](https://docs.lakefs.io/quickstart/launch.html) containing sample data available.
 
 ```python
@@ -88,8 +88,6 @@ duckdb.register_filesystem(fsspec.filesystem("lakefs"))
 res = duckdb.read_parquet("lakefs://quickstart/main/lakes.parquet")
 res.show()
 ```
-
-For a more comprehensive overview of third-party tools integrating with `fsspec` (and therefore by extension `lakefs-spec`), see the [user guide](https://lakefs-spec.org/latest/guides/overview/) in the documentation.
 
 ## Contributing
 
