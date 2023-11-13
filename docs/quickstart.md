@@ -1,6 +1,14 @@
 # Quickstart
 
-## Installing
+This quickstart guide will show you how to
+
+1. [Install the `lakefs-spec` package](#installing),
+1. [spin up a local lakeFS server](#spinning-up-a-local-lakefs-instance),
+1. [create a lakeFS repository for experimentation](#create-a-lakefs-repository), and
+1. [perform basic file system operations](#using-the-lakefs-fsspec-file-system)
+in a lakeFS repository using `lakefs-spec`.
+
+## Installing `lakefs-spec`
 
 `lakefs-spec` can be used on any platform and requires at least Python 3.9.
 
@@ -32,15 +40,15 @@ Or, if you want to try the latest pre-release version directly from GitHub:
     poetry add git+https://github.com/appliedAI-Initiative/lakefs-spec.git
     ```
 
+??? tip "Virtual Environments"
+
+    Consider installing the library in a separate virtual environment.
+
+    If you are using Poetry, virtual environments can automatically be created by the tool.
+
+    If you prefer the `venv` functionality built into Python, see the [official docs](https://docs.python.org/3/library/venv.html).
+
 ## First Steps
-
-!!! tip
-    This section will show you how to
-
-    1. [spin up a local lakeFS server](#spinning-up-a-local-lakefs-instance),
-    1. [create a lakeFS repository for experimentation](#create-a-lakefs-repository), and
-    1. [perform basic file system operations](#using-the-lakefs-fsspec-file-system)
-    in a lakeFS repository using `lakefs-spec`.
 
 ### Spinning up a local lakeFS instance
 
@@ -96,21 +104,23 @@ Once you have logged into the web UI of the lakeFS server for the first time, yo
 
 While the `quickstart` repository already contains some files, we won't be using them for the remainder of this guide. Instead, we will now use the `lakefs-spec` file system interface to upload a file to the repository we just created, make a commit, and read back the committed data.
 
+To get started, create a file called `quickstart.py` with the following contents:
+
 ```python
 --8<-- "docs/_code/quickstart.py::13"
 ```
 
-We now have prepared a file on your local machine, ready to be added to the lakeFS repository, so let's do just that:
+This code snippet prepares a file `demo.txt` on your machine, ready to be added to the lakeFS repository, so let's do just that:
 
 ```python
 --8<-- "docs/_code/quickstart.py:14:16"
 ```
 
-After running the modified script, you can already see the [committed file](http://localhost:8000/repositories/repo/object?ref=main&path=demo.txt) in the lakeFS web UI:
+If you execute the `quickstart.py` script at this point, you can already see the [committed file](http://localhost:8000/repositories/repo/object?ref=main&path=demo.txt) in the lakeFS web UI:
 
 ![](_images/quickstart-lakefs-ui.png)
 
-But we can also access the committed file through the `fsspec` file system interface programmatically. Add the following lines at the end of your script and observe the output:
+While examining the file contents in the browser is nice, we want to access the committed file programmatically. Add the following lines at the end of your script and observe the output:
 
 ```python
 --8<-- "docs/_code/quickstart.py:18:19"
@@ -132,4 +142,6 @@ Note that executing the same code multiple times will only result in a single co
 
 After this walkthrough of the installation and an introduction to basic file system operations using `lakefs-spec`, you might want to consider more advanced topics:
 
-- TODO
+- [Use Cases for `lakefs-spec`](/use-cases)
+- [API Reference](/reference/lakefs_spec)
+- [TODO: User Guide](/guides/overview/)
