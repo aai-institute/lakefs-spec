@@ -69,6 +69,8 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.snippets:
+      url_download: true
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true 
@@ -77,6 +79,8 @@ theme:
   name: "material"
   icon:
     repo: fontawesome/brands/github
+  features:
+    - content.tabs.link
   palette:
     # Palette toggle for light mode
     - scheme: default
