@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections import deque
 from dataclasses import dataclass
 from functools import partial
@@ -16,8 +18,6 @@ if TYPE_CHECKING:
     from lakefs_spec import LakeFSFileSystem
 
     VersioningOpTuple = tuple[Callable[[LakeFSFileSystem], None], Any]
-else:
-    VersioningOpTuple = tuple[Callable[["LakeFSFileSystem"], None], Any]
 
 
 @dataclass
@@ -53,7 +53,7 @@ class LakeFSTransaction(Transaction):
         self.files: deque[AbstractBufferedFile | VersioningOpTuple] = deque(self.files)
 
     def __enter__(self):
-        self.start()
+        self.fs._intrans = True
         return self
 
     def commit(
@@ -122,7 +122,7 @@ class LakeFSTransaction(Transaction):
         return None
 
     def rev_parse(
-        self, repository: str, ref: str | Placeholder[str], parent: int = 0
+        self, repository: str, ref: str | Placeholder[Commit], parent: int = 0
     ) -> Placeholder[Commit]:
         def rev_parse_op(client: LakeFSClient, **kwargs: Any) -> Commit:
             kwargs = unwrap_placeholders(kwargs)
@@ -132,10 +132,6 @@ class LakeFSTransaction(Transaction):
         op = partial(rev_parse_op, repository=repository, ref=ref, parent=parent)
         self.files.append((op, p))
         return p
-
-    def start(self):
-        """Start a transaction on the LakeFSFileSystem."""
-        self.fs._intrans = True
 
     def tag(self, repository: str, ref: str | Placeholder[Commit], tag: str) -> str:
         """Create a tag referencing a commit in a repository."""
