@@ -9,6 +9,7 @@ strict: false
 
 nav:
   - Introduction: README.md
+  - quickstart.md
   - Use Cases: use-cases.md
   - User Guide: guides/
   - API Reference: reference/
