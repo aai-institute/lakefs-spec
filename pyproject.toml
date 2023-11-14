@@ -32,7 +32,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 
-dependencies = ["fsspec>=2023.6.0", "lakefs-sdk>=1.0.0"]
+dependencies = ["fsspec>=2023.6.0", "lakefs-sdk>=1.0.0", "pyyaml>=6.0.1"]
 
 dynamic = ["version"]
 
@@ -64,6 +64,7 @@ docs = [
     "black",                                     # formatting of signatures in docs
     "mike",
 ]
+demos = ["pandas", "scikit-learn", "numpy", "-e ."]
 
 [tool.setuptools]
 package-dir = { "" = "src" }
