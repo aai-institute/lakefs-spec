@@ -1,11 +1,13 @@
 site_name: lakefs-spec
 site_dir: public/docs
-site_url: https://lakefs-spec.github.io
+site_url: https://lakefs-spec.org
 repo_url: https://github.com/appliedAI-Initiative/lakefs-spec
 edit_uri: -/edit/main/docs/
 
 # To validate all internal links exist. Does not work in ipynb files
 strict: false
+
+copyright: Copyright &copy; 2023 appliedAI Institute for Europe gGmbH
 
 nav:
   - Introduction: README.md
@@ -77,13 +79,19 @@ markdown_extensions:
 
 theme:
   name: "material"
+  logo: _images/aai-logo-cropped.png
+  favicon: _images/aai-favicon.png
+  font:
+    text: IBM Plex Sans  # Arial replacement
+    code: Source Code Pro
   icon:
+    logo: _images/aai-favicon.png
     repo: fontawesome/brands/github
   features:
     - content.tabs.link
   palette:
     # Palette toggle for light mode
-    - scheme: default
+    - scheme: aai-light
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
@@ -95,7 +103,8 @@ theme:
         name: Switch to light mode
 
 extra:
-  copyright_link: https://appliedai.de
+  copyright_link: https://appliedai-institute.de
+  homepage: https://lakefs-spec.org
   version:
     provider: mike
     default: latest
@@ -105,7 +114,8 @@ extra:
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/lakefs-spec
     - icon: fontawesome/brands/linkedin
-      link: https://www.linkedin.com/company/applied-ai-initiative/
+      link: https://www.linkedin.com/company/appliedai-institute-for-europe-ggmbh/
 
 extra_css:
-  - mkdocs_customization/extra.css
+  - _styles/extra.css
+  - _styles/theme.css
