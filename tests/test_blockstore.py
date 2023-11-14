@@ -20,6 +20,7 @@ def test_local_blockstore_type(
 ) -> None:
     random_file = random_file_factory.make()
     lpath = str(random_file)
+    rpath = f"{repository}/{temp_branch}/{random_file.name}"
 
     with patch(
         "lakefs_sdk.api.ConfigApi.get_config", new_callable=MagicMock
@@ -28,7 +29,7 @@ def test_local_blockstore_type(
             storage_config=StorageConfig("local")
         )
         with pytest.raises(ValueError, match="not implemented for blockstore type 'local'"):
-            fs.put_file_to_blockstore(lpath, repository, temp_branch, random_file.name)
+            fs.put_file_to_blockstore(lpath, rpath)
 
 
 def test_presigned_url(
@@ -40,6 +41,7 @@ def test_presigned_url(
 ) -> None:
     random_file = random_file_factory.make()
     lpath = str(random_file)
+    rpath = f"{repository}/{temp_branch}/{random_file.name}"
 
     with patch(
         "lakefs_sdk.api.ConfigApi.get_config", new_callable=MagicMock
@@ -52,7 +54,7 @@ def test_presigned_url(
         )
         link_physical_address_mock = fs.client.staging_api.link_physical_address = MagicMock()
 
-        fs.put_file_to_blockstore(lpath, repository, temp_branch, random_file.name, presign=True)
+        fs.put_file_to_blockstore(lpath, rpath, presign=True)
     mock_urlopen.assert_called_once()
     get_physical_address_mock.assert_called_once()
     link_physical_address_mock.assert_called_once()

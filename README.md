@@ -35,13 +35,12 @@ For a more thorough overview of the features and use cases for `lakefs-spec`, se
 ### Low-level: As a `fsspec` filesystem 
 
 The following example shows how to upload a file, create a commit, and read back the committed data using the bare lakeFS filesystem implementation.
-It assumes you have already created a repository named `repo` and have `lakectl` credentials set up on your machine (see the [lakeFS quickstart guide](https://docs.lakefs.io/quickstart/) if you are new to lakeFS and need guidance).
+It assumes you have already created a repository named `repo` and have `lakectl` credentials set up on your machine in `~/.lakectl.yaml` (see the [lakeFS quickstart guide](https://docs.lakefs.io/quickstart/) if you are new to lakeFS and need guidance).
 
 ```python
 from pathlib import Path
 
 from lakefs_spec import LakeFSFileSystem
-from lakefs_spec.client_helpers import commit
 
 REPO, BRANCH = "repo", "main"
 
@@ -52,8 +51,10 @@ local_path.write_text("Hello, lakeFS!")
 # Upload to lakeFS and create a commit
 fs = LakeFSFileSystem()  # will auto-discover config from ~/.lakectl.yaml
 repo_path = f"{REPO}/{BRANCH}/{local_path.name}"
-fs.put(str(local_path), repo_path)
-commit(fs.client, REPO, BRANCH, "Add demo data")
+
+with fs.transaction as tx:
+    fs.put(str(local_path), repo_path)
+    tx.commit(REPO, BRANCH, "Add demo data")
 
 # Read back committed file
 f = fs.open(repo_path, "rt")

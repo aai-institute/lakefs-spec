@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 from typing import Any, NamedTuple
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+import yaml
 
 
 class LakectlConfig(NamedTuple):
@@ -15,14 +13,8 @@ class LakectlConfig(NamedTuple):
 
     @classmethod
     def read(cls, path: str | Path) -> "LakectlConfig":
-        try:
-            import yaml
-        except ModuleNotFoundError:
-            logger.warning(
-                f"Configuration '{path}' exists, but cannot be read because the `pyyaml` package "
-                f"is not installed. To fix, run `python -m pip install --upgrade pyyaml`.",
-            )
-            return cls()
+        if not Path(path).exists():
+            raise FileNotFoundError(path)
 
         with open(path, "r") as f:
             obj: dict[str, Any] = yaml.safe_load(f)

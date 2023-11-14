@@ -1,5 +1,6 @@
 import pytest
 
+import lakefs_spec.spec
 from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory
 
@@ -37,9 +38,11 @@ def test_lakefs_file_open_write(
 
     rpath = f"{repository}/{temp_branch}/{random_file.name}"
 
+    lakefs_spec.spec._warn_on_fileupload = True
+
     with pytest.warns(
         UserWarning,
-        match=r"Calling `LakeFSFile\.open\(\)` in write mode results in unbuffered file uploads.*",
+        match=r"Calling `LakeFSFileSystem\.open\(\)` in write mode results in unbuffered file uploads.*",
     ):
         # try opening the remote file and writing to it
         with fs.open(rpath, "wb") as fp:

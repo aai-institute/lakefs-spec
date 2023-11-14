@@ -2,7 +2,7 @@
 
 from importlib.metadata import PackageNotFoundError, version
 
-from .spec import LakeFSFile, LakeFSFileSystem
+from .spec import LakeFSFile, LakeFSFileSystem, LakeFSTransaction
 
 try:
     __version__ = version("lakefs-spec")
