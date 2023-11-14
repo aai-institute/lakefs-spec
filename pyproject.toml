@@ -40,6 +40,8 @@ dynamic = ["version"]
 Homepage = "https://github.com/appliedai-initiative/lakefs-spec"
 Repository = "https://github.com/appliedai-initiative/lakefs-spec.git"
 Issues = "https://github.com/appliedai-initiative/lakefs-spec/issues"
+Discussions = "https://github.com/appliedai-initiative/lakefs-spec/discussions"
+Documentation = "https://lakefs-spec.org/latest"
 
 [project.optional-dependencies]
 dev = [
