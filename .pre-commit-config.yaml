@@ -16,14 +16,14 @@ repos:
       - id: end-of-file-fixer
       - id: mixed-line-ending
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.6.1
+    rev: v1.7.0
     hooks:
       # See https://github.com/pre-commit/mirrors-mypy/blob/main/.pre-commit-hooks.yaml
      - id: mypy
        types_or: [ python, pyi ]
        args: ["--ignore-missing-imports", "--scripts-are-modules"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.4
+    rev: v0.1.5
     hooks:
       - id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
