@@ -16,24 +16,15 @@ repos:
       - id: end-of-file-fixer
       - id: mixed-line-ending
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.5.1
+    rev: v1.7.0
     hooks:
       # See https://github.com/pre-commit/mirrors-mypy/blob/main/.pre-commit-hooks.yaml
       - id: mypy
         types_or: [python, pyi]
         args: ["--ignore-missing-imports", "--scripts-are-modules"]
         exclude: "demos/demo-ci/create_demo_notebook.py"
-  - repo: https://github.com/psf/black
-    rev: 23.9.1
-    hooks:
-      - id: black
-        exclude: "demos/demo-ci/create_demo_notebook.py"
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.292
+    rev: v0.1.5
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -49,11 +40,15 @@ repos:
     hooks:
       - id: pip-compile
         name: pip-compile pyproject.toml
-        args: ["--strip-extras", pyproject.toml]
+        args:
+          - --no-annotate
+          - --strip-extras
+          - pyproject.toml
         files: ^(pyproject\.toml|requirements\.txt)$
       - id: pip-compile
         name: pip-compile requirements-dev.txt
         args:
+          - --no-annotate
           - --extra=dev
           - --output-file=requirements-dev.txt
           - pyproject.toml
@@ -61,6 +56,7 @@ repos:
       - id: pip-compile
         name: pip-compile requirements-docs.txt
         args:
+          - --no-annotate
           - --extra=docs
           - --output-file=requirements-docs.txt
           - pyproject.toml

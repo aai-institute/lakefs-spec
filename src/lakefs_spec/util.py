@@ -1,7 +1,20 @@
+import hashlib
 import re
 
 from lakefs_sdk import __version__ as __lakefs_sdk_version__
-from lakefs_sdk.client import LakeFSClient
+
+lakefs_sdk_version = tuple(int(v) for v in __lakefs_sdk_version__.split("."))
+del __lakefs_sdk_version__
+
+
+def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
+    with open(lpath, "rb") as f:
+        file_hash = hashlib.md5(usedforsecurity=False)
+        chunk = f.read(blocksize)
+        while chunk:
+            file_hash.update(chunk)
+            chunk = f.read(blocksize)
+    return file_hash.hexdigest()
 
 
 def parse(path: str) -> tuple[str, str, str]:
@@ -33,25 +46,3 @@ def parse(path: str) -> tuple[str, str, str]:
 
     repo, ref, resource = results.groups()
     return repo, ref, resource
-
-
-lakefs_client_version = tuple(int(v) for v in __lakefs_sdk_version__.split("."))
-del __lakefs_sdk_version__
-
-
-def get_blockstore_type(client: LakeFSClient) -> str:
-    """
-    Get the blockstore of the lakeFS server.
-    Backwards compatible to breaking config_api change in lakeFSClient version 0.110.1.
-
-    Args:
-        client (LakeFSClient): The lakefs client.
-
-    Returns:
-        str: The lakeFS server's blockstore type.
-    """
-    if lakefs_client_version < (0, 111, 0):
-        blockstore_type = client.config_api.get_storage_config().blockstore_type
-    else:
-        blockstore_type = client.config_api.get_config().storage_config.blockstore_type
-    return blockstore_type

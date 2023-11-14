@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import logging
 
+from lakefs_sdk import BranchCreation
 from lakefs_sdk.client import LakeFSClient
-from lakefs_sdk.exceptions import NotFoundException
+from lakefs_sdk.exceptions import ApiException, NotFoundException
 from lakefs_sdk.models import CommitCreation, RepositoryCreation, RevertCreation, TagCreation
 
 logger = logging.getLogger(__name__)
@@ -31,6 +32,36 @@ def commit(
 def create_tag(client: LakeFSClient, repository: str, ref: str, tag: str) -> None:
     tag_creation = TagCreation(id=tag, ref=ref)
     client.tags_api.create_tag(repository=repository, tag_creation=tag_creation)
+
+
+def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_branch: str) -> None:
+    """
+    Checks if a branch exists. If not, it is created.
+    This implementation depends on server-side error handling.
+
+    Parameters
+    ----------
+    client: LakeFSClient
+        The lakeFS client configured for (and authenticated with) the target instance.
+    repository: str
+        Repository name.
+    branch: str
+        Name of the branch.
+    source_branch: str
+        Name of the source branch the new branch is created from.
+
+    Returns
+    -------
+    None
+    """
+
+    try:
+        new_branch = BranchCreation(name=branch, source=source_branch)
+        # client.branches_api.create_branch throws ApiException when branch exists
+        client.branches_api.create_branch(repository=repository, branch_creation=new_branch)
+        logger.info(f"Created new branch {branch!r} from branch {source_branch!r}.")
+    except ApiException:
+        pass
 
 
 def get_tags(client: LakeFSClient, repository: str) -> dict:
