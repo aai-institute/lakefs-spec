@@ -10,9 +10,9 @@ Highlights:
 
 - High-level abstraction over basic lakeFS repository operations
 - Seamless integration into the `fsspec` ecosystem
+- Transaction support
 - Zero-config option through config autodiscovery
 - Automatic up-/download management to avoid unnecessary transfers for unchanged files
-- Extensibility through event hooks
 
 ## Installation
 
