@@ -55,9 +55,6 @@ plugins:
       type: iso_date
   - include_dir_to_nav:
       file_pattern: '.*\.(md|ipynb)$'
-  - mkdocs-jupyter:
-      execute: True
-      allow_errors: false
 
 markdown_extensions:
   # python-markdown extensions: https://python-markdown.github.io/extensions/
