@@ -120,7 +120,7 @@ syft-output.json
 .direnv
 
 #demo-files
-/demos/data/*
+data/
 .lakectl.yaml 
 .demovenv
 

@@ -16,9 +16,8 @@ runs:
     - run: |
         python -m venv .demovenv
         source .demovenv/bin/activate
-        pip install -r demos/requirements.txt
+        pip install -r demos/requirements-demo.txt
         pip install -r requirements-docs.txt
-        python demos/demo-ci/jupytext_to_executed_notebook.py ./demos/demo-ci/create_demo_notebook.py ./demos/demo_data_science_project.ipynb
     - run: |
         # https://github.com/jimporter/mike#deploying-via-ci
         git fetch origin gh-pages --depth=1
