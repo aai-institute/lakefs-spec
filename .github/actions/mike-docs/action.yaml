@@ -16,7 +16,7 @@ runs:
     - run: |
         python -m venv .demovenv
         source .demovenv/bin/activate
-        pip install -r demos/requirements-demo.txt
+        pip install -r requirements-demos.txt
         pip install -r requirements-docs.txt
     - run: |
         # https://github.com/jimporter/mike#deploying-via-ci
