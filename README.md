@@ -24,8 +24,6 @@ $ pip install lakefs-spec
 $ poetry add lakefs-spec
 ```
 
-If you want `lakefs-spec` to automatically discover and load credentials from an existing `~/.lakectl.yaml` credentials file on your machine, additionally install the `PyYAML` library.
-
 ## Usage
 
 The following usage examples showcase two major ways of using `lakefs-spec`: as a low-level filesystem abstraction, and through third-party (data science) libraries.
