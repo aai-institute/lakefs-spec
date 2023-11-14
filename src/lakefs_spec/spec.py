@@ -7,7 +7,6 @@ import operator
 import os
 import urllib.error
 import urllib.request
-import warnings
 from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
@@ -31,11 +30,8 @@ from lakefs_spec.util import md5_checksum, parse
 _DEFAULT_CALLBACK = NoOpCallback()
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 EmptyYield = Generator[None, None, None]
-
-_warn_on_fileupload = True
 
 
 class LakeFSTransaction(Transaction):
@@ -430,17 +426,6 @@ class LakeFSFileSystem(AbstractFileSystem):
     ) -> LakeFSFile:
         if mode not in {"rb", "wb"}:
             raise NotImplementedError(f"unsupported mode {mode!r}")
-
-        if mode == "wb":
-            global _warn_on_fileupload
-            if _warn_on_fileupload:
-                warnings.warn(
-                    f"Calling `{self.__class__.__name__}.open()` in write mode results in unbuffered "
-                    "file uploads, because the lakeFS Python client does not support multipart "
-                    "uploads. Uploading large files unbuffered can have performance implications.",
-                    UserWarning,
-                )
-                _warn_on_fileupload = False
 
         return LakeFSFile(
             self,
