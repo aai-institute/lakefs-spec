@@ -54,6 +54,14 @@ repos:
           - pyproject.toml
         files: ^(pyproject\.toml|requirements-dev\.txt)$
       - id: pip-compile
+        name: pip-compile requirements-demos.txt
+        args:
+          - --no-annotate
+          - --extra=demos
+          - --output-file=requirements-demos.txt
+          - pyproject.toml
+        files: ^(pyproject\.toml|requirements-demos\.txt)$
+      - id: pip-compile
         name: pip-compile requirements-docs.txt
         args:
           - --no-annotate
