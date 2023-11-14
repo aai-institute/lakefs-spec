@@ -18,6 +18,7 @@ runs:
         source .demovenv/bin/activate
         pip install -r requirements-demos.txt
         pip install -r requirements-docs.txt
+      shell: bash
     - run: |
         # https://github.com/jimporter/mike#deploying-via-ci
         git fetch origin gh-pages --depth=1
