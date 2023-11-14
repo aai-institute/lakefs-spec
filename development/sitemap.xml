@@ -2,57 +2,57 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://lakefs-spec.github.io/latest/</loc>
-         <lastmod>2023-11-13</lastmod>
+         <lastmod>2023-11-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.github.io/latest/CONTRIBUTING/</loc>
-         <lastmod>2023-11-13</lastmod>
+         <lastmod>2023-11-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.github.io/latest/use-cases/</loc>
-         <lastmod>2023-11-13</lastmod>
+         <lastmod>2023-11-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.github.io/latest/guides/overview/</loc>
-         <lastmod>2023-11-13</lastmod>
+         <lastmod>2023-11-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.github.io/latest/reference/SUMMARY/</loc>
-         <lastmod>2023-11-13</lastmod>
+         <lastmod>2023-11-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/</loc>
-         <lastmod>2023-11-13</lastmod>
+         <lastmod>2023-11-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/client_helpers/</loc>
-         <lastmod>2023-11-13</lastmod>
+         <lastmod>2023-11-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/config/</loc>
-         <lastmod>2023-11-13</lastmod>
+         <lastmod>2023-11-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/errors/</loc>
-         <lastmod>2023-11-13</lastmod>
+         <lastmod>2023-11-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/spec/</loc>
-         <lastmod>2023-11-13</lastmod>
+         <lastmod>2023-11-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/util/</loc>
-         <lastmod>2023-11-13</lastmod>
+         <lastmod>2023-11-14</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
