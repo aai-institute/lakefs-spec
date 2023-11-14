@@ -126,7 +126,7 @@ To get started, create a file called `quickstart.py` with the following contents
 This code snippet prepares a file `demo.txt` on your machine, ready to be added to the lakeFS repository, so let's do just that:
 
 ```python
---8<-- "docs/_code/quickstart.py:10:16"
+--8<-- "docs/_code/quickstart.py:12:17"
 ```
 
 If you execute the `quickstart.py` script at this point, you can already see the [committed file](http://localhost:8000/repositories/repo/object?ref=main&path=demo.txt) in the lakeFS web UI:
@@ -136,10 +136,23 @@ If you execute the `quickstart.py` script at this point, you can already see the
 While examining the file contents in the browser is nice, we want to access the committed file programmatically. Add the following lines at the end of your script and observe the output:
 
 ```python
---8<-- "docs/_code/quickstart.py:18:19"
+--8<-- "docs/_code/quickstart.py:20:21"
 ```
 
 Note that executing the same code multiple times will only result in a single commit in the repository since the contents of the file on disk and in the repository are identical.
+
+In addition to simple read and write operations, the `fsspec` file system interface also allows us to list the files in a repository folder using `ls`, and query the metadata of objects in the repository through `info` (akin to the POSIX `stat` system call).
+Let's add the following code to our script and observe the output:
+
+```python
+--8<-- "docs/_code/quickstart.py:23:28"
+```
+
+As the last order of business, let's clean up the repository to its original state by removing the file using the `rm` operation and creating another commit (also, the local file is deleted, since we don't need it anymore):
+
+```python
+--8<-- "docs/_code/quickstart.py:31:34"
+```
 
 !!! success
 
