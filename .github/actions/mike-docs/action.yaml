@@ -14,13 +14,6 @@ runs:
   using: "composite"
   steps:
     - run: |
-        python -m venv .demovenv
-        source .demovenv/bin/activate
-        pip install -r requirements-demos.txt
-        pip install -r requirements-docs.txt
-        pip install -e .
-      shell: bash
-    - run: |
         # https://github.com/jimporter/mike#deploying-via-ci
         git fetch origin gh-pages --depth=1
 
@@ -29,10 +22,16 @@ runs:
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       shell: bash
     - run: |
+        python -m venv .demovenv
+        source .demovenv/bin/activate
+        pip install -r requirements-demos.txt
+        pip install -r requirements-docs.txt
+        pip install -e .
+      shell: bash
+    - run: |
         MIKE_OPTIONS=( "--update-aliases" )
         if [ "true" = "${{ inputs.push }}" ]; then
           MIKE_OPTIONS+=( "--push" )
         fi
-
         mike deploy ${{ inputs.version }} ${{ inputs.alias }} "${MIKE_OPTIONS[@]}"
       shell: bash
