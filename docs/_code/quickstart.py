@@ -22,7 +22,9 @@ print(f.readline())  # prints "Hello, lakeFS!"
 
 # Compare the sizes of local file and repo
 file_info = fs.info(repo_path)
-print(f"{local_path.name}: local size: {file_info['size']}, remote size: {local_path.stat().st_size}")
+print(
+    f"{local_path.name}: local size: {file_info['size']}, remote size: {local_path.stat().st_size}"
+)
 
 # Get information about all files in the repo root
 print(fs.ls(f"{REPO}/{BRANCH}/"))

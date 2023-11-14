@@ -145,13 +145,13 @@ In addition to simple read and write operations, the `fsspec` file system interf
 Let's add the following code to our script and observe the output:
 
 ```python
---8<-- "docs/_code/quickstart.py:23:28"
+--8<-- "docs/_code/quickstart.py:23:30"
 ```
 
 As the last order of business, let's clean up the repository to its original state by removing the file using the `rm` operation and creating another commit (also, the local file is deleted, since we don't need it anymore):
 
 ```python
---8<-- "docs/_code/quickstart.py:31:34"
+--8<-- "docs/_code/quickstart.py:33:36"
 ```
 
 !!! success
