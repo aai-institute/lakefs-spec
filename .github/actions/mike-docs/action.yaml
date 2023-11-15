@@ -13,22 +13,22 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: |
-        # https://github.com/jimporter/mike#deploying-via-ci
-        git fetch origin gh-pages --depth=1
+  - run: |
+      # https://github.com/jimporter/mike#deploying-via-ci
+      git fetch origin gh-pages --depth=1
 
-        # For proper UI integration: https://github.com/actions/checkout/pull/1184
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      shell: bash
-    - run: |
-        python -m venv .docsvenv
-        source .docsvenv/bin/activate
-        pip install  pandas scikit-learn -r requirements-docs.txt
-        pip install -e .
-        MIKE_OPTIONS=( "--update-aliases" )
-        if [ "true" = "${{ inputs.push }}" ]; then
-          MIKE_OPTIONS+=( "--push" )
-        fi
-        mike deploy ${{ inputs.version }} ${{ inputs.alias }} "${MIKE_OPTIONS[@]}"
-      shell: bash
+      # For proper UI integration: https://github.com/actions/checkout/pull/1184
+      git config user.name "github-actions[bot]"
+      git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+    shell: bash
+  - run: |
+      python -m venv .docsvenv
+      source .docsvenv/bin/activate
+      pip install  pandas scikit-learn -r requirements-docs.txt
+      pip install -e .
+      MIKE_OPTIONS=( "--update-aliases" )
+      if [ "true" = "${{ inputs.push }}" ]; then
+        MIKE_OPTIONS+=( "--push" )
+      fi
+      mike deploy ${{ inputs.version }} ${{ inputs.alias }} "${MIKE_OPTIONS[@]}"
+    shell: bash
