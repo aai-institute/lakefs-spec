@@ -22,13 +22,11 @@ repos:
       - id: mypy
         types_or: [python, pyi]
         args: ["--ignore-missing-imports", "--scripts-are-modules"]
-        exclude: "demos/demo-ci/create_demo_notebook.py"
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.1.5
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
-        exclude: "demos/demo-ci/create_demo_notebook.py"
   - repo: https://github.com/PyCQA/bandit
     rev: 1.7.5
     hooks:
