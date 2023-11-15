@@ -26,7 +26,7 @@ runs:
         source .demovenv/bin/activate
         pip install -r requirements-docs.txt
         pip install -e .
-        pip install pandas scikit-learn numpy
+        pip install pandas scikit-learn
       shell: bash
     - run: |
         MIKE_OPTIONS=( "--update-aliases" )
