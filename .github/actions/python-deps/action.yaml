@@ -25,3 +25,4 @@ runs:
     - name: Install demo dependencies
       run: | 
         pip install pandas scikit-learn 
+      shell: bash
