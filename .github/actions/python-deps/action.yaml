@@ -22,3 +22,6 @@ runs:
         pip install -r requirements.txt -r requirements-dev.txt -r requirements-docs.txt
         pip install -e . --no-deps
       shell: bash
+    - name: Install demo dependencies
+      run: | 
+        pip install pandas scikit-learn 

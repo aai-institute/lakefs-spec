@@ -22,8 +22,6 @@ runs:
       git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
     shell: bash
   - run: |
-      pip install  pandas scikit-learn -r requirements-docs.txt
-      pip install -e .
       MIKE_OPTIONS=( "--update-aliases" )
       if [ "true" = "${{ inputs.push }}" ]; then
         MIKE_OPTIONS+=( "--push" )
