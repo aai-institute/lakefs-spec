@@ -11,6 +11,7 @@ nav:
   - Introduction: README.md
   - Use Cases: use-cases.md
   - User Guide: guides/
+  - Tutorials: tutorials/
   - API Reference: reference/
   - CONTRIBUTING.md
 
@@ -70,7 +71,7 @@ markdown_extensions:
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.superfences
   - pymdownx.tabbed:
-      alternate_style: true 
+      alternate_style: true
 
 theme:
   name: "material"

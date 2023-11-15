@@ -5,7 +5,14 @@ import logging
 from lakefs_sdk import BranchCreation
 from lakefs_sdk.client import LakeFSClient
 from lakefs_sdk.exceptions import ApiException, NotFoundException
-from lakefs_sdk.models import Commit, CommitCreation, RevertCreation, TagCreation
+from lakefs_sdk.models import (
+    Commit,
+    CommitCreation,
+    Repository,
+    RepositoryCreation,
+    RevertCreation,
+    TagCreation,
+)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -72,6 +79,11 @@ def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_bra
 
 def get_tags(client: LakeFSClient, repository: str) -> dict:
     return client.tags_api.list_tags(repository=repository)
+
+
+def create_repository(client: LakeFSClient, name: str, storage_namespace: str) -> Repository:
+    repository_creation = RepositoryCreation(name=name, storage_namespace=storage_namespace)
+    return client.repositories_api.create_repository(repository_creation=repository_creation)
 
 
 def merge(client: LakeFSClient, repository: str, source_ref: str, target_branch: str) -> None:
