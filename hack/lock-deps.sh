@@ -13,4 +13,3 @@ done
 pip-compile "${COMMON_OPTIONS[@]}" --strip-extras "$INFILE"
 pip-compile "${COMMON_OPTIONS[@]}" --extra=dev --output-file=requirements-dev.txt "$INFILE"
 pip-compile "${COMMON_OPTIONS[@]}" --extra=docs --output-file=requirements-docs.txt "$INFILE"
-pip-compile "${COMMON_OPTIONS[@]}" --extra=demos --output-file=requirements-demos.txt "$INFILE"

@@ -24,9 +24,9 @@ runs:
     - run: |
         python -m venv .demovenv
         source .demovenv/bin/activate
-        pip install -r requirements-demos.txt
         pip install -r requirements-docs.txt
         pip install -e .
+        pip install pandas scikit-learn numpy
       shell: bash
     - run: |
         MIKE_OPTIONS=( "--update-aliases" )
