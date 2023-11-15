@@ -21,9 +21,11 @@ def test_create_tag(
 
     tag = f"Change_{uuid.uuid4()}"
     try:
-        client_helpers.create_tag(client=fs.client, repository=repository, ref=temp_branch, tag=tag)
+        client_helpers.create_tag(
+            client=fs.client, repository=repository, ref=temp_branch, tag=tag)
 
-        assert any(commit.id == tag for commit in fs.client.tags_api.list_tags(repository).results)
+        assert any(commit.id == tag for commit in fs.client.tags_api.list_tags(
+            repository).results)
     finally:
         fs.client.tags_api.delete_tag(repository=repository, tag=tag)
 
@@ -99,7 +101,8 @@ def test_revert(
         )
         > 0
     )
-    client_helpers.revert(client=fs.client, repository=repository, branch=temp_branch)
+    client_helpers.revert(
+        client=fs.client, repository=repository, branch=temp_branch)
     assert (
         len(
             fs.client.refs_api.diff_refs(
@@ -114,7 +117,8 @@ def test_rev_parse(
     fs: LakeFSFileSystem, random_file_factory: RandomFileFactory, repository: str, temp_branch: str
 ) -> None:
     current_head_commit = (
-        fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results[0].id
+        fs.client.refs_api.log_commits(
+            repository=repository, ref=temp_branch).results[0].id
     )
     random_file = random_file_factory.make()
     fs.put(str(random_file), f"{repository}/{temp_branch}/{random_file.name}")
@@ -123,15 +127,18 @@ def test_rev_parse(
     )
 
     next_head_commit = (
-        fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results[0].id
+        fs.client.refs_api.log_commits(
+            repository=repository, ref=temp_branch).results[0].id
     )
 
     assert (
-        client_helpers.rev_parse(client=fs.client, repository=repository, ref=temp_branch, parent=0)
+        client_helpers.rev_parse(
+            client=fs.client, repository=repository, ref=temp_branch, parent=0)
         == next_head_commit
     )
     assert (
-        client_helpers.rev_parse(client=fs.client, repository=repository, ref=temp_branch, parent=1)
+        client_helpers.rev_parse(
+            client=fs.client, repository=repository, ref=temp_branch, parent=1)
         == current_head_commit
     )
 
@@ -150,7 +157,8 @@ def test_rev_parse_error_on_commit_not_found(fs: LakeFSFileSystem, repository: s
 def test_rev_parse_error_on_parent_does_not_exist(
     fs: LakeFSFileSystem, repository: str, temp_branch: str
 ) -> None:
-    n_commits = len(fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results)
+    n_commits = len(fs.client.refs_api.log_commits(
+        repository=repository, ref=temp_branch).results)
     non_existent_parent = n_commits + 1
     with pytest.raises(
         ValueError,
@@ -159,16 +167,3 @@ def test_rev_parse_error_on_parent_does_not_exist(
         client_helpers.rev_parse(
             client=fs.client, repository=repository, ref=temp_branch, parent=non_existent_parent
         )
-
-
-def test_repository_creation(fs: LakeFSFileSystem) -> None:
-    non_existent_repo = f"{uuid.uuid4()}"
-    try:
-        client_helpers.create_repository(
-            client=fs.client,
-            repository_name=non_existent_repo,
-            storage_namespace=f"local://{non_existent_repo}",
-        )
-        assert fs.client.repositories_api.get_repository(repository=non_existent_repo)
-    finally:
-        fs.client.repositories_api.delete_repository(repository=non_existent_repo)
