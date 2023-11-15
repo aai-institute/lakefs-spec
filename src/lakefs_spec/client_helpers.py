@@ -25,7 +25,7 @@ def commit(
     message: str,
     metadata: dict[str, str] | None = None,
 ) -> Commit:
-    diff = client.branches_api.diff_branch( repository=repository, branch=branch)
+    diff = client.branches_api.diff_branch(repository=repository, branch=branch)
 
     if not diff.results:
         logger.warning(f"No changes to commit on branch {branch!r}, aborting commit.")
@@ -33,7 +33,9 @@ def commit(
 
     commit_creation = CommitCreation(message=message, metadata=metadata or {})
 
-    new_commit = client.commits_api.commit(repository=repository, branch=branch, commit_creation=commit_creation)
+    new_commit = client.commits_api.commit(
+        repository=repository, branch=branch, commit_creation=commit_creation
+    )
     return new_commit
 
 
@@ -67,8 +69,7 @@ def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_bra
     try:
         new_branch = BranchCreation(name=branch, source=source_branch)
         # client.branches_api.create_branch throws ApiException when branch exists
-        client.branches_api.create_branch(
-            repository=repository, branch_creation=new_branch)
+        client.branches_api.create_branch(repository=repository, branch_creation=new_branch)
         logger.info(f"Created new branch {branch!r} from branch {source_branch!r}.")
     except ApiException:
         pass
@@ -81,9 +82,7 @@ def get_tags(client: LakeFSClient, repository: str) -> dict:
 
 
 def create_repository(client: LakeFSClient, name: str, storage_namespace: str) -> Repository:
-    repository_creation = RepositoryCreation(
-        name=name, storage_namespace=storage_namespace
-    )
+    repository_creation = RepositoryCreation(name=name, storage_namespace=storage_namespace)
     return client.repositories_api.create_repository(repository_creation=repository_creation)
 
 
@@ -114,7 +113,9 @@ def revert(client: LakeFSClient, repository: str, branch: str, parent_number: in
         If there are multiple parents to a commit, specify to which parent the commit should be reverted. Index starts at 1. Defaults to 1.
     """
     revert_creation = RevertCreation(ref=branch, parent_number=parent_number)
-    client.branches_api.revert_branch( repository=repository, branch=branch, revert_creation=revert_creation)
+    client.branches_api.revert_branch(
+        repository=repository, branch=branch, revert_creation=revert_creation
+    )
 
 
 def rev_parse(
@@ -128,7 +129,9 @@ def rev_parse(
     try:
         if isinstance(ref, Commit):
             ref = ref.id
-        revisions = client.refs_api.log_commits( repository=repository, ref=ref, limit=True, amount=2 * (parent + 1)).results
+        revisions = client.refs_api.log_commits(
+            repository=repository, ref=ref, limit=True, amount=2 * (parent + 1)
+        ).results
         if len(revisions) <= parent:
             raise ValueError(
                 f"cannot fetch revision {ref}~{parent}: "
@@ -136,4 +139,4 @@ def rev_parse(
             )
         return revisions[parent]
     except NotFoundException:
-        raise ValueError( f"{ref!r} does not match any revision in lakeFS repository {repository!r}")
+        raise ValueError(f"{ref!r} does not match any revision in lakeFS repository {repository!r}")

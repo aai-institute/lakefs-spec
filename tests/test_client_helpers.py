@@ -21,11 +21,9 @@ def test_create_tag(
 
     tag = f"Change_{uuid.uuid4()}"
     try:
-        client_helpers.create_tag(
-            client=fs.client, repository=repository, ref=temp_branch, tag=tag)
+        client_helpers.create_tag(client=fs.client, repository=repository, ref=temp_branch, tag=tag)
 
-        assert any(commit.id == tag for commit in fs.client.tags_api.list_tags(
-            repository).results)
+        assert any(commit.id == tag for commit in fs.client.tags_api.list_tags(repository).results)
     finally:
         fs.client.tags_api.delete_tag(repository=repository, tag=tag)
 
@@ -101,8 +99,7 @@ def test_revert(
         )
         > 0
     )
-    client_helpers.revert(
-        client=fs.client, repository=repository, branch=temp_branch)
+    client_helpers.revert(client=fs.client, repository=repository, branch=temp_branch)
     assert (
         len(
             fs.client.refs_api.diff_refs(
@@ -130,13 +127,11 @@ def test_rev_parse(
     ).results[0]
 
     assert (
-        client_helpers.rev_parse(
-            client=fs.client, repository=repository, ref=temp_branch, parent=0)
+        client_helpers.rev_parse(client=fs.client, repository=repository, ref=temp_branch, parent=0)
         == next_head_commit
     )
     assert (
-        client_helpers.rev_parse(
-            client=fs.client, repository=repository, ref=temp_branch, parent=1)
+        client_helpers.rev_parse(client=fs.client, repository=repository, ref=temp_branch, parent=1)
         == current_head_commit
     )
 
@@ -155,8 +150,7 @@ def test_rev_parse_error_on_commit_not_found(fs: LakeFSFileSystem, repository: s
 def test_rev_parse_error_on_parent_does_not_exist(
     fs: LakeFSFileSystem, repository: str, temp_branch: str
 ) -> None:
-    n_commits = len(fs.client.refs_api.log_commits(
-        repository=repository, ref=temp_branch).results)
+    n_commits = len(fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results)
     non_existent_parent = n_commits + 1
     with pytest.raises(
         ValueError,
