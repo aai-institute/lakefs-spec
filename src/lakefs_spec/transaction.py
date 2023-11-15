@@ -103,6 +103,9 @@ class LakeFSTransaction(Transaction):
         self.fs._intrans = False
 
     def create_branch(self, repository: str, branch: str, source_branch: str) -> str:
+        """
+        Create a branch with the name `branch` in a repository, branching off `source_branch`.
+        """
         op = partial(
             ensure_branch, repository=repository, branch=branch, source_branch=source_branch
         )
@@ -124,6 +127,8 @@ class LakeFSTransaction(Transaction):
     def rev_parse(
         self, repository: str, ref: str | Placeholder[Commit], parent: int = 0
     ) -> Placeholder[Commit]:
+        """Parse a given reference or any of its parents in a repository."""
+
         def rev_parse_op(client: LakeFSClient, **kwargs: Any) -> Commit:
             kwargs = unwrap_placeholders(kwargs)
             return rev_parse(client, **kwargs)

@@ -165,5 +165,5 @@ def test_transaction_failure(
     except RuntimeError:
         pass
 
-    # assert that no second commit was attempted because of the exception.
+    # assert that no commit happens because of the exception.
     assert counter.count("commits_api.commit") == 0
