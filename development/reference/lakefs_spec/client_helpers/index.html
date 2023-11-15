@@ -544,6 +544,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../transaction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    transaction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../util/" class="md-nav__link">
         
   
@@ -692,8 +712,7 @@
 
   <div class="doc doc-contents ">
   
-      <p>Checks if a branch exists. If not, it is created.
-This implementation depends on server-side error handling.</p>
+      <p>Creates a branch named <code>branch</code> if not already existent.</p>
 
 
 
@@ -777,7 +796,7 @@ This implementation depends on server-side error handling.</p>
         <tr>
           <td>
               <span class="doc-returns-annotation">
-                  <code>None</code>
+                  <code>The branch name that was given.</code>
               </span>
           </td>
           <td class="doc-returns-details">
@@ -791,12 +810,7 @@ This implementation depends on server-side error handling.</p>
 
           <details class="quote">
             <summary>Source code in <code>src/lakefs_spec/client_helpers.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
@@ -818,10 +832,15 @@ This implementation depends on server-side error handling.</p>
 <span class="normal">61</span>
 <span class="normal">62</span>
 <span class="normal">63</span>
-<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ensure_branch</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">LakeFSClient</span><span class="p">,</span> <span class="n">repository</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ensure_branch</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">LakeFSClient</span><span class="p">,</span> <span class="n">repository</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">source_branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checks if a branch exists. If not, it is created.</span>
-<span class="sd">    This implementation depends on server-side error handling.</span>
+<span class="sd">    Creates a branch named ``branch`` if not already existent.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -836,7 +855,7 @@ This implementation depends on server-side error handling.</p>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    None</span>
+<span class="sd">    The branch name that was given.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -846,6 +865,8 @@ This implementation depends on server-side error handling.</p>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created new branch </span><span class="si">{</span><span class="n">branch</span><span class="si">!r}</span><span class="s2"> from branch </span><span class="si">{</span><span class="n">source_branch</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">ApiException</span><span class="p">:</span>
         <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">branch</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -945,13 +966,7 @@ This implementation depends on server-side error handling.</p>
 
           <details class="quote">
             <summary>Source code in <code>src/lakefs_spec/client_helpers.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 83</span>
-<span class="normal"> 84</span>
-<span class="normal"> 85</span>
-<span class="normal"> 86</span>
-<span class="normal"> 87</span>
-<span class="normal"> 88</span>
-<span class="normal"> 89</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 89</span>
 <span class="normal"> 90</span>
 <span class="normal"> 91</span>
 <span class="normal"> 92</span>
@@ -962,7 +977,13 @@ This implementation depends on server-side error handling.</p>
 <span class="normal"> 97</span>
 <span class="normal"> 98</span>
 <span class="normal"> 99</span>
-<span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">revert</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">LakeFSClient</span><span class="p">,</span> <span class="n">repository</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">revert</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">LakeFSClient</span><span class="p">,</span> <span class="n">repository</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reverts the commit on the specified branch to the parent specified by parent_number.</span>
 
 <span class="sd">    Parameters</span>
@@ -999,7 +1020,7 @@ This implementation depends on server-side error handling.</p>
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-14</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-15</span>
       
     
   </small>
