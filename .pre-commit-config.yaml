@@ -20,18 +20,19 @@ repos:
     hooks:
     # See https://github.com/pre-commit/mirrors-mypy/blob/main/.pre-commit-hooks.yaml
     - id: mypy
-      types_or: [python, pyi]
+      types_or: [ python, pyi ]
       args: ["--ignore-missing-imports", "--scripts-are-modules"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.1.5
     hooks:
     - id: ruff
-      args: [--fix, --exit-non-zero-on-fix]
+      args: [ --fix, --exit-non-zero-on-fix ]
+    - id: ruff-format
   - repo: https://github.com/PyCQA/bandit
     rev: 1.7.5
     hooks:
     - id: bandit
-      args: ["-c", "pyproject.toml"]
+      args: [ "-c", "pyproject.toml" ]
       additional_dependencies: ["bandit[toml]"]
   - repo: https://github.com/jazzband/pip-tools
     rev: 7.3.0
