@@ -80,12 +80,6 @@ lakefs_spec = ["py.typed"]
 # Automatically determine version number from Git tags
 [tool.setuptools_scm]
 
-[tool.black]
-# Source https://github.com/psf/black#configuration-format
-include = "\\.pyi?$"
-line-length = 100
-target-version = ["py311"]
-
 [tool.mypy]
 check_untyped_defs = true
 disallow_incomplete_defs = true
@@ -102,21 +96,21 @@ ignore_missing_imports = true
 # explicitly set src folder for isort to understand first-party imports correctly.
 src = ["src"]
 line-length = 100
-# Enable pycodestyle errors & warnings (`E`, `W`), Pyflakes (`F`), and isort (`I`) codes by default.
+# Enable pycodestyle errors & warnings (`E`, `W`), Pyflakes (`F`), and isort (`I`) by default.
 select = ["E", "F", "I", "W"]
 ignore = [
-    # whitespace before colon (:), rely on black for formatting (in particular, allow spaces before ":" in list/array slices)
+    # Whitespace before colon (:)
     "E203",
     # Multiple spaces before operator
     "E221",
-    # line too long, rely on black for reformatting of these, since sometimes URLs or comments can be longer
+    # Line too long
     "E501",
-    # Allow capitalized variable names, necessary for e.g., `X_train = get_train_data()`
+    # Allow capitalized variable names
     "F841",
 ]
 
-# Ignore `F401` (unused imports) in all `__init__.py` files
 [tool.ruff.per-file-ignores]
+# Ignore unused imports in all `__init__.py` files
 "__init__.py" = ["F401"]
 
 [tool.bandit]
