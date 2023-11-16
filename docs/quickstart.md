@@ -117,13 +117,23 @@ Click the small _Click here_ link at the bottom of the page to proceed and creat
 
 ### Using the lakeFS `fsspec` file system
 
-While the `quickstart` repository already contains some files, we won't be using them for the remainder of this guide. Instead, we will now use the `lakefs-spec` file system interface to upload a file to the repository we just created, make a commit, and read back the committed data.
+We will now use the `lakefs-spec` file system interface to perform some basic operations on the repository created in the previous step:
+
+* Upload a local file to the repository
+* Read data from a file in the repository
+* Make a commit
+* Fetch metadata about repository contents
+* Delete a file from the repository
 
 To get started, create a file called `quickstart.py` with the following contents:
 
 ```python title="quickstart.py"
 --8<-- "docs/_code/quickstart.py::9"
 ```
+
+!!! tip
+    We will keep adding more code to this file as we progress through the next steps.
+    Feel free to execute the script after each step and observe the effects as noted in the guide.
 
 This code snippet prepares a file `demo.txt` on your machine, ready to be added to the lakeFS repository, so let's do just that:
 
