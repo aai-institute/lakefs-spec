@@ -21,6 +21,14 @@ in a lakeFS repository using `lakefs-spec`.
 
 ## Installing `lakefs-spec`
 
+??? tip "A note on virtual environments"
+
+    We generally recommend installing the library in a virtual environment to ensure proper isolation, especially when following this quickstart guide.
+
+    If you are using Poetry, virtual environments can automatically be created by the tool.
+
+    If you prefer the `venv` functionality built into Python, see the [official docs](https://docs.python.org/3/library/venv.html) (tl;dr: `python -m venv venv; source venv/bin/activate`).
+
 `lakefs-spec` can be used on any platform and requires at least Python 3.9.
 
 To install the package directly from PyPI, run:
@@ -50,14 +58,6 @@ Or, if you want to try the latest pre-release version directly from GitHub:
     ```
     poetry add git+https://github.com/appliedAI-Initiative/lakefs-spec.git
     ```
-
-??? tip "A note on virtual environments"
-
-    Consider installing the library in a separate virtual environment.
-
-    If you are using Poetry, virtual environments can automatically be created by the tool.
-
-    If you prefer the `venv` functionality built into Python, see the [official docs](https://docs.python.org/3/library/venv.html).
 
 ## First Steps
 
