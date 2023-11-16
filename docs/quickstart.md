@@ -76,19 +76,21 @@ $ curl https://raw.githubusercontent.com/appliedAI-Initiative/lakefs-spec/main/h
 
 If you do not have `curl` installed on your machine or would like to examine and/or customize the container configuration, you can also create a `docker-compose.yml` file locally and use it with `docker-compose up`:
 
-```yaml
+```yaml title="docker-compose.yml"
 --8<-- "https://raw.githubusercontent.com/appliedAI-Initiative/lakefs-spec/main/hack/docker-compose.yml:3:"
 ```
 
 In order to allow `lakefs-spec` to automatically discover credentials to access this lakeFS instance, create a `.lakectl.yaml` in your home directory containing the following:
 
-```yaml
-credentials:
+```yaml title="~/.lakectl.yaml"
+credentials: # (1)!
   access_key_id: AKIAIOSFOLQUICKSTART
   secret_access_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 server:
   endpoint_url: http://127.0.0.1:8000
 ```
+
+1. These must match the credentials set in the `environment` section of the Docker Compose file above
 
 After the container has finished initializing, you can access the [web UI](http://localhost:8000) of your local lakeFS deployment in your browser. Fill out the setup form, where you can optionally share your email address with the developers of lakeFS to receive updates on their product. Next, you can log into your fresh lakeFS instance with the credentials listed above.
 
@@ -119,7 +121,7 @@ While the `quickstart` repository already contains some files, we won't be using
 
 To get started, create a file called `quickstart.py` with the following contents:
 
-```python
+```python title="quickstart.py"
 --8<-- "docs/_code/quickstart.py::9"
 ```
 
@@ -160,7 +162,7 @@ As the last order of business, let's clean up the repository to its original sta
 
 ??? tip "Full example code"
 
-    ```python
+    ```python title="quickstart.py"
     --8<-- "docs/_code/quickstart.py"
     ```
 
