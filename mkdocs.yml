@@ -4,6 +4,9 @@ site_url: https://lakefs-spec.github.io
 repo_url: https://github.com/appliedAI-Initiative/lakefs-spec
 edit_uri: -/edit/main/docs/
 
+# lakeFS occupies port 8000, which is the default for `mkdocs serve`
+dev_addr: 127.0.0.1:8001
+
 # To validate all internal links exist. Does not work in ipynb files
 strict: false
 
