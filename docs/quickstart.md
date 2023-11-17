@@ -13,7 +13,7 @@ in a lakeFS repository using `lakefs-spec`.
     To follow along with this guide, you will need a few prerequisites ready on your machine:
 
     - `lakefs-spec` supports Windows, macOS, or Linux
-    - [Docker](https://www.docker.com/), with Docker Compose (although Podman should work as well, but is untested)
+    - [Docker](https://www.docker.com/get-started/), with Docker Compose (Podman should work as well, but is untested)
     - [Python 3.9](https://python.org) or later
     - optionally, [`lakectl`](https://docs.lakefs.io/reference/cli.html), the lakeFS command line tool
 
@@ -66,7 +66,9 @@ Or, if you want to try the latest pre-release version directly from GitHub:
 
     Please check out the [lakeFS docs](https://docs.lakefs.io/howto/deploy/) for production-ready deployment options.
 
-If you don't already have access to a lakeFS server, you can quickly start a local instance using Docker Compose with a [configuration file](https://github.com/appliedAI-Initiative/lakefs-spec/blob/main/hack/docker-compose.yml) provided in the `lakefs-spec` repository:
+If you don't already have access to a lakeFS server, you can quickly start a local instance using Docker Compose. Before continuing, please make sure Docker is installed and running on your machine.
+
+The lakeFS quickstart deployment can be launched directly with a [configuration file](https://github.com/appliedAI-Initiative/lakefs-spec/blob/main/hack/docker-compose.yml) provided in the `lakefs-spec` repository:
 
 ```shell
 $ curl https://raw.githubusercontent.com/appliedAI-Initiative/lakefs-spec/main/hack/docker-compose.yml | docker-compose -f - up
