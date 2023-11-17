@@ -783,7 +783,7 @@ in a lakeFS repository using <code>lakefs-spec</code>.</li>
 <p>To follow along with this guide, you will need a few prerequisites ready on your machine:</p>
 <ul>
 <li><code>lakefs-spec</code> supports Windows, macOS, or Linux</li>
-<li><a href="https://www.docker.com/">Docker</a>, with Docker Compose (although Podman should work as well, but is untested)</li>
+<li><a href="https://www.docker.com/get-started/">Docker</a>, with Docker Compose (Podman should work as well, but is untested)</li>
 <li><a href="https://python.org">Python 3.9</a> or later</li>
 <li>optionally, <a href="https://docs.lakefs.io/reference/cli.html"><code>lakectl</code></a>, the lakeFS command line tool</li>
 </ul>
@@ -829,7 +829,8 @@ in a lakeFS repository using <code>lakefs-spec</code>.</li>
 <p>This setup is not recommended for production uses, since it does not store the data persistently.</p>
 <p>Please check out the <a href="https://docs.lakefs.io/howto/deploy/">lakeFS docs</a> for production-ready deployment options.</p>
 </div>
-<p>If you don't already have access to a lakeFS server, you can quickly start a local instance using Docker Compose with a <a href="https://github.com/appliedAI-Initiative/lakefs-spec/blob/main/hack/docker-compose.yml">configuration file</a> provided in the <code>lakefs-spec</code> repository:</p>
+<p>If you don't already have access to a lakeFS server, you can quickly start a local instance using Docker Compose. Before continuing, please make sure Docker is installed and running on your machine.</p>
+<p>The lakeFS quickstart deployment can be launched directly with a <a href="https://github.com/appliedAI-Initiative/lakefs-spec/blob/main/hack/docker-compose.yml">configuration file</a> provided in the <code>lakefs-spec</code> repository:</p>
 <div class="language-shell highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$<span class="w"> </span>curl<span class="w"> </span>https://raw.githubusercontent.com/appliedAI-Initiative/lakefs-spec/main/hack/docker-compose.yml<span class="w"> </span><span class="p">|</span><span class="w"> </span>docker-compose<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span>up
 </span></code></pre></div>
 <p>If you do not have <code>curl</code> installed on your machine or would like to examine and/or customize the container configuration, you can also create a <code>docker-compose.yml</code> file locally and use it with <code>docker-compose up</code>:</p>
