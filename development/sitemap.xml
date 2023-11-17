@@ -11,6 +11,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://lakefs-spec.github.io/latest/quickstart/</loc>
+         <lastmod>2023-11-17</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://lakefs-spec.github.io/latest/use-cases/</loc>
          <lastmod>2023-11-17</lastmod>
          <changefreq>daily</changefreq>

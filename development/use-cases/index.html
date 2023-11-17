@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://lakefs-spec.github.io/latest/use-cases/">
       
       
-        <link rel="prev" href="..">
+        <link rel="prev" href="../quickstart/">
       
       
         <link rel="next" href="../guides/overview/">
@@ -283,6 +283,25 @@
       
   
   
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quickstart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -412,10 +431,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -426,8 +445,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             API Reference
           </label>
@@ -448,7 +467,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
         
           
           
@@ -464,14 +483,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_1">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1">
             <span class="md-nav__icon md-icon"></span>
             lakefs_spec
           </label>
@@ -702,32 +721,32 @@
 <p>Before, the only way to interface with a lakeFS instance was to use the Python API client. While it has its merits,
 and (mostly) works as advertised, it has its issues - the developer experience being the most difficult one, with incomplete
 typing information, and the woes of reading lots of raw client code, for example when downloading a file to load into a data frame:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">lakefs_sdk</span> <span class="kn">import</span> <span class="n">Configuration</span>
-<span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
-
-<span class="c1"># painful!</span>
-<span class="n">configuration</span> <span class="o">=</span> <span class="n">Configuration</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;my-host&quot;</span><span class="p">)</span>
-<span class="n">client</span> <span class="o">=</span> <span class="n">LakeFSClient</span><span class="p">(</span><span class="n">configuration</span><span class="o">=</span><span class="n">configuration</span><span class="p">)</span>
-
-<span class="n">repository</span> <span class="o">=</span> <span class="s2">&quot;my-repo&quot;</span>
-<span class="n">ref</span> <span class="o">=</span> <span class="s2">&quot;my-ref&quot;</span>
-<span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;data.parquet&quot;</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;res.parquet&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">objects_api</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">repository</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">chunk</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">20</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>
-            <span class="k">break</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
-</code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">lakefs_sdk</span> <span class="kn">import</span> <span class="n">Configuration</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">lakefs_sdk.client</span> <span class="kn">import</span> <span class="n">LakeFSClient</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># painful!</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">configuration</span> <span class="o">=</span> <span class="n">Configuration</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;my-host&quot;</span><span class="p">)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">client</span> <span class="o">=</span> <span class="n">LakeFSClient</span><span class="p">(</span><span class="n">configuration</span><span class="o">=</span><span class="n">configuration</span><span class="p">)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">repository</span> <span class="o">=</span> <span class="s2">&quot;my-repo&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">ref</span> <span class="o">=</span> <span class="s2">&quot;my-ref&quot;</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;data.parquet&quot;</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;res.parquet&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">res</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">objects_api</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">repository</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>        <span class="n">chunk</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">20</span><span class="p">)</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>            <span class="k">break</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+</span></code></pre></div>
 <p>When comparing this to <code>lakefs-spec</code>, we see that approaching the problem from a file system point of view makes things much easier:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-
-<span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;my-host&quot;</span><span class="p">)</span>
-
-<span class="n">fs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;my-repo/my-ref/data.parquet&quot;</span><span class="p">,</span> <span class="s2">&quot;res.parquet&quot;</span><span class="p">)</span>
-</code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;my-host&quot;</span><span class="p">)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">fs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;my-repo/my-ref/data.parquet&quot;</span><span class="p">,</span> <span class="s2">&quot;res.parquet&quot;</span><span class="p">)</span>
+</span></code></pre></div>
 <p>These abstractions make the code needed to interact with files and specific versions of resources much more straightforward.</p>
 <h2 id="integration-with-fsspec-powered-python-data-science-libraries">Integration with <code>fsspec</code>-powered Python data science libraries<a class="headerlink" href="#integration-with-fsspec-powered-python-data-science-libraries" title="Permanent link">&para;</a></h2>
 <p>Some projects, including <code>pandas</code>, <code>polars</code>, and <code>pyspark</code>, use <code>fsspec</code> to abstract I/O into a file-system paradigm.
@@ -736,16 +755,16 @@ at build time.</p>
 <p><code>lakefs-spec</code> itself is registered as the default file system for the <code>lakefs</code> protocol in the official <code>fsspec</code> registry,
 so all you have to do is to <code>pip install --upgrade lakefs-spec</code> to start using it.</p>
 <p>With it, reading and writing data in a versioned manner is supported natively, for example in data frame I/O in <code>pandas</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
-<span class="n">storage_options</span><span class="o">=</span><span class="p">{</span>
-    <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost:8000&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;username&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
-<span class="p">}</span>
-
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s1">&#39;lakefs://quickstart/main/lakes.parquet&#39;</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">)</span>
-</code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">storage_options</span><span class="o">=</span><span class="p">{</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost:8000&quot;</span><span class="p">,</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="s2">&quot;username&quot;</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s1">&#39;lakefs://quickstart/main/lakes.parquet&#39;</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">)</span>
+</span></code></pre></div>
 <p>With more advanced methods in <code>lakefs-spec</code> such as config file instantiation and environment variable setting,
 you can even instantiate the file system without any arguments and rely on automated client configuration and setup.</p>
 <h2 id="setting-up-lakefs-automations-and-versioning-workflows-using-transactions">Setting up lakeFS automations and versioning workflows using transactions<a class="headerlink" href="#setting-up-lakefs-automations-and-versioning-workflows-using-transactions" title="Permanent link">&para;</a></h2>
@@ -759,16 +778,16 @@ APIs, which allow for accurate typing.</p>
 file operations. <code>lakefs-spec</code> solves this by defining a <code>Transaction</code> class which works as a context manager and has many data versioning operations available.</p>
 <p>A concrete example of this is creating lakeFS commits after a successful file upload.
 Commits provide a snapshot of a lakeFS repository, similarly to version control systems like git.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-
-<span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
-
-<span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-    <span class="c1"># creates a commit with the message &quot;Add file my-file.txt&quot; after the file put.</span>
-    <span class="c1"># setting `autocommit=False` defers the actual upload until the transaction has finished.</span>
-    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;my-repo/my-branch/my-file.txt&quot;</span><span class="p">,</span> <span class="n">autocommit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;my-repo&quot;</span><span class="p">,</span> <span class="s2">&quot;my-branch&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add file my-file.txt&quot;</span><span class="p">)</span>
-</code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="c1"># creates a commit with the message &quot;Add file my-file.txt&quot; after the file put.</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="c1"># setting `autocommit=False` defers the actual upload until the transaction has finished.</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;my-repo/my-branch/my-file.txt&quot;</span><span class="p">,</span> <span class="n">autocommit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;my-repo&quot;</span><span class="p">,</span> <span class="s2">&quot;my-branch&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add file my-file.txt&quot;</span><span class="p">)</span>
+</span></code></pre></div>
 <p>The <code>lakefs_spec.Transaction</code> class contains multiple useful versioning helpers like <code>commit</code>, <code>tag</code>, <code>merge</code>, and <code>revert</code>.
 If you need more extensibility, you can define your own subclass of this transaction class to gain even more control over
 your versioning workflow.</p>
@@ -793,6 +812,8 @@ your versioning workflow.</p>
             </div>
           
           
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
         </div>
         
       </main>
@@ -858,7 +879,7 @@ your versioning workflow.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.tabs.link", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.aecac24b.min.js"></script>
