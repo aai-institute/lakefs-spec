@@ -29,8 +29,6 @@ in a lakeFS repository using `lakefs-spec`.
 
     If you prefer the `venv` functionality built into Python, see the [official docs](https://docs.python.org/3/library/venv.html) (tl;dr: `python -m venv venv; source venv/bin/activate`).
 
-`lakefs-spec` can be used on any platform and requires at least Python 3.9.
-
 To install the package directly from PyPI, run:
 
 === "pip"
@@ -80,7 +78,7 @@ If you do not have `curl` installed on your machine or would like to examine and
 --8<-- "https://raw.githubusercontent.com/appliedAI-Initiative/lakefs-spec/main/hack/docker-compose.yml:3:"
 ```
 
-In order to allow `lakefs-spec` to automatically discover credentials to access this lakeFS instance, create a `.lakectl.yaml` in your home directory containing the following:
+In order to allow `lakefs-spec` to automatically discover credentials to access this lakeFS instance, create a `.lakectl.yaml` in your home directory containing the credentials for the quickstart environment (you can also use `lakectl config` to create this file interactively if you have the `lakectl` tool installed on your machine):
 
 ```yaml title="~/.lakectl.yaml"
 credentials: # (1)!
