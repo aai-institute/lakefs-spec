@@ -178,6 +178,9 @@ As the last order of business, let's clean up the repository to its original sta
 
 ## Next Steps
 
+!!! todo
+    These links might refer to pages under development and are subject to change (or being broken)
+
 After this walkthrough of the installation and an introduction to basic file system operations using `lakefs-spec`, you might want to consider more advanced topics:
 
 - [Use Cases for `lakefs-spec`](use-cases.md)
