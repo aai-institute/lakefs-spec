@@ -5,7 +5,14 @@ import logging
 from lakefs_sdk import BranchCreation
 from lakefs_sdk.client import LakeFSClient
 from lakefs_sdk.exceptions import ApiException, NotFoundException
-from lakefs_sdk.models import CommitCreation, RevertCreation, TagCreation
+from lakefs_sdk.models import (
+    Commit,
+    CommitCreation,
+    Repository,
+    RepositoryCreation,
+    RevertCreation,
+    TagCreation,
+)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -17,27 +24,31 @@ def commit(
     branch: str,
     message: str,
     metadata: dict[str, str] | None = None,
-) -> None:
+) -> Commit:
     diff = client.branches_api.diff_branch(repository=repository, branch=branch)
 
     if not diff.results:
         logger.warning(f"No changes to commit on branch {branch!r}, aborting commit.")
-        return
+        return rev_parse(client, repository, branch, parent=0)
 
     commit_creation = CommitCreation(message=message, metadata=metadata or {})
 
-    client.commits_api.commit(repository=repository, branch=branch, commit_creation=commit_creation)
+    new_commit = client.commits_api.commit(
+        repository=repository, branch=branch, commit_creation=commit_creation
+    )
+    return new_commit
 
 
-def create_tag(client: LakeFSClient, repository: str, ref: str, tag: str) -> None:
+def create_tag(client: LakeFSClient, repository: str, ref: str | Commit, tag: str) -> None:
+    if isinstance(ref, Commit):
+        ref = ref.id
     tag_creation = TagCreation(id=tag, ref=ref)
     client.tags_api.create_tag(repository=repository, tag_creation=tag_creation)
 
 
-def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_branch: str) -> None:
+def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_branch: str) -> str:
     """
-    Checks if a branch exists. If not, it is created.
-    This implementation depends on server-side error handling.
+    Creates a branch named ``branch`` if not already existent.
 
     Parameters
     ----------
@@ -52,7 +63,7 @@ def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_bra
 
     Returns
     -------
-    None
+    The branch name that was given.
     """
 
     try:
@@ -63,9 +74,16 @@ def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_bra
     except ApiException:
         pass
 
+    return branch
+
 
 def get_tags(client: LakeFSClient, repository: str) -> dict:
     return client.tags_api.list_tags(repository=repository)
+
+
+def create_repository(client: LakeFSClient, name: str, storage_namespace: str) -> Repository:
+    repository_creation = RepositoryCreation(name=name, storage_namespace=storage_namespace)
+    return client.repositories_api.create_repository(repository_creation=repository_creation)
 
 
 def merge(client: LakeFSClient, repository: str, source_ref: str, target_branch: str) -> None:
@@ -103,21 +121,22 @@ def revert(client: LakeFSClient, repository: str, branch: str, parent_number: in
 def rev_parse(
     client: LakeFSClient,
     repository: str,
-    ref: str,
+    ref: str | Commit,
     parent: int = 0,
-) -> str:
+) -> Commit:
     if parent < 0:
         raise ValueError(f"Parent cannot be negative, got {parent}")
     try:
+        if isinstance(ref, Commit):
+            ref = ref.id
         revisions = client.refs_api.log_commits(
             repository=repository, ref=ref, limit=True, amount=2 * (parent + 1)
         ).results
         if len(revisions) <= parent:
             raise ValueError(
-                f"cannot fetch revision {ref}~{parent}: {ref} only has {len(revisions)} parents"
+                f"cannot fetch revision {ref}~{parent}: "
+                f"ref {ref!r} only has {len(revisions)} parents"
             )
-        return revisions[parent].id
+        return revisions[parent]
     except NotFoundException:
-        raise RuntimeError(
-            f"{ref!r} does not match any revision in lakeFS repository {repository!r}"
-        )
+        raise ValueError(f"{ref!r} does not match any revision in lakeFS repository {repository!r}")

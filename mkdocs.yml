@@ -12,6 +12,7 @@ nav:
   - quickstart.md
   - Use Cases: use-cases.md
   - User Guide: guides/
+  - Tutorials: tutorials/
   - API Reference: reference/
   - CONTRIBUTING.md
 
@@ -78,7 +79,7 @@ markdown_extensions:
       url_download: true
   - pymdownx.superfences
   - pymdownx.tabbed:
-      alternate_style: true 
+      alternate_style: true
 
 theme:
   name: "material"
