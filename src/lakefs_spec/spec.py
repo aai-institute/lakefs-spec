@@ -396,7 +396,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                     urllib_http_error_as_lakefs_api_exception = ApiException(
                         status=e.code, reason=e.reason
                     )
-                    translate_lakefs_error(error=urllib_http_error_as_lakefs_api_exception)
+                    raise translate_lakefs_error(error=urllib_http_error_as_lakefs_api_exception)
         else:
             blockstore_type = self.client.config_api.get_config().storage_config.blockstore_type
             # lakeFS blockstore name is "azure", but Azure's fsspec registry entry is "az".
