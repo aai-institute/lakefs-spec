@@ -185,4 +185,4 @@ After this walkthrough of the installation and an introduction to basic file sys
 
 - [Use Cases for `lakefs-spec`](use-cases.md)
 - [API Reference](reference/lakefs_spec/spec.md)
-- [TODO: User Guide](guides/overview.md)
+- [TODO: User Guide](guides/index.md)

@@ -3,7 +3,7 @@
 There are multiple ways to configure the `LakeFSFileSystem` for use with a deployed lakeFS instance.
 This guide introduces them in the order of least to most in-Python configuration - the preferred way to use the file system is with as little Python code as possible.
 
-!!! Warning
+!!! Info
     
     The configuration methods are introduced in reverse order of precedence - config file arguments have the lowest priority, environment variables have medium priority, and constructor arguments have the highest priority.
 
@@ -19,7 +19,7 @@ server:
   endpoint_url: <LAKEFS-HOST>
 ```
 
-For a local instance produced by the [lakeFS quickstart](https://docs.lakefs.io/quickstart/launch.html), the following values will work:
+For a local instance produced by the [quickstart](../quickstart.md), the following values will work:
 
 ```yaml
 credentials:
@@ -64,7 +64,7 @@ os.environ["LAKEFS_PASSWORD"] = "my-password"
 fs = LakeFSFileSystem()
 ```
 
-!!! Warning
+!!! Info
     
     Not all initialization values can be set via environment variables - the `proxy`, `create_branch_ok`, `source_branch`, and `storage_options` arguments can only be supplied in Python.
 
@@ -89,17 +89,15 @@ Beware that this method of configuration can leak sensitive information when usi
 Two of the introduced methods allow for "zero-config" (i.e. no arguments given to the constructor) initialization of the file system.
 However, care must be taken when working with different file systems configured by the same means (for example, file systems configured with separate environment variables).
 
-The reason for this is `fsspec`'s [instance caching mechanism](https://filesystem-spec.readthedocs.io/en/latest/features.html#instance-caching). Each file system instance is cached on construction, and kept in a weakref cache for reference.
-While this allows for efficient reuse of file systems e.g. by third-party libraries (pandas, duckdb, ...), it can lead to silent misconfigurations. Consider this example, with an existent `.lakectl.yaml` file:
+The reason for this is the [instance caching mechanism](https://filesystem-spec.readthedocs.io/en/latest/features.html#instance-caching) built into `fsspec`.
+While this allows for efficient reuse of file systems e.g. by third-party libraries (pandas, DuckDB, ...), it can lead to silent misconfigurations. Consider this example, with an existent `.lakectl.yaml` file:
 
-```shell
-$ cat $HOME/.lakectl.yaml
-
-# credentials:
-#   access_key_id: AKIAIOSFOLQUICKSTART
-#   secret_access_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-# server:
-#   endpoint_url: http://127.0.0.1:8000
+```yaml title="$HOME/.lakectl.yaml"
+credentials:
+  access_key_id: AKIAIOSFOLQUICKSTART
+  secret_access_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+server:
+  endpoint_url: http://127.0.0.1:8000
 ```
 
 Now, mixing config file and environment variable initializations leads to the wrong result:
