@@ -14,16 +14,23 @@ def test_create_tag(
     random_file = random_file_factory.make()
     lpath = str(random_file)
     rpath = f"{repository}/{temp_branch}/{random_file.name}"
+
     fs.put(lpath, rpath, precheck=False)
+
     client_helpers.commit(
         client=fs.client, repository=repository, branch=temp_branch, message="Commit File Factory"
     )
 
     tag = f"Change_{uuid.uuid4()}"
     try:
-        client_helpers.create_tag(client=fs.client, repository=repository, ref=temp_branch, tag=tag)
-
-        assert any(commit.id == tag for commit in fs.client.tags_api.list_tags(repository).results)
+        new_tag = client_helpers.create_tag(
+            client=fs.client, repository=repository, ref=temp_branch, tag=tag
+        )
+        assert tag in [commit.id for commit in client_helpers.list_tags(fs.client, repository)]
+        existing_tag = client_helpers.create_tag(
+            client=fs.client, repository=repository, ref=temp_branch, tag=tag
+        )
+        assert new_tag == existing_tag
     finally:
         fs.client.tags_api.delete_tag(repository=repository, tag=tag)
 

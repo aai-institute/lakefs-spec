@@ -106,9 +106,7 @@ class LakeFSTransaction(Transaction):
         """
         Create a branch with the name `name` in a repository, branching off `source_branch`.
         """
-        op = partial(
-            create_branch, repository=repository, name=name, source_branch=source_branch
-        )
+        op = partial(create_branch, repository=repository, name=name, source_branch=source_branch)
         self.files.append((op, name))
         return name
 
