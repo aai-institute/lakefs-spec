@@ -21,7 +21,12 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/guides/overview/</loc>
+         <loc>https://lakefs-spec.github.io/latest/guides/</loc>
+         <lastmod>2023-11-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://lakefs-spec.github.io/latest/guides/configuration/</loc>
          <lastmod>2023-11-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
