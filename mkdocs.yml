@@ -14,7 +14,9 @@ nav:
   - Introduction: README.md
   - quickstart.md
   - Use Cases: use-cases.md
-  - User Guide: guides/
+  - User Guide:
+    - guides/index.md
+    - guides/configuration.md
   - Tutorials: tutorials/
   - API Reference: reference/
   - CONTRIBUTING.md

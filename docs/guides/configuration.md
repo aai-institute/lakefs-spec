@@ -1,4 +1,4 @@
-# Configuration options for the `LakeFSFileSystem`
+# Passing configuration to the file system
 
 There are multiple ways to configure the `LakeFSFileSystem` for use with a deployed lakeFS instance.
 This guide introduces them in the order of least to most in-Python configuration - the preferred way to use the file system is with as little Python code as possible.
