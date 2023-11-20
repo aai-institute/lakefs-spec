@@ -1653,7 +1653,7 @@ file systems.</p>
 </span><span id="__span-0-396"><a id="__codelineno-0-396" name="__codelineno-0-396"></a>                    <span class="n">urllib_http_error_as_lakefs_api_exception</span> <span class="o">=</span> <span class="n">ApiException</span><span class="p">(</span>
 </span><span id="__span-0-397"><a id="__codelineno-0-397" name="__codelineno-0-397"></a>                        <span class="n">status</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">reason</span>
 </span><span id="__span-0-398"><a id="__codelineno-0-398" name="__codelineno-0-398"></a>                    <span class="p">)</span>
-</span><span id="__span-0-399"><a id="__codelineno-0-399" name="__codelineno-0-399"></a>                    <span class="n">translate_lakefs_error</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="n">urllib_http_error_as_lakefs_api_exception</span><span class="p">)</span>
+</span><span id="__span-0-399"><a id="__codelineno-0-399" name="__codelineno-0-399"></a>                    <span class="k">raise</span> <span class="n">translate_lakefs_error</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="n">urllib_http_error_as_lakefs_api_exception</span><span class="p">)</span>
 </span><span id="__span-0-400"><a id="__codelineno-0-400" name="__codelineno-0-400"></a>        <span class="k">else</span><span class="p">:</span>
 </span><span id="__span-0-401"><a id="__codelineno-0-401" name="__codelineno-0-401"></a>            <span class="n">blockstore_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">config_api</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span><span class="o">.</span><span class="n">storage_config</span><span class="o">.</span><span class="n">blockstore_type</span>
 </span><span id="__span-0-402"><a id="__codelineno-0-402" name="__codelineno-0-402"></a>            <span class="c1"># lakeFS blockstore name is &quot;azure&quot;, but Azure&#39;s fsspec registry entry is &quot;az&quot;.</span>
@@ -2749,7 +2749,7 @@ blocks are allowed to be. Disallows further writing to this file.</p>
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-17</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-20</span>
       
     
   </small>
