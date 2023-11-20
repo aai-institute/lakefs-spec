@@ -8,6 +8,7 @@ from lakefs_sdk.exceptions import ApiException, NotFoundException
 from lakefs_sdk.models import (
     Commit,
     CommitCreation,
+    Ref,
     Repository,
     RepositoryCreation,
     RevertCreation,
@@ -31,7 +32,7 @@ def commit(
         logger.warning(f"No changes to commit on branch {branch!r}, aborting commit.")
         return rev_parse(client, repository, branch, parent=0)
 
-    commit_creation = CommitCreation(message=message, metadata=metadata or {})
+    commit_creation = CommitCreation(message=message, metadata=metadata)
 
     new_commit = client.commits_api.commit(
         repository=repository, branch=branch, commit_creation=commit_creation
@@ -39,16 +40,11 @@ def commit(
     return new_commit
 
 
-def create_tag(client: LakeFSClient, repository: str, ref: str | Commit, tag: str) -> None:
-    if isinstance(ref, Commit):
-        ref = ref.id
-    tag_creation = TagCreation(id=tag, ref=ref)
-    client.tags_api.create_tag(repository=repository, tag_creation=tag_creation)
-
-
-def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_branch: str) -> str:
+def create_branch(
+    client: LakeFSClient, repository: str, name: str, source_branch: str, exist_ok: bool = True
+) -> str:
     """
-    Creates a branch named ``branch`` if not already existent.
+    Create a branch in a lakeFS repository.
 
     Parameters
     ----------
@@ -56,34 +52,59 @@ def ensure_branch(client: LakeFSClient, repository: str, branch: str, source_bra
         The lakeFS client configured for (and authenticated with) the target instance.
     repository: str
         Repository name.
-    branch: str
-        Name of the branch.
+    name: str
+        Name of the newly created branch.
     source_branch: str
         Name of the source branch the new branch is created from.
+    exist_ok: bool
+        Ignore errors if the branch already exists.
 
     Returns
     -------
-    The branch name that was given.
+    The newly created branch name.
     """
 
     try:
-        new_branch = BranchCreation(name=branch, source=source_branch)
-        # client.branches_api.create_branch throws ApiException when branch exists
+        new_branch = BranchCreation(name=name, source=source_branch)
+        # client.branches_api.create_branch throws ApiException if branch exists
         client.branches_api.create_branch(repository=repository, branch_creation=new_branch)
-        logger.info(f"Created new branch {branch!r} from branch {source_branch!r}.")
-    except ApiException:
-        pass
-
-    return branch
-
-
-def get_tags(client: LakeFSClient, repository: str) -> dict:
-    return client.tags_api.list_tags(repository=repository)
+        logger.debug(f"Created new branch {name!r} from branch {source_branch!r}.")
+        return name
+    except ApiException as e:
+        if e.status == 409 and exist_ok:
+            return name
+        raise e
 
 
-def create_repository(client: LakeFSClient, name: str, storage_namespace: str) -> Repository:
-    repository_creation = RepositoryCreation(name=name, storage_namespace=storage_namespace)
-    return client.repositories_api.create_repository(repository_creation=repository_creation)
+def create_repository(
+    client: LakeFSClient, name: str, storage_namespace: str, exist_ok: bool = True
+) -> Repository:
+    try:
+        repository_creation = RepositoryCreation(name=name, storage_namespace=storage_namespace)
+        return client.repositories_api.create_repository(repository_creation=repository_creation)
+    except ApiException as e:
+        if e.status == 409 and exist_ok:
+            return client.repositories_api.get_repository(name)
+        raise e
+
+
+def create_tag(
+    client: LakeFSClient, repository: str, ref: str | Commit, tag: str, exist_ok: bool = True
+) -> Ref:
+    if isinstance(ref, Commit):
+        ref = ref.id
+    tag_creation = TagCreation(id=tag, ref=ref)
+
+    try:
+        return client.tags_api.create_tag(repository=repository, tag_creation=tag_creation)
+    except ApiException as e:
+        if e.status == 409 and exist_ok:
+            return client.tags_api.get_tag(repository=repository, tag=tag)
+        raise e
+
+
+def list_tags(client: LakeFSClient, repository: str) -> list[Ref]:
+    return client.tags_api.list_tags(repository=repository).results
 
 
 def merge(client: LakeFSClient, repository: str, source_ref: str, target_branch: str) -> None:

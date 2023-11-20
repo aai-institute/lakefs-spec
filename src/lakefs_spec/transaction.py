@@ -8,9 +8,9 @@ from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
 from fsspec.spec import AbstractBufferedFile
 from fsspec.transaction import Transaction
 from lakefs_sdk.client import LakeFSClient
-from lakefs_sdk.models import Commit
+from lakefs_sdk.models import Commit, Ref
 
-from lakefs_spec.client_helpers import commit, create_tag, ensure_branch, merge, rev_parse, revert
+from lakefs_spec.client_helpers import commit, create_branch, create_tag, merge, rev_parse, revert
 
 T = TypeVar("T")
 
@@ -102,15 +102,15 @@ class LakeFSTransaction(Transaction):
 
         self.fs._intrans = False
 
-    def create_branch(self, repository: str, branch: str, source_branch: str) -> str:
+    def create_branch(self, repository: str, name: str, source_branch: str) -> str:
         """
-        Create a branch with the name `branch` in a repository, branching off `source_branch`.
+        Create a branch with the name `name` in a repository, branching off `source_branch`.
         """
         op = partial(
-            ensure_branch, repository=repository, branch=branch, source_branch=source_branch
+            create_branch, repository=repository, name=name, source_branch=source_branch
         )
-        self.files.append((op, branch))
-        return branch
+        self.files.append((op, name))
+        return name
 
     def merge(self, repository: str, source_ref: str, into: str) -> None:
         """Merge a branch into another branch in a repository."""
@@ -141,7 +141,7 @@ class LakeFSTransaction(Transaction):
     def tag(self, repository: str, ref: str | Placeholder[Commit], tag: str) -> str:
         """Create a tag referencing a commit in a repository."""
 
-        def tag_op(client: LakeFSClient, **kwargs: str) -> None:
+        def tag_op(client: LakeFSClient, **kwargs: Any) -> Ref:
             kwargs = unwrap_placeholders(kwargs)
             return create_tag(client, **kwargs)
 
