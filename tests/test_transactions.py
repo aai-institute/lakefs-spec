@@ -121,7 +121,7 @@ def test_transaction_branch(fs: LakeFSFileSystem, repository: str) -> None:
 
     try:
         with fs.transaction as tx:
-            tx.create_branch(repository=repository, branch=branch, source_branch="main")
+            tx.create_branch(repository=repository, name=branch, source_branch="main")
 
         branches = [
             b.id for b in fs.client.branches_api.list_branches(repository=repository).results
@@ -129,7 +129,6 @@ def test_transaction_branch(fs: LakeFSFileSystem, repository: str) -> None:
 
         # existence check for a newly created branch.
         assert branch in branches
-
     finally:
         fs.client.branches_api.delete_branch(
             repository=repository,

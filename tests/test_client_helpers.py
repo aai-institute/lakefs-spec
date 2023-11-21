@@ -1,3 +1,5 @@
+import random
+import string
 import uuid
 from typing import Any
 
@@ -14,16 +16,23 @@ def test_create_tag(
     random_file = random_file_factory.make()
     lpath = str(random_file)
     rpath = f"{repository}/{temp_branch}/{random_file.name}"
+
     fs.put(lpath, rpath, precheck=False)
+
     client_helpers.commit(
         client=fs.client, repository=repository, branch=temp_branch, message="Commit File Factory"
     )
 
     tag = f"Change_{uuid.uuid4()}"
     try:
-        client_helpers.create_tag(client=fs.client, repository=repository, ref=temp_branch, tag=tag)
-
-        assert any(commit.id == tag for commit in fs.client.tags_api.list_tags(repository).results)
+        new_tag = client_helpers.create_tag(
+            client=fs.client, repository=repository, ref=temp_branch, tag=tag
+        )
+        assert tag in [commit.id for commit in client_helpers.list_tags(fs.client, repository)]
+        existing_tag = client_helpers.create_tag(
+            client=fs.client, repository=repository, ref=temp_branch, tag=tag
+        )
+        assert new_tag == existing_tag
     finally:
         fs.client.tags_api.delete_tag(repository=repository, tag=tag)
 
@@ -79,6 +88,25 @@ def test_merge_into_branch_aborts_on_no_diff(
         client=fs.client, repository=repository, source_ref="main", target_branch=temp_branch
     )
     assert caplog.records[0].message == "No difference between source and target. Aborting merge."
+
+
+def test_create_repository(fs: LakeFSFileSystem) -> None:
+    name = "testrepo" + "".join(random.choices(string.digits, k=8))
+
+    storage_config = fs.client.config_api.get_config().storage_config
+    namespace = f"{storage_config.default_namespace_prefix}/{name}"
+
+    repo = None
+    try:
+        repo = client_helpers.create_repository(fs.client, name=name, storage_namespace=namespace)
+        new_repo = client_helpers.create_repository(
+            fs.client, name=name, storage_namespace=namespace
+        )
+        # exist_ok means the same existing repo is returned.
+        assert repo == new_repo
+    finally:
+        if repo is not None:
+            fs.client.repositories_api.delete_repository(repo.id)
 
 
 def test_revert(
