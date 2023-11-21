@@ -13,5 +13,9 @@ table {
 }
 
 .landing-page-icon {
-    color: hsl(198.5, 83.5%, 19%);
+    color: #b7c6cf;
+}
+
+.landing-page-icon:hover {
+    color: #46add5;
 }
