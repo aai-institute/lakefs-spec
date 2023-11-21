@@ -20,7 +20,7 @@ from lakefs_sdk.client import LakeFSClient
 from lakefs_sdk.exceptions import ApiException, NotFoundException
 from lakefs_sdk.models import ObjectCopyCreation, ObjectStatsList, StagingMetadata
 
-from lakefs_spec.client_helpers import ensure_branch
+from lakefs_spec.client_helpers import create_branch
 from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
@@ -492,7 +492,7 @@ class LakeFSFile(AbstractBufferedFile):
         self.buffer: io.BytesIO
         if mode == "wb" and self.fs.create_branch_ok:
             repository, branch, resource = parse(path)
-            ensure_branch(self.fs.client, repository, branch, self.fs.source_branch)
+            create_branch(self.fs.client, repository, branch, self.fs.source_branch)
 
     def _upload_chunk(self, final: bool = False) -> bool:
         """Commits the file on final chunk via single-shot upload, no-op otherwise."""
