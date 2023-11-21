@@ -2,6 +2,16 @@
 
 This guide contains instructions and code snippets on how to use the lakeFS file system.
 
+## The lakeFS URI structure
+
+In the following subsections, we frequently make use of [lakeFS URIs](https://docs.lakefs.io/understand/model.html#lakefs-protocol-uris) in the example code.
+lakeFS URIs are strings identifying resources in a lakeFS deployment through a unique combination of repository name, lakeFS revision/ref name, and file name relative to the repository root.
+
+As an example, a URI like `repo/main/file.txt` addresses the `file.txt` file on the `main` branch in the repository named `repo`.
+
+In some lakeFS file system operations, directories are also allowed as resource names.
+For example, the URI `repo/main/data/` addresses the `data` directory on the `main` branch in the `repo` repository.
+
 ## Uploading and downloading files
 
 The arguably most important feature of the file system are file transfers.
@@ -9,7 +19,7 @@ The arguably most important feature of the file system are file transfers.
 ### File uploads
 
 To upload a file, you can use the `fs.put()` and `fs.put_file()` methods. 
-While `put_file()` operates on single files only as the name suggests, the `put` API can be used for directory uploads.
+While `fs.put_file()` operates on single files only, the `fs.put()` API can be used for directory uploads.
 
 ```python
 from lakefs_spec import LakeFSFileSystem
@@ -20,7 +30,7 @@ fs = LakeFSFileSystem()
 fs.put_file("file.txt", "my-repo/my-ref/file.txt")
 ```
 
-If you want to upload a whole directory to lakeFS, use the `fs.put` API together with the `recursive=True` switch:
+If you want to upload a whole directory to lakeFS, use the `fs.put()` API together with the `recursive=True` switch:
 
 ```python
 # structure:
@@ -29,11 +39,6 @@ If you want to upload a whole directory to lakeFS, use the `fs.put` API together
 #      /c.csv
 #      /...
 
-from lakefs_spec import LakeFSFileSystem
-
-fs = LakeFSFileSystem()
-
-# creates the target directory `dir` in the current directory.
 fs.put("dir", "my-repo/my-ref/dir", recursive=True)
 ```
 
@@ -54,7 +59,7 @@ fs.put("dir", "my-repo/my-ref/dir", recursive=True)
 
 ### File downloads
 
-To download a file, you can use the `fs.get()` or `fs.get_file` methods:
+To download a file, you can use the `fs.get()` or `fs.get_file()` methods:
 
 ```python
 from lakefs_spec import LakeFSFileSystem
@@ -74,11 +79,7 @@ In the case of a directory in lakeFS, use the `fs.get()` API together with the `
 #      /c.csv
 #      /...
 
-from lakefs_spec import LakeFSFileSystem
-
-fs = LakeFSFileSystem()
-
-# creates the target directory `dir` in the current directory.
+# downloads `dir` into the current directory.
 fs.get("my-repo/my-ref/dir", "dir", recursive=True)
 ```
 
@@ -96,7 +97,7 @@ my_file_info = fs.info("my-repo/my-ref/my-file.txt")
 
 The resulting `my_file_info` object is a dictionary containing useful information such as storage location of the file, creation timestamp, and size (in bytes).
 
-You can also call `fs.info` on directories:
+You can also call `fs.info()` on directories:
 
 ```python
 dir_info = fs.info("my-repo/my-ref/dir/")
@@ -138,7 +139,7 @@ When removing files or directories from a branch, those removal operations are s
 
 ## Copying files between branches
 
-To copy files from one branch to a different branch, use the `fs.cp_file` or `fs.copy()` methods:
+To copy files from one branch to a different branch, use the `fs.cp_file()` or `fs.copy()` methods:
 
 ```python
 from lakefs_spec import LakeFSFileSystem
