@@ -120,7 +120,7 @@ theme:
         name: Switch to light mode
 
 extra:
-  copyright_link: https://appliedai-institute-institute.de
+  copyright_link: https://appliedai-institute.de
   homepage: https://lakefs-spec.org
   generator: false
   version:
