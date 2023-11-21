@@ -53,7 +53,7 @@ def create_branch(
     repository: str
         Repository name.
     name: str
-        Name of the newly created branch.
+        Name of the newly created (or existing) branch.
     source_branch: str
         Name of the source branch the new branch is created from.
     exist_ok: bool
@@ -61,7 +61,7 @@ def create_branch(
 
     Returns
     -------
-    The newly created branch name.
+    The requested branch name.
     """
 
     try:
@@ -85,8 +85,8 @@ def create_repository(
     Important: Due to cleanup issues in the lakeFS backend, creating a repository again after prior
     deletion under the same name and storage namespace will almost certainly not work.
 
-    The exist_ok flag only asserts idempotence in case the repository is not deleted between
-    single `create_repository` calls.
+    The `exist_ok` flag only asserts idempotence in case the repository is not deleted in between
+    `create_repository` calls.
     """
     try:
         repository_creation = RepositoryCreation(name=name, storage_namespace=storage_namespace)
