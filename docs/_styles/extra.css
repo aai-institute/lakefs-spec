@@ -17,5 +17,5 @@ table {
 }
 
 .landing-page-icon:hover {
-    color: #46add5;
+    color: var(--md-accent-fg-color);
 }

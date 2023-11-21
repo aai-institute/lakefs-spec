@@ -10,7 +10,7 @@ dev_addr: 127.0.0.1:8001
 # To validate all internal links exist. Does not work in ipynb files
 strict: false
 
-copyright: Copyright &copy; 2023 appliedAI Institute for Europe gGmbH
+copyright: Copyright &copy; 2023 appliedAI Institute for Europe gGmbH<br>The appliedAI Institute for Europe gGmbH is supported by the KI-Stiftung Heilbronn gGmbH.
 
 nav:
   - Home: index.md
@@ -122,6 +122,7 @@ theme:
 extra:
   copyright_link: https://appliedai-institute-institute.de
   homepage: https://lakefs-spec.org
+  generator: false
   version:
     provider: mike
     default: latest

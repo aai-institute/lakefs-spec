@@ -13,9 +13,15 @@
 }
 
 [data-md-color-scheme="slate"] {
-    --md-hue: 199;
     --md-primary-fg-color: #46add5;
+    --md-primary-fg-color--dark: #04212f;
     --md-accent-fg-color: hsl(197, 63%, 75%);
+
+    --md-typeset-a-color: var(--md-primary-fg-color) !important;
+
+    --md-accent-fg-color: var(--md-primary-fg-color);
+
+    --md-code-font-family: "Source Code Pro", monospace
 }
 
 .md-header {
