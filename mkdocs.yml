@@ -19,6 +19,7 @@ nav:
   - User Guide:
     - guides/index.md
     - guides/configuration.md
+    - guides/usage.md
   - Tutorials:
     - tutorials/index.md
     - tutorials/demo_data_science_project.ipynb
