@@ -79,11 +79,20 @@ def create_branch(
 def create_repository(
     client: LakeFSClient, name: str, storage_namespace: str, exist_ok: bool = True
 ) -> Repository:
+    """
+    Create a repository with the given name and storage namespace.
+
+    Important: Due to cleanup issues in the lakeFS backend, creating a repository again after prior
+    deletion under the same name and storage namespace will almost certainly not work.
+
+    The exist_ok flag only asserts idempotence in case the repository is not deleted between
+    single `create_repository` calls.
+    """
     try:
         repository_creation = RepositoryCreation(name=name, storage_namespace=storage_namespace)
         return client.repositories_api.create_repository(repository_creation=repository_creation)
     except ApiException as e:
-        if e.status == 409 and exist_ok:
+        if e.status == 400 and "namespace already in use" in e.body and exist_ok:
             return client.repositories_api.get_repository(name)
         raise e
 
