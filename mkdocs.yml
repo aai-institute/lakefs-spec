@@ -1,8 +1,8 @@
 site_name: lakefs-spec
 site_dir: public/docs
-site_url: https://lakefs-spec.github.io
-repo_url: https://github.com/appliedAI-Initiative/lakefs-spec
-edit_uri: -/edit/main/docs/
+site_url: https://lakefs-spec.org
+repo_url: https://github.com/aai-institute/lakefs-spec
+edit_uri: edit/main/docs/
 
 # lakeFS occupies port 8000, which is the default for `mkdocs serve`
 dev_addr: 127.0.0.1:8001
@@ -10,14 +10,18 @@ dev_addr: 127.0.0.1:8001
 # To validate all internal links exist. Does not work in ipynb files
 strict: false
 
+copyright: Copyright &copy; 2023 appliedAI Institute for Europe gGmbH
+
 nav:
-  - Introduction: README.md
+  - Home: index.md
   - quickstart.md
   - Use Cases: use-cases.md
   - User Guide:
     - guides/index.md
     - guides/configuration.md
-  - Tutorials: tutorials/
+  - Tutorials:
+    - tutorials/index.md
+    - tutorials/demo_data_science_project.ipynb
   - API Reference: reference/
   - CONTRIBUTING.md
 
@@ -63,6 +67,7 @@ plugins:
       file_pattern: '.*\.(md|ipynb)$'
 
 markdown_extensions:
+  - neoteroi.cards  # https://www.neoteroi.dev/mkdocs-plugins/cards/
   # python-markdown extensions: https://python-markdown.github.io/extensions/
   - admonition
   - attr_list
@@ -88,15 +93,22 @@ markdown_extensions:
 
 theme:
   name: "material"
+  logo: _images/aai-logo-cropped.png
+  favicon: _images/aai-favicon.png
+  font:
+    text: IBM Plex Sans  # Arial replacement
+    code: Source Code Pro
   icon:
+    logo: _images/aai-favicon.png
     repo: fontawesome/brands/github
   features:
     - content.tabs.link
     - content.code.copy
     - content.code.annotate
+    - content.action.edit
   palette:
     # Palette toggle for light mode
-    - scheme: default
+    - scheme: aai-light
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
@@ -108,17 +120,20 @@ theme:
         name: Switch to light mode
 
 extra:
-  copyright_link: https://appliedai.de
+  copyright_link: https://appliedai-institute-institute.de
+  homepage: https://lakefs-spec.org
   version:
     provider: mike
     default: latest
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/appliedAI-Initiative/lakefs-spec
+      link: https://github.com/aai-institute/lakefs-spec
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/lakefs-spec
     - icon: fontawesome/brands/linkedin
-      link: https://www.linkedin.com/company/applied-ai-initiative/
+      link: https://www.linkedin.com/company/appliedai-institute-for-europe-ggmbh/
 
 extra_css:
-  - mkdocs_customization/extra.css
+  - _styles/extra.css
+  - _styles/theme.css
+  - _styles/neoteroi-mkdocs.css

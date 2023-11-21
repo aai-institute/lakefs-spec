@@ -48,13 +48,13 @@ Or, if you want to try the latest pre-release version directly from GitHub:
 === "pip"
 
     ```
-    pip install git+https://github.com/appliedAI-Initiative/lakefs-spec.git
+    pip install git+https://github.com/aai-institute/lakefs-spec.git
     ```
 
 === "poetry"
 
     ```
-    poetry add git+https://github.com/appliedAI-Initiative/lakefs-spec.git
+    poetry add git+https://github.com/aai-institute/lakefs-spec.git
     ```
 
 ## First Steps
@@ -68,16 +68,16 @@ Or, if you want to try the latest pre-release version directly from GitHub:
 
 If you don't already have access to a lakeFS server, you can quickly start a local instance using Docker Compose. Before continuing, please make sure Docker is installed and running on your machine.
 
-The lakeFS quickstart deployment can be launched directly with a [configuration file](https://github.com/appliedAI-Initiative/lakefs-spec/blob/main/hack/docker-compose.yml) provided in the `lakefs-spec` repository:
+The lakeFS quickstart deployment can be launched directly with a [configuration file](https://github.com/aai-institute/lakefs-spec/blob/main/hack/docker-compose.yml) provided in the `lakefs-spec` repository:
 
 ```shell
-$ curl https://raw.githubusercontent.com/appliedAI-Initiative/lakefs-spec/main/hack/docker-compose.yml | docker-compose -f - up
+$ curl https://raw.githubusercontent.com/aai-institute/lakefs-spec/main/hack/docker-compose.yml | docker-compose -f - up
 ```
 
 If you do not have `curl` installed on your machine or would like to examine and/or customize the container configuration, you can also create a `docker-compose.yml` file locally and use it with `docker-compose up`:
 
 ```yaml title="docker-compose.yml"
---8<-- "https://raw.githubusercontent.com/appliedAI-Initiative/lakefs-spec/main/hack/docker-compose.yml:3:"
+--8<-- "https://raw.githubusercontent.com/aai-institute/lakefs-spec/main/hack/docker-compose.yml:3:"
 ```
 
 In order to allow `lakefs-spec` to automatically discover credentials to access this lakeFS instance, create a `.lakectl.yaml` in your home directory containing the credentials for the quickstart environment (you can also use `lakectl config` to create this file interactively if you have the `lakectl` tool installed on your machine):

@@ -1,5 +1,5 @@
-[![](https://img.shields.io/pypi/v/lakefs-spec)](https://pypi.org/project/lakefs-spec) ![GitHub](https://img.shields.io/github/license/appliedAI-Initiative/lakefs-spec) [![docs](https://img.shields.io/badge/docs-latest-blue)](https://lakefs-spec.org)
- ![GitHub](https://img.shields.io/github/stars/appliedAI-Initiative/lakefs-spec)
+[![](https://img.shields.io/pypi/v/lakefs-spec)](https://pypi.org/project/lakefs-spec) ![GitHub](https://img.shields.io/github/license/aai-institute/lakefs-spec) [![docs](https://img.shields.io/badge/docs-latest-blue)](https://lakefs-spec.org)
+ ![GitHub](https://img.shields.io/github/stars/aai-institute/lakefs-spec)
 
 # `lakefs-spec`: An `fsspec` backend for lakeFS
 
@@ -91,10 +91,10 @@ res.show()
 ## Contributing
 
 We encourage and welcome contributions from the community to enhance the project.
-Please check [discussions](https://github.com/appliedAI-Initiative/lakefs-spec/discussions) or raise an [issue](https://github.com/appliedAI-Initiative/lakefs-spec/issues) on GitHub for any problems you encounter with the library.
+Please check [discussions](https://github.com/aai-institute/lakefs-spec/discussions) or raise an [issue](https://github.com/aai-institute/lakefs-spec/issues) on GitHub for any problems you encounter with the library.
 
 For information on the general development workflow, see the [contribution guide](CONTRIBUTING.md).
 
 ## License
 
-The `lakefs-spec` library is distributed under the [Apache-2 license](https://github.com/appliedAI-Initiative/lakefs-spec/blob/main/LICENSE).
+The `lakefs-spec` library is distributed under the [Apache-2 license](https://github.com/aai-institute/lakefs-spec/blob/main/LICENSE).
