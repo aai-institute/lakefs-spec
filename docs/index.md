@@ -15,15 +15,15 @@ Highlights:
 
 ::cards:: cols=3
 
-- title: Overview
-  content: Installation, Usage, Contributing, License
-  icon: ":octicons-telescope-24:{ .landing-page-icon }"
-  url: README.md
-
 - title: Quickstart
   content: Step-by-step installation and first operations
   icon: ":octicons-flame-24:{ .landing-page-icon }"
   url: quickstart.md
+
+- title: Use Cases
+  content: Reasons to use `lakefs-spec` in your project
+  icon: ":octicons-telescope-24:{ .landing-page-icon }"
+  url: use-cases.md
 
 - title: Tutorials
   content: In-depth tutorials on using `lakefs-spec`
