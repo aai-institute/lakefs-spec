@@ -102,11 +102,19 @@ class LakeFSTransaction(Transaction):
 
         self.fs._intrans = False
 
-    def create_branch(self, repository: str, name: str, source_branch: str) -> str:
+    def create_branch(
+        self, repository: str, name: str, source_branch: str, exist_ok: bool = True
+    ) -> str:
         """
         Create a branch with the name `name` in a repository, branching off `source_branch`.
         """
-        op = partial(create_branch, repository=repository, name=name, source_branch=source_branch)
+        op = partial(
+            create_branch,
+            repository=repository,
+            name=name,
+            source_branch=source_branch,
+            exist_ok=exist_ok,
+        )
         self.files.append((op, name))
         return name
 
@@ -136,12 +144,16 @@ class LakeFSTransaction(Transaction):
         self.files.append((op, p))
         return p
 
-    def tag(self, repository: str, ref: str | Placeholder[Commit], tag: str) -> str:
+    def tag(
+        self, repository: str, ref: str | Placeholder[Commit], tag: str, exist_ok: bool = True
+    ) -> str:
         """Create a tag referencing a commit in a repository."""
 
         def tag_op(client: LakeFSClient, **kwargs: Any) -> Ref:
             kwargs = unwrap_placeholders(kwargs)
             return create_tag(client, **kwargs)
 
-        self.files.append((partial(tag_op, repository=repository, ref=ref, tag=tag), tag))
+        self.files.append(
+            (partial(tag_op, repository=repository, ref=ref, tag=tag, exist_ok=exist_ok), tag)
+        )
         return tag
