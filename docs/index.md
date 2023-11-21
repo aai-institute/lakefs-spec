@@ -1,4 +1,4 @@
-# `lakefs-spec`: An `fsspec` backend for lakeFS
+# lakefs-spec: An fsspec backend for lakeFS
 
 Welcome to `lakefs-spec`, a [filesystem-spec](https://github.com/fsspec/filesystem_spec) backend implementation for the [lakeFS](https://lakefs.io/) data lake.
 Our primary goal is to streamline versioned data operations in lakeFS, enabling seamless integration with popular data science tools such as Pandas, Polars, and DuckDB directly from Python.
