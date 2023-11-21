@@ -3,7 +3,7 @@
 Thank you for your interest in contributing to this project!
 
 We appreciate issue reports, pull requests for code and documentation,
-as well as any project-related communication through [GitHub Discussions](https://github.com/appliedAI-Initiative/lakefs-spec/discussions).
+as well as any project-related communication through [GitHub Discussions](https://github.com/aai-institute/lakefs-spec/discussions).
 
 ## Quickstart
 
@@ -12,7 +12,7 @@ To get started with development, you can follow these steps:
 1. Clone this repository:
 
     ```shell
-    git clone https://github.com/appliedAI-Initiative/lakefs-spec.git
+    git clone https://github.com/aai-institute/lakefs-spec.git
     ```
 
 2. Navigate to the directory and install the development dependencies into a virtual environment:

@@ -115,7 +115,7 @@ extra:
     default: latest
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/appliedAI-Initiative/lakefs-spec
+      link: https://github.com/aai-institute/lakefs-spec
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/lakefs-spec
     - icon: fontawesome/brands/linkedin
