@@ -1,7 +1,7 @@
 site_name: lakefs-spec
 site_dir: public/docs
 site_url: https://lakefs-spec.github.io
-repo_url: https://github.com/appliedAI-Initiative/lakefs-spec
+repo_url: https://github.com/aai-institute/lakefs-spec
 edit_uri: -/edit/main/docs/
 
 # lakeFS occupies port 8000, which is the default for `mkdocs serve`
@@ -109,7 +109,7 @@ theme:
         name: Switch to light mode
 
 extra:
-  copyright_link: https://appliedai.de
+  copyright_link: https://appliedai-institute.de
   version:
     provider: mike
     default: latest
