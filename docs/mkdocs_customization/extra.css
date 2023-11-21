@@ -11,3 +11,7 @@ table {
     overflow-x: auto;
     white-space: nowrap;
 }
+
+.landing-page-icon {
+    color: hsl(198.5, 83.5%, 19%);
+}
