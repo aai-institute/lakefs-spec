@@ -63,6 +63,7 @@ plugins:
       file_pattern: '.*\.(md|ipynb)$'
 
 markdown_extensions:
+  - neoteroi.cards  # https://www.neoteroi.dev/mkdocs-plugins/cards/
   # python-markdown extensions: https://python-markdown.github.io/extensions/
   - admonition
   - attr_list
@@ -122,3 +123,4 @@ extra:
 
 extra_css:
   - mkdocs_customization/extra.css
+  - mkdocs_customization/neoteroi-mkdocs.css

@@ -27,6 +27,8 @@ comm==0.1.4
 debugpy==1.8.0
 decorator==5.1.1
 defusedxml==0.7.1
+essentials==1.1.5
+essentials-openapi==1.0.9
 executing==2.0.0
 fastjsonschema==2.18.1
 fqdn==1.5.1
@@ -35,6 +37,9 @@ ghp-import==2.1.0
 gitdb==4.0.11
 gitpython==3.1.40
 griffe==0.36.7
+h11==0.14.0
+httpcore==1.0.2
+httpx==0.25.1
 idna==3.4
 importlib-metadata==6.8.0
 importlib-resources==6.1.0
@@ -63,8 +68,10 @@ jupyterlab-server==2.25.0
 jupyterlab-widgets==3.0.9
 lakefs-sdk==1.0.0
 markdown==3.5
+markdown-it-py==3.0.0
 markupsafe==2.1.3
 matplotlib-inline==0.1.6
+mdurl==0.1.2
 mergedeep==1.3.4
 mike==2.0.0
 mistune==3.0.2
@@ -84,6 +91,7 @@ mypy-extensions==1.0.0
 nbclient==0.8.0
 nbconvert==7.9.2
 nbformat==5.9.2
+neoteroi-mkdocs==1.0.4
 nest-asyncio==1.5.8
 notebook==7.0.6
 notebook-shim==0.2.3
@@ -119,6 +127,7 @@ regex==2023.10.3
 requests==2.31.0
 rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
+rich==13.7.0
 rpds-py==0.10.6
 send2trash==1.8.2
 six==1.16.0
