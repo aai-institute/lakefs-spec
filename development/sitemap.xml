@@ -1,77 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://lakefs-spec.github.io/latest/</loc>
+         <loc>https://lakefs-spec.org/latest/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/CONTRIBUTING/</loc>
+         <loc>https://lakefs-spec.org/latest/CONTRIBUTING/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/quickstart/</loc>
+         <loc>https://lakefs-spec.org/latest/quickstart/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/use-cases/</loc>
+         <loc>https://lakefs-spec.org/latest/use-cases/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/guides/</loc>
+         <loc>https://lakefs-spec.org/latest/guides/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/guides/configuration/</loc>
+         <loc>https://lakefs-spec.org/latest/guides/configuration/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/reference/SUMMARY/</loc>
+         <loc>https://lakefs-spec.org/latest/reference/SUMMARY/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/</loc>
+         <loc>https://lakefs-spec.org/latest/reference/lakefs_spec/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/client_helpers/</loc>
+         <loc>https://lakefs-spec.org/latest/reference/lakefs_spec/client_helpers/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/config/</loc>
+         <loc>https://lakefs-spec.org/latest/reference/lakefs_spec/config/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/errors/</loc>
+         <loc>https://lakefs-spec.org/latest/reference/lakefs_spec/errors/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/spec/</loc>
+         <loc>https://lakefs-spec.org/latest/reference/lakefs_spec/spec/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/transaction/</loc>
+         <loc>https://lakefs-spec.org/latest/reference/lakefs_spec/transaction/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/reference/lakefs_spec/util/</loc>
+         <loc>https://lakefs-spec.org/latest/reference/lakefs_spec/util/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://lakefs-spec.github.io/latest/tutorials/demo_data_science_project/</loc>
+         <loc>https://lakefs-spec.org/latest/tutorials/</loc>
+         <lastmod>2023-11-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://lakefs-spec.org/latest/tutorials/demo_data_science_project/</loc>
          <lastmod>2023-11-21</lastmod>
          <changefreq>daily</changefreq>
     </url>

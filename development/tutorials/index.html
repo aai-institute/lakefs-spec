@@ -8,28 +8,28 @@
       
       
       
-        <link rel="canonical" href="https://lakefs-spec.org/latest/reference/lakefs_spec/config/">
+        <link rel="canonical" href="https://lakefs-spec.org/latest/tutorials/">
       
       
-        <link rel="prev" href="../client_helpers/">
+        <link rel="prev" href="../guides/configuration/">
       
       
-        <link rel="next" href="../errors/">
+        <link rel="next" href="demo_data_science_project/">
       
       
-      <link rel="icon" href="../../../_images/aai-favicon.png">
+      <link rel="icon" href="../_images/aai-favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
     
     
       
-        <title>config - lakefs-spec</title>
+        <title>Tutorials - lakefs-spec</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.35e1ed30.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.35e1ed30.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.356b1318.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
       
       
 
@@ -48,21 +48,21 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../../_styles/extra.css">
+      <link rel="stylesheet" href="../_styles/extra.css">
     
-      <link rel="stylesheet" href="../../../_styles/theme.css">
+      <link rel="stylesheet" href="../_styles/theme.css">
     
-      <link rel="stylesheet" href="../../../_styles/neoteroi-mkdocs.css">
+      <link rel="stylesheet" href="../_styles/neoteroi-mkdocs.css">
     
-      <link rel="stylesheet" href="../../../css/ansi-colours.css">
+      <link rel="stylesheet" href="../css/ansi-colours.css">
     
-      <link rel="stylesheet" href="../../../css/jupyter-cells.css">
+      <link rel="stylesheet" href="../css/jupyter-cells.css">
     
-      <link rel="stylesheet" href="../../../css/pandas-dataframe.css">
+      <link rel="stylesheet" href="../css/pandas-dataframe.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -91,7 +91,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#lakefs_spec.config" class="md-skip">
+        <a href="#tutorials" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="https://lakefs-spec.org" title="lakefs-spec" class="md-header__button md-logo" aria-label="lakefs-spec" data-md-component="logo">
       
-  <img src="../../../_images/aai-logo-cropped.png" alt="logo">
+  <img src="../_images/aai-logo-cropped.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -130,7 +130,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              config
+              Tutorials
             
           </span>
         </div>
@@ -242,7 +242,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="https://lakefs-spec.org" title="lakefs-spec" class="md-nav__button md-logo" aria-label="lakefs-spec" data-md-component="logo">
       
-  <img src="../../../_images/aai-logo-cropped.png" alt="logo">
+  <img src="../_images/aai-logo-cropped.png" alt="logo">
 
     </a>
     lakefs-spec
@@ -268,7 +268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -287,7 +287,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../quickstart/" class="md-nav__link">
+      <a href="../quickstart/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -306,7 +306,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../use-cases/" class="md-nav__link">
+      <a href="../use-cases/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -339,7 +339,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../guides/" class="md-nav__link ">
+            <a href="../guides/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -369,11 +369,84 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/configuration/" class="md-nav__link">
+      <a href="../guides/configuration/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Passing configuration to the file system
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  <span class="md-ellipsis">
+    Tutorials
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link md-nav__link--active" for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="demo_data_science_project/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Demo data science project
   </span>
   
 
@@ -405,80 +478,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../../tutorials/" class="md-nav__link ">
-              
-  
-  <span class="md-ellipsis">
-    Tutorials
-  </span>
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            Tutorials
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../tutorials/demo_data_science_project/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Demo data science project
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-        
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
@@ -492,7 +492,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             API Reference
@@ -503,25 +503,23 @@
                 
   
   
-    
-  
   
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../reference/lakefs_spec/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -538,7 +536,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6_1">
             <span class="md-nav__icon md-icon"></span>
             lakefs_spec
@@ -551,7 +549,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../client_helpers/" class="md-nav__link">
+      <a href="../reference/lakefs_spec/client_helpers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -569,27 +567,9 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    config
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../reference/lakefs_spec/config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -598,31 +578,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#lakefs_spec.config" class="md-nav__link">
-    config
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -634,7 +589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../errors/" class="md-nav__link">
+      <a href="../reference/lakefs_spec/errors/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -654,7 +609,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../spec/" class="md-nav__link">
+      <a href="../reference/lakefs_spec/spec/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -674,7 +629,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../transaction/" class="md-nav__link">
+      <a href="../reference/lakefs_spec/transaction/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -694,7 +649,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../util/" class="md-nav__link">
+      <a href="../reference/lakefs_spec/util/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -729,7 +684,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../CONTRIBUTING/" class="md-nav__link">
+      <a href="../CONTRIBUTING/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -759,21 +714,8 @@
   
   
   
+    
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#lakefs_spec.config" class="md-nav__link">
-    config
-  </a>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -788,7 +730,7 @@
                   
 
   
-    <a href="https://github.com/aai-institute/lakefs-spec/edit/main/docs/src/lakefs_spec/config.py" title="Edit this page" class="md-content__button md-icon">
+    <a href="https://github.com/aai-institute/lakefs-spec/edit/main/docs/tutorials/index.md" title="Edit this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
     </a>
@@ -796,34 +738,15 @@
   
 
 
-  <h1>config</h1>
-
-<div class="doc doc-object doc-module">
-
-
-
-<a id="lakefs_spec.config"></a>
-  <div class="doc doc-contents first">
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-  </div>
-
+<h1 id="tutorials">Tutorials<a class="headerlink" href="#tutorials" title="Permanent link">&para;</a></h1>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>We aim to provide additional tutorials in the future - contributions are welcome!</p>
 </div>
+<ul>
+<li><a href="../quickstart/">Quickstart example</a>: Using <code>lakefs-spec</code> as a file system</li>
+<li><a href="demo_data_science_project/">A fully-worked data science example</a>: Using <code>lakefs-spec</code> together with Pandas to train a classifier based on a public dataset and simulate additional data being collected</li>
+</ul>
 
   <hr>
 <div class="md-source-file">
@@ -916,10 +839,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.tabs.link", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.tabs.link", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../assets/javascripts/bundle.aecac24b.min.js"></script>
       
     
   </body>
