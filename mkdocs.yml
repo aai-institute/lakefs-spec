@@ -17,7 +17,9 @@ nav:
   - User Guide:
     - guides/index.md
     - guides/configuration.md
-  - Tutorials: tutorials/
+  - Tutorials:
+    - tutorials/index.md
+    - tutorials/demo_data_science_project.ipynb
   - API Reference: reference/
   - CONTRIBUTING.md
 
