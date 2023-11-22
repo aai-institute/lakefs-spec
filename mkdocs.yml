@@ -22,7 +22,7 @@ nav:
   - Use Cases: use-cases.md
   - User Guide:
     - guides/index.md
-    - guides/usage.md
+    - guides/filesystem-usage.md
     - guides/configuration.md
   - Tutorials:
     - tutorials/index.md
