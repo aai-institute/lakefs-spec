@@ -92,6 +92,24 @@ In the case of a directory in lakeFS, use the `fs.get()` API together with the `
 fs.get("my-repo/my-ref/dir", "dir", recursive=True)
 ```
 
+## Check existence of lakeFS objects
+
+To check the existence of a file in a given revision of a repository, you can use the `fs.exists()` API:
+
+```python
+from lakefs_spec import LakeFSFileSystem
+
+fs = LakeFSFileSystem()
+
+my_file_exists = fs.exists("my-repo/my-ref/my-file.txt")
+```
+
+This function returns `True` if the file exists on that revision, and `False` if it does not. Errors (e.g. permission errors) will be raised, since in that case, object existence cannot be decided.
+
+!!! Warning
+    
+    `fs.exists()` only works on file objects, and will return `False` if called on directories.
+
 ## Obtaining info on stored objects
 
 To query the metadata of a single object in a lakeFS repository (similar to the POSIX `stat` function), use the `fs.info()` API:
@@ -144,14 +162,17 @@ fs.rm_file("my-repo/my-branch/my-file.txt")
 fs.rm("my-repo/my-branch/my-dir/", recursive=True)
 ```
 
-## Copying files between branches
+## Copying files in a repository
 
-To copy files from one branch to a different branch, use the `fs.cp_file()` or `fs.copy()` methods:
+To copy files on a branch or from one branch to another, use the `fs.cp_file()` or `fs.copy()` methods:
 
 ```python
 from lakefs_spec import LakeFSFileSystem
 
 fs = LakeFSFileSystem()
+
+# copies a single file on the same branch to a new location.
+fs.cp_file("my-repo/branch-a/file.txt", "my-repo/branch-a/file.txt.bak")
 
 # copies a single file from branch A to branch B.
 fs.cp_file("my-repo/branch-a/file.txt", "my-repo/branch-b/file.txt")
