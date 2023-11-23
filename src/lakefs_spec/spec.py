@@ -285,17 +285,25 @@ class LakeFSFileSystem(AbstractFileSystem):
         path = self._strip_protocol(path)
         repository, ref, prefix = parse(path)
 
-        try:
-            cache_entry: list[Any] | None = self._ls_from_cache(prefix)
-        except FileNotFoundError:
-            # we patch files missing from an ls call in the cache entry below,
-            # so this should not be an error.
-            cache_entry = None
+        # Try lookup in dircache unless explicitly disabled by `refresh=True` kwarg
+        use_dircache = True
+        if "refresh" in kwargs:
+            use_dircache = not kwargs["refresh"]
+            del kwargs["refresh"]  # cannot be forwarded to the API
 
-        if cache_entry is not None:
-            if not detail:
-                return [e["name"] for e in cache_entry]
-            return cache_entry
+        if use_dircache:
+            cache_entry: list[Any] | None = None
+            try:
+                cache_entry = self._ls_from_cache(path)
+            except FileNotFoundError:
+                # we patch files missing from an ls call in the cache entry below,
+                # so this should not be an error.
+                pass
+
+            if cache_entry is not None:
+                if not detail:
+                    return [e["name"] for e in cache_entry]
+                return cache_entry
 
         has_more, after = True, ""
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
@@ -313,7 +321,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                             "checksum": obj.checksum,
                             "content-type": obj.content_type,
                             "mtime": obj.mtime,
-                            "name": obj.path,
+                            "name": f"{repository}/{ref}/{obj.path}",
                             "size": obj.size_bytes,
                             "type": "file",
                         }
