@@ -21,3 +21,17 @@ def test_info_on_nonexistent_directory(fs: LakeFSFileSystem, repository: str) ->
 
     with pytest.raises(FileNotFoundError):
         fs.info(resource)
+
+
+def test_info_on_directory_no_trailing_slash(fs: LakeFSFileSystem, repository: str) -> None:
+    """
+    Regression test to check that calling `fs.info()` on existing non-slash-terminated
+    directories yields the same results as if terminated with a slash.
+    """
+    resource = f"{repository}/main/data/"
+    res = fs.info(resource)
+
+    assert res["type"] == "directory"
+
+    non_slash_resource = resource.rstrip("/")
+    assert fs.info(non_slash_resource) == res
