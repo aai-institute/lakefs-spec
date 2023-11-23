@@ -58,7 +58,7 @@ fs.put("dir", "my-repo/my-ref/dir", recursive=True)
 !!! info
 
     The above method of file uploading results in two transfers: Once from the client to the lakeFS server, and once from the lakeFS server to the object storage.
-    This can impact performance if the uploaded files are very large. To avoid this performance hit, you can also decide to write the file directly to the underlying object storage:
+    This can impact performance if the uploaded files are very large. To avoid this performance issue, you can also decide to write the file directly to the underlying object storage:
 
     ```python
     fs = LakeFSFileSystem()
