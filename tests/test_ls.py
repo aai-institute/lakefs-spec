@@ -34,6 +34,24 @@ def test_ls_caching(fs: LakeFSFileSystem, repository: str) -> None:
     assert counter.count("objects_api.list_objects") == 1
 
 
+def test_ls_cache_refresh(fs: LakeFSFileSystem, repository: str) -> None:
+    """
+    Check that ls calls bypass the dircache if requested through ``refresh=False``
+    """
+    fs.client, counter = with_counter(fs.client)
+
+    testdir = "data"
+    resource = f"{repository}/main/{testdir}/"
+
+    for _ in range(2):
+        fs.ls(resource, refresh=True)
+        assert len(fs.dircache) == 1
+        assert set(fs.dircache.keys()) == {resource.removesuffix("/")}
+
+    # assert the second `ls` call bypasses the cache
+    assert counter.count("objects_api.list_objects") == 2
+
+
 def test_ls_stale_cache_entry(
     fs: LakeFSFileSystem,
     repository: str,
