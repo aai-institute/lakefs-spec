@@ -182,10 +182,12 @@ fs.cp_file("my-repo/branch-a/file.txt", "my-repo/branch-a/file.txt.bak")
 # copies a single file from branch A to branch B.
 fs.cp_file("my-repo/branch-a/file.txt", "my-repo/branch-b/file.txt")
 
-# copies the entire `my-dir` directory from branch A to B.
+# copies the entire `my-dir` directory from branch A to branch B (which must exist).
 fs.copy("my-repo/branch-a/my-dir/", "my-repo/branch-b/my-dir/", recursive=True)
 ```
 
 !!! Info
 
     Files and directories can only be copied between branches in the same repository, not between different repositories.
+
+    Trying to copy to a non-existent branch will not create the branch.
