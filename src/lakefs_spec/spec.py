@@ -115,6 +115,22 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
 
+    def expand_path(
+        self,
+        path: str | list[str],
+        recursive: bool = False,
+        maxdepth: int | None = None,
+        **kwargs: Any,
+    ) -> list[str]:
+        paths = super().expand_path(path=path, recursive=recursive, maxdepth=maxdepth, **kwargs)
+
+        if isinstance(path, list):
+            (version_prefix,) = set("/".join(p.split("/", 2)[:2]) for p in path)
+        else:
+            version_prefix = "/".join(path.split("/", 2)[:2])
+
+        return [p if p.startswith(version_prefix) else version_prefix + "/" + p for p in paths]
+
     @classmethod
     @overload
     def _strip_protocol(cls, path: str | os.PathLike[str] | Path) -> str:
@@ -235,7 +251,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         precheck: bool = True,
         **kwargs: Any,
     ) -> None:
-        if precheck and Path(lpath).exists():
+        lp = Path(lpath)
+        if precheck and lp.exists() and not lp.is_dir():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.info(rpath).get("checksum")
             if local_checksum == remote_checksum:
@@ -432,7 +449,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         storage_options: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
-        if precheck:
+        if precheck and not Path(lpath).is_dir():
             remote_checksum = self.checksum(rpath)
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             if local_checksum == remote_checksum:
