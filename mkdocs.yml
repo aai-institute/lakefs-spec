@@ -14,7 +14,7 @@ validation:
   absolute_links: warn
   unrecognized_links: warn
 
-copyright: Copyright &copy; 2023 appliedAI Institute for Europe gGmbH<br>The appliedAI Institute for Europe gGmbH is supported by the KI-Stiftung Heilbronn gGmbH.
+copyright: Copyright &copy; 2023 <a href="https://appliedai-institute.de" target="_blank" rel="noopener">appliedAI Institute for Europe gGmbH</a><br>The appliedAI Institute for Europe gGmbH is supported by the KI-Stiftung Heilbronn gGmbH.
 
 nav:
   - Home: index.md
@@ -139,6 +139,9 @@ extra:
       link: https://pypi.org/project/lakefs-spec
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/company/appliedai-institute-for-europe-ggmbh/
+    - icon: fontawesome/solid/section
+      link: https://appliedai-institute.de/impressum
+      name: Impressum / Imprint
 
 extra_css:
   - _styles/extra.css
