@@ -31,6 +31,16 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://lakefs-spec.org/latest/guides/filesystem-usage/</loc>
+         <lastmod>2023-11-23</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://lakefs-spec.org/latest/guides/transactions/</loc>
+         <lastmod>2023-11-23</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://lakefs-spec.org/latest/reference/SUMMARY/</loc>
          <lastmod>2023-11-23</lastmod>
          <changefreq>daily</changefreq>

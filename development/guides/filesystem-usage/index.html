@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://lakefs-spec.org/latest/guides/configuration/">
+        <link rel="canonical" href="https://lakefs-spec.org/latest/guides/filesystem-usage/">
       
       
-        <link rel="prev" href="../filesystem-usage/">
+        <link rel="prev" href="../">
       
       
-        <link rel="next" href="../transactions/">
+        <link rel="next" href="../configuration/">
       
       
       <link rel="icon" href="../../_images/aai-favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Passing configuration to the file system - lakefs-spec</title>
+        <title>How to use the lakeFS file system - lakefs-spec</title>
       
     
     
@@ -91,7 +91,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#passing-configuration-to-the-file-system" class="md-skip">
+        <a href="#how-to-use-the-lakefs-file-system" class="md-skip">
           Skip to content
         </a>
       
@@ -130,7 +130,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Passing configuration to the file system
+              How to use the lakeFS file system
             
           </span>
         </div>
@@ -369,26 +369,6 @@
                 
   
   
-  
-    <li class="md-nav__item">
-      <a href="../filesystem-usage/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    How to use the lakeFS file system
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -404,7 +384,7 @@
           
   
   <span class="md-ellipsis">
-    Passing configuration to the file system
+    How to use the lakeFS file system
   </span>
   
 
@@ -415,7 +395,7 @@
         
   
   <span class="md-ellipsis">
-    Passing configuration to the file system
+    How to use the lakeFS file system
   </span>
   
 
@@ -437,30 +417,71 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-lakectlyaml-configuration-file" class="md-nav__link">
-    The .lakectl.yaml configuration file
+  <a href="#the-lakefs-uri-structure" class="md-nav__link">
+    The lakeFS URI structure
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#setting-environment-variables" class="md-nav__link">
-    Setting environment variables
+  <a href="#on-staged-versus-committed-changes" class="md-nav__link">
+    On staged versus committed changes
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#using-constructor-arguments" class="md-nav__link">
-    Using constructor arguments
+  <a href="#how-to-use-lakefs-file-system-apis" class="md-nav__link">
+    How to use lakeFS file system APIs
+  </a>
+  
+    <nav class="md-nav" aria-label="How to use lakeFS file system APIs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uploading-and-downloading-files" class="md-nav__link">
+    Uploading and downloading files
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#appendix-mixing-zero-config-methods" class="md-nav__link">
-    Appendix: Mixing zero-config methods
+        
+          <li class="md-nav__item">
+  <a href="#checking-the-existence-of-lakefs-objects" class="md-nav__link">
+    Checking the existence of lakeFS objects
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#obtaining-info-on-stored-objects" class="md-nav__link">
+    Obtaining info on stored objects
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listing-directories-in-lakefs" class="md-nav__link">
+    Listing directories in lakeFS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deleting-objects-from-a-lakefs-branch" class="md-nav__link">
+    Deleting objects from a lakeFS branch
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copying-files-in-a-repository" class="md-nav__link">
+    Copying files in a repository
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -468,6 +489,26 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Passing configuration to the file system
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -832,30 +873,71 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-lakectlyaml-configuration-file" class="md-nav__link">
-    The .lakectl.yaml configuration file
+  <a href="#the-lakefs-uri-structure" class="md-nav__link">
+    The lakeFS URI structure
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#setting-environment-variables" class="md-nav__link">
-    Setting environment variables
+  <a href="#on-staged-versus-committed-changes" class="md-nav__link">
+    On staged versus committed changes
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#using-constructor-arguments" class="md-nav__link">
-    Using constructor arguments
+  <a href="#how-to-use-lakefs-file-system-apis" class="md-nav__link">
+    How to use lakeFS file system APIs
+  </a>
+  
+    <nav class="md-nav" aria-label="How to use lakeFS file system APIs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uploading-and-downloading-files" class="md-nav__link">
+    Uploading and downloading files
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#appendix-mixing-zero-config-methods" class="md-nav__link">
-    Appendix: Mixing zero-config methods
+        
+          <li class="md-nav__item">
+  <a href="#checking-the-existence-of-lakefs-objects" class="md-nav__link">
+    Checking the existence of lakeFS objects
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#obtaining-info-on-stored-objects" class="md-nav__link">
+    Obtaining info on stored objects
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listing-directories-in-lakefs" class="md-nav__link">
+    Listing directories in lakeFS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deleting-objects-from-a-lakefs-branch" class="md-nav__link">
+    Deleting objects from a lakeFS branch
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copying-files-in-a-repository" class="md-nav__link">
+    Copying files in a repository
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -874,7 +956,7 @@
                   
 
   
-    <a href="https://github.com/aai-institute/lakefs-spec/edit/main/docs/guides/configuration.md" title="Edit this page" class="md-content__button md-icon">
+    <a href="https://github.com/aai-institute/lakefs-spec/edit/main/docs/guides/filesystem-usage.md" title="Edit this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
     </a>
@@ -882,107 +964,149 @@
   
 
 
-<h1 id="passing-configuration-to-the-file-system">Passing configuration to the file system<a class="headerlink" href="#passing-configuration-to-the-file-system" title="Permanent link">&para;</a></h1>
-<p>There are multiple ways to configure the <code>LakeFSFileSystem</code> for use with a deployed lakeFS instance.
-This guide introduces them in the order of least to most in-Python configuration - the preferred way to use the file system is with as little Python code as possible.</p>
+<h1 id="how-to-use-the-lakefs-file-system">How to use the lakeFS file system<a class="headerlink" href="#how-to-use-the-lakefs-file-system" title="Permanent link">&para;</a></h1>
+<p>This guide contains instructions and code snippets on how to use the lakeFS file system.</p>
+<h2 id="the-lakefs-uri-structure">The lakeFS URI structure<a class="headerlink" href="#the-lakefs-uri-structure" title="Permanent link">&para;</a></h2>
+<p>In the following subsections, we frequently make use of <a href="https://docs.lakefs.io/understand/model.html#lakefs-protocol-uris">lakeFS URIs</a> in the example code.
+lakeFS URIs identify resources in a lakeFS deployment through a unique path consisting of repository name, lakeFS revision/ref name, and file name relative to the repository root.</p>
+<p>As an example, a URI like <code>repo/main/file.txt</code> addresses the <code>file.txt</code> file on the <code>main</code> branch in the repository named <code>repo</code>.</p>
+<p>In some lakeFS file system operations, directories are also allowed as resource names.
+For example, the URI <code>repo/main/data/</code> (note the trailing slash) refers to the <code>data</code> directory on the <code>main</code> branch in the <code>repo</code> repository.</p>
+<h2 id="on-staged-versus-committed-changes">On staged versus committed changes<a class="headerlink" href="#on-staged-versus-committed-changes" title="Permanent link">&para;</a></h2>
+<p>When uploading, copying, or removing files or directories from a branch, those removal operations will result in staged changes in the repository until a commit is created.
+<code>lakefs-spec</code> does not create these commits automatically, since it separates file operations from versioning operations rigorously.
+If you want to conduct versioning operations, like creating commits, between file transfers, the best way to do so is by using <a href="../transactions/">filesystem transactions</a>.</p>
+<h2 id="how-to-use-lakefs-file-system-apis">How to use lakeFS file system APIs<a class="headerlink" href="#how-to-use-lakefs-file-system-apis" title="Permanent link">&para;</a></h2>
+<p>The following section explains more in-depth how to use the <code>LakeFSFileSystem</code> APIs.
+This section concerns the explicitly implemented operations. In addition, there are a number of file system APIs inherited from the <a href="https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.spec.AbstractFileSystem"><code>AbstractFileSystem</code> interface in fsspec</a>.</p>
+<p>More information on file system usage can be found in the <a href="https://filesystem-spec.readthedocs.io/en/latest/usage.html#use-a-file-system"><code>fsspec</code> documentation</a>.</p>
+<h3 id="uploading-and-downloading-files">Uploading and downloading files<a class="headerlink" href="#uploading-and-downloading-files" title="Permanent link">&para;</a></h3>
+<p>The arguably most important feature of the file system is file transfers.</p>
+<h4 id="file-uploads">File uploads<a class="headerlink" href="#file-uploads" title="Permanent link">&para;</a></h4>
+<p>To upload a file, you can use the <code>fs.put()</code> and <code>fs.put_file()</code> methods. 
+While <code>fs.put_file()</code> operates on single files only, the <code>fs.put()</code> API can be used for directory uploads.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># remote path, then local target path.</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;my-repo/my-ref/file.txt&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>If you want to upload an entire directory to lakeFS, you can use the <code>fs.put()</code> API together with the <code>recursive=True</code> switch:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># structure:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1">#   dir/a.txt</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">#      /b.yaml</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1">#      /c.csv</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1">#      /...</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">fs</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;dir&quot;</span><span class="p">,</span> <span class="s2">&quot;my-repo/my-ref/dir&quot;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></code></pre></div>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>The configuration methods are introduced in reverse order of precedence - config file arguments have the lowest priority, environment variables have medium priority, and constructor arguments have the highest priority.</p>
-</div>
-<h2 id="the-lakectlyaml-configuration-file">The <code>.lakectl.yaml</code> configuration file<a class="headerlink" href="#the-lakectlyaml-configuration-file" title="Permanent link">&para;</a></h2>
-<p>The easiest way of configuring the lakeFS file system is with a <code>lakectl</code> YAML configuration file. To address a lakeFS server, the following minimum configuration is required:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">credentials</span><span class="p">:</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ID&gt;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;KEY&gt;</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nt">server</span><span class="p">:</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;LAKEFS-HOST&gt;</span>
-</span></code></pre></div>
-<p>For a local instance produced by the <a href="../../quickstart/">quickstart</a>, the following values will work:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">credentials</span><span class="p">:</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AKIAIOSFOLQUICKSTART</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nt">server</span><span class="p">:</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://127.0.0.1:8000</span>
-</span></code></pre></div>
-<p>To work without any more arguments "out of the box", the configuration file has to be placed in your home directory with the name <code>.lakectl.yaml</code> (this is where lakeFS expects it).
-If you set all values correctly, you can instantiate the lakeFS file system without any arguments:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+<p>The above method of file uploading results in two transfers: Once from the client to the lakeFS server, and once from the lakeFS server to the object storage.
+This can impact performance if the uploaded files are very large. To avoid this performance issue, you can also decide to write the file directly to the underlying object storage:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># zero config necessary.</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-repo/my-ref/file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;file.txt&quot;</span><span class="p">,</span> <span class="n">use_blockstore</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span></code></pre></div>
-<p>If you cannot use the default location (<code>$HOME/.lakectl.yaml</code>), you can read a file from any other location by passing the <code>configfile</code> argument:</p>
+<p>Direct lakeFS blockstore uploads require the installation of the corresponding <code>fsspec</code> file system implementation through <code>pip</code>.
+For an S3-based lakeFS deployment, install the <code>s3fs</code> package. For Google Cloud Storage (GCS), install the <code>gcsfs</code> package.
+For Azure blob storage, install the <code>adlfs</code> package.</p>
+</div>
+<h4 id="file-downloads">File downloads<a class="headerlink" href="#file-downloads" title="Permanent link">&para;</a></h4>
+<p>To download a file, you can use the <code>fs.get()</code> or <code>fs.get_file()</code> methods.
+While <code>fs.get_file()</code> downloads single files only, the <code>fs.get()</code> API can be used for recursive directory downloads.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">(</span><span class="n">configfile</span><span class="o">=</span><span class="s2">&quot;/path/to/my/configfile.yaml&quot;</span><span class="p">)</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># remote path, then local target path.</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">fs</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="s2">&quot;my-repo/my-ref/file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;file.txt&quot;</span><span class="p">)</span>
 </span></code></pre></div>
-<h2 id="setting-environment-variables">Setting environment variables<a class="headerlink" href="#setting-environment-variables" title="Permanent link">&para;</a></h2>
-<p>It is also possible to specify certain configuration values used for authentication with the lakeFS server with environment variables.
-For these values, the variable name is exactly the constructor argument name prefaced with <code>LAKEFS_</code>, e.g. the <code>host</code> argument can be set via the <code>LAKEFS_HOST</code> environment variable.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span> <span class="nn">os</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKEFS_HOST&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;http://my-lakefs.host&quot;</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKEFS_USERNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;my-username&quot;</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKEFS_PASSWORD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;my-password&quot;</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># also zero-config.</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+<p>In the case of a directory in lakeFS, use the <code>fs.get()</code> API together with the <code>recursive=True</code> switch:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># structure:</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1">#   dir/a.txt</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1">#      /b.yaml</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1">#      /c.csv</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1">#      /...</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># downloads the entire `dir` directory (and subdirectories) into the current directory.</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="n">fs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;my-repo/my-ref/dir&quot;</span><span class="p">,</span> <span class="s2">&quot;dir&quot;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="checking-the-existence-of-lakefs-objects">Checking the existence of lakeFS objects<a class="headerlink" href="#checking-the-existence-of-lakefs-objects" title="Permanent link">&para;</a></h3>
+<p>To check the existence of a file in a given revision of a repository, you can use the <code>fs.exists()</code> API:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">my_file_exists</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;my-repo/my-ref/my-file.txt&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>This function returns <code>True</code> if the file exists on that revision, and <code>False</code> if it does not. Errors (e.g. permission errors) will be raised, since in that case, object existence cannot be decided.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code>fs.exists()</code> only works on file objects, and will return <code>False</code> if called on directories.</p>
+</div>
+<h3 id="obtaining-info-on-stored-objects">Obtaining info on stored objects<a class="headerlink" href="#obtaining-info-on-stored-objects" title="Permanent link">&para;</a></h3>
+<p>To query the metadata of a single object in a lakeFS repository, use the <code>fs.info()</code> API:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">my_file_info</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;my-repo/my-ref/my-file.txt&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>The resulting <code>my_file_info</code> object is a dictionary containing useful information such as storage location of the file, creation timestamp, and size (in bytes).</p>
+<p>You can also call <code>fs.info()</code> on directories:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">dir_info</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;my-repo/my-ref/dir/&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>In this case, the resulting <code>dir_info</code> object only contains the directory name, and the cumulated size of the files it contains.</p>
+<h3 id="listing-directories-in-lakefs">Listing directories in lakeFS<a class="headerlink" href="#listing-directories-in-lakefs" title="Permanent link">&para;</a></h3>
+<p>To list the files in a directory in lakeFS, use the <code>fs.ls()</code> method:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">my_dir_listing</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="s2">&quot;my-repo/my-ref/my-dir/&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>This returns a list of Python dictionaries containing information on the objects contained in the requested directory.
+The returned objects have the same fields set as those returned by a normal <code>fs.info()</code> call on a file object.</p>
+<h3 id="deleting-objects-from-a-lakefs-branch">Deleting objects from a lakeFS branch<a class="headerlink" href="#deleting-objects-from-a-lakefs-branch" title="Permanent link">&para;</a></h3>
+<p>To delete objects from a lakeFS branch, use the <code>fs.rm_file()</code> or <code>fs.rm()</code> APIs. As before, while the former works only for single files, the latter can be used to remove entire directories with the <code>recursive=True</code> option.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="n">fs</span><span class="o">.</span><span class="n">rm_file</span><span class="p">(</span><span class="s2">&quot;my-repo/my-branch/my-file.txt&quot;</span><span class="p">)</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1"># removes the entire `my-dir` directory.</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="n">fs</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="s2">&quot;my-repo/my-branch/my-dir/&quot;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="copying-files-in-a-repository">Copying files in a repository<a class="headerlink" href="#copying-files-in-a-repository" title="Permanent link">&para;</a></h3>
+<p>To copy files on a branch or from one branch to another, use the <code>fs.cp_file()</code> or <code>fs.copy()</code> methods:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># copies a single file on the same branch to a new location.</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="n">fs</span><span class="o">.</span><span class="n">cp_file</span><span class="p">(</span><span class="s2">&quot;my-repo/branch-a/file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;my-repo/branch-a/file.txt.bak&quot;</span><span class="p">)</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="c1"># copies a single file from branch A to branch B.</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="n">fs</span><span class="o">.</span><span class="n">cp_file</span><span class="p">(</span><span class="s2">&quot;my-repo/branch-a/file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;my-repo/branch-b/file.txt&quot;</span><span class="p">)</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="c1"># copies the entire `my-dir` directory from branch A to branch B (which must exist).</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="n">fs</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="s2">&quot;my-repo/branch-a/my-dir/&quot;</span><span class="p">,</span> <span class="s2">&quot;my-repo/branch-b/my-dir/&quot;</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span></code></pre></div>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>Not all initialization values can be set via environment variables - the <code>proxy</code>, <code>create_branch_ok</code>, <code>source_branch</code>, and <code>storage_options</code> arguments can only be supplied in Python.</p>
+<p>Files and directories can only be copied between branches in the same repository, not between different repositories.</p>
+<p>Trying to copy to a non-existent branch will not create the branch.</p>
 </div>
-<h2 id="using-constructor-arguments">Using constructor arguments<a class="headerlink" href="#using-constructor-arguments" title="Permanent link">&para;</a></h2>
-<p>The most straightforward way is to simply supply the values to your lakeFS file system in Python:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">(</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;http://my-lakefs.host&quot;</span><span class="p">,</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">username</span><span class="o">=</span><span class="s2">&quot;my-username&quot;</span><span class="p">,</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">password</span><span class="o">=</span><span class="s2">&quot;my-password&quot;</span><span class="p">,</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">)</span>
-</span></code></pre></div>
-<p>Beware that this method of configuration can leak sensitive information when using fixed, constant values and checking them into version control systems.</p>
-<h2 id="appendix-mixing-zero-config-methods">Appendix: Mixing zero-config methods<a class="headerlink" href="#appendix-mixing-zero-config-methods" title="Permanent link">&para;</a></h2>
-<p>Two of the introduced methods allow for "zero-config" (i.e. no arguments given to the constructor) initialization of the file system.
-However, care must be taken when working with different file systems configured by the same means (for example, file systems configured with separate environment variables).</p>
-<p>The reason for this is the <a href="https://filesystem-spec.readthedocs.io/en/latest/features.html#instance-caching">instance caching mechanism</a> built into <code>fsspec</code>.
-While this allows for efficient reuse of file systems e.g. by third-party libraries (pandas, DuckDB, ...), it can lead to silent misconfigurations. Consider this example, with an existent <code>.lakectl.yaml</code> file:</p>
-<div class="language-yaml highlight"><span class="filename">$HOME/.lakectl.yaml</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nt">credentials</span><span class="p">:</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AKIAIOSFOLQUICKSTART</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nt">server</span><span class="p">:</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://127.0.0.1:8000</span>
-</span></code></pre></div>
-<p>Now, mixing config file and environment variable initializations leads to the wrong result:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">import</span> <span class="nn">os</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># first file system, initialized from the config file</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">config_fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKEFS_HOST&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;http://my-other-lakefs.host&quot;</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKEFS_USERNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;my-username&quot;</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKEFS_PASSWORD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;my-password&quot;</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="n">envvar_fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
-</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>
-</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="nb">print</span><span class="p">(</span><span class="n">config_fs</span> <span class="ow">is</span> <span class="n">envvar_fs</span><span class="p">)</span> <span class="c1"># &lt;- prints True! </span>
-</span></code></pre></div>
-<p>The reason why the above code does not work as desired is that the cached config-file-initialized file system is simply reused on the second assignment.
-To clear the file system instance cache, you can run the following:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">LakeFSFileSystem</span><span class="o">.</span><span class="n">clear_instance_cache</span><span class="p">()</span>
-</span></code></pre></div>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-20</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-23</span>
       
     
   </small>
