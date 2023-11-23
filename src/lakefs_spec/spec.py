@@ -286,7 +286,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, ref, prefix = parse(path)
 
         try:
-            cache_entry: list[Any] | None = self._ls_from_cache(prefix)
+            cache_entry: list[Any] | None = self._ls_from_cache(path)
         except FileNotFoundError:
             # we patch files missing from an ls call in the cache entry below,
             # so this should not be an error.
@@ -313,7 +313,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                             "checksum": obj.checksum,
                             "content-type": obj.content_type,
                             "mtime": obj.mtime,
-                            "name": obj.path,
+                            "name": f"{repository}/{ref}/{obj.path}",
                             "size": obj.size_bytes,
                             "type": "file",
                         }
