@@ -117,7 +117,7 @@ This function returns `True` if the file exists on that revision, and `False` if
 
 ### Obtaining info on stored objects
 
-To query the metadata of a single object in a lakeFS repository (similar to the POSIX `stat` function), use the `fs.info()` API:
+To query the metadata of a single object in a lakeFS repository, use the `fs.info()` API:
 
 ```python
 from lakefs_spec import LakeFSFileSystem
