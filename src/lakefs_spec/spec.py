@@ -235,7 +235,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         precheck: bool = True,
         **kwargs: Any,
     ) -> None:
-        if precheck and Path(lpath).exists():
+        lp = Path(lpath)
+        if precheck and lp.exists() and lp.is_file():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.info(rpath).get("checksum")
             if local_checksum == remote_checksum:
@@ -440,7 +441,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         storage_options: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
-        if precheck:
+        if precheck and Path(lpath).is_file():
             remote_checksum = self.checksum(rpath)
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             if local_checksum == remote_checksum:
