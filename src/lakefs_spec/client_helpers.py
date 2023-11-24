@@ -26,8 +26,7 @@ def commit(
     message: str,
     metadata: dict[str, str] | None = None,
 ) -> Commit:
-    """
-    Creates a new commit of all uncommitted changes on the branch in the lakeFS file storage
+    """Creates a new commit of all uncommitted changes on the branch in the lakeFS file storage
 
     Parameters
     -------
@@ -63,8 +62,7 @@ def commit(
 def create_branch(
     client: LakeFSClient, repository: str, name: str, source_branch: str, exist_ok: bool = True
 ) -> str:
-    """
-    Create a branch in a lakeFS repository.
+    """Create a branch in a lakeFS repository.
 
     Parameters
     ----------
@@ -100,19 +98,18 @@ def create_branch(
 def create_repository(
     client: LakeFSClient, name: str, storage_namespace: str, exist_ok: bool = True
 ) -> Repository:
-    """
-    Creates a new repository in the lakeFS file storage system with a specified name and storage namespace.
+    """Creates a new repository in the lakeFS file storage system with a specified name and storage namespace.
 
     Parameters
     ----------
-        client: LakeFSClient
-            The lakeFS client object used for interactions with the lakeFS server.
-        name: str
-            The name of the repository to be created. This must be unique within the lakeFS instance.
-        storage_namespace: str
-            The storage namespace where the repository data will reside, typically corresponding to a bucket in object storage (e.g., an S3 bucket) or a local namespace (e.g. local://<repo_name>)
-        exist_ok: bool, optional
-            Flag to determine behavior when a repository with the specified name already exists. If True, the existing repository is returned without error. Defaults to True.
+    client: LakeFSClient
+        The lakeFS client object used for interactions with the lakeFS server.
+    name: str
+        The name of the repository to be created. This must be unique within the lakeFS instance.
+    storage_namespace: str
+        The storage namespace where the repository data will reside, typically corresponding to a bucket in object storage (e.g., an S3 bucket) or a local namespace (e.g. local://<repo_name>)
+    exist_ok: bool, optional
+        Flag to determine behavior when a repository with the specified name already exists. If True, the existing repository is returned without error. Defaults to True.
 
     Returns
     -------
@@ -134,21 +131,20 @@ def create_repository(
 def create_tag(
     client: LakeFSClient, repository: str, ref: str | Commit, tag: str, exist_ok: bool = True
 ) -> Ref:
-    """
-    Creates a new tag in the specified repository in the lakeFS file storage system.
+    """Creates a new tag in the specified repository in the lakeFS file storage system.
 
     Parameters
     ----------
-        client: LakeFSClient
-            The lakeFS client object used for interactions with the lakeFS server.
-        repository: str
-            The name of the repository where the tag will be created.
-        ref: str | Commit
-            A string representing the commit SHA or a Commit object to which the tag will point.
-        tag: str
-            The name of the tag to be created.
-        exist_ok: bool, optional
-            Flag to determine behavior when a tag with the specified name already exists. If True, the existing tag is returned without error. The tag is not reassigned. Defaults to True.
+    client: LakeFSClient
+        The lakeFS client object used for interactions with the lakeFS server.
+    repository: str
+        The name of the repository where the tag will be created.
+    ref: str | Commit
+        A string representing the commit SHA or a Commit object to which the tag will point.
+    tag: str
+        The name of the tag to be created.
+    exist_ok: bool, optional
+        Flag to determine behavior when a tag with the specified name already exists. If True, the existing tag is returned without error. The tag is not reassigned. Defaults to True.
 
     Returns
     -------
@@ -168,8 +164,7 @@ def create_tag(
 
 
 def list_tags(client: LakeFSClient, repository: str) -> list[Ref]:
-    """
-    Lists all the tags in the specified repository in the lakeFS file storage system.
+    """Lists all the tags in the specified repository in the lakeFS file storage system.
 
     Parameters
     ----------
@@ -186,8 +181,7 @@ def list_tags(client: LakeFSClient, repository: str) -> list[Ref]:
 
 
 def merge(client: LakeFSClient, repository: str, source_ref: str, target_branch: str) -> None:
-    """
-    Merges changes from a source reference to a target branch in a specified repository in the lakeFS file storage system.
+    """Merges changes from a source reference to a target branch in a specified repository in the lakeFS file storage system.
     If no differences between source_ref and target_branch are found, the merge process is aborted.
 
     Parameters
@@ -238,8 +232,7 @@ def rev_parse(
     ref: str | Commit,
     parent: int = 0,
 ) -> Commit:
-    """
-    Resolves a commit reference to the most recent commit or traverses the specified number of parent commits on a branch in a lakeFS repository.
+    """Resolves a commit reference to the most recent commit or traverses the specified number of parent commits on a branch in a lakeFS repository.
 
     Parameters
     ----------
