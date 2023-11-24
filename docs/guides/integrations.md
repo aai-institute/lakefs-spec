@@ -10,6 +10,8 @@ This user guide page adds more detail on how `lakefs-spec` can be used with four
 
     Please see the [Quickstart guide](../quickstart.md) if you need guidance in getting started.
 
+    The relevant lines for the `lakefs-spec` integration in these examples are highlighted.
+
 ## Pandas
 
 [Pandas](https://pandas.pydata.org){: target="_blank" rel="noopener"} can read and write data from remote locations, and uses `fsspec` for all URLs that are not local or HTTP(S).
@@ -63,10 +65,6 @@ with fs.transaction as tx:
 
 1. Makes the `lakefs-spec` file system known to DuckDB (`duckdb.register_filesystem(fsspec.filesystem("lakefs"))` can also be used to avoid the direct import of `LakeFSFileSystem`)
 
-## PyArrow
-
-!!! todo
-
 ## Polars
 
 !!! warning
@@ -98,3 +96,36 @@ with fs.transaction as tx:
 ```
 
 1. Polars does not support directly writing to remote storage through the `pl.DataFrame.write_*` API (see [docs](https://pola-rs.github.io/polars/user-guide/io/cloud-storage/#writing-to-cloud-storage))
+
+## PyArrow
+
+[Apache Arrow](https://arrow.apache.org/){: target="_blank" rel="noopener"} and its Python API, [PyArrow](https://arrow.apache.org/docs/python/){: target="_blank" rel="noopener"}, can also use `fsspec` file systems to perform I/O operations on data objects. The documentation has additional details on [using fsspec-compatible file systems with Arrow](https://arrow.apache.org/docs/python/filesystems.html#using-fsspec-compatible-filesystems-with-arrow){: target="_blank" rel="noopener"}.
+
+PyArrow `read_*` and `write_*` functions take an explicit `filesystem` parameter, which accepts any `fsspec` file system, such as the `LakeFSFileSystem` provided by this library. 
+
+The following example code illustrates the use of `lakefs-spec` with PyArrow, reading a Parquet file and writing it back to a lakeFS repository as a partitioned dataset in the context of a [transaction](transactions.md):
+
+```python hl_lines="12 17"
+import pyarrow as pa
+import pyarrow.dataset as ds
+import pyarrow.parquet as pq
+
+from lakefs_spec.spec import LakeFSFileSystem
+
+fs = LakeFSFileSystem()
+
+with fs.transaction as tx:
+    tx.create_branch("quickstart", "partitioned-data", "main")
+
+    lakes_table = pq.read_table("quickstart/main/lakes.parquet", filesystem=fs)
+
+    ds.write_dataset(
+        lakes_table,
+        "quickstart/partitioned-data/lakes",
+        filesystem=fs,
+        format="parquet",
+        partitioning=ds.partitioning(pa.schema([lakes_table.schema.field("Country")])),
+    )
+
+    tx.commit("quickstart", "partitioned-data", "Add German lakes")
+```
