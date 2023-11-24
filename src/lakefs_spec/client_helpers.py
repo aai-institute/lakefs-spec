@@ -84,12 +84,17 @@ def create_branch(
     source_branch: str
         Name of the source branch the new branch is created from.
     exist_ok: bool
-        Ignore errors if the branch already exists.
+        If True, ignore errors and return name of the branch if the branch already exists. Defaults to True.
 
     Returns
     -------
     name: str
-        The requested branch name.
+        Name of newly created or existing.
+
+    Raises
+    ------
+    ApiException:
+        If a branch with the same name already exists and 'exist_ok' is set to False.
     """
 
     try:
@@ -118,11 +123,16 @@ def create_repository(
     storage_namespace: str
         Storage namespace where the repository data will reside, typically corresponding to a bucket in object storage (e.g., S3 bucket) or a local namespace (e.g. local://<repo_name>).
     exist_ok: bool, optional
-        Ignores error if the repository already exists. Defaults to True.
+        If True, ignores error and returns the Repository object, if the repository already exists. Defaults to True.
 
     Returns
     -------
         Repository: Repository object of the lakeFS-SDK representing the newly created or existing repository.
+
+    Raises
+    ------
+    ApiException:
+        If a repository of the same name already exists and 'exist_ok' is set to False.
 
     Notes
     -----
@@ -153,7 +163,12 @@ def create_tag(
     tag: str
         Name of the tag to be created.
     exist_ok: bool, optional
-        Ignore error if the tag already exists. The tag is not reassigned. Defaults to True.
+        If True, ignore error and return Tag object corresponding to the tag, if the tag already exists. The tag is not reassigned. Defaults to True.
+
+    Raises
+    ------
+    ApiException:
+        If a tag of the same name already exists and 'exist_ok' is set to False.
 
     Returns
     -------
