@@ -1,3 +1,12 @@
+"""
+This module provides a collection of functions to interact with a lakeFS server using the lakeFS SDK.
+It includes functionalities to manage branches, repositories, commits, tags, and merge operations in
+a lakeFS instance.
+
+Note: Users of this module should have a configured and authenticated LakeFSClient instance, which is
+required input to all functions.
+"""
+
 from __future__ import annotations
 
 import logging
