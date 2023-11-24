@@ -40,7 +40,7 @@ def commit(
     Parameters
     -------
     client: LakeFSClient
-        The lakeFS client object.
+        lakeFS client object.
     repository: str
         Repository name.
     branch: str
@@ -52,7 +52,7 @@ def commit(
 
     Returns
     -------
-        Commit: Commit object of the lakeFS-sdk
+        Commit: Commit object of the lakeFS-SDK.
     """
     diff = client.branches_api.diff_branch(repository=repository, branch=branch)
 
@@ -76,11 +76,11 @@ def create_branch(
     Parameters
     ----------
     client: LakeFSClient
-        The lakeFS client configured for (and authenticated with) the target instance.
+        lakeFS client object.
     repository: str
         Repository name.
     name: str
-        Name of the newly created (or existing) branch.
+        Name of the branch to be created.
     source_branch: str
         Name of the source branch the new branch is created from.
     exist_ok: bool
@@ -112,17 +112,17 @@ def create_repository(
     Parameters
     ----------
     client: LakeFSClient
-        The lakeFS client object used for interactions with the lakeFS server.
+        lakeFS client object.
     name: str
-        The name of the repository to be created. This must be unique within the lakeFS instance.
+        Name of the repository to be created. This must be unique within the lakeFS instance.
     storage_namespace: str
-        The storage namespace where the repository data will reside, typically corresponding to a bucket in object storage (e.g., an S3 bucket) or a local namespace (e.g. local://<repo_name>)
+        Storage namespace where the repository data will reside, typically corresponding to a bucket in object storage (e.g., S3 bucket) or a local namespace (e.g. local://<repo_name>).
     exist_ok: bool, optional
-        Flag to determine behavior when a repository with the specified name already exists. If True, the existing repository is returned without error. Defaults to True.
+        Ignores error if the repository already exists. Defaults to True.
 
     Returns
     -------
-        Repository: Repository object of the lakeFS-sdk representing the newly created or existing repository.
+        Repository: Repository object of the lakeFS-SDK representing the newly created or existing repository.
 
     Notes
     -----
@@ -145,15 +145,15 @@ def create_tag(
     Parameters
     ----------
     client: LakeFSClient
-        The lakeFS client object used for interactions with the lakeFS server.
+        lakeFS client object.
     repository: str
-        The name of the repository where the tag will be created.
+        Name of the repository where the tag will be created.
     ref: str | Commit
-        A string representing the commit SHA or a Commit object to which the tag will point.
+        Commit SHA or Commit object of the commit to which the tag will point.
     tag: str
-        The name of the tag to be created.
+        Name of the tag to be created.
     exist_ok: bool, optional
-        Flag to determine behavior when a tag with the specified name already exists. If True, the existing tag is returned without error. The tag is not reassigned. Defaults to True.
+        Ignore error if the tag already exists. The tag is not reassigned. Defaults to True.
 
     Returns
     -------
@@ -178,13 +178,13 @@ def list_tags(client: LakeFSClient, repository: str) -> list[Ref]:
     Parameters
     ----------
     client: LakeFSClient
-        The lakeFS client object used for interactions with the lakeFS server.
+        lakeFS client object.
     repository: str
-        The name of the repository from which to list the tags.
+        Name of the repository from which to list the tags.
 
     Returns
     -------
-        list[Ref]: A list of Ref objects, each representing a tag in the specified repository.
+        list[Ref]: Ref objects of the tag in the repository.
     """
     return client.tags_api.list_tags(repository=repository).results
 
@@ -196,13 +196,13 @@ def merge(client: LakeFSClient, repository: str, source_ref: str, target_branch:
     Parameters
     ----------
     client: LakeFSClient
-        The lakeFS client object used for interactions with the lakeFS server.
+        lakeFS client object.
     repository: str
-        The name of the repository where the merge will occur.
+        Name of the repository where the merge will occur.
     source_ref: str
-        The source reference (branch or reference/commit SHA) from which changes will be merged.
+        Source reference (branch name or ref/commit SHA) from which changes will be merged.
     target_branch: str
-        The target branch to which changes will be merged.
+        Target branch to which changes will be merged.
     """
     diff = client.refs_api.diff_refs(
         repository=repository, left_ref=target_branch, right_ref=source_ref
@@ -221,7 +221,7 @@ def revert(client: LakeFSClient, repository: str, branch: str, parent_number: in
     Parameters
     ----------
     client: LakeFSClient
-        The client to interact with.
+        lakeFS client object.
     repository: str
         Repository in which the specified branch is located.
     branch: str
@@ -246,17 +246,17 @@ def rev_parse(
     Parameters
     ----------
     client: LakeFSClient
-        The lakeFS client object used for interactions with the lakeFS server.
+        lakeFS client object.
     repository: str
-        The name of the repository where the commit will be searched.
+        Name of the repository where the commit will be searched.
     ref: str | Commit
-        The commit reference SHA or Commit object (with SHA stored in its 'id' attribute) to resolve.
+        Commit SHA or Commit object (with SHA stored in its 'id' attribute) to resolve.
     parent: int, optional
-        The number of parent commits to go back from the specified 'ref'. Defaults to 0, which means no parent traversal.
+        Number of parent commits to go back from the specified 'ref'. Defaults to 0, which means no parent traversal.
 
     Returns
     -------
-        Commit: A Commit object representing the resolved commit in the lakeFS repository.
+        Commit: Commit object representing the resolved commit in the lakeFS repository.
 
     Raises
     ------
