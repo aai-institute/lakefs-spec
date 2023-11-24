@@ -25,6 +25,7 @@ nav:
     - guides/filesystem-usage.md
     - guides/configuration.md
     - guides/transactions.md
+    - guides/integrations.md
   - Tutorials:
     - tutorials/index.md
     - tutorials/demo_data_science_project.ipynb
