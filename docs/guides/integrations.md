@@ -38,7 +38,10 @@ with fs.transaction as tx:
 
 ## DuckDB
 
-Similar to the example above, the following code snippet illustrates how to read and write data from/to a lakeFS repository in the context of a [transaction](transactions.md) through the DuckDB Python API:
+The [DuckDB](https://duckdb.org/){: target="_blank" rel="noopener"} in-memory database management system includes support for `fsspec` file systems as part of its Python API (see the official documentation on [using fsspec filesystems](https://duckdb.org/docs/guides/python/filesystems.html){: target="_blank" rel="noopener"} for details).
+This allows DuckDB to transparently query and store data located in lakeFS repositories through `lakefs-spec`.
+
+Similar to the example above, the following code snippet illustrates how to read and write data from/to a lakeFS repository in the context of a [transaction](transactions.md) through the [DuckDB Python API](https://duckdb.org/docs/api/python/overview.html){: target="_blank" rel="noopener"}:
 
 ```python
 import duckdb
