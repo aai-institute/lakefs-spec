@@ -19,7 +19,7 @@ See the Pandas documentation on [reading/writing remote files](https://pandas.py
 
 The following code snippet illustrates how to read and write Pandas data frames in various formats from/to a lakeFS repository in the context of a [transaction](transactions.md):
 
-```python
+```python hl_lines="10 12"
 import pandas as pd
 
 from lakefs_spec.transaction import LakeFSFileSystem
@@ -43,7 +43,7 @@ This allows DuckDB to transparently query and store data located in lakeFS repos
 
 Similar to the example above, the following code snippet illustrates how to read and write data from/to a lakeFS repository in the context of a [transaction](transactions.md) through the [DuckDB Python API](https://duckdb.org/docs/api/python/overview.html){: target="_blank" rel="noopener"}:
 
-```python
+```python hl_lines="6 11 13"
 import duckdb
 
 from lakefs_spec import LakeFSFileSystem
@@ -69,4 +69,32 @@ with fs.transaction as tx:
 
 ## Polars
 
-!!! todo
+!!! warning
+    There is an ongoing discussion in the Polars development team whether to remove support for `fsspec` file systems, with no clear outcome as of the time this page was written.
+    Please refer to the discussion on the relevant [GitHub issue](https://github.com/pola-rs/polars/issues/11056){: target="_blank" rel="noopener"} in case you encounter any problems.
+
+The Python API wrapper for the Rust-based [Polars](https://pola-rs.github.io/polars/){: target="_blank" rel="noopener"} DataFrame library can access remote storage through `fsspec`, similar to Pandas (see the official [documentation on cloud storage](https://pola-rs.github.io/polars/user-guide/io/cloud-storage/){: target="_blank" rel="noopener"}).
+
+Again, the following code example demonstrates how to read a Parquet file and save a modified version back in CSV format to a lakeFS repository from Polars in the context of a  [transaction](transactions.md):
+
+
+```python hl_lines="10 13-14"
+import polars as pl
+
+from lakefs_spec import LakeFSFileSystem
+
+fs = LakeFSFileSystem()
+
+with fs.transaction as tx:
+    tx.create_branch("quickstart", "german-lakes", "main")
+
+    lakes = pl.read_parquet("lakefs://quickstart/main/lakes.parquet")
+    german_lakes = lakes.filter(pl.col("Country") == "Germany")
+
+    with fs.open("lakefs://quickstart/german-lakes/german_lakes.csv", "wb") as f: # (1)!
+        german_lakes.write_csv(f)
+
+    tx.commit("quickstart", "german-lakes", "Add German lakes")
+```
+
+1. Polars does not support directly writing to remote storage through the `pl.DataFrame.write_*` API (see [docs](https://pola-rs.github.io/polars/user-guide/io/cloud-storage/#writing-to-cloud-storage))
