@@ -39,10 +39,12 @@ def parse(path: str) -> tuple[str, str, str]:
     # https://docs.lakefs.io/understand/model.html#repository
     # Second regex is the branch: Only letters, digits, underscores
     # and dash, no leading dash
-    path_regex = re.compile(r"([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-]*)/(.*)")
+    path_regex = re.compile(r"(?:lakefs://)?([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-]*)/(.*)")
     results = path_regex.fullmatch(path)
     if results is None:
-        raise ValueError(f"expected path with structure <repo>/<ref>/<resource>, got {path!r}")
+        raise ValueError(
+            f"expected path with structure lakefs://<repo>/<ref>/<resource>, got {path!r}"
+        )
 
     repo, ref, resource = results.groups()
     return repo, ref, resource
