@@ -38,6 +38,32 @@ with fs.transaction as tx:
 
 ## DuckDB
 
+Similar to the example above, the following code snippet illustrates how to read and write data from/to a lakeFS repository in the context of a [transaction](transactions.md) through the DuckDB Python API:
+
+```python
+import duckdb
+
+from lakefs_spec import LakeFSFileSystem
+
+fs = LakeFSFileSystem()
+duckdb.register_filesystem(fs)  # (1)! 
+
+with fs.transaction as tx:
+    tx.create_branch("quickstart", "german-lakes", "main")
+
+    lakes = duckdb.read_parquet("lakefs://quickstart/main/lakes.parquet")
+    german_lakes = duckdb.sql("SELECT * FROM lakes where Country='Germany'")
+    german_lakes.to_csv("lakefs://quickstart/german-lakes/german_lakes.csv")
+
+    tx.commit("quickstart", "german-lakes", "Add German lakes")
+```
+
+1. Makes the `lakefs-spec` file system known to DuckDB (`duckdb.register_filesystem(fsspec.filesystem("lakefs"))` can also be used to avoid the direct import of `LakeFSFileSystem`)
+
 ## PyArrow
 
+!!! todo
+
 ## Polars
+
+!!! todo
