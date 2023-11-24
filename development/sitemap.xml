@@ -36,6 +36,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://lakefs-spec.org/latest/guides/integrations/</loc>
+         <lastmod>2023-11-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://lakefs-spec.org/latest/guides/transactions/</loc>
          <lastmod>2023-11-24</lastmod>
          <changefreq>daily</changefreq>

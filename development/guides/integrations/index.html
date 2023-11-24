@@ -8,9 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://lakefs-spec.org/latest/reference/SUMMARY/">
+        <link rel="canonical" href="https://lakefs-spec.org/latest/guides/integrations/">
       
       
+        <link rel="prev" href="../transactions/">
+      
+      
+        <link rel="next" href="../../tutorials/">
       
       
       <link rel="icon" href="../../_images/aai-favicon.png">
@@ -18,7 +22,7 @@
     
     
       
-        <title>SUMMARY - lakefs-spec</title>
+        <title>How to use lakefs-spec with third-party data science libraries - lakefs-spec</title>
       
     
     
@@ -86,6 +90,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#how-to-use-lakefs-spec-with-third-party-data-science-libraries" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -121,7 +130,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              SUMMARY
+              How to use lakefs-spec with third-party data science libraries
             
           </span>
         </div>
@@ -314,23 +323,25 @@
       
   
   
+    
+  
   
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../guides/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -347,7 +358,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             User Guide
@@ -360,7 +371,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/filesystem-usage/" class="md-nav__link">
+      <a href="../filesystem-usage/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -380,7 +391,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/configuration/" class="md-nav__link">
+      <a href="../configuration/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -400,7 +411,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/transactions/" class="md-nav__link">
+      <a href="../transactions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -418,9 +429,29 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../guides/integrations/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    How to use lakefs-spec with third-party data science libraries
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -429,6 +460,54 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pandas" class="md-nav__link">
+    Pandas
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#duckdb" class="md-nav__link">
+    DuckDB
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#polars" class="md-nav__link">
+    Polars
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyarrow" class="md-nav__link">
+    PyArrow
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -568,7 +647,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../lakefs_spec/" class="md-nav__link ">
+            <a href="../../reference/lakefs_spec/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -598,7 +677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../lakefs_spec/client_helpers/" class="md-nav__link">
+      <a href="../../reference/lakefs_spec/client_helpers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -618,7 +697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../lakefs_spec/config/" class="md-nav__link">
+      <a href="../../reference/lakefs_spec/config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -638,7 +717,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../lakefs_spec/errors/" class="md-nav__link">
+      <a href="../../reference/lakefs_spec/errors/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -658,7 +737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../lakefs_spec/spec/" class="md-nav__link">
+      <a href="../../reference/lakefs_spec/spec/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -678,7 +757,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../lakefs_spec/transaction/" class="md-nav__link">
+      <a href="../../reference/lakefs_spec/transaction/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -698,7 +777,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../lakefs_spec/util/" class="md-nav__link">
+      <a href="../../reference/lakefs_spec/util/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -763,6 +842,44 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pandas" class="md-nav__link">
+    Pandas
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#duckdb" class="md-nav__link">
+    DuckDB
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#polars" class="md-nav__link">
+    Polars
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyarrow" class="md-nav__link">
+    PyArrow
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -776,20 +893,123 @@
                 
                   
 
+  
+    <a href="https://github.com/aai-institute/lakefs-spec/edit/main/docs/guides/integrations.md" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
+    </a>
+  
+  
 
-  <h1>SUMMARY</h1>
 
-<ul>
-<li><a href="../lakefs_spec/">lakefs_spec</a><ul>
-<li><a href="../lakefs_spec/client_helpers/">client_helpers</a></li>
-<li><a href="../lakefs_spec/config/">config</a></li>
-<li><a href="../lakefs_spec/errors/">errors</a></li>
-<li><a href="../lakefs_spec/spec/">spec</a></li>
-<li><a href="../lakefs_spec/transaction/">transaction</a></li>
-<li><a href="../lakefs_spec/util/">util</a></li>
-</ul>
-</li>
-</ul>
+<h1 id="how-to-use-lakefs-spec-with-third-party-data-science-libraries">How to use <code>lakefs-spec</code> with third-party data science libraries<a class="headerlink" href="#how-to-use-lakefs-spec-with-third-party-data-science-libraries" title="Permanent link">&para;</a></h1>
+<p><code>lakefs-spec</code> is built on top of the <code>fsspec</code> library, which allows third-party libraries to make use of its file system abstraction to offer high-level features.
+The <a href="https://filesystem-spec.readthedocs.io/en/latest/#who-uses-fsspec" rel="noopener" target="_blank"><code>fsspec</code> documentation</a> lists examples of its users, mostly data science libraries.</p>
+<p>This user guide page adds more detail on how <code>lakefs-spec</code> can be used with four prominent data science libraries.</p>
+<div class="admonition tip">
+<p class="admonition-title">Code Examples</p>
+<p>The code examples assume access to an existing lakeFS server with a <code>quickstart</code> containing the sample data set repository set up.</p>
+<p>Please see the <a href="../../quickstart/">Quickstart guide</a> if you need guidance in getting started.</p>
+<p>The relevant lines for the <code>lakefs-spec</code> integration in these examples are highlighted.</p>
+</div>
+<h2 id="pandas">Pandas<a class="headerlink" href="#pandas" title="Permanent link">&para;</a></h2>
+<p><a href="https://pandas.pydata.org" rel="noopener" target="_blank">Pandas</a> can read and write data from remote locations, and uses <code>fsspec</code> for all URLs that are not local or HTTP(S).</p>
+<p>This means that (almost) all <code>pd.read_*</code> and <code>pd.DataFrame.to_*</code> operations can benefit from the lakeFS integration offered by our library without any additional configuration.
+See the Pandas documentation on <a href="https://pandas.pydata.org/docs/user_guide/io.html#reading-writing-remote-files" rel="noopener" target="_blank">reading/writing remote files</a> for additional details.</p>
+<p>The following code snippet illustrates how to read and write Pandas data frames in various formats from/to a lakeFS repository in the context of a <a href="../transactions/">transaction</a>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span> <span class="nn">lakefs_spec.transaction</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">create_branch</span><span class="p">(</span><span class="s2">&quot;quickstart&quot;</span><span class="p">,</span> <span class="s2">&quot;german-lakes&quot;</span><span class="p">,</span> <span class="s2">&quot;main&quot;</span><span class="p">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="hll">    <span class="n">lakes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">&quot;lakefs://quickstart/main/lakes.parquet&quot;</span><span class="p">)</span>
+</span></span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">german_lakes</span> <span class="o">=</span> <span class="n">lakes</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;Country == &quot;Germany&quot;&#39;</span><span class="p">)</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="hll">    <span class="n">german_lakes</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;lakefs://quickstart/german-lakes/german_lakes.csv&quot;</span><span class="p">)</span>
+</span></span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;quickstart&quot;</span><span class="p">,</span> <span class="s2">&quot;german-lakes&quot;</span><span class="p">,</span> <span class="s2">&quot;Add German lakes&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="duckdb">DuckDB<a class="headerlink" href="#duckdb" title="Permanent link">&para;</a></h2>
+<p>The <a href="https://duckdb.org/" rel="noopener" target="_blank">DuckDB</a> in-memory database management system includes support for <code>fsspec</code> file systems as part of its Python API (see the official documentation on <a href="https://duckdb.org/docs/guides/python/filesystems.html" rel="noopener" target="_blank">using fsspec filesystems</a> for details).
+This allows DuckDB to transparently query and store data located in lakeFS repositories through <code>lakefs-spec</code>.</p>
+<p>Similar to the example above, the following code snippet illustrates how to read and write data from/to a lakeFS repository in the context of a <a href="../transactions/">transaction</a> through the <a href="https://duckdb.org/docs/api/python/overview.html" rel="noopener" target="_blank">DuckDB Python API</a>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">duckdb</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="hll"><span class="n">duckdb</span><span class="o">.</span><span class="n">register_filesystem</span><span class="p">(</span><span class="n">fs</span><span class="p">)</span>  <span class="c1"># (1)! </span>
+</span></span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">create_branch</span><span class="p">(</span><span class="s2">&quot;quickstart&quot;</span><span class="p">,</span> <span class="s2">&quot;german-lakes&quot;</span><span class="p">,</span> <span class="s2">&quot;main&quot;</span><span class="p">)</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="hll">    <span class="n">lakes</span> <span class="o">=</span> <span class="n">duckdb</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">&quot;lakefs://quickstart/main/lakes.parquet&quot;</span><span class="p">)</span>
+</span></span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="n">german_lakes</span> <span class="o">=</span> <span class="n">duckdb</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM lakes where Country=&#39;Germany&#39;&quot;</span><span class="p">)</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="hll">    <span class="n">german_lakes</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;lakefs://quickstart/german-lakes/german_lakes.csv&quot;</span><span class="p">)</span>
+</span></span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;quickstart&quot;</span><span class="p">,</span> <span class="s2">&quot;german-lakes&quot;</span><span class="p">,</span> <span class="s2">&quot;Add German lakes&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<ol>
+<li>Makes the <code>lakefs-spec</code> file system known to DuckDB (<code>duckdb.register_filesystem(fsspec.filesystem("lakefs"))</code> can also be used to avoid the direct import of <code>LakeFSFileSystem</code>)</li>
+</ol>
+<h2 id="polars">Polars<a class="headerlink" href="#polars" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>There is an ongoing discussion in the Polars development team whether to remove support for <code>fsspec</code> file systems, with no clear outcome as of the time this page was written.
+Please refer to the discussion on the relevant <a href="https://github.com/pola-rs/polars/issues/11056" rel="noopener" target="_blank">GitHub issue</a> in case you encounter any problems.</p>
+</div>
+<p>The Python API wrapper for the Rust-based <a href="https://pola-rs.github.io/polars/" rel="noopener" target="_blank">Polars</a> DataFrame library can access remote storage through <code>fsspec</code>, similar to Pandas (see the official <a href="https://pola-rs.github.io/polars/user-guide/io/cloud-storage/" rel="noopener" target="_blank">documentation on cloud storage</a>).</p>
+<p>Again, the following code example demonstrates how to read a Parquet file and save a modified version back in CSV format to a lakeFS repository from Polars in the context of a  <a href="../transactions/">transaction</a>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span> <span class="nn">polars</span> <span class="k">as</span> <span class="nn">pl</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">create_branch</span><span class="p">(</span><span class="s2">&quot;quickstart&quot;</span><span class="p">,</span> <span class="s2">&quot;german-lakes&quot;</span><span class="p">,</span> <span class="s2">&quot;main&quot;</span><span class="p">)</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="hll">    <span class="n">lakes</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">&quot;lakefs://quickstart/main/lakes.parquet&quot;</span><span class="p">)</span>
+</span></span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">german_lakes</span> <span class="o">=</span> <span class="n">lakes</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;Country&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Germany&quot;</span><span class="p">)</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="hll">    <span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;lakefs://quickstart/german-lakes/german_lakes.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> <span class="c1"># (1)!</span>
+</span></span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="hll">        <span class="n">german_lakes</span><span class="o">.</span><span class="n">write_csv</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span></span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;quickstart&quot;</span><span class="p">,</span> <span class="s2">&quot;german-lakes&quot;</span><span class="p">,</span> <span class="s2">&quot;Add German lakes&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<ol>
+<li>Polars does not support directly writing to remote storage through the <code>pl.DataFrame.write_*</code> API (see <a href="https://pola-rs.github.io/polars/user-guide/io/cloud-storage/#writing-to-cloud-storage">docs</a>)</li>
+</ol>
+<h2 id="pyarrow">PyArrow<a class="headerlink" href="#pyarrow" title="Permanent link">&para;</a></h2>
+<p><a href="https://arrow.apache.org/" rel="noopener" target="_blank">Apache Arrow</a> and its Python API, <a href="https://arrow.apache.org/docs/python/" rel="noopener" target="_blank">PyArrow</a>, can also use <code>fsspec</code> file systems to perform I/O operations on data objects. The documentation has additional details on <a href="https://arrow.apache.org/docs/python/filesystems.html#using-fsspec-compatible-filesystems-with-arrow" rel="noopener" target="_blank">using fsspec-compatible file systems with Arrow</a>.</p>
+<p>PyArrow <code>read_*</code> and <code>write_*</code> functions take an explicit <code>filesystem</code> parameter, which accepts any <code>fsspec</code> file system, such as the <code>LakeFSFileSystem</code> provided by this library. </p>
+<p>The following example code illustrates the use of <code>lakefs-spec</code> with PyArrow, reading a Parquet file and writing it back to a lakeFS repository as a partitioned CSV dataset in the context of a <a href="../transactions/">transaction</a>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span> <span class="nn">pyarrow</span> <span class="k">as</span> <span class="nn">pa</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">import</span> <span class="nn">pyarrow.dataset</span> <span class="k">as</span> <span class="nn">ds</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">import</span> <span class="nn">pyarrow.parquet</span> <span class="k">as</span> <span class="nn">pq</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="kn">from</span> <span class="nn">lakefs_spec.spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">create_branch</span><span class="p">(</span><span class="s2">&quot;quickstart&quot;</span><span class="p">,</span> <span class="s2">&quot;partitioned-data&quot;</span><span class="p">,</span> <span class="s2">&quot;main&quot;</span><span class="p">)</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="hll">    <span class="n">lakes_table</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="s2">&quot;quickstart/main/lakes.parquet&quot;</span><span class="p">,</span> <span class="n">filesystem</span><span class="o">=</span><span class="n">fs</span><span class="p">)</span>
+</span></span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="n">ds</span><span class="o">.</span><span class="n">write_dataset</span><span class="p">(</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>        <span class="n">lakes_table</span><span class="p">,</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>        <span class="s2">&quot;quickstart/partitioned-data/lakes&quot;</span><span class="p">,</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="hll">        <span class="n">filesystem</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
+</span></span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>        <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>        <span class="n">partitioning</span><span class="o">=</span><span class="n">ds</span><span class="o">.</span><span class="n">partitioning</span><span class="p">(</span><span class="n">pa</span><span class="o">.</span><span class="n">schema</span><span class="p">([</span><span class="n">lakes_table</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;Country&quot;</span><span class="p">)])),</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>    <span class="p">)</span>
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;quickstart&quot;</span><span class="p">,</span> <span class="s2">&quot;partitioned-data&quot;</span><span class="p">,</span> <span class="s2">&quot;Add German lakes&quot;</span><span class="p">)</span>
+</span></code></pre></div>
 
   <hr>
 <div class="md-source-file">
