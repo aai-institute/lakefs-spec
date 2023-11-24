@@ -62,7 +62,7 @@ def commit(
 def create_branch(
     client: LakeFSClient, repository: str, name: str, source_branch: str, exist_ok: bool = True
 ) -> str:
-    """Create a branch in a lakeFS repository.
+    """Creates a branch in a lakeFS repository.
 
     Parameters
     ----------
