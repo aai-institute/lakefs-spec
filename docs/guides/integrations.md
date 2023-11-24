@@ -103,7 +103,7 @@ with fs.transaction as tx:
 
 PyArrow `read_*` and `write_*` functions take an explicit `filesystem` parameter, which accepts any `fsspec` file system, such as the `LakeFSFileSystem` provided by this library. 
 
-The following example code illustrates the use of `lakefs-spec` with PyArrow, reading a Parquet file and writing it back to a lakeFS repository as a partitioned dataset in the context of a [transaction](transactions.md):
+The following example code illustrates the use of `lakefs-spec` with PyArrow, reading a Parquet file and writing it back to a lakeFS repository as a partitioned CSV dataset in the context of a [transaction](transactions.md):
 
 ```python hl_lines="12 17"
 import pyarrow as pa
@@ -123,7 +123,7 @@ with fs.transaction as tx:
         lakes_table,
         "quickstart/partitioned-data/lakes",
         filesystem=fs,
-        format="parquet",
+        format="csv",
         partitioning=ds.partitioning(pa.schema([lakes_table.schema.field("Country")])),
     )
 
