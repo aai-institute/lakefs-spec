@@ -1,25 +1,25 @@
 # Quickstart
 
-Welcome! This quickstart guide will get you up and running with `lakefs-spec` by showing you how to
+Welcome! This quickstart guide will get you up and running with lakeFS-spec by showing you how to
 
 1. [install the `lakefs-spec` package](#installing),
 1. [spin up a local lakeFS server](#spinning-up-a-local-lakefs-instance),
 1. [create a lakeFS repository for experimentation](#create-a-lakefs-repository), and
 1. [perform basic file system operations](#using-the-lakefs-fsspec-file-system)
-in a lakeFS repository using `lakefs-spec`.
+in a lakeFS repository using lakeFS-spec.
 
 ??? info "Prerequisites"
 
     To follow along with this guide, you will need a few prerequisites ready on your machine:
 
-    - `lakefs-spec` supports Windows, macOS, or Linux
+    - lakeFS-spec supports Windows, macOS, or Linux
     - [Docker](https://www.docker.com/get-started/), with Docker Compose
     - [Python 3.9](https://python.org) or later
     - optionally, [`lakectl`](https://docs.lakefs.io/reference/cli.html), the lakeFS command line tool
 
     Please take a moment to make sure you have these tools available before proceeding with the next steps.
 
-## Installing `lakefs-spec`
+## Installing lakeFS-spec
 
 ??? tip "A note on virtual environments"
 
@@ -68,7 +68,7 @@ Or, if you want to try the latest pre-release version directly from GitHub:
 
 If you don't already have access to a lakeFS server, you can quickly start a local instance using Docker Compose. Before continuing, please make sure Docker is installed and running on your machine.
 
-The lakeFS quickstart deployment can be launched directly with a [configuration file](https://github.com/aai-institute/lakefs-spec/blob/main/hack/docker-compose.yml) provided in the `lakefs-spec` repository:
+The lakeFS quickstart deployment can be launched directly with a [configuration file](https://github.com/aai-institute/lakefs-spec/blob/main/hack/docker-compose.yml) provided in the lakeFS-spec repository:
 
 ```shell
 $ curl https://raw.githubusercontent.com/aai-institute/lakefs-spec/main/hack/docker-compose.yml | docker-compose -f - up
@@ -80,7 +80,7 @@ If you do not have `curl` installed on your machine or would like to examine and
 --8<-- "https://raw.githubusercontent.com/aai-institute/lakefs-spec/main/hack/docker-compose.yml:3:"
 ```
 
-In order to allow `lakefs-spec` to automatically discover credentials to access this lakeFS instance, create a `.lakectl.yaml` in your home directory containing the credentials for the quickstart environment (you can also use `lakectl config` to create this file interactively if you have the `lakectl` tool installed on your machine):
+In order to allow lakeFS-spec to automatically discover credentials to access this lakeFS instance, create a `.lakectl.yaml` in your home directory containing the credentials for the quickstart environment (you can also use `lakectl config` to create this file interactively if you have the `lakectl` tool installed on your machine):
 
 ```yaml title="~/.lakectl.yaml"
 credentials: # (1)!
@@ -113,11 +113,11 @@ Click the small _Click here_ link at the bottom of the page to proceed and creat
     ![](_images/quickstart-lakefs-repositories.png)
 
 !!! success
-    You have successfully created a lakeFS repository named `repo`, ready to be used with `lakefs-spec`.
+    You have successfully created a lakeFS repository named `repo`, ready to be used with lakeFS-spec.
 
-### Using the lakeFS `fsspec` file system
+### Using the lakeFS file system
 
-We will now use the `lakefs-spec` file system interface to perform some basic operations on the repository created in the previous step:
+We will now use the lakeFS-spec file system interface to perform some basic operations on the repository created in the previous step:
 
 * Upload a local file to the repository
 * Read data from a file in the repository
@@ -153,7 +153,7 @@ While examining the file contents in the browser is nice, we want to access the 
 
 Note that executing the same code multiple times will only result in a single commit in the repository since the contents of the file on disk and in the repository are identical.
 
-In addition to simple read and write operations, the `fsspec` file system interface also allows us to list the files in a repository folder using `ls`, and query the metadata of objects in the repository through `info` (akin to the POSIX `stat` system call).
+In addition to simple read and write operations, the fsspec file system interface also allows us to list the files in a repository folder using `ls`, and query the metadata of objects in the repository through `info` (akin to the POSIX `stat` system call).
 Let's add the following code to our script and observe the output:
 
 ```python
@@ -168,7 +168,7 @@ As the last order of business, let's clean up the repository to its original sta
 
 !!! success
 
-    You now have all the basic tools available to version data from your Python code using the file system interface provided by `lakefs-spec`.
+    You now have all the basic tools available to version data from your Python code using the file system interface provided by lakeFS-spec.
 
 ??? tip "Full example code"
 
@@ -178,10 +178,10 @@ As the last order of business, let's clean up the repository to its original sta
 
 ## Next Steps
 
-After this walkthrough of the installation and an introduction to basic file system operations using `lakefs-spec`, you might want to consider more advanced topics:
+After this walkthrough of the installation and an introduction to basic file system operations using lakeFS-spec, you might want to consider more advanced topics:
 
 - [API Reference](reference/lakefs_spec/spec.md)
 - [User Guide](guides/index.md), in particular
     - [How to use the lakeFS file system](guides/filesystem-usage.md)
-    - [How to use `lakefs-spec` with third-party data science libraries](guides/integrations.md)
-- [Tutorial: Using `lakefs-spec` in a data science project](tutorials/demo_data_science_project.ipynb)
+    - [How to use lakeFS-spec with third-party data science libraries](guides/integrations.md)
+- [Tutorial: Using lakeFS-spec in a data science project](tutorials/demo_data_science_project.ipynb)

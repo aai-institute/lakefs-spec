@@ -73,7 +73,7 @@ fs = LakeFSFileSystem()
 Two of the introduced methods allow for "zero-config" (i.e. no arguments given to the constructor) initialization of the file system.
 However, care must be taken when working with different file systems configured by the same means (for example, file systems configured with separate environment variables).
 
-The reason for this is the [instance caching mechanism](https://filesystem-spec.readthedocs.io/en/latest/features.html#instance-caching) built into `fsspec`.
+The reason for this is the [instance caching mechanism](https://filesystem-spec.readthedocs.io/en/latest/features.html#instance-caching) built into fsspec.
 While this allows for efficient reuse of file systems e.g. by third-party libraries (pandas, DuckDB, ...), it can lead to silent misconfigurations. Consider this example, with an existent `.lakectl.yaml` file:
 
 ```yaml title="~/.lakectl.yaml"
