@@ -24,7 +24,7 @@ The following code snippet illustrates how to read and write Pandas data frames 
 ```python hl_lines="10 12"
 import pandas as pd
 
-from lakefs_spec.transaction import LakeFSFileSystem
+from lakefs_spec import LakeFSFileSystem
 
 fs = LakeFSFileSystem()
 
@@ -110,7 +110,7 @@ import pyarrow as pa
 import pyarrow.dataset as ds
 import pyarrow.parquet as pq
 
-from lakefs_spec.spec import LakeFSFileSystem
+from lakefs_spec import LakeFSFileSystem
 
 fs = LakeFSFileSystem()
 
