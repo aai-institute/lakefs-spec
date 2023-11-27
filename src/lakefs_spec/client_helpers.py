@@ -54,7 +54,7 @@ def commit(
     Returns
     -------
     Commit
-        The created commit object of the lakeFS server. 
+        The created commit object of the lakeFS server.
     """
     diff = client.branches_api.diff_branch(repository=repository, branch=branch)
 
