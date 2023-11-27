@@ -68,22 +68,6 @@ fs = LakeFSFileSystem()
     
     Not all initialization values can be set via environment variables - the `proxy`, `create_branch_ok`, `source_branch`, and `storage_options` arguments can only be supplied in Python.
 
-## Using constructor arguments
-
-The most straightforward way is to simply supply the values to your lakeFS file system in Python:
-
-```python
-from lakefs_spec import LakeFSFileSystem
-
-fs = LakeFSFileSystem(
-    host="http://my-lakefs.host",
-    username="my-username",
-    password="my-password",
-)
-```
-
-Beware that this method of configuration can leak sensitive information when using fixed, constant values and checking them into version control systems.
-
 ## Appendix: Mixing zero-config methods
 
 Two of the introduced methods allow for "zero-config" (i.e. no arguments given to the constructor) initialization of the file system.
