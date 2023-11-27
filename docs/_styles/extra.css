@@ -19,3 +19,11 @@ table {
 .landing-page-icon:hover {
     color: var(--md-accent-fg-color);
 }
+
+.celltag_remove_input,
+.celltag_remove_output,
+.celltag_Remove_input,
+.celltag_Remove_all_output,
+.celltag_Remove_single_output {
+    display: none !important
+}

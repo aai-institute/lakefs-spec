@@ -53,6 +53,7 @@ dev = [
 ]
 docs = [
     "mkdocs",
+    "mkdocs-callouts",
     "mkdocs-gen-files",
     "mkdocs-literate-nav",
     "mkdocs-section-index",

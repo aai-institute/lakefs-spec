@@ -5,17 +5,17 @@ This guide contains instructions and code snippets on how to use the lakeFS file
 ## The lakeFS URI structure
 
 In the following subsections, we frequently make use of [lakeFS URIs](https://docs.lakefs.io/understand/model.html#lakefs-protocol-uris) in the example code.
-lakeFS URIs identify resources in a lakeFS deployment through a unique path consisting of repository name, lakeFS revision/ref name, and file name relative to the repository root.
+lakeFS URIs identify resources in a lakeFS deployment through a unique path consisting of repository name, lakeFS revision/ref name, and file name relative to the repository root. Optionally, they may be prefixed with the `lakefs://` URI scheme (this is required when using [third-party libraries](integrations.md)).
 
 As an example, a URI like `repo/main/file.txt` addresses the `file.txt` file on the `main` branch in the repository named `repo`.
 
 In some lakeFS file system operations, directories are also allowed as resource names.
-For example, the URI `repo/main/data/` (note the trailing slash) refers to the `data` directory on the `main` branch in the `repo` repository.
+For example, the URI `repo/main/data/` (note the optional trailing slash) refers to the `data` directory on the `main` branch in the `repo` repository.
 
 ## On staged versus committed changes
 
 When uploading, copying, or removing files or directories from a branch, those removal operations will result in staged changes in the repository until a commit is created.
-`lakefs-spec` does not create these commits automatically, since it separates file operations from versioning operations rigorously.
+lakeFS-spec does not create these commits automatically, since it separates file operations from versioning operations rigorously.
 If you want to conduct versioning operations, like creating commits, between file transfers, the best way to do so is by using [filesystem transactions](transactions.md).
 
 ## How to use lakeFS file system APIs
@@ -23,7 +23,7 @@ If you want to conduct versioning operations, like creating commits, between fil
 The following section explains more in-depth how to use the `LakeFSFileSystem` APIs.
 This section concerns the explicitly implemented operations. In addition, there are a number of file system APIs inherited from the [`AbstractFileSystem` interface in fsspec](https://filesystem-spec.readthedocs.io/en/latest/api.html#fsspec.spec.AbstractFileSystem).
 
-More information on file system usage can be found in the [`fsspec` documentation](https://filesystem-spec.readthedocs.io/en/latest/usage.html#use-a-file-system).
+More information on file system usage can be found in the [fsspec documentation](https://filesystem-spec.readthedocs.io/en/latest/usage.html#use-a-file-system).
 
 ### Uploading and downloading files
 
@@ -47,10 +47,11 @@ If you want to upload an entire directory to lakeFS, you can use the `fs.put()` 
 
 ```python
 # structure:
-#   dir/a.txt
-#      /b.yaml
-#      /c.csv
-#      /...
+#   dir/
+#   ├── a.txt
+#   ├── b.yaml
+#   ├── c.csv
+#   └── ...
 
 fs.put("dir", "my-repo/my-ref/dir", recursive=True)
 ```
@@ -66,7 +67,7 @@ fs.put("dir", "my-repo/my-ref/dir", recursive=True)
     fs.put_file("my-repo/my-ref/file.txt", "file.txt", use_blockstore=True)
     ```
 
-    Direct lakeFS blockstore uploads require the installation of the corresponding `fsspec` file system implementation through `pip`.
+    Direct lakeFS blockstore uploads require the installation of the corresponding fsspec file system implementation through `pip`.
     For an S3-based lakeFS deployment, install the `s3fs` package. For Google Cloud Storage (GCS), install the `gcsfs` package.
     For Azure blob storage, install the `adlfs` package.
 
@@ -88,10 +89,11 @@ In the case of a directory in lakeFS, use the `fs.get()` API together with the `
 
 ```python
 # structure:
-#   dir/a.txt
-#      /b.yaml
-#      /c.csv
-#      /...
+#   dir/
+#   ├── a.txt
+#   ├── b.yaml
+#   ├── c.csv
+#   └── ...
 
 # downloads the entire `dir` directory (and subdirectories) into the current directory.
 fs.get("my-repo/my-ref/dir", "dir", recursive=True)

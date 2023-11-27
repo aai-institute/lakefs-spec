@@ -60,7 +60,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         **storage_options: Any,
     ):
         """
-        The LakeFS file system constructor.
+        The lakeFS file system constructor.
 
         Parameters
         ----------

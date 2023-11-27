@@ -19,7 +19,6 @@ copyright: Copyright &copy; 2023 <a href="https://appliedai-institute.de" target
 nav:
   - Home: index.md
   - quickstart.md
-  - Use Cases: use-cases.md
   - User Guide:
     - guides/index.md
     - guides/filesystem-usage.md
@@ -30,9 +29,13 @@ nav:
     - tutorials/index.md
     - tutorials/demo_data_science_project.ipynb
   - API Reference: reference/
-  - CONTRIBUTING.md
+  - Contributing: CONTRIBUTING.md
+
+exclude_docs: |
+  use-cases.md
 
 plugins:
+  - callouts
   - gen-files:
       scripts:
         - docs/_scripts/gen_api_ref_pages.py

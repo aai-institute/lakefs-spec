@@ -1,4 +1,4 @@
-# Useful resources for development on `lakefs-spec`
+# Useful resources for development on lakeFS-spec
 
 This document contains information on the resources in this directory, and how they can be used in development and testing.
 
