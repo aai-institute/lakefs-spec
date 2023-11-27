@@ -141,7 +141,7 @@ def create_repository(
 
     Notes
     -----
-        Attempting to recreate a repository with the same name and storage namespace after previous deletion may lead to issues due to residual data, and is not recommended.
+    Attempting to recreate a repository with the same name and storage namespace after previous deletion may lead to issues due to residual data, and is not recommended.
     """
     try:
         repository_creation = RepositoryCreation(name=name, storage_namespace=storage_namespace)
