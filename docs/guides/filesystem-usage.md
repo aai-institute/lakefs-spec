@@ -5,12 +5,12 @@ This guide contains instructions and code snippets on how to use the lakeFS file
 ## The lakeFS URI structure
 
 In the following subsections, we frequently make use of [lakeFS URIs](https://docs.lakefs.io/understand/model.html#lakefs-protocol-uris) in the example code.
-lakeFS URIs identify resources in a lakeFS deployment through a unique path consisting of repository name, lakeFS revision/ref name, and file name relative to the repository root.
+lakeFS URIs identify resources in a lakeFS deployment through a unique path consisting of repository name, lakeFS revision/ref name, and file name relative to the repository root. Optionally, they may be prefixed with the `lakefs://` URI scheme (this is required when using [third-party libraries](integrations.md)).
 
 As an example, a URI like `repo/main/file.txt` addresses the `file.txt` file on the `main` branch in the repository named `repo`.
 
 In some lakeFS file system operations, directories are also allowed as resource names.
-For example, the URI `repo/main/data/` (note the trailing slash) refers to the `data` directory on the `main` branch in the `repo` repository.
+For example, the URI `repo/main/data/` (note the optional trailing slash) refers to the `data` directory on the `main` branch in the `repo` repository.
 
 ## On staged versus committed changes
 
@@ -67,7 +67,7 @@ fs.put("dir", "my-repo/my-ref/dir", recursive=True)
     fs.put_file("my-repo/my-ref/file.txt", "file.txt", use_blockstore=True)
     ```
 
-    Direct lakeFS blockstore uploads require the installation of the corresponding `fsspec` file system implementation through `pip`.
+    Direct lakeFS blockstore uploads require the installation of the corresponding fsspec file system implementation through `pip`.
     For an S3-based lakeFS deployment, install the `s3fs` package. For Google Cloud Storage (GCS), install the `gcsfs` package.
     For Azure blob storage, install the `adlfs` package.
 
