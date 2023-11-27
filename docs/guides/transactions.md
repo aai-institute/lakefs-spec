@@ -49,12 +49,12 @@ with fs.transaction as tx:
 
 The full list of supported lakeFS versioning operations:
 
-* `commit`, for creating commits on a branch, optionally with attached metadata.
-* `create_branch`, for creating a new branch.
-* `merge`, for merging a given branch into another branch.
-* `revert`, for reverting a previous commit on a branch.
-* `rev_parse`, for parsing revisions like branch/tag names and SHA fragments into full commit SHAs.
-* `tag`, for creating a tag pointing to a commit.
+* [`commit`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.LakeFSTransaction.commit), for creating commits on a branch, optionally with attached metadata.
+* [`create_branch`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.LakeFSTransaction.create_branch), for creating a new branch.
+* [`merge`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.LakeFSTransaction.merge), for merging a given branch into another branch.
+* [`revert`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.LakeFSTransaction.revert), for reverting a previous commit on a branch.
+* [`rev_parse`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.LakeFSTransaction.rev_parse), for parsing revisions like branch/tag names and SHA fragments into full commit SHAs.
+* [`tag`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.LakeFSTransaction.tag), for creating a tag pointing to a commit.
 
 !!! Warning
 
@@ -63,7 +63,7 @@ The full list of supported lakeFS versioning operations:
 
     While you can use some values (branch/tag names) returned by transaction versioning helpers, we strongly advise not to reuse values outside of the transaction, since they might result in unexpected behavior.
 
-    ```
+    ```python
     with fs.transaction as tx:
         tx.put_file("my-file.txt", "repo/branch/my-file.txt")
         sha = tx.commit("repo", "branch", message="Add my-file.txt")
