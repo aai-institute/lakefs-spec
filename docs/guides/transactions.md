@@ -4,6 +4,7 @@ In addition to file operations, you can carry out versioning operations in your 
 
 A transaction is basically a context manager that collects all file uploads, defers them, and executes the uploads on completion of the transaction.
 They are an "all or nothing" proposition: If an error occurs during the transaction, none of the queued files are uploaded.
+For more information on fsspec transactions, see the official [documentation](https://filesystem-spec.readthedocs.io/en/latest/features.html#transactions).
 
 The main features of the lakeFS file system transaction are:
 
@@ -13,7 +14,7 @@ Through its use of `collections.deque` as a store for uploads, upload queueing a
 
 ## Atomicity
 
-If an exception occurs anywhere during the transaction, all queued file uploads are discarded:
+If an exception occurs anywhere during the transaction, all queued file uploads and versioning operations are discarded:
 
 ```python
 from lakefs_spec import LakeFSFileSystem
@@ -46,11 +47,30 @@ with fs.transaction as tx:
     tx.tag("repo", sha, tag="My train-test split")
 ```
 
+The full list of supported lakeFS versioning operations:
+
+* `commit`, for creating commits on a branch, optionally with attached metadata.
+* `create_branch`, for creating a new branch.
+* `merge`, for merging a given branch into another branch.
+* `revert`, for reverting a previous commit on a branch.
+* `rev_parse`, for parsing revisions like branch/tag names and SHA fragments into full commit SHAs.
+* `tag`, for creating a tag pointing to a commit.
+
 !!! Warning
 
     All of the operations above are deferred, and their results are not available until completion of the transaction.
-    For example, the `sha` return value of `tx.commit` will be a placeholder for the actual commit SHA computed by the lakeFS
-    server on commit creation.
+    For example, the `sha` return value of `tx.commit` will be a placeholder for the actual commit SHA computed by the lakeFS server on commit creation.
 
-    While you can use some values (branch/tag names) returned by transaction versioning helpers, we strongly
-    advise not to reuse values computed in transactions since they might result in unexpected behavior.
+    While you can use some values (branch/tag names) returned by transaction versioning helpers, we strongly advise not to reuse values outside of the transaction, since they might result in unexpected behavior.
+
+    ```
+    with fs.transaction as tx:
+        tx.put_file("my-file.txt", "repo/branch/my-file.txt")
+        sha = tx.commit("repo", "branch", message="Add my-file.txt")
+    
+    # This will not work: `sha` is of type `Placeholder[Commit]`
+    fs.get_file(f"repo/{sha}/my-file.txt", "my-new-file.txt")
+
+    # Instead, you can use `Placeholder.unwrap()`:
+    fs.get_file(f"repo/{sha.unwrap()}/my-file.txt", "my-new-file.txt")
+    ```
