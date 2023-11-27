@@ -36,7 +36,7 @@ def commit(
     metadata: dict[str, str] | None = None,
 ) -> Commit:
     """
-    Creates a new commit of all uncommitted changes on the branch in the lakeFS file storage
+    Create a new commit of all uncommitted changes on the branch in the lakeFS file storage.
 
     Parameters
     -------
@@ -74,7 +74,7 @@ def create_branch(
     client: LakeFSClient, repository: str, name: str, source_branch: str, exist_ok: bool = True
 ) -> str:
     """
-    Creates a branch in a lakeFS repository.
+    Create a branch in a lakeFS repository.
 
     Parameters
     ----------
@@ -116,7 +116,7 @@ def create_repository(
     client: LakeFSClient, name: str, storage_namespace: str, exist_ok: bool = True
 ) -> Repository:
     """
-    Creates a new repository in the lakeFS file storage system with a specified name and storage namespace.
+    Create a new repository in the lakeFS file storage system with a specified name and storage namespace.
 
     Parameters
     ----------
@@ -156,7 +156,7 @@ def create_tag(
     client: LakeFSClient, repository: str, ref: str | Commit, tag: str, exist_ok: bool = True
 ) -> Ref:
     """
-    Creates a new tag in the specified repository in the lakeFS file storage system.
+    Create a new tag in the specified repository in the lakeFS file storage system.
 
     Parameters
     ----------
@@ -196,7 +196,7 @@ def create_tag(
 
 def list_tags(client: LakeFSClient, repository: str) -> list[Ref]:
     """
-    Lists all the tags in the specified repository in the lakeFS file storage system.
+    List all the tags in the specified repository in the lakeFS file storage system.
 
     Parameters
     ----------
@@ -242,7 +242,7 @@ def merge(client: LakeFSClient, repository: str, source_ref: str, target_branch:
 
 def revert(client: LakeFSClient, repository: str, branch: str, parent_number: int = 1) -> None:
     """
-    Reverts the commit on the specified branch to the parent specified by parent_number.
+    Revert the commit on the specified branch to the parent specified by parent_number.
 
     Parameters
     ----------
@@ -268,7 +268,7 @@ def rev_parse(
     parent: int = 0,
 ) -> Commit:
     """
-    Resolves a commit reference to the most recent commit or traverses the specified number of parent commits on a branch in a lakeFS repository.
+    Resolve a commit reference to the most recent commit or traverses the specified number of parent commits on a branch in a lakeFS repository.
 
     Parameters
     ----------
