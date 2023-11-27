@@ -8,9 +8,9 @@ This user guide page adds more detail on how lakeFS-spec can be used with four p
 !!! tip "Code Examples"
     The code examples assume access to an existing lakeFS server with a `quickstart` containing the sample data set repository set up.
 
-    Please see the [Quickstart guide](../quickstart.md) if you need guidance in getting started.
+    Please see the [Quickstart guide](../quickstart.md) or [lakeFS quickstart guide](https://docs.lakefs.io/quickstart/launch.html){: target="_blank" rel="noopener"} if you need guidance in getting started.
 
-    The relevant lines for the lakeFS-spec integration in these examples are highlighted.
+    The relevant lines for the lakeFS-spec integration in the following code snippets are highlighted.
 
 ## Pandas
 
