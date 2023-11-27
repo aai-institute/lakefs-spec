@@ -53,7 +53,8 @@ def commit(
 
     Returns
     -------
-        Commit: Commit object of the lakeFS-SDK.
+    Commit
+        Commit object of the lakeFS-SDK.
     """
     diff = client.branches_api.diff_branch(repository=repository, branch=branch)
 
@@ -90,12 +91,12 @@ def create_branch(
 
     Returns
     -------
-    name: str
+    str
         Name of newly created or existing.
 
     Raises
     ------
-    ApiException:
+    ApiException
         If a branch with the same name already exists and 'exist_ok' is set to False.
     """
 
@@ -130,11 +131,12 @@ def create_repository(
 
     Returns
     -------
-        Repository: Repository object of the lakeFS-SDK representing the newly created or existing repository.
+    Repository
+        Repository object of the lakeFS-SDK representing the newly created or existing repository.
 
     Raises
     ------
-    ApiException:
+    ApiException
         If a repository of the same name already exists and 'exist_ok' is set to False.
 
     Notes
@@ -171,12 +173,13 @@ def create_tag(
 
     Raises
     ------
-    ApiException:
+    ApiException
         If a tag of the same name already exists and 'exist_ok' is set to False.
 
     Returns
     -------
-        Ref: Ref object of the lakeFS-sdk representing the newly created or existing tag.
+    Ref
+        Ref object of the lakeFS-sdk representing the newly created or existing tag.
     """
 
     if isinstance(ref, Commit):
@@ -204,7 +207,8 @@ def list_tags(client: LakeFSClient, repository: str) -> list[Ref]:
 
     Returns
     -------
-        list[Ref]: Ref objects of the tag in the repository.
+    list[Ref]
+        Ref objects of the tag in the repository.
     """
     return client.tags_api.list_tags(repository=repository).results
 
@@ -279,11 +283,12 @@ def rev_parse(
 
     Returns
     -------
-        Commit: Commit object representing the resolved commit in the lakeFS repository.
+    Commit
+        Commit object representing the resolved commit in the lakeFS repository.
 
     Raises
     ------
-    ValueError:
+    ValueError
         - If 'parent' is negative.
         - If the specified number of parent commits exceeds the actual number of available parents.
         - If the provided 'ref' does not match any revision in the specified repository.
