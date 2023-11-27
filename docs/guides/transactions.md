@@ -8,10 +8,6 @@ For more information on fsspec transactions, see the official [documentation](ht
 
 The main features of the lakeFS file system transaction are:
 
-## Thread safety
-
-Through its use of `collections.deque` as a store for uploads, upload queueing and file transfers are thread-safe.
-
 ## Atomicity
 
 If an exception occurs anywhere during the transaction, all queued file uploads and versioning operations are discarded:
@@ -61,7 +57,7 @@ The full list of supported lakeFS versioning operations:
     All of the operations above are deferred, and their results are not available until completion of the transaction.
     For example, the `sha` return value of `tx.commit` will be a placeholder for the actual commit SHA computed by the lakeFS server on commit creation.
 
-    While you can use some values (branch/tag names) returned by transaction versioning helpers, we strongly advise not to reuse values outside of the transaction, since they might result in unexpected behavior.
+    While you can directly use some values (branch/tag names) returned by transaction versioning helpers, care needs to be taken with computed objects like commit SHAs:
 
     ```python
     with fs.transaction as tx:
@@ -70,7 +66,26 @@ The full list of supported lakeFS versioning operations:
     
     # This will not work: `sha` is of type `Placeholder[Commit]`
     fs.get_file(f"repo/{sha}/my-file.txt", "my-new-file.txt")
-
-    # Instead, you can use `Placeholder.unwrap()`:
-    fs.get_file(f"repo/{sha.unwrap()}/my-file.txt", "my-new-file.txt")
     ```
+    
+    See the subsection directly below on how to reuse commits created during transactions. 
+
+### A note on reusing resources created in transactions
+
+Some transaction versioning helpers create new objects in the lakeFS instance that are not known before said helpers are actually executed.
+An example of this is a commit SHA, which is only available once created by the lakeFS server.
+In the above example, a commit is created directly after a file upload, but its actual SHA identifier will not be available until the transaction is complete.
+To reuse the value later in your code, you can call `unwrap()` on the resulting [`Placeholder`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.Placeholder) object:
+
+```python
+with fs.transaction as tx:
+    tx.put_file("my-file.txt", "repo/branch/my-file.txt")
+    sha = tx.commit("repo", "branch", message="Add my-file.txt")
+
+# Obtain the SHA value by unwrapping the placeholder first.
+fs.get_file(f"repo/{sha.unwrap()}/my-file.txt", "my-new-file.txt")
+```
+
+## Thread safety
+
+Through its use of `collections.deque` as a store for uploads, upload queueing and file transfers are thread-safe.
