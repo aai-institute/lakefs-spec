@@ -1,11 +1,11 @@
-# Developing on `lakefs-spec`
+# Contributing to `lakefs-spec`
 
 Thank you for your interest in contributing to this project!
 
 We appreciate issue reports, pull requests for code and documentation,
 as well as any project-related communication through [GitHub Discussions](https://github.com/aai-institute/lakefs-spec/discussions).
 
-## Quickstart
+## Getting Started
 
 To get started with development, you can follow these steps:
 
@@ -73,7 +73,8 @@ If you want to update the `lakefs-sdk` dependency, for example, simply run:
 hack/lock-deps.sh lakefs-sdk
 ```
 
-⚠️ Since the official development version is Python 3.11, please run the above commands in a virtual environment with Python 3.11.
+> [!IMPORTANT]
+> Since the official development version is Python 3.11, please run the above commands in a virtual environment with Python 3.11.
 
 ## Working on Documentation
 

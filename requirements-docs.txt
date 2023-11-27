@@ -77,6 +77,7 @@ mike==2.0.0
 mistune==3.0.2
 mkdocs==1.5.3
 mkdocs-autorefs==0.5.0
+mkdocs-callouts==1.10.0
 mkdocs-gen-files==0.5.0
 mkdocs-git-revision-date-localized-plugin==1.2.1
 mkdocs-include-dir-to-nav==1.2.0

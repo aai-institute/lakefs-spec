@@ -29,12 +29,13 @@ nav:
     - tutorials/index.md
     - tutorials/demo_data_science_project.ipynb
   - API Reference: reference/
-  - CONTRIBUTING.md
+  - Contributing: CONTRIBUTING.md
 
 exclude_docs: |
   use-cases.md
 
 plugins:
+  - callouts
   - gen-files:
       scripts:
         - docs/_scripts/gen_api_ref_pages.py
