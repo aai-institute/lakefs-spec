@@ -160,30 +160,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         except ApiException as e:
             raise translate_lakefs_error(e, message=message, set_cause=set_cause)
 
-    @contextmanager
-    def scope(
-        self,
-        create_branch_ok: bool | None = None,
-        source_branch: str | None = None,
-    ) -> EmptyYield:
-        """
-        A context manager yielding scope in which the lakeFS file system behavior
-        is changed from defaults.
-        """
-        curr_create_branch_ok, curr_source_branch = (
-            self.create_branch_ok,
-            self.source_branch,
-        )
-        try:
-            if create_branch_ok is not None:
-                self.create_branch_ok = create_branch_ok
-            if source_branch is not None:
-                self.source_branch = source_branch
-            yield
-        finally:
-            self.create_branch_ok = curr_create_branch_ok
-            self.source_branch = curr_source_branch
-
     def checksum(self, path: str) -> str | None:
         try:
             return self.info(path).get("checksum")

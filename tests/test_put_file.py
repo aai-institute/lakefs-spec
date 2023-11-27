@@ -48,26 +48,25 @@ def test_implicit_branch_creation(
     random_file = random_file_factory.make()
     lpath = str(random_file)
 
-    with fs.scope(create_branch_ok=True):
-        non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
-        rpath = f"{repository}/{non_existing_branch}/{random_file.name}"
-        try:
-            fs.put(lpath, rpath)
-            branches = [
-                r.id for r in fs.client.branches_api.list_branches(repository=repository).results
-            ]
-            assert non_existing_branch in branches
-        finally:
-            fs.client.branches_api.delete_branch(
-                repository=repository,
-                branch=non_existing_branch,
-            )
+    non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
+    rpath = f"{repository}/{non_existing_branch}/{random_file.name}"
+    try:
+        fs.put(lpath, rpath)
+        branches = [
+            r.id for r in fs.client.branches_api.list_branches(repository=repository).results
+        ]
+        assert non_existing_branch in branches
+    finally:
+        fs.client.branches_api.delete_branch(
+            repository=repository,
+            branch=non_existing_branch,
+        )
 
-    with fs.scope(create_branch_ok=False):
-        another_non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
-        rpath = f"{repository}/{another_non_existing_branch}/{random_file.name}"
-        with pytest.raises(FileNotFoundError):
-            fs.put(lpath, rpath)
+    fs.create_branch_ok = False
+    another_non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
+    rpath = f"{repository}/{another_non_existing_branch}/{random_file.name}"
+    with pytest.raises(FileNotFoundError):
+        fs.put(lpath, rpath)
 
 
 def test_put_client_caching(
