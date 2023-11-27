@@ -54,7 +54,7 @@ def commit(
     Returns
     -------
     Commit
-        Commit object of the lakeFS-SDK.
+        The created commit object of the lakeFS server. 
     """
     diff = client.branches_api.diff_branch(repository=repository, branch=branch)
 
@@ -87,12 +87,12 @@ def create_branch(
     source_branch: str
         Name of the source branch the new branch is created from.
     exist_ok: bool
-        If True, ignore errors and return name of the branch if the branch already exists. Defaults to True.
+        Ignore creation errors if the branch already exists.
 
     Returns
     -------
     str
-        Name of newly created or existing.
+        Name of newly created or existing branch.
 
     Raises
     ------
@@ -127,7 +127,7 @@ def create_repository(
     storage_namespace: str
         Storage namespace where the repository data will reside, typically corresponding to a bucket in object storage (e.g., S3 bucket) or a local namespace (e.g. local://<repo_name>).
     exist_ok: bool, optional
-        If True, ignores error and returns the Repository object, if the repository already exists. Defaults to True.
+        Ignore creation errors if the repository already exists.
 
     Returns
     -------
@@ -169,7 +169,7 @@ def create_tag(
     tag: str
         Name of the tag to be created.
     exist_ok: bool, optional
-        If True, ignore error and return Tag object corresponding to the tag, if the tag already exists. The tag is not reassigned. Defaults to True.
+        Ignore creation errors if the tag already exists. The tag is not reassigned.
 
     Raises
     ------
@@ -253,7 +253,7 @@ def revert(client: LakeFSClient, repository: str, branch: str, parent_number: in
     branch: str
         Branch on which the commit should be reverted.
     parent_number: int, optional
-        If there are multiple parents to a commit, specify to which parent the commit should be reverted. Index starts at 1. Defaults to 1.
+        If there are multiple parents to a commit, specify to which parent the commit should be reverted. Index starts at 1.
     """
     revert_creation = RevertCreation(ref=branch, parent_number=parent_number)
     client.branches_api.revert_branch(
