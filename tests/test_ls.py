@@ -75,7 +75,7 @@ def test_ls_stale_cache_entry(
     lpath = str(random_file)
     rpath = f"{repository}/{temp_branch}/data/{random_file.name}"
 
-    fs.put_file(lpath, rpath)
+    fs.put_file(lpath, rpath, precheck=False)
 
     res = fs.ls(rpath)
     assert counter.count("objects_api.list_objects") == 2
