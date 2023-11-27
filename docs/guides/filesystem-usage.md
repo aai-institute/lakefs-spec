@@ -47,10 +47,11 @@ If you want to upload an entire directory to lakeFS, you can use the `fs.put()` 
 
 ```python
 # structure:
-#   dir/a.txt
-#      /b.yaml
-#      /c.csv
-#      /...
+#   dir/
+#   ├── a.txt
+#   ├── b.yaml
+#   ├── c.csv
+#   └── ...
 
 fs.put("dir", "my-repo/my-ref/dir", recursive=True)
 ```
@@ -88,10 +89,11 @@ In the case of a directory in lakeFS, use the `fs.get()` API together with the `
 
 ```python
 # structure:
-#   dir/a.txt
-#      /b.yaml
-#      /c.csv
-#      /...
+#   dir/
+#   ├── a.txt
+#   ├── b.yaml
+#   ├── c.csv
+#   └── ...
 
 # downloads the entire `dir` directory (and subdirectories) into the current directory.
 fs.get("my-repo/my-ref/dir", "dir", recursive=True)
