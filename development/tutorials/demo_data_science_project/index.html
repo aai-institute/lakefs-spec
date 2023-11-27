@@ -492,6 +492,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Demo data science project
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -501,6 +512,95 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#environment-setup" class="md-nav__link">
+    Environment setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lakefs-setup" class="md-nav__link">
+    lakeFS Setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authenticating-with-the-lakefs-server" class="md-nav__link">
+    Authenticating with the lakeFS server
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-ingestion" class="md-nav__link">
+    Data Ingestion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upload-a-file-using-transactions" class="md-nav__link">
+    Upload a file using transactions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-transformation" class="md-nav__link">
+    Data Transformation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#training-the-initial-weather-model" class="md-nav__link">
+    Training the initial weather model
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#updating-data-and-retraining-the-model" class="md-nav__link">
+    Updating data and retraining the model
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessing-data-versions-through-commits-and-reproducing-experiments" class="md-nav__link">
+    Accessing data versions through commits and reproducing experiments
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-tags-instead-of-commit-shas-for-semantic-versioning" class="md-nav__link">
+    Using tags instead of commit SHAs for semantic versioning
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -768,6 +868,84 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#environment-setup" class="md-nav__link">
+    Environment setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lakefs-setup" class="md-nav__link">
+    lakeFS Setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authenticating-with-the-lakefs-server" class="md-nav__link">
+    Authenticating with the lakeFS server
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-ingestion" class="md-nav__link">
+    Data Ingestion
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#upload-a-file-using-transactions" class="md-nav__link">
+    Upload a file using transactions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-transformation" class="md-nav__link">
+    Data Transformation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#training-the-initial-weather-model" class="md-nav__link">
+    Training the initial weather model
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#updating-data-and-retraining-the-model" class="md-nav__link">
+    Updating data and retraining the model
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessing-data-versions-through-commits-and-reproducing-experiments" class="md-nav__link">
+    Accessing data versions through commits and reproducing experiments
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-tags-instead-of-commit-shas-for-semantic-versioning" class="md-nav__link">
+    Using tags instead of commit SHAs for semantic versioning
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -823,32 +1001,29 @@
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h1>
-<p>In this notebook, we will complete a small end-to-end data science tutorial that employs <code>lakeFS-spec</code> for data versioning. We will use weather data to train a random forest classifier to predict whether a given day from now is a raining day given the current weather.</p>
+<p>In this notebook, we will complete a small end-to-end data science tutorial that employs lakeFS-spec for data versioning. We will use versioned weather data to train a decision tree classifier to predict whether it is raining tomorrow given the current weather.</p>
 <p>We will do the following:</p>
 <ul>
 <li>Environment setup</li>
-<li>lakeFS setup</li>
-<li>Data ingestion<ul>
-<li>Transactions</li>
-<li>PUT a file</li>
-</ul>
-</li>
+<li>LakeFS setup</li>
+<li>Authenticating with the lakeFS server</li>
+<li>Data ingestion via transactions</li>
 <li>Model training</li>
 <li>Updating data and retraining a model</li>
-<li>Accessing data versions and Reproducing Experiments</li>
-<li>Using a tag instead of a commit SHA for semantic versioning</li>
+<li>Accessing data versions and reproducing experiments</li>
+<li>Using tags for semantic versioning</li>
 </ul>
-<p>To execute the code in this tutorial as a Jupyter notebook, download this <code>.ipynb</code> file to a convenient location on your machine. You can also clone the whole <code>lakefs-spec</code> repository. During the execution of this tutorial, in the same directory, a folder <code>data</code> will be created. We will also download a file <code>.lakectl.yaml</code> to the current user's home directory.</p>
-<p>This tutorial assumes that you have installed <code>lakefs-spec</code> in a virtual environment, and that you have followed the <a href="../../quickstart/">quickstart guide</a> to set up a local lakeFS instance.</p>
-<h1 id="environment-setup">Environment Setup<a class="headerlink" href="#environment-setup" title="Permanent link">&para;</a></h1>
-<p>Install the libraries necessary for this notebook on the environment you have just created: </p>
+<p>To execute the code in this tutorial as a Jupyter notebook, download the <code>.ipynb</code> file from the lakeFS-spec repository. </p>
+<p>This tutorial assumes that you have installed lakeFS-spec in a virtual environment, and that you have followed the <a href="../../quickstart/">quickstart guide</a> to set up a local lakeFS instance.</p>
+<h2 id="environment-setup">Environment setup<a class="headerlink" href="#environment-setup" title="Permanent link">&para;</a></h2>
+<p>Install the necessary libraries for this notebook on the environment you have just created: </p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered celltag_remove_output">
+<div class="cell border-box-sizing code_cell rendered celltag_hide-output">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">lakefs</span><span class="o">-</span><span class="n">spec</span> <span class="n">numpy</span> <span class="n">pandas</span> <span class="n">scikit</span><span class="o">-</span><span class="n">learn</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">numpy</span> <span class="n">pandas</span> <span class="n">scikit</span><span class="o">-</span><span class="n">learn</span>
 </span></code></pre></div>
 
 </div>
@@ -857,16 +1032,12 @@
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Requirement already satisfied: lakefs-spec in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (0.3.1.dev52+g3cfeb29)
-Collecting numpy
+<code>Collecting numpy
   Using cached numpy-1.26.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
 Collecting pandas
   Using cached pandas-2.1.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (18 kB)
 Collecting scikit-learn
   Using cached scikit_learn-1.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
-Requirement already satisfied: fsspec&gt;=2023.6.0 in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from lakefs-spec) (2023.10.0)
-Requirement already satisfied: lakefs-sdk&gt;=1.0.0 in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from lakefs-spec) (1.0.0)
-Requirement already satisfied: pyyaml&gt;=6.0.1 in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from lakefs-spec) (6.0.1)
 Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from pandas) (2.8.2)
 Requirement already satisfied: pytz&gt;=2020.1 in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from pandas) (2023.3.post1)
 Collecting tzdata&gt;=2022.1 (from pandas)
@@ -877,11 +1048,7 @@ Collecting joblib&gt;=1.1.1 (from scikit-learn)
   Using cached joblib-1.3.2-py3-none-any.whl.metadata (5.4 kB)
 Collecting threadpoolctl&gt;=2.0.0 (from scikit-learn)
   Using cached threadpoolctl-3.2.0-py3-none-any.whl.metadata (10.0 kB)
-Requirement already satisfied: urllib3&lt;2.1.0,&gt;=1.25.3 in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from lakefs-sdk&gt;=1.0.0-&gt;lakefs-spec) (2.0.7)
-Requirement already satisfied: pydantic&lt;2,&gt;=1.10.5 in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from lakefs-sdk&gt;=1.0.0-&gt;lakefs-spec) (1.10.13)
-Requirement already satisfied: aenum in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from lakefs-sdk&gt;=1.0.0-&gt;lakefs-spec) (3.1.15)
 Requirement already satisfied: six&gt;=1.5 in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
-Requirement already satisfied: typing-extensions&gt;=4.2.0 in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from pydantic&lt;2,&gt;=1.10.5-&gt;lakefs-sdk&gt;=1.0.0-&gt;lakefs-spec) (4.8.0)
 Using cached numpy-1.26.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.2 MB)
 Using cached pandas-2.1.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.2 MB)
 Using cached scikit_learn-1.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (10.9 MB)
@@ -904,31 +1071,32 @@ Note: you may need to restart the kernel to use updated packages.
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>From a terminal, start a Jupyter notebook server if one is not already running, by executing <code>jupyter notebook</code>. Double click the notebook to autostart a kernel using the created virtual environment.</p>
-<h1 id="lakefs-setup">lakeFS Setup<a class="headerlink" href="#lakefs-setup" title="Permanent link">&para;</a></h1>
-<p>Ensure you have Docker Desktop or a similar runtime available and running.</p>
-<p>Set up LakeFS. You can do this by executing the following <code>docker run</code> command (the lakeFS quickstart) in your console:</p>
+<p>Also install an appropriate lakeFS-spec version, which can be either the latest release from PyPI via <code>pip install --upgrade lakefs-spec</code>, or the development version from GitHub via <code>pip install git+https://github.com/aai-institute/lakefs-spec.git</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="lakefs-setup">lakeFS Setup<a class="headerlink" href="#lakefs-setup" title="Permanent link">&para;</a></h2>
+<p>With Docker Desktop or a similar runtime running set up lakeFS by executing the following <code>docker run</code> command (from the <a href="https://docs.lakefs.io/quickstart/launch.html">lakeFS quickstart</a>) in your console:</p>
 <p><code>docker run --name lakefs --pull always --rm --publish 8000:8000 treeverse/lakefs:latest run --quickstart</code></p>
-<p>Open a browser and navigate to the lakeFS instance - by default: http://localhost:8000/. </p>
-<p>Authenticate with the following credentials:</p>
-<div class="language-text highlight"><pre><span></span><code>Access Key ID    : AKIAIOSFOLQUICKSTART
-Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-</code></pre></div>
-<p>As an email, you can enter anything, we won't need it in this example.</p>
-<p>Before we instantiate the filesystem connector <code>LakeFSFilesystem</code>, we need to configure authentication.</p>
-<p>There are multiple ways to authenticate to lakeFS from Python code - in this tutorial, we choose the convenient YAML file configuration. Execute the code below to download the YAML file including the lakeFS quickstart credentials and server URL to your user directory.</p>
+<p>You find the authentication credentials in the terminal output. The default address for the local lakeFS GUI is http://localhost:8000/. </p>
+<h2 id="authenticating-with-the-lakefs-server">Authenticating with the lakeFS server<a class="headerlink" href="#authenticating-with-the-lakefs-server" title="Permanent link">&para;</a></h2>
+<p>There are multiple ways to authenticate with lakeFS from Python code. In this tutorial, we choose the YAML file configuration. By executing the cell below, you will download a YAML file containing the default lakeFS quickstart credentials and server URL to your user directory.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">urllib.request</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">import</span> <span class="nn">os</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">destination</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/.lakectl.yaml&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">os</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">import</span> <span class="nn">tempfile</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">import</span> <span class="nn">urllib.request</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="s2">&quot;https://raw.githubusercontent.com/aai-institute/lakefs-spec/main/docs/tutorials/.lakectl.yaml&quot;</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="s2">&quot;https://raw.githubusercontent.com/aai-institute/lakefs-spec/main/docs/tutorials/.lakectl.yaml&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/.lakectl.yaml&quot;</span><span class="p">)</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">)</span>
 </span></code></pre></div>
 
 </div>
@@ -937,7 +1105,7 @@ Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 <div class="output_area">
 <div class="output_text output_subarea output_execute_result">
 <pre>
-<code>('/home/runner/.lakectl.yaml', &lt;http.client.HTTPMessage at 0x7f98c4f189d0&gt;)</code>
+<code>('/home/runner/.lakectl.yaml', &lt;http.client.HTTPMessage at 0x7f9933b02d10&gt;)</code>
 </pre>
 </div>
 </div>
@@ -947,7 +1115,7 @@ Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now we can instantiate the <code>LakeFSFileSystem</code> and it will use the credentials we just downloaded for authentication. Alternatively, we could have passed the credentials in the code. It is important, that the credentials are available at the time of filesystem instantiation. </p>
+<p>We can now instantiate the <code>LakeFSFileSystem</code> with the credentials we just downloaded. Alternatively, we could have passed the credentials directly in the code. It is important that the credentials are available at the time of filesystem instantiation. </p>
 </div>
 </div>
 </div>
@@ -966,8 +1134,7 @@ Secret Access Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We will create a repository using a helper function provided by <code>lakefs-spec</code>. If you created one in the UI, make sure to set the <code>REPO_NAME</code> variable in the cell above accordingly. You can re-execute if necessary.
-Otherwise, execute the next cell.</p>
+<p>We will create a repository using a helper function provided by lakeFS-spec. If you have already created one in the UI, make sure to set the <code>REPO_NAME</code> variable accordingly in the cell directly above.</p>
 </div>
 </div>
 </div>
@@ -984,22 +1151,16 @@ Otherwise, execute the next cell.</p>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="data-ingestion">Data Ingestion<a class="headerlink" href="#data-ingestion" title="Permanent link">&para;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="data-ingestion">Data Ingestion<a class="headerlink" href="#data-ingestion" title="Permanent link">&para;</a></h2>
 <p>Now it's time to get some data. We will use the <a href="https://open-meteo.com/">Open Meteo API</a>, where we can pull weather data from an API for free (as long as we are non-commercial) and without an API-token.</p>
-<p>First, create the folder <code>data</code> inside a directory when your notebook is located:</p>
+<p>For training our toy model, we download the full weather data of Munich for the year 2010:</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">outfile</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="s2">&quot;https://archive-api.open-meteo.com/v1/archive?latitude=52.52&amp;amp;longitude=13.41&amp;amp;start_date=2010-01-01&amp;amp;end_date=2010-12-31&amp;amp;hourly=temperature_2m,relativehumidity_2m,rain,pressure_msl,surface_pressure,cloudcover,cloudcover_low,cloudcover_mid,cloudcover_high,windspeed_10m,windspeed_100m,winddirection_10m,winddirection_100m&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 
 </div>
@@ -1007,72 +1168,16 @@ Otherwise, execute the next cell.</p>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Then, for the purpose of training, get the full 2010 weather data from Munich:</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">destination</span> <span class="o">=</span> <span class="s2">&quot;data/weather-2010.json&quot;</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="s2">&quot;https://archive-api.open-meteo.com/v1/archive?latitude=52.52&amp;amp;longitude=13.41&amp;amp;start_date=2010-01-01&amp;amp;end_date=2010-12-31&amp;amp;hourly=temperature_2m,relativehumidity_2m,rain,pressure_msl,surface_pressure,cloudcover,cloudcover_low,cloudcover_mid,cloudcover_high,windspeed_10m,windspeed_100m,winddirection_10m,winddirection_100m&quot;</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
-</span></code></pre></div>
-
-</div>
-<div class="output_wrapper">
-<div class="output">
-<div class="output_area">
-<div class="output_text output_subarea output_execute_result">
-<pre>
-<code>('data/weather-2010.json', &lt;http.client.HTTPMessage at 0x7f98b8c322d0&gt;)</code>
-</pre>
-</div>
-</div>
+<p>The data is in JSON format. Therefore, we need to wrangle the data a bit to make it usable. But first, we will upload it to our lakeFS instance.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="put-a-file">PUT a file<a class="headerlink" href="#put-a-file" title="Permanent link">&para;</a></h1>
-<p>The data is in JSON format. Therefore, we need to wrangle the data a bit to make it usable. But first we will save it into our lakeFS instance.</p>
-<p>lakeFS works similar to <code>git</code> as a versioning system. You can create <em>commits</em> that contain specific changes to the data. You can also work with <em>branches</em> to fork your own copy of the data such that you don't interfere with your colleagues. Every commit (on any branch) is identified by a commit SHA. This SHA can be used to programmatically interact with specific states of your data and enables logging of the specific data versions used to create a certain model. We will cover all of this in this demo.</p>
-<p>For now, we will <code>put</code> the file we have on a new branch, <code>transform-raw-data</code>, specifically created for our data.</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">LakeFSFileSystem</span><span class="o">.</span><span class="n">clear_instance_cache</span><span class="p">()</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">NEW_BRANCH_NAME</span> <span class="o">=</span> <span class="s1">&#39;transform-raw-data&#39;</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">fs</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">NEW_BRANCH_NAME</span><span class="si">}</span><span class="s1">/weather-2010.json&#39;</span><span class="p">)</span>
-</span></code></pre></div>
-
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Going to the LakeFS UI in your browser, you can change the branch view to <code>transform-raw-data</code> and see the saved file. However, the change is not yet committed. While you can do that manually via the uncommitted changes tab in the UI, we will commit the file in a different way.</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="transactions">Transactions<a class="headerlink" href="#transactions" title="Permanent link">&para;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>To easily carry out versioning operations while uploading files, you can use a <em>transaction</em>. A transaction is a context manager that keeps track of all files that were uploaded in its scope, as well as all versioning operations happening in between file uploads. All operations are deferred to the end of the transaction, and are executed sequentially on completion.</p>
+<h2 id="upload-a-file-using-transactions">Upload a file using transactions<a class="headerlink" href="#upload-a-file-using-transactions" title="Permanent link">&para;</a></h2>
+<p>lakeFS works similar to <code>git</code> as a versioning system. You can create <em>commits</em> that contain specific changes to the data. You can also work with <em>branches</em> to create your own isolated view of the data independently of your colleagues. Every commit (on any branch) is identified by a commit SHA. This SHA can be used to programmatically interact with specific states of your data and enables logging of the specific data versions used to create a certain model.</p>
+<p>To easily carry out versioning operations while uploading files, you can use <strong>transactions</strong>. A transaction is a context manager that keeps track of all files that were uploaded in its scope, as well as all versioning operations happening between file uploads. All operations are deferred to the end of the transaction, and are executed sequentially on completion.</p>
 <p>To create a commit after a file upload, you can run the following transaction:</p>
 </div>
 </div>
@@ -1080,9 +1185,11 @@ Otherwise, execute the next cell.</p>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">NEW_BRANCH_NAME</span><span class="si">}</span><span class="s1">/weather-2010.json&#39;</span><span class="p">,</span> <span class="n">precheck</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autocommit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">NEW_BRANCH_NAME</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add 2010 weather data&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">NEW_BRANCH_NAME</span> <span class="o">=</span> <span class="s1">&#39;transform-raw-data&#39;</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">NEW_BRANCH_NAME</span><span class="si">}</span><span class="s1">/weather-2010.json&#39;</span><span class="p">)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">NEW_BRANCH_NAME</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add 2010 weather data&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 
 </div>
@@ -1090,42 +1197,42 @@ Otherwise, execute the next cell.</p>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This transaction, if successful, will create a commit. Since we already uploaded the file, lakeFS will skip the upload as the checksums of the local and remote file match.</p>
-<p>If we want to execute the upload even for an unchanged file, we can do so by passing <code>precheck=False</code> to the <code>fs.put()</code> operation.</p>
+<p>You can inspect this commit by selecting the <code>transform-raw-data</code> branch, and navigating to the <strong>Commits</strong> tab.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="data-transformation">Data Transformation<a class="headerlink" href="#data-transformation" title="Permanent link">&para;</a></h1>
+<h2 id="data-transformation">Data Transformation<a class="headerlink" href="#data-transformation" title="Permanent link">&para;</a></h2>
 <p>Now let's transform the data for our use case. We put the transformation into a function to be able to reuse it later.</p>
-<p>In this notebook, we follow a simple toy example to predict whether it is raining at the same time tomorrow given weather data from right now.</p>
-<p>We will skip a lot of possible feature engineering etc. in order to focus on the application of lakeFS and the <code>LakeFSFileSystem</code>.</p>
+<p>In this notebook, we use a simple toy model to predict whether it is raining at the same time tomorrow given weather data from right now.</p>
+<p>We will skip a lot of possible feature engineering and other data science aspects in order to focus more on the application of the <code>LakeFSFileSystem</code>.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span> <span class="nn">json</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="k">def</span> <span class="nf">transform_json_weather_data</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;hourly&quot;</span><span class="p">])</span>
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="n">df</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
-</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;is_raining&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rain</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="mi">0</span>
-</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;is_raining_in_1_day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">is_raining</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
-</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>    <span class="k">return</span> <span class="n">df</span>
-</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>
-</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="n">df</span> <span class="o">=</span> <span class="n">transform_json_weather_data</span><span class="p">(</span><span class="s1">&#39;data/weather-2010.json&#39;</span><span class="p">)</span>
-</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span> <span class="nn">json</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="k">def</span> <span class="nf">transform_json_weather_data</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;close&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;tell&quot;</span><span class="p">):</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;hourly&quot;</span><span class="p">])</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="n">df</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;is_raining&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rain</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="mi">0</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;is_raining_in_1_day&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">is_raining</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>    <span class="k">return</span> <span class="n">df</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="n">df</span> <span class="o">=</span> <span class="n">transform_json_weather_data</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </span></code></pre></div>
 
 </div>
@@ -1171,99 +1278,99 @@ Otherwise, execute the next cell.</p>
 </thead>
 <tbody>
 <tr>
-<th>24</th>
-<td>2010-01-02 00:00:00</td>
-<td>-3.0</td>
+<th>0</th>
+<td>2010-01-01 00:00:00</td>
+<td>-2.6</td>
 <td>88</td>
 <td>0.0</td>
-<td>1004.0</td>
-<td>999.2</td>
+<td>996.9</td>
+<td>992.1</td>
 <td>100</td>
+<td>100</td>
+<td>97</td>
+<td>75</td>
+<td>16.0</td>
+<td>27.2</td>
 <td>54</td>
+<td>58</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr>
+<th>1</th>
+<td>2010-01-01 01:00:00</td>
+<td>-2.7</td>
+<td>88</td>
+<td>0.0</td>
+<td>996.4</td>
+<td>991.6</td>
 <td>100</td>
-<td>70</td>
-<td>8.3</td>
-<td>17.3</td>
-<td>18</td>
-<td>31</td>
+<td>99</td>
+<td>96</td>
+<td>49</td>
+<td>16.3</td>
+<td>28.0</td>
+<td>55</td>
+<td>58</td>
 <td>False</td>
-<td>False</td>
+<td>True</td>
 </tr>
 <tr>
-<th>25</th>
-<td>2010-01-02 01:00:00</td>
-<td>-3.2</td>
-<td>89</td>
+<th>2</th>
+<td>2010-01-01 02:00:00</td>
+<td>-2.7</td>
+<td>88</td>
 <td>0.0</td>
-<td>1004.5</td>
-<td>999.7</td>
+<td>996.2</td>
+<td>991.4</td>
 <td>100</td>
-<td>37</td>
-<td>98</td>
-<td>92</td>
-<td>9.1</td>
-<td>18.6</td>
-<td>9</td>
-<td>22</td>
-<td>False</td>
-<td>False</td>
-</tr>
-<tr>
-<th>26</th>
-<td>2010-01-02 02:00:00</td>
-<td>-3.4</td>
-<td>89</td>
-<td>0.0</td>
-<td>1005.2</td>
-<td>1000.4</td>
-<td>100</td>
-<td>24</td>
-<td>98</td>
-<td>77</td>
-<td>10.1</td>
-<td>20.3</td>
-<td>2</td>
-<td>13</td>
-<td>False</td>
-<td>False</td>
-</tr>
-<tr>
-<th>27</th>
-<td>2010-01-02 03:00:00</td>
-<td>-3.5</td>
-<td>89</td>
-<td>0.0</td>
-<td>1005.6</td>
-<td>1000.8</td>
-<td>93</td>
-<td>8</td>
-<td>98</td>
-<td>89</td>
-<td>11.2</td>
-<td>21.7</td>
-<td>4</td>
-<td>12</td>
-<td>False</td>
-<td>False</td>
-</tr>
-<tr>
-<th>28</th>
-<td>2010-01-02 04:00:00</td>
-<td>-3.7</td>
-<td>90</td>
-<td>0.0</td>
-<td>1006.2</td>
-<td>1001.4</td>
+<td>96</td>
 <td>94</td>
-<td>6</td>
+<td>60</td>
+<td>16.3</td>
+<td>27.5</td>
+<td>55</td>
+<td>58</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr>
+<th>3</th>
+<td>2010-01-01 03:00:00</td>
+<td>-2.7</td>
+<td>88</td>
+<td>0.0</td>
+<td>996.1</td>
+<td>991.3</td>
 <td>100</td>
-<td>95</td>
-<td>11.2</td>
-<td>21.8</td>
-<td>358</td>
-<td>9</td>
+<td>97</td>
+<td>96</td>
+<td>83</td>
+<td>15.4</td>
+<td>26.6</td>
+<td>53</td>
+<td>57</td>
 <td>False</td>
+<td>True</td>
+</tr>
+<tr>
+<th>4</th>
+<td>2010-01-01 04:00:00</td>
+<td>-2.7</td>
+<td>88</td>
+<td>0.0</td>
+<td>996.0</td>
+<td>991.2</td>
+<td>100</td>
+<td>92</td>
+<td>98</td>
+<td>82</td>
+<td>14.8</td>
+<td>25.6</td>
+<td>47</td>
+<td>52</td>
 <td>False</td>
+<td>True</td>
 </tr>
 </tbody>
 </table>
@@ -1276,16 +1383,16 @@ Otherwise, execute the next cell.</p>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Next, we save this data as a CSV file into the main branch. When the transaction commit helper is called, the newly put CSV file is committed. You can verify the saving worked in the LakeFS UI in your browser by switching to the commits tab of the <code>main</code> branch.</p>
+<p>Next, we save this data as a CSV file into the main branch. When the transaction commit helper is called, the newly put CSV file is committed. You can verify the saving worked in the lakeFS UI in your browser by switching to the commits tab of the <code>main</code> branch.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/main/weather_2010.csv&#39;</span><span class="p">)</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Update weather data&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/main/weather_2010.csv&#39;</span><span class="p">)</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Update weather data&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 
 </div>
@@ -1293,7 +1400,7 @@ Otherwise, execute the next cell.</p>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="model-training">Model Training<a class="headerlink" href="#model-training" title="Permanent link">&para;</a></h1>
+<h2 id="training-the-initial-weather-model">Training the initial weather model<a class="headerlink" href="#training-the-initial-weather-model" title="Permanent link">&para;</a></h2>
 <p>First we will do a train-test split:</p>
 </div>
 </div>
@@ -1301,11 +1408,11 @@ Otherwise, execute the next cell.</p>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">import</span> <span class="nn">sklearn.model_selection</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">model_data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">model_selection</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">model_data</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span> <span class="nn">sklearn.model_selection</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">model_data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">model_selection</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">model_data</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
 </span></code></pre></div>
 
 </div>
@@ -1320,184 +1427,68 @@ Otherwise, execute the next cell.</p>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">TRAINING_BRANCH</span> <span class="o">=</span> <span class="s1">&#39;training&#39;</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">TRAINING_BRANCH</span> <span class="o">=</span> <span class="s1">&#39;training&#39;</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="n">train</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/train_weather.csv&#39;</span><span class="p">)</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="n">test</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/test_weather.csv&#39;</span><span class="p">)</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">TRAINING_BRANCH</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add train-test split of 2010 weather data&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's check the shape of train and test data. Later on, we will get back to this data version and reproduce the results of the experiment.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Initial train data shape: </span><span class="si">{</span><span class="n">train</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Initial test data shape: </span><span class="si">{</span><span class="n">test</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+<code>Initial train data shape: (6570, 15)
+Initial test data shape: (2190, 15)
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We now proceed to train a decision tree classifier and evaluate it on the test set:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="kn">import</span> <span class="n">DecisionTreeClassifier</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="n">train</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/train_weather.csv&#39;</span><span class="p">)</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>    <span class="n">test</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/test_weather.csv&#39;</span><span class="p">)</span>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">TRAINING_BRANCH</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add train-test split of 2010 weather data&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Implicit branch creation is a convenient way to create new branches programmatically. However, one drawback is that typos in your code might result in new accidental branch creations. If you want to avoid this implicit behavior and raise errors instead, you can disable implicit branch creation by setting <code>fs.create_branch_ok=False</code>.</p>
-<p>We can now read train and test files directly from the remote LakeFS instance. (You can verify that neither the train nor the test file are saved in the <code>/data</code> directory).</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/train_weather.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/test_weather.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">train</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</span></code></pre></div>
-
-</div>
-<div class="output_wrapper">
-<div class="output">
-<div class="output_area">
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-<thead>
-<tr style="text-align: right;">
-<th></th>
-<th>temperature_2m</th>
-<th>relativehumidity_2m</th>
-<th>rain</th>
-<th>pressure_msl</th>
-<th>surface_pressure</th>
-<th>cloudcover</th>
-<th>cloudcover_low</th>
-<th>cloudcover_mid</th>
-<th>cloudcover_high</th>
-<th>windspeed_10m</th>
-<th>windspeed_100m</th>
-<th>winddirection_10m</th>
-<th>winddirection_100m</th>
-<th>is_raining</th>
-<th>is_raining_in_1_day</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th>8594</th>
-<td>-3.4</td>
-<td>87</td>
-<td>0.0</td>
-<td>1008.9</td>
-<td>1004.1</td>
-<td>100</td>
-<td>100</td>
-<td>99</td>
-<td>98</td>
-<td>22.4</td>
-<td>36.4</td>
-<td>341</td>
-<td>346</td>
-<td>False</td>
-<td>False</td>
-</tr>
-<tr>
-<th>2725</th>
-<td>14.6</td>
-<td>41</td>
-<td>0.0</td>
-<td>1023.4</td>
-<td>1018.8</td>
-<td>18</td>
-<td>0</td>
-<td>1</td>
-<td>57</td>
-<td>3.6</td>
-<td>4.0</td>
-<td>354</td>
-<td>350</td>
-<td>False</td>
-<td>False</td>
-</tr>
-<tr>
-<th>7096</th>
-<td>8.5</td>
-<td>65</td>
-<td>0.0</td>
-<td>1006.9</td>
-<td>1002.3</td>
-<td>30</td>
-<td>1</td>
-<td>0</td>
-<td>97</td>
-<td>15.6</td>
-<td>29.2</td>
-<td>173</td>
-<td>178</td>
-<td>False</td>
-<td>False</td>
-</tr>
-<tr>
-<th>6621</th>
-<td>12.1</td>
-<td>77</td>
-<td>0.0</td>
-<td>1013.8</td>
-<td>1009.2</td>
-<td>34</td>
-<td>8</td>
-<td>0</td>
-<td>90</td>
-<td>20.1</td>
-<td>35.7</td>
-<td>134</td>
-<td>137</td>
-<td>False</td>
-<td>False</td>
-</tr>
-<tr>
-<th>2935</th>
-<td>9.4</td>
-<td>92</td>
-<td>1.5</td>
-<td>1008.4</td>
-<td>1003.8</td>
-<td>100</td>
-<td>100</td>
-<td>100</td>
-<td>95</td>
-<td>13.7</td>
-<td>23.5</td>
-<td>35</td>
-<td>40</td>
-<td>True</td>
-<td>False</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's check the shape of train and test data. Later on we will train to get back to this data version and reproduce the results of the experiment.</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Initial train data shape: </span><span class="si">{</span><span class="n">train</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Initial test data shape: </span><span class="si">{</span><span class="n">test</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">dependent_variable</span> <span class="o">=</span> <span class="s1">&#39;is_raining_in_1_day&#39;</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="n">model</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">train</span><span class="p">[</span><span class="n">dependent_variable</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">test</span><span class="p">[</span><span class="n">dependent_variable</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="n">test_acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test accuracy: </span><span class="si">{</span><span class="n">test_acc</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 
 </div>
@@ -1506,8 +1497,7 @@ Otherwise, execute the next cell.</p>
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Initial train data shape: (6552, 15)
-Initial test data shape: (2184, 15)
+<code>Test accuracy: 87.31%
 </code>
 </pre>
 </div>
@@ -1518,46 +1508,7 @@ Initial test data shape: (2184, 15)
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We now proceed to train a random forest classifier and evaluate it on the test set:</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="kn">import</span> <span class="n">DecisionTreeClassifier</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="n">dependent_variable</span> <span class="o">=</span> <span class="s1">&#39;is_raining_in_1_day&#39;</span>
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
-</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="n">model</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
-</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">train</span><span class="p">[</span><span class="n">dependent_variable</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">test</span><span class="p">[</span><span class="n">dependent_variable</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>
-</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>
-</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="n">test_acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
-</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>
-</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test accuracy: </span><span class="si">{</span><span class="n">test_acc</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-
-</div>
-<div class="output_wrapper">
-<div class="output">
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>Test accuracy: 86.86%
-</code>
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="updating-data-and-model">Updating Data and Model<a class="headerlink" href="#updating-data-and-model" title="Permanent link">&para;</a></h1>
+<h2 id="updating-data-and-retraining-the-model">Updating data and retraining the model<a class="headerlink" href="#updating-data-and-retraining-the-model" title="Permanent link">&para;</a></h2>
 <p>Until now, we only have used data from 2010. Let's download additional 2020 data, transform it, and save it to LakeFS.</p>
 </div>
 </div>
@@ -1565,22 +1516,16 @@ Initial test data shape: (2184, 15)
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">destination</span> <span class="o">=</span> <span class="s2">&quot;data/weather-2020.json&quot;</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="s2">&quot;https://archive-api.open-meteo.com/v1/archive?latitude=52.52&amp;amp;longitude=13.41&amp;amp;start_date=2020-01-01&amp;amp;end_date=2020-12-31&amp;amp;hourly=temperature_2m,relativehumidity_2m,rain,pressure_msl,surface_pressure,cloudcover,cloudcover_low,cloudcover_mid,cloudcover_high,windspeed_10m,windspeed_100m,winddirection_10m,winddirection_100m&quot;</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="n">new_data</span> <span class="o">=</span> <span class="n">transform_json_weather_data</span><span class="p">(</span><span class="s1">&#39;data/weather-2020.json&#39;</span><span class="p">)</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>    <span class="n">new_data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/main/weather_2020.csv&#39;</span><span class="p">)</span>
-</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add 2020 weather data&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">new_data</span> <span class="o">=</span> <span class="n">new_data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">outfile</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="s2">&quot;https://archive-api.open-meteo.com/v1/archive?latitude=52.52&amp;amp;longitude=13.41&amp;amp;start_date=2020-01-01&amp;amp;end_date=2020-12-31&amp;amp;hourly=temperature_2m,relativehumidity_2m,rain,pressure_msl,surface_pressure,cloudcover,cloudcover_low,cloudcover_mid,cloudcover_high,windspeed_10m,windspeed_100m,winddirection_10m,winddirection_100m&quot;</span><span class="p">)</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">new_data</span> <span class="o">=</span> <span class="n">transform_json_weather_data</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">new_data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/main/weather_2020.csv&#39;</span><span class="p">)</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add 2020 weather data&quot;</span><span class="p">)</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="c1"># Remove leftover temporary files from previous `urlretrieve` calls</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlcleanup</span><span class="p">()</span>
 </span></code></pre></div>
 
 </div>
@@ -1588,43 +1533,161 @@ Initial test data shape: (2184, 15)
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's concatenate the old data and the new data, create a new train-test split, and overwrite the files on lakeFS:</p>
+<p>Let's concatenate the old data and the new data, create a new train-test split, and push the updated files to lakeFS:</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/train_weather.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">df_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/test_weather.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">new_data</span> <span class="o">=</span> <span class="n">new_data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">full_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">new_data</span><span class="p">,</span> <span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">])</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">model_selection</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">full_data</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Updated train data shape: </span><span class="si">{</span><span class="n">train_df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Updated test data shape: </span><span class="si">{</span><span class="n">test_df</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>    <span class="n">train_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/train_weather.csv&#39;</span><span class="p">)</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>    <span class="n">test_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/test_weather.csv&#39;</span><span class="p">)</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">TRAINING_BRANCH</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add train-test split of 2010 and 2020 data&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+<code>Updated train data shape: (13158, 15)
+Updated test data shape: (4386, 15)
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, we train the model on the new data and validate on the new test data.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">train_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">train_df</span><span class="p">[</span><span class="n">dependent_variable</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">test_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">test_df</span><span class="p">[</span><span class="n">dependent_variable</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="n">test_acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test accuracy: </span><span class="si">{</span><span class="n">test_acc</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+<code>Test accuracy: 82.67%
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="accessing-data-versions-through-commits-and-reproducing-experiments">Accessing data versions through commits and reproducing experiments<a class="headerlink" href="#accessing-data-versions-through-commits-and-reproducing-experiments" title="Permanent link">&para;</a></h2>
+<p>If we need to go to our initial data and reproduce the first experiment (the model trained on the 2010 data with its initial accuracy), we can go back in the commit history of the <code>training</code> branch and select the appropriate commit data snapshot. Since we have created multiple commits on the same branch already, we will address different data versions by their commit SHAs. </p>
+<p>To obtain the actual commit SHA from a branch, we have multiple options. Manually, we could go into the lakeFS UI, select the training branch, and navigate to the <strong>Commits</strong> tab. There, we take the parent of the previous commit, titled <code>Add train-test split of 2010 weather data</code>, and copy its revision SHA (also called <code>ID</code>).</p>
+<p>In code, we can use a versioning helper called <code>rev_parse</code> to obtain commit SHAs for different revisions on the <code>training</code> branch.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec.client_helpers</span> <span class="kn">import</span> <span class="n">rev_parse</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="c1"># parent is the parent number of a commit relative to HEAD (the latest commit, for which parent = 0).</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="n">previous_commit</span> <span class="o">=</span> <span class="n">rev_parse</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">TRAINING_BRANCH</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="n">fixed_commit_id</span> <span class="o">=</span> <span class="n">previous_commit</span><span class="o">.</span><span class="n">id</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">fixed_commit_id</span><span class="p">)</span>
+</span></code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+<code>32af95bbb75376cc32a45352178bce001fdbc8f970aacd3e38900d080709ee27
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's check whether we managed to get the initial train and test data with this commit SHA, checking equality to the initial data:</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">orig_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">fixed_commit_id</span><span class="si">}</span><span class="s2">/train_weather.csv&quot;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">orig_test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">fixed_commit_id</span><span class="si">}</span><span class="s2">/test_weather.csv&quot;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Is the pulled training data equal to the local training data? </span><span class="si">{</span><span class="n">train</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">orig_train</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Is the pulled test data equal to the local test data? </span><span class="si">{</span><span class="n">test</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">orig_test</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+<code>Is the pulled training data equal to the local training data? True
+Is the pulled test data equal to the local test data? True
+</code>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Let's train and validate the model again based on the redownloaded data and see if we manage to reproduce the initial accuracy.  </p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">train</span><span class="p">[</span><span class="n">dependent_variable</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">test</span><span class="p">[</span><span class="n">dependent_variable</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
 </span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
-</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="n">full_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">new_data</span><span class="p">,</span> <span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span><span class="p">])</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
 </span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>
-</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="n">train_df</span><span class="p">,</span> <span class="n">test_df</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">model_selection</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">full_data</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="n">test_acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
 </span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>
-</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>    <span class="n">train_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/train_weather.csv&#39;</span><span class="p">)</span>
-</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>    <span class="n">test_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/test_weather.csv&#39;</span><span class="p">)</span>
-</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">TRAINING_BRANCH</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add train-test split of 2010 and 2020 data&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We may now read the updated data directly from lakeFS and check their shape to insure that initial files <code>train_weather.csv</code> and <code>test_weather.csv</code> have been overwritten successfully (number of rows should be significantly higher as 2020 data were added):</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/train_weather.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/test_weather.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
-</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Updated train data shape: </span><span class="si">{</span><span class="n">train</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Updated test data shape: </span><span class="si">{</span><span class="n">test</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test accuracy: </span><span class="si">{</span><span class="n">test_acc</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 
 </div>
@@ -1633,8 +1696,7 @@ Initial test data shape: (2184, 15)
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Updated train data shape: (13122, 15)
-Updated test data shape: (4374, 15)
+<code>Test accuracy: 87.31%
 </code>
 </pre>
 </div>
@@ -1645,150 +1707,8 @@ Updated test data shape: (4374, 15)
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now we may train the model based on the new train data and validate based on the new test data:</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="language-python highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">train</span><span class="p">[</span><span class="n">dependent_variable</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">test</span><span class="p">[</span><span class="n">dependent_variable</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
-</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>
-</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="n">test_acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
-</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>
-</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test accuracy: </span><span class="si">{</span><span class="n">test_acc</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-
-</div>
-<div class="output_wrapper">
-<div class="output">
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>Test accuracy: 84.04%
-</code>
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="accessing-data-version-and-reproducing-experiment">Accessing Data Version and Reproducing Experiment<a class="headerlink" href="#accessing-data-version-and-reproducing-experiment" title="Permanent link">&para;</a></h1>
-<p>Let's assume we need to go to our initial data and reproduce the first experiment (the model trained on the 2010 data with its initial accuracy). This might be tricky as we have overwritten initial train and test data on lakeFS.</p>
-<p>To enable data versioning we should save the <code>ref</code> of the specific datasets. <code>ref</code> can be a branch we are pulling a file from LakeFS. <code>ref</code> can be also a commit id - then you can access different data versions within the same branch and not only the version from the latest commit. Therefore, we will use explicit versioning and get the actual commit SHA. We have multiple ways to do this. Manually, we could go into the lakeFS UI, select the training branch, and navigate to the "Commits" tab. There, we could see the second-latest commit, titled <code>Add train-test split of 2010 weather data</code>, and copy its ID.</p>
-<p>However, we want to automate as much as possible and therefore use a helper function. You find pre-written helper functions in the <code>lakefs_spec.client_helpers</code> module:</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="language-python highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec.client_helpers</span> <span class="kn">import</span> <span class="n">rev_parse</span>
-</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>
-</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="c1"># parent is a relative number of a commit when 0 is the latest</span>
-</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="n">previous_commit</span> <span class="o">=</span> <span class="n">rev_parse</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">client</span><span class="p">,</span> <span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">TRAINING_BRANCH</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="n">fixed_commit_id</span> <span class="o">=</span> <span class="n">previous_commit</span><span class="o">.</span><span class="n">id</span>
-</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">fixed_commit_id</span><span class="p">)</span>
-</span></code></pre></div>
-
-</div>
-<div class="output_wrapper">
-<div class="output">
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>ac4d8ace3ce0f51b3dd8542e5a3c5583959e2c162a3a70ffc8ef6f7869f71cb1
-</code>
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>With our transaction setup, both <code>DataFrame.to_csv()</code> operations are kept in a single commit. To get other commits with the <code>rev_parse</code> function, you can change the <code>repository</code> and <code>branch</code> parameters. To go back in the chosen branch's commit history, you can increase the <code>parent</code> parameter. In our case the initial data was commited two commits ago - we count the latest commit on a branch as 0, thus <code>parent = 1</code>.</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's check whether we manage to get the initial train and test data with this commit SHA, comparing the shape to the initial data shape:</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="language-python highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">fixed_commit_id</span><span class="si">}</span><span class="s2">/train_weather.csv&quot;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">fixed_commit_id</span><span class="si">}</span><span class="s2">/test_weather.csv&quot;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>
-</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;train data shape: </span><span class="si">{</span><span class="n">train</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;test data shape: </span><span class="si">{</span><span class="n">test</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-</span></code></pre></div>
-
-</div>
-<div class="output_wrapper">
-<div class="output">
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>train data shape: (6552, 15)
-test data shape: (2184, 15)
-</code>
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's train and validate the model based on re-fetched data and see whether we manage to reproduce the initial accuracy ratio:  </p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="language-python highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span> <span class="o">=</span> <span class="n">train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">train</span><span class="p">[</span><span class="n">dependent_variable</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">dependent_variable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">test</span><span class="p">[</span><span class="n">dependent_variable</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
-</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
-</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>
-</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="n">test_acc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
-</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>
-</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test accuracy: </span><span class="si">{</span><span class="n">test_acc</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-
-</div>
-<div class="output_wrapper">
-<div class="output">
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>Test accuracy: 86.86%
-</code>
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="using-a-tag-instead-of-a-commit-sha-for-semantic-versioning">Using a tag instead of a commit SHA for semantic versioning<a class="headerlink" href="#using-a-tag-instead-of-a-commit-sha-for-semantic-versioning" title="Permanent link">&para;</a></h1>
-<p>The above method for data versioning works great when you have experiment tracking tools to store and retrieve the commit SHA in automated pipelines. But it is hard to remember and tedious to retrieve in manual prototyping. We can make selected versions of the dataset more accessible with semantic versioning. We attach a human-interpretable tag that points to a specific commit SHA.</p>
+<h2 id="using-tags-instead-of-commit-shas-for-semantic-versioning">Using tags instead of commit SHAs for semantic versioning<a class="headerlink" href="#using-tags-instead-of-commit-shas-for-semantic-versioning" title="Permanent link">&para;</a></h2>
+<p>The above method for data versioning works great when you have experiment tracking tools to store and retrieve the commit SHA in automated pipelines. But it can be tedious to retrieve in manual prototyping. We can make selected versions of the dataset more accessible with semantic versioning by attaching a human-interpretable tag to a specific commit SHA.</p>
 <p>Creating a tag is easiest when done inside a transaction, just like the files we already uploaded. To do this, simply call <code>tx.tag</code> on the transaction and supply the repository name, the commit SHA to tag, and the intended tag name.</p>
 </div>
 </div>
@@ -1796,9 +1716,9 @@ test data shape: (2184, 15)
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>    <span class="c1"># the `tag` result is simply the tag name, in this case &#39;train-test-split-2010&#39;.</span>
-</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>    <span class="n">tag</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">fixed_commit_id</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;train-test-split-2010&#39;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>    <span class="c1"># the `tag` result is simply the tag name, in this case &#39;train-test-split-2010&#39;.</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>    <span class="n">tag</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">REPO_NAME</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">fixed_commit_id</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;train-test-split-2010&#39;</span><span class="p">)</span>
 </span></code></pre></div>
 
 </div>
@@ -1813,9 +1733,8 @@ test data shape: (2184, 15)
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">train_from_branch_head</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">TRAINING_BRANCH</span><span class="si">}</span><span class="s1">/train_weather.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="n">train_from_commit_sha</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">fixed_commit_id</span><span class="si">}</span><span class="s1">/train_weather.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="n">train_from_semantic_tag</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s1">/train_weather.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">train_from_commit</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">fixed_commit_id</span><span class="si">}</span><span class="s1">/train_weather.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">train_from_tag</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lakefs://</span><span class="si">{</span><span class="n">REPO_NAME</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s1">/train_weather.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </span></code></pre></div>
 
 </div>
@@ -1823,16 +1742,14 @@ test data shape: (2184, 15)
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We can verify this by looking at the lengths of the <code>DataFrame</code>s. We see that the <code>train_from_commit_sha</code> and <code>train_from_semantic_tag</code> are equal. </p>
+<p>We can verify this by comparing the <code>DataFrame</code>s. We see that the <code>train_from_commit</code> and <code>train_from_tag</code> are equal.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
-<div class="language-python highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train_from_branch_head</span><span class="p">))</span>
-</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train_from_commit_sha</span><span class="p">))</span>
-</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">train_from_semantic_tag</span><span class="p">))</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is the data tagged </span><span class="si">{</span><span class="n">tag</span><span class="si">!r}</span><span class="s2"> equal to the data in commit </span><span class="si">{</span><span class="n">fixed_commit_id</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">? </span><span class="si">{</span><span class="n">train_from_commit</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">train_from_tag</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 
 </div>
@@ -1841,9 +1758,7 @@ test data shape: (2184, 15)
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>13122
-6552
-6552
+<code>Is the data tagged 'train-test-split-2010' equal to the data in commit 32af95bb? True
 </code>
 </pre>
 </div>
@@ -1857,7 +1772,7 @@ test data shape: (2184, 15)
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-21</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-27</span>
       
     
   </small>
