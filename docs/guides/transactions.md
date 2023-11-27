@@ -68,9 +68,9 @@ The full list of supported lakeFS versioning operations:
     fs.get_file(f"repo/{sha}/my-file.txt", "my-new-file.txt")
     ```
     
-    See the subsection directly below on how to reuse commits created during transactions. 
+    See the following section on how to reuse commits created during transactions. 
 
-### A note on reusing resources created in transactions
+### Reusing resources created in transactions
 
 Some transaction versioning helpers create new objects in the lakeFS instance that are not known before said helpers are actually executed.
 An example of this is a commit SHA, which is only available once created by the lakeFS server.
