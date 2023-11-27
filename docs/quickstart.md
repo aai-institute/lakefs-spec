@@ -2,7 +2,7 @@
 
 Welcome! This quickstart guide will get you up and running with `lakefs-spec` by showing you how to
 
-1. [Install the `lakefs-spec` package](#installing),
+1. [install the `lakefs-spec` package](#installing),
 1. [spin up a local lakeFS server](#spinning-up-a-local-lakefs-instance),
 1. [create a lakeFS repository for experimentation](#create-a-lakefs-repository), and
 1. [perform basic file system operations](#using-the-lakefs-fsspec-file-system)
@@ -13,7 +13,7 @@ in a lakeFS repository using `lakefs-spec`.
     To follow along with this guide, you will need a few prerequisites ready on your machine:
 
     - `lakefs-spec` supports Windows, macOS, or Linux
-    - [Docker](https://www.docker.com/get-started/), with Docker Compose (Podman should work as well, but is untested)
+    - [Docker](https://www.docker.com/get-started/), with Docker Compose
     - [Python 3.9](https://python.org) or later
     - optionally, [`lakectl`](https://docs.lakefs.io/reference/cli.html), the lakeFS command line tool
 
@@ -178,11 +178,10 @@ As the last order of business, let's clean up the repository to its original sta
 
 ## Next Steps
 
-!!! todo
-    These links might refer to pages under development and are subject to change (or being broken)
-
 After this walkthrough of the installation and an introduction to basic file system operations using `lakefs-spec`, you might want to consider more advanced topics:
 
-- [Use Cases for `lakefs-spec`](use-cases.md)
 - [API Reference](reference/lakefs_spec/spec.md)
-- [TODO: User Guide](guides/index.md)
+- [User Guide](guides/index.md), in particular
+    - [How to use the lakeFS file system](guides/filesystem-usage.md)
+    - [How to use `lakefs-spec` with third-party data science libraries](guides/integrations.md)
+- [Tutorial: Using `lakefs-spec` in a data science project](tutorials/demo_data_science_project.ipynb)
