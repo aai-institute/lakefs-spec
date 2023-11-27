@@ -6,11 +6,11 @@ The [fsspec documentation](https://filesystem-spec.readthedocs.io/en/latest/#who
 This user guide page adds more detail on how lakeFS-spec can be used with four prominent data science libraries.
 
 !!! tip "Code Examples"
-    The code examples assume access to an existing lakeFS server with a `quickstart` containing the sample data set repository set up.
+    The code examples assume access to an existing lakeFS server with a `quickstart` repository containing the sample data already set up.
 
-    Please see the [Quickstart guide](../quickstart.md) if you need guidance in getting started.
+    Please see the [Quickstart guide](../quickstart.md) or [lakeFS quickstart guide](https://docs.lakefs.io/quickstart/launch.html){: target="_blank" rel="noopener"} if you need guidance in getting started.
 
-    The relevant lines for the lakeFS-spec integration in these examples are highlighted.
+    The relevant lines for the lakeFS-spec integration in the following code snippets are highlighted.
 
 ## Pandas
 
@@ -22,20 +22,7 @@ See the Pandas documentation on [reading/writing remote files](https://pandas.py
 The following code snippet illustrates how to read and write Pandas data frames in various formats from/to a lakeFS repository in the context of a [transaction](transactions.md):
 
 ```python hl_lines="10 12"
-import pandas as pd
-
-from lakefs_spec.transaction import LakeFSFileSystem
-
-fs = LakeFSFileSystem()
-
-with fs.transaction as tx:
-    tx.create_branch("quickstart", "german-lakes", "main")
-
-    lakes = pd.read_parquet("lakefs://quickstart/main/lakes.parquet")
-    german_lakes = lakes.query('Country == "Germany"')
-    german_lakes.to_csv("lakefs://quickstart/german-lakes/german_lakes.csv")
-
-    tx.commit("quickstart", "german-lakes", "Add German lakes")
+--8<-- "docs/_code/pandas_example.py"
 ```
 
 ## DuckDB
@@ -46,21 +33,7 @@ This allows DuckDB to transparently query and store data located in lakeFS repos
 Similar to the example above, the following code snippet illustrates how to read and write data from/to a lakeFS repository in the context of a [transaction](transactions.md) through the [DuckDB Python API](https://duckdb.org/docs/api/python/overview.html){: target="_blank" rel="noopener"}:
 
 ```python hl_lines="6 11 13"
-import duckdb
-
-from lakefs_spec import LakeFSFileSystem
-
-fs = LakeFSFileSystem()
-duckdb.register_filesystem(fs)  # (1)! 
-
-with fs.transaction as tx:
-    tx.create_branch("quickstart", "german-lakes", "main")
-
-    lakes = duckdb.read_parquet("lakefs://quickstart/main/lakes.parquet")
-    german_lakes = duckdb.sql("SELECT * FROM lakes where Country='Germany'")
-    german_lakes.to_csv("lakefs://quickstart/german-lakes/german_lakes.csv")
-
-    tx.commit("quickstart", "german-lakes", "Add German lakes")
+--8<-- "docs/_code/duckdb_example.py"
 ```
 
 1. Makes the lakeFS-spec file system known to DuckDB (`duckdb.register_filesystem(fsspec.filesystem("lakefs"))` can also be used to avoid the direct import of `LakeFSFileSystem`)
@@ -77,22 +50,7 @@ Again, the following code example demonstrates how to read a Parquet file and sa
 
 
 ```python hl_lines="10 13-14"
-import polars as pl
-
-from lakefs_spec import LakeFSFileSystem
-
-fs = LakeFSFileSystem()
-
-with fs.transaction as tx:
-    tx.create_branch("quickstart", "german-lakes", "main")
-
-    lakes = pl.read_parquet("lakefs://quickstart/main/lakes.parquet")
-    german_lakes = lakes.filter(pl.col("Country") == "Germany")
-
-    with fs.open("lakefs://quickstart/german-lakes/german_lakes.csv", "wb") as f: # (1)!
-        german_lakes.write_csv(f)
-
-    tx.commit("quickstart", "german-lakes", "Add German lakes")
+--8<-- "docs/_code/polars_example.py"
 ```
 
 1. Polars does not support directly writing to remote storage through the `pl.DataFrame.write_*` API (see [docs](https://pola-rs.github.io/polars/user-guide/io/cloud-storage/#writing-to-cloud-storage))
@@ -106,26 +64,5 @@ PyArrow `read_*` and `write_*` functions take an explicit `filesystem` parameter
 The following example code illustrates the use of lakeFS-spec with PyArrow, reading a Parquet file and writing it back to a lakeFS repository as a partitioned CSV dataset in the context of a [transaction](transactions.md):
 
 ```python hl_lines="12 17"
-import pyarrow as pa
-import pyarrow.dataset as ds
-import pyarrow.parquet as pq
-
-from lakefs_spec.spec import LakeFSFileSystem
-
-fs = LakeFSFileSystem()
-
-with fs.transaction as tx:
-    tx.create_branch("quickstart", "partitioned-data", "main")
-
-    lakes_table = pq.read_table("quickstart/main/lakes.parquet", filesystem=fs)
-
-    ds.write_dataset(
-        lakes_table,
-        "quickstart/partitioned-data/lakes",
-        filesystem=fs,
-        format="csv",
-        partitioning=ds.partitioning(pa.schema([lakes_table.schema.field("Country")])),
-    )
-
-    tx.commit("quickstart", "partitioned-data", "Add German lakes")
+--8<-- "docs/_code/pyarrow_example.py"
 ```
