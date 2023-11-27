@@ -6,7 +6,7 @@ The [fsspec documentation](https://filesystem-spec.readthedocs.io/en/latest/#who
 This user guide page adds more detail on how lakeFS-spec can be used with four prominent data science libraries.
 
 !!! tip "Code Examples"
-    The code examples assume access to an existing lakeFS server with a `quickstart` containing the sample data set repository set up.
+    The code examples assume access to an existing lakeFS server with a `quickstart` repository containing the sample data already set up.
 
     Please see the [Quickstart guide](../quickstart.md) or [lakeFS quickstart guide](https://docs.lakefs.io/quickstart/launch.html){: target="_blank" rel="noopener"} if you need guidance in getting started.
 
