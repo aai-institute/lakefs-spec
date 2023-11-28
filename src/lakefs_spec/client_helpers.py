@@ -97,7 +97,7 @@ def create_branch(
     Raises
     ------
     ApiException
-        If a branch with the same name already exists and 'exist_ok' is set to False.
+        If a branch with the same name already exists and ``exist_ok=False``.
     """
 
     try:
@@ -132,12 +132,12 @@ def create_repository(
     Returns
     -------
     Repository
-        Repository object of the lakeFS-SDK representing the newly created or existing repository.
+        Repository object of the lakeFS SDK representing the newly created or existing repository.
 
     Raises
     ------
     ApiException
-        If a repository of the same name already exists and 'exist_ok' is set to False.
+        If a repository of the same name already exists and ``exist_ok=False``.
 
     Notes
     -----
@@ -174,12 +174,12 @@ def create_tag(
     Raises
     ------
     ApiException
-        If a tag of the same name already exists and 'exist_ok' is set to False.
+        If a tag of the same name already exists and ``exist_ok=False``.
 
     Returns
     -------
     Ref
-        Ref object of the lakeFS-sdk representing the newly created or existing tag.
+        Ref object of the lakeFS SDK representing the newly created or existing tag.
     """
 
     if isinstance(ref, Commit):
@@ -277,9 +277,9 @@ def rev_parse(
     repository: str
         Name of the repository where the commit will be searched.
     ref: str | Commit
-        Commit SHA or Commit object (with SHA stored in its 'id' attribute) to resolve.
+        Commit SHA or Commit object (with SHA stored in its ``id`` attribute) to resolve.
     parent: int, optional
-        Number of parent commits to go back from the specified 'ref'. Defaults to 0, which means no parent traversal.
+        Number of parent commits to go back from the specified ``ref``. Defaults to 0, which means no parent traversal.
 
     Returns
     -------
@@ -289,9 +289,9 @@ def rev_parse(
     Raises
     ------
     ValueError
-        - If 'parent' is negative.
+        - If ``parent`` is negative.
         - If the specified number of parent commits exceeds the actual number of available parents.
-        - If the provided 'ref' does not match any revision in the specified repository.
+        - If the provided ``ref`` does not match any revision in the specified repository.
     """
     if parent < 0:
         raise ValueError(f"Parent cannot be negative, got {parent}")
