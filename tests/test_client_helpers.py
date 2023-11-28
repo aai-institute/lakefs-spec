@@ -10,28 +10,20 @@ from _pytest.logging import LogCaptureFixture
 
 import lakefs_spec.client_helpers as client_helpers
 from lakefs_spec import LakeFSFileSystem
-from tests.util import RandomFileFactory
+from tests.util import RandomFileFactory, add_and_commit_change_on_branch
 
 
-def test_create_tag(
-    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str, caplog: LogCaptureFixture
+def test_create_tag(random_file_factory: RandomFileFactory,fs: LakeFSFileSystem, repository: str, temp_branch: str, caplog: LogCaptureFixture
 ) -> None:
+    add_and_commit_change_on_branch(random_file_factory=random_file_factory, fs=fs, repository=repository, temp_branch=temp_branch)
     
-    random_file = random_file_factory.make()
-    lpath = str(random_file)
-    rpath = f"{repository}/{temp_branch}/{random_file.name}"
-
-    fs.put(lpath, rpath, precheck=False)
-
-    client_helpers.commit(
-        client=fs.client, repository=repository, branch=temp_branch, message="Commit File Factory"
-    )
-
     tag = f"Change_{uuid.uuid4()}"
     try:
         new_tag = client_helpers.create_tag(
             client=fs.client, repository=repository, ref=temp_branch, tag=tag
         )
+
+        
         assert tag in [commit.id for commit in client_helpers.list_tags(fs.client, repository)]
         with caplog.at_level(logging.WARNING):
             existing_tag = client_helpers.create_tag(
