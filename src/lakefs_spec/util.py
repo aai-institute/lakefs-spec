@@ -1,25 +1,22 @@
 import hashlib
 import re
-from typing import Callable, Generator, ParamSpec, Protocol, TypeVar
+from typing import Any, Callable, Generator, Protocol
 
+from lakefs_sdk import Pagination
 from lakefs_sdk import __version__ as __lakefs_sdk_version__
-from lakefs_sdk.models import Pagination
 
 lakefs_sdk_version = tuple(int(v) for v in __lakefs_sdk_version__.split("."))
 del __lakefs_sdk_version__
 
-T = TypeVar("T")
-P = ParamSpec("P")
 
-
-class PaginatedApiResponse(Protocol[T]):
+class PaginatedApiResponse(Protocol):
     pagination: Pagination
-    results: list[T]
+    results: list
 
 
 def depaginate(
-    api: Callable[P, PaginatedApiResponse[T]], *args: P.args, **kwargs: P.kwargs
-) -> Generator[T, None, None]:
+    api: Callable[..., PaginatedApiResponse], *args: Any, **kwargs: Any
+) -> Generator[Any, None, None]:
     """Send a number of lakeFS API response documents to a generator."""
     while True:
         resp = api(*args, **kwargs)

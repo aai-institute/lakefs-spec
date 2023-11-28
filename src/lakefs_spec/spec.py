@@ -9,13 +9,13 @@ import urllib.error
 import urllib.request
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator, Literal, overload
+from typing import Any, Generator, Literal, cast, overload
 
 from fsspec import filesystem
 from fsspec.callbacks import Callback, NoOpCallback
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import stringify_path
-from lakefs_sdk import Configuration
+from lakefs_sdk import Configuration, ObjectStats
 from lakefs_sdk.client import LakeFSClient
 from lakefs_sdk.exceptions import ApiException, NotFoundException
 from lakefs_sdk.models import ObjectCopyCreation, StagingMetadata
@@ -319,7 +319,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         info = []
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         with self.wrapped_api_call():
-            for obj in depaginate(self.client.objects_api.list_objects, repository, ref, **kwargs):
+            objects = depaginate(self.client.objects_api.list_objects, repository, ref, **kwargs)
+            for obj in cast(list[ObjectStats], objects):
                 info.append(
                     {
                         "checksum": obj.checksum,
