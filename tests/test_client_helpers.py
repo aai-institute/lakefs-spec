@@ -27,21 +27,21 @@ def test_create_tag(
         temp_branch=temp_branch,
     )
 
-    tag = f"Change_{uuid.uuid4()}"
+    tagname = f"Change_{uuid.uuid4()}"
     try:
-        new_tag = client_helpers.create_tag(
-            client=fs.client, repository=repository, ref=temp_branch, tag=tag
+        tag = client_helpers.create_tag(
+            client=fs.client, repository=repository, ref=temp_branch, tag=tagname
         )
 
-        assert tag in [commit.id for commit in client_helpers.list_tags(fs.client, repository)]
+        assert tag in client_helpers.list_tags(fs.client, repository)
         with caplog.at_level(logging.WARNING):
             existing_tag = client_helpers.create_tag(
-                client=fs.client, repository=repository, ref=temp_branch, tag=tag, exist_ok=True
+                client=fs.client, repository=repository, ref=temp_branch, tag=tagname, exist_ok=True
             )
         assert re.search("tag .* already exists", caplog.text)
-        assert new_tag == existing_tag
+        assert tag == existing_tag
     finally:
-        fs.client.tags_api.delete_tag(repository=repository, tag=tag)
+        fs.client.tags_api.delete_tag(repository=repository, tag=tagname)
 
 
 def test_delete_tag(
@@ -54,11 +54,11 @@ def test_delete_tag(
         temp_branch=temp_branch,
     )
 
-    tag = f"Change_{uuid.uuid4()}"
-    client_helpers.create_tag(client=fs.client, repository=repository, ref=temp_branch, tag=tag)
-    assert tag in [commit.id for commit in client_helpers.list_tags(fs.client, repository)]
-    client_helpers.delete_tag(client=fs.client, repository=repository, tag=tag)
-    assert tag not in [commit.id for commit in client_helpers.list_tags(fs.client, repository)]
+    tagname = f"Change_{uuid.uuid4()}"
+    tag = client_helpers.create_tag(client=fs.client, repository=repository, ref=temp_branch, tag=tagname)
+    assert tag in client_helpers.list_tags(fs.client, repository)
+    client_helpers.delete_tag(client=fs.client, repository=repository, tag=tagname)
+    assert tag not in client_helpers.list_tags(fs.client, repository)
 
 
 def test_merge_into_branch(
