@@ -185,10 +185,11 @@ def create_tag(client: LakeFSClient, repository: str, ref: str | Commit, tag: st
     try:
         return client.tags_api.create_tag(repository=repository, tag_creation=tag_creation)
     except ApiException as e:
-        target_commit = rev_parse(client=client, repository=repository, ref=ref)
-        existing_tag = client.tags_api.get_tag(repository=repository, tag=tag)
-        if e.status == 409 and existing_tag.commit_id == target_commit.id:
-            return existing_tag
+        if e.status == 409:
+            target_commit = rev_parse(client=client, repository=repository, ref=ref)
+            existing_tag = client.tags_api.get_tag(repository=repository, tag=tag)
+            if existing_tag.commit_id == target_commit.id:
+                return existing_tag
         raise e
 
 
