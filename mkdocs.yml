@@ -34,6 +34,10 @@ nav:
 exclude_docs: |
   use-cases.md
 
+# Rebuild docs in `mkdocs serve` for changes in source code
+watch:
+  - src/
+
 plugins:
   - callouts
   - gen-files:
