@@ -1,9 +1,9 @@
+import logging
 import random
+import re
 import string
 import uuid
 from typing import Any
-import logging
-import re
 
 import pytest
 from _pytest.logging import LogCaptureFixture
@@ -13,17 +13,26 @@ from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory, add_and_commit_change_on_branch
 
 
-def test_create_tag(random_file_factory: RandomFileFactory,fs: LakeFSFileSystem, repository: str, temp_branch: str, caplog: LogCaptureFixture
+def test_create_tag(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: str,
+    temp_branch: str,
+    caplog: LogCaptureFixture,
 ) -> None:
-    add_and_commit_change_on_branch(random_file_factory=random_file_factory, fs=fs, repository=repository, temp_branch=temp_branch)
-    
+    add_and_commit_change_on_branch(
+        random_file_factory=random_file_factory,
+        fs=fs,
+        repository=repository,
+        temp_branch=temp_branch,
+    )
+
     tag = f"Change_{uuid.uuid4()}"
     try:
         new_tag = client_helpers.create_tag(
             client=fs.client, repository=repository, ref=temp_branch, tag=tag
         )
 
-        
         assert tag in [commit.id for commit in client_helpers.list_tags(fs.client, repository)]
         with caplog.at_level(logging.WARNING):
             existing_tag = client_helpers.create_tag(
@@ -33,6 +42,23 @@ def test_create_tag(random_file_factory: RandomFileFactory,fs: LakeFSFileSystem,
         assert new_tag == existing_tag
     finally:
         fs.client.tags_api.delete_tag(repository=repository, tag=tag)
+
+
+def test_delete_tag(
+    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
+) -> None:
+    add_and_commit_change_on_branch(
+        random_file_factory=random_file_factory,
+        fs=fs,
+        repository=repository,
+        temp_branch=temp_branch,
+    )
+
+    tag = f"Change_{uuid.uuid4()}"
+    client_helpers.create_tag(client=fs.client, repository=repository, ref=temp_branch, tag=tag)
+    assert tag in [commit.id for commit in client_helpers.list_tags(fs.client, repository)]
+    client_helpers.delete_tag(client=fs.client, repository=repository, tag=tag)
+    assert tag not in [commit.id for commit in client_helpers.list_tags(fs.client, repository)]
 
 
 def test_merge_into_branch(
