@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 
 from lakefs_sdk import BranchCreation
@@ -92,8 +93,10 @@ def create_repository(
         repository_creation = RepositoryCreation(name=name, storage_namespace=storage_namespace)
         return client.repositories_api.create_repository(repository_creation=repository_creation)
     except ApiException as e:
-        if e.status == 400 and "namespace already in use" in e.body and exist_ok:
-            return client.repositories_api.get_repository(name)
+        if exist_ok:
+            msg: str = json.loads(e.body)["message"]
+            if e.status == 400 and msg.endswith("namespace already in use") or e.status == 409:
+                return client.repositories_api.get_repository(name)
         raise e
 
 
