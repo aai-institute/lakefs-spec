@@ -182,7 +182,7 @@ def test_rev_parse_error_on_parent_does_not_exist(
     non_existent_parent = n_commits + 1
     with pytest.raises(
         ValueError,
-        match=f"cannot fetch revision {temp_branch}~{non_existent_parent}",
+        match=f"unable to fetch revision {temp_branch}~{non_existent_parent}",
     ):
         client_helpers.rev_parse(
             client=fs.client, repository=repository, ref=temp_branch, parent=non_existent_parent

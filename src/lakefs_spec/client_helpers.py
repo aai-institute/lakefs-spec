@@ -24,6 +24,8 @@ from lakefs_sdk.models import (
     TagCreation,
 )
 
+from lakefs_spec.util import depaginate
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -210,7 +212,7 @@ def list_tags(client: LakeFSClient, repository: str) -> list[Ref]:
     list[Ref]
         Ref objects of the tag in the repository.
     """
-    return client.tags_api.list_tags(repository=repository).results
+    return list(depaginate(client.tags_api.list_tags, repository))
 
 
 def merge(client: LakeFSClient, repository: str, source_ref: str, target_branch: str) -> None:
@@ -294,16 +296,18 @@ def rev_parse(
         - If the provided ``ref`` does not match any revision in the specified repository.
     """
     if parent < 0:
-        raise ValueError(f"Parent cannot be negative, got {parent}")
+        raise ValueError("Parent number cannot be negative")
     try:
         if isinstance(ref, Commit):
             ref = ref.id
-        revisions = client.refs_api.log_commits(
-            repository=repository, ref=ref, limit=True, amount=2 * (parent + 1)
-        ).results
+        revisions = list(
+            depaginate(
+                client.refs_api.log_commits, repository, ref, limit=True, amount=2 * (parent + 1)
+            )
+        )
         if len(revisions) <= parent:
             raise ValueError(
-                f"cannot fetch revision {ref}~{parent}: "
+                f"unable to fetch revision {ref}~{parent}: "
                 f"ref {ref!r} only has {len(revisions)} parents"
             )
         return revisions[parent]
