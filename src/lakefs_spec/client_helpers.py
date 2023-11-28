@@ -193,6 +193,21 @@ def create_tag(
             logger.warning(f"The tag, '{tag}' already exists. It was not reassigned.")
             return client.tags_api.get_tag(repository=repository, tag=tag)
         raise e
+    
+def delete_tag(client: LakeFSClient, repository: str, tag:str) -> None:
+    """
+    Delete the specified tag from a repository.
+
+    Parameters
+    ----------
+    client : LakeFSClient
+        lakeFS client object.
+    repository : str
+        Name of the repository from which the tag will be deleted.
+    tag : str
+        Name of the tag to be deleted.
+    """
+    client.tags_api.delete_tag(repository=repository, tag=tag)
 
 
 def list_tags(client: LakeFSClient, repository: str) -> list[Ref]:
