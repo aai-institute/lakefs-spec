@@ -153,7 +153,7 @@ def create_repository(
 
 
 def create_tag(
-    client: LakeFSClient, repository: str, ref: str | Commit, tag: str, exist_ok: bool = True
+    client: LakeFSClient, repository: str, ref: str | Commit, tag: str, exist_ok: bool = False
 ) -> Ref:
     """
     Create a new tag in the specified repository in the lakeFS file storage system.
@@ -190,6 +190,7 @@ def create_tag(
         return client.tags_api.create_tag(repository=repository, tag_creation=tag_creation)
     except ApiException as e:
         if e.status == 409 and exist_ok:
+            logger.warning(f"The tag, '{tag}' already exists. It was not reassigned.")
             return client.tags_api.get_tag(repository=repository, tag=tag)
         raise e
 
