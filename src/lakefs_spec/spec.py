@@ -17,13 +17,13 @@ from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from lakefs_sdk import Configuration
 from lakefs_sdk.client import LakeFSClient
 from lakefs_sdk.exceptions import ApiException, NotFoundException
-from lakefs_sdk.models import ObjectCopyCreation, ObjectStatsList, StagingMetadata
+from lakefs_sdk.models import ObjectCopyCreation, StagingMetadata
 
 from lakefs_spec.client_helpers import create_branch
 from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
-from lakefs_spec.util import md5_checksum, parse
+from lakefs_spec.util import depaginate, md5_checksum, parse
 
 _DEFAULT_CALLBACK = NoOpCallback()
 
@@ -266,27 +266,22 @@ class LakeFSFileSystem(AbstractFileSystem):
                     return [e["name"] for e in cache_entry]
                 return cache_entry
 
-        has_more, after = True, ""
-        # stat infos are either the path only (`detail=False`) or a dict full of metadata
-        info: list[Any] = []
+        kwargs["prefix"] = prefix
 
+        info = []
+        # stat infos are either the path only (`detail=False`) or a dict full of metadata
         with self.wrapped_api_call():
-            while has_more:
-                res: ObjectStatsList = self.client.objects_api.list_objects(
-                    repository, ref, after=after, prefix=prefix, **kwargs
+            for obj in depaginate(self.client.objects_api.list_objects, repository, ref, **kwargs):
+                info.append(
+                    {
+                        "checksum": obj.checksum,
+                        "content-type": obj.content_type,
+                        "mtime": obj.mtime,
+                        "name": f"{repository}/{ref}/{obj.path}",
+                        "size": obj.size_bytes,
+                        "type": "file",
+                    }
                 )
-                has_more, after = res.pagination.has_more, res.pagination.next_offset
-                for obj in res.results:
-                    info.append(
-                        {
-                            "checksum": obj.checksum,
-                            "content-type": obj.content_type,
-                            "mtime": obj.mtime,
-                            "name": f"{repository}/{ref}/{obj.path}",
-                            "size": obj.size_bytes,
-                            "type": "file",
-                        }
-                    )
 
         # cache the info if not empty.
         if info:
