@@ -9,7 +9,7 @@ import urllib.error
 import urllib.request
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator, Literal, cast, overload
+from typing import Any, Generator, Iterable, Literal, cast, overload
 
 from fsspec import filesystem
 from fsspec.callbacks import Callback, NoOpCallback
@@ -320,7 +320,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         with self.wrapped_api_call():
             objects = depaginate(self.client.objects_api.list_objects, repository, ref, **kwargs)
-            for obj in cast(list[ObjectStats], objects):
+            for obj in cast(Iterable[ObjectStats], objects):
                 info.append(
                     {
                         "checksum": obj.checksum,
