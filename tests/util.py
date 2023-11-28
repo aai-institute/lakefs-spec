@@ -97,5 +97,8 @@ def commit_random_file_on_branch(
     fs.put(lpath, rpath, precheck=False)
 
     commit = client_helpers.commit(
-        client=fs.client, repository=repository, branch=temp_branch, message="Commit File Factory"
+        client=fs.client,
+        repository=repository,
+        branch=temp_branch,
+        message=f"Add file {random_file.name!r}",
     )

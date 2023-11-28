@@ -193,7 +193,7 @@ def create_tag(client: LakeFSClient, repository: str, ref: str | Commit, tag: st
         raise e
 
 
-def delete_tag(client: LakeFSClient, repository: str, tag: str | Ref ) -> None:
+def delete_tag(client: LakeFSClient, repository: str, tag: str | Ref) -> None:
     """
     Delete the specified tag from a repository.
 
