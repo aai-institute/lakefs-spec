@@ -28,9 +28,3 @@ table {
 .celltag_Remove_single_output {
     display: none !important
 }
-
-/* Need to remove margin, since the template renders a div containing whitespace
-   when not enabling the banner, so using the :empty selector is not possible */
-.md-banner__inner {
-    margin: 0;
-}

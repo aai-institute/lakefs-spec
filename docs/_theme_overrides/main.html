@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 {% block announce %}
-{% if config.extra.pre_release %}
-  <!-- Need to reapply margin from base template, which is removed in CSS (to fix empty banner) -->
-  <div style="margin: 0.6rem auto">
-    You are currently viewing <strong>development</strong> documentation. This may contain features that have not yet been released. For the most accurate information, please <strong><a href="{{ '../' ~ base_url }}">access the latest release</a></strong>.
-  </div>
-{% endif %}
+{%- if config.extra.pre_release -%}
+You are currently viewing <strong>pre-release</strong> documentation. This may contain features that have not yet been
+released. For the most accurate information, please <strong><a href="{{ '../' ~ base_url }}">access the latest
+    release</a></strong>.
+{%- endif -%}
 {% endblock %}
