@@ -1,12 +1,10 @@
-import logging
 import random
-import re
 import string
 import uuid
 from typing import Any
 
 import pytest
-from _pytest.logging import LogCaptureFixture
+from lakefs_sdk.exceptions import ApiException
 
 import lakefs_spec.client_helpers as client_helpers
 from lakefs_spec import LakeFSFileSystem
@@ -14,11 +12,7 @@ from tests.util import RandomFileFactory, commit_random_file_on_branch
 
 
 def test_create_tag(
-    random_file_factory: RandomFileFactory,
-    fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
-    caplog: LogCaptureFixture,
+    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
 ) -> None:
     commit_random_file_on_branch(
         random_file_factory=random_file_factory,
@@ -34,14 +28,41 @@ def test_create_tag(
         )
 
         assert tag in client_helpers.list_tags(fs.client, repository)
-        with caplog.at_level(logging.WARNING):
-            existing_tag = client_helpers.create_tag(
-                client=fs.client, repository=repository, ref=temp_branch, tag=tagname, exist_ok=True
-            )
-        assert re.search("tag .* already exists", caplog.text)
+        existing_tag = client_helpers.create_tag(
+            client=fs.client, repository=repository, ref=temp_branch, tag=tagname
+        )
         assert tag == existing_tag
     finally:
         fs.client.tags_api.delete_tag(repository=repository, tag=tagname)
+
+
+def test_cannot_reassign_tag(
+    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
+) -> None:
+    commit_random_file_on_branch(
+        random_file_factory=random_file_factory,
+        fs=fs,
+        repository=repository,
+        temp_branch=temp_branch,
+    )
+
+    tagname = f"Change_{uuid.uuid4()}"
+    try:
+        tag = client_helpers.create_tag(
+            client=fs.client, repository=repository, ref=temp_branch, tag=tagname
+        )
+        commit_random_file_on_branch(
+            random_file_factory=random_file_factory,
+            fs=fs,
+            repository=repository,
+            temp_branch=temp_branch,
+        )
+        with pytest.raises(ApiException):
+            tag = client_helpers.create_tag(
+                client=fs.client, repository=repository, ref=temp_branch, tag=tagname
+            )
+    finally:
+        client_helpers.delete_tag(client=fs.client, repository=repository, tag=tagname)
 
 
 def test_delete_tag(
@@ -55,7 +76,9 @@ def test_delete_tag(
     )
 
     tagname = f"Change_{uuid.uuid4()}"
-    tag = client_helpers.create_tag(client=fs.client, repository=repository, ref=temp_branch, tag=tagname)
+    tag = client_helpers.create_tag(
+        client=fs.client, repository=repository, ref=temp_branch, tag=tagname
+    )
     assert tag in client_helpers.list_tags(fs.client, repository)
     client_helpers.delete_tag(client=fs.client, repository=repository, tag=tagname)
     assert tag not in client_helpers.list_tags(fs.client, repository)
