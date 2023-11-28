@@ -2,8 +2,11 @@ import random
 import string
 import uuid
 from typing import Any
+import logging
+import re
 
 import pytest
+from _pytest.logging import LogCaptureFixture
 
 import lakefs_spec.client_helpers as client_helpers
 from lakefs_spec import LakeFSFileSystem
@@ -11,8 +14,9 @@ from tests.util import RandomFileFactory
 
 
 def test_create_tag(
-    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
+    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str, caplog: LogCaptureFixture
 ) -> None:
+    
     random_file = random_file_factory.make()
     lpath = str(random_file)
     rpath = f"{repository}/{temp_branch}/{random_file.name}"
@@ -29,9 +33,11 @@ def test_create_tag(
             client=fs.client, repository=repository, ref=temp_branch, tag=tag
         )
         assert tag in [commit.id for commit in client_helpers.list_tags(fs.client, repository)]
-        existing_tag = client_helpers.create_tag(
-            client=fs.client, repository=repository, ref=temp_branch, tag=tag
-        )
+        with caplog.at_level(logging.WARNING):
+            existing_tag = client_helpers.create_tag(
+                client=fs.client, repository=repository, ref=temp_branch, tag=tag, exist_ok=True
+            )
+        assert re.search(".*already exists.*not reassigned.*", caplog.text)
         assert new_tag == existing_tag
     finally:
         fs.client.tags_api.delete_tag(repository=repository, tag=tag)
