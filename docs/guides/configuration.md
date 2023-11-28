@@ -5,13 +5,13 @@ This guide introduces them in the order of least to most in-Python configuration
 
 !!! Info
     
-    The configuration methods are introduced in reverse order of precedence - config file arguments have the lowest priority, environment variables have medium priority, and constructor arguments have the highest priority.
+    The configuration methods are introduced in reverse order of precedence - config file arguments have the lowest priority and are overwritten by environment variables (if specified).
 
 ## The `.lakectl.yaml` configuration file
 
 The easiest way of configuring the lakeFS file system is with a `lakectl` YAML configuration file. To address a lakeFS server, the following minimum configuration is required:
 
-```yaml
+```yaml title="~/.lakectl.yaml"
 credentials:
   access_key_id: <ID>
   secret_access_key: <KEY>
@@ -21,7 +21,7 @@ server:
 
 For a local instance produced by the [quickstart](../quickstart.md), the following values will work:
 
-```yaml
+```yaml title="~/.lakectl.yaml"
 credentials:
   access_key_id: AKIAIOSFOLQUICKSTART
   secret_access_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
@@ -66,33 +66,17 @@ fs = LakeFSFileSystem()
 
 !!! Info
     
-    Not all initialization values can be set via environment variables - the `proxy`, `create_branch_ok`, `source_branch`, and `storage_options` arguments can only be supplied in Python.
-
-## Using constructor arguments
-
-The most straightforward way is to simply supply the values to your lakeFS file system in Python:
-
-```python
-from lakefs_spec import LakeFSFileSystem
-
-fs = LakeFSFileSystem(
-    host="http://my-lakefs.host",
-    username="my-username",
-    password="my-password",
-)
-```
-
-Beware that this method of configuration can leak sensitive information when using fixed, constant values and checking them into version control systems.
+    Not all initialization values can be set via environment variables - the `proxy`, `create_branch_ok`, and `source_branch` arguments can only be supplied in Python.
 
 ## Appendix: Mixing zero-config methods
 
 Two of the introduced methods allow for "zero-config" (i.e. no arguments given to the constructor) initialization of the file system.
 However, care must be taken when working with different file systems configured by the same means (for example, file systems configured with separate environment variables).
 
-The reason for this is the [instance caching mechanism](https://filesystem-spec.readthedocs.io/en/latest/features.html#instance-caching) built into `fsspec`.
+The reason for this is the [instance caching mechanism](https://filesystem-spec.readthedocs.io/en/latest/features.html#instance-caching) built into fsspec.
 While this allows for efficient reuse of file systems e.g. by third-party libraries (pandas, DuckDB, ...), it can lead to silent misconfigurations. Consider this example, with an existent `.lakectl.yaml` file:
 
-```yaml title="$HOME/.lakectl.yaml"
+```yaml title="~/.lakectl.yaml"
 credentials:
   access_key_id: AKIAIOSFOLQUICKSTART
   secret_access_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY

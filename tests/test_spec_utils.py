@@ -32,6 +32,13 @@ def test_path_parsing():
     assert ref == "a"
     assert resource == "resource.txt"
 
+    # case 5: well-formed path with leading lakefs:// scheme
+    path = "lakefs://my-repo/my-ref/resource.txt"
+    repo, ref, resource = parse(path)
+    assert repo == "my-repo"
+    assert ref == "my-ref"
+    assert resource == "resource.txt"
+
     # ----------------- Failure cases -------------------
     # repo name illegally begins with hyphen
     path = "-repo/my-ref/resource.txt"

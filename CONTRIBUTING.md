@@ -1,11 +1,11 @@
-# Developing on `lakefs-spec`
+# Contributing to lakeFS-spec
 
 Thank you for your interest in contributing to this project!
 
 We appreciate issue reports, pull requests for code and documentation,
 as well as any project-related communication through [GitHub Discussions](https://github.com/aai-institute/lakefs-spec/discussions).
 
-## Quickstart
+## Getting Started
 
 To get started with development, you can follow these steps:
 
@@ -73,18 +73,19 @@ If you want to update the `lakefs-sdk` dependency, for example, simply run:
 hack/lock-deps.sh lakefs-sdk
 ```
 
-⚠️ Since the official development version is Python 3.11, please run the above commands in a virtual environment with Python 3.11.
+> [!IMPORTANT]
+> Since the official development version is Python 3.11, please run the above commands in a virtual environment with Python 3.11.
 
 ## Working on Documentation
 
 Improvements or additions to the project's documentation are highly appreciated.
 
-The documentation is based on the [`mkdocs`](https://mkdocs.org) and [`mkdocs-material`](https://squidfunk.github.io/mkdocs-material/) projects, see their homepages for in-depth guides on their features and usage. We use the [Numpy documentation style](https://numpydoc.readthedocs.io/en/latest/format.html) for Python docstrings.
+The documentation is based on the [MkDocs](http://mkdocs.org) and [Material for MkDocs (`mkdocs-material`)](https://squidfunk.github.io/mkdocs-material/) projects, see their homepages for in-depth guides on their features and usage. We use the [Numpy documentation style](https://numpydoc.readthedocs.io/en/latest/format.html) for Python docstrings.
 
 To build the documentation locally, you need to first install the optional `docs` dependencies from `requirements-docs.txt`,
 e.g., with `pip install -r requirements-docs.txt`. You can then start a local documentation server with `mkdocs serve`, or
 build the documentation into its output folder in `public/`.
 
-In order to maintain documentation for multiple versions of this library, we use the [`mike`](https://github.com/jimporter/mike) tool, which automatically maintains individual documentation builds per version and publishes them to the `gh-pages` branch.
+In order to maintain documentation for multiple versions of this library, we use the [mike](https://github.com/jimporter/mike) tool, which automatically maintains individual documentation builds per version and publishes them to the `gh-pages` branch.
 
 The GitHub CI pipeline automatically invokes `mike` as part of the release process with the correct version and updates the GitHub pages branch for the project.

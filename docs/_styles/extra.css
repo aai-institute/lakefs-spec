@@ -12,10 +12,18 @@ table {
     white-space: nowrap;
 }
 
-.landing-page-icon {
+.nt-card .landing-page-icon {
     color: #b7c6cf;
 }
 
-.landing-page-icon:hover {
+.nt-card:hover .landing-page-icon {
     color: var(--md-accent-fg-color);
+}
+
+.celltag_remove_input,
+.celltag_remove_output,
+.celltag_Remove_input,
+.celltag_Remove_all_output,
+.celltag_Remove_single_output {
+    display: none !important
 }

@@ -60,7 +60,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         **storage_options: Any,
     ):
         """
-        The LakeFS file system constructor.
+        The lakeFS file system constructor.
 
         Parameters
         ----------
@@ -251,36 +251,44 @@ class LakeFSFileSystem(AbstractFileSystem):
     def info(self, path: str, **kwargs: Any) -> dict[str, Any]:
         path = self._strip_protocol(path)
 
-        # input path is a directory name
-        if path.endswith("/"):
-            out = self.ls(path, detail=True, **kwargs)
-            if not out:
-                raise FileNotFoundError(path)
+        repository, ref, resource = parse(path)
+        # first, try with `stat_object` in case of a file.
+        # the condition below checks edge cases of resources that cannot be files.
+        if resource and not resource.endswith("/"):
+            try:
+                # the set of keyword arguments allowed in `list_objects` is a
+                # superset of the keyword arguments for `stat_object`.
+                # Ensure that only admissible keyword arguments are actually
+                # passed to `stat_object`.
+                stat_keywords = ["presign", "user_metadata"]
+                stat_kwargs = {k: v for k, v in kwargs.items() if k in stat_keywords}
 
-            resource = path.split("/", maxsplit=2)[-1]
-            statobj = {
-                "name": resource,
-                "size": sum(o.get("size", 0) for o in out),
-                "type": "directory",
-            }
-        # input path is a file name
-        else:
-            with self.wrapped_api_call():
-                repository, ref, resource = parse(path)
                 res = self.client.objects_api.stat_object(
-                    repository=repository, ref=ref, path=resource, **kwargs
+                    repository=repository, ref=ref, path=resource, **stat_kwargs
                 )
+                return {
+                    "checksum": res.checksum,
+                    "content-type": res.content_type,
+                    "mtime": res.mtime,
+                    "name": f"{repository}/{ref}/{res.path}",
+                    "size": res.size_bytes,
+                    "type": "file",
+                }
+            except NotFoundException:
+                # fall through, retry with `ls` if it's a directory.
+                pass
+            except ApiException as e:
+                raise translate_lakefs_error(e)
 
-            statobj = {
-                "checksum": res.checksum,
-                "content-type": res.content_type,
-                "mtime": res.mtime,
-                "name": res.path,
-                "size": res.size_bytes,
-                "type": "file",
-            }
+        out = self.ls(path, detail=True, **kwargs)
+        if not out:
+            raise FileNotFoundError(path)
 
-        return statobj
+        return {
+            "name": path.rstrip("/"),
+            "size": sum(o.get("size", 0) for o in out),
+            "type": "directory",
+        }
 
     def ls(self, path: str, detail: bool = True, **kwargs: Any) -> list:
         path = self._strip_protocol(path)
