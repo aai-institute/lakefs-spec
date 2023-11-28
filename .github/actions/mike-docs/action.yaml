@@ -10,6 +10,9 @@ inputs:
     description: Whether to push the built documentation to the repository
     required: true
     default: "false"
+  pre_release:
+    description: Whether this version is a pre-release version (to render a notification banner)
+    default: "false"
 runs:
   using: "composite"
   steps:
@@ -21,7 +24,9 @@ runs:
       git config user.name "github-actions[bot]"
       git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
     shell: bash
-  - run: |
+  - env:
+      DOCS_PRERELEASE: ${{ inputs.pre_release }}
+    run: |
       MIKE_OPTIONS=( "--update-aliases" )
       if [ "true" = "${{ inputs.push }}" ]; then
         MIKE_OPTIONS+=( "--push" )
