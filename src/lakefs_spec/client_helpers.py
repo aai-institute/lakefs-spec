@@ -193,7 +193,7 @@ def create_tag(client: LakeFSClient, repository: str, ref: str | Commit, tag: st
         raise e
 
 
-def delete_tag(client: LakeFSClient, repository: str, tag: str) -> None:
+def delete_tag(client: LakeFSClient, repository: str, tag: str | Ref ) -> None:
     """
     Delete the specified tag from a repository.
 
@@ -206,7 +206,12 @@ def delete_tag(client: LakeFSClient, repository: str, tag: str) -> None:
     tag : str
         Name of the tag to be deleted.
     """
-    client.tags_api.delete_tag(repository=repository, tag=tag)
+    if isinstance(tag, str):
+        client.tags_api.delete_tag(repository=repository, tag=tag)
+    elif isinstance(tag, Ref):
+        client.tags_api.delete_tag(repository=repository, tag=tag.id)
+    else:
+        raise ValueError(r"Type of tag must be str or Ref.")
 
 
 def list_tags(client: LakeFSClient, repository: str) -> list[Ref]:

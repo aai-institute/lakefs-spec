@@ -48,7 +48,7 @@ def test_cannot_reassign_tag(
 
     tagname = f"Change_{uuid.uuid4()}"
     try:
-        tag = client_helpers.create_tag(
+        client_helpers.create_tag(
             client=fs.client, repository=repository, ref=temp_branch, tag=tagname
         )
         commit_random_file_on_branch(
@@ -58,7 +58,7 @@ def test_cannot_reassign_tag(
             temp_branch=temp_branch,
         )
         with pytest.raises(ApiException):
-            tag = client_helpers.create_tag(
+            client_helpers.create_tag(
                 client=fs.client, repository=repository, ref=temp_branch, tag=tagname
             )
     finally:
