@@ -34,6 +34,10 @@ nav:
 exclude_docs: |
   use-cases.md
 
+# Rebuild docs in `mkdocs serve` for changes in source code
+watch:
+  - src/
+
 plugins:
   - callouts
   - gen-files:
@@ -53,6 +57,7 @@ plugins:
             show_bases: true
             members_order: source
             separate_signature: true
+            show_signature_annotations: true
             signature_crossrefs: true
             merge_init_into_class: false
   - mknotebooks:
