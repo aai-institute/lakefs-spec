@@ -10,7 +10,7 @@ from _pytest.logging import LogCaptureFixture
 
 import lakefs_spec.client_helpers as client_helpers
 from lakefs_spec import LakeFSFileSystem
-from tests.util import RandomFileFactory, add_and_commit_change_on_branch
+from tests.util import RandomFileFactory, commit_random_file_on_branch
 
 
 def test_create_tag(
@@ -20,7 +20,7 @@ def test_create_tag(
     temp_branch: str,
     caplog: LogCaptureFixture,
 ) -> None:
-    add_and_commit_change_on_branch(
+    commit_random_file_on_branch(
         random_file_factory=random_file_factory,
         fs=fs,
         repository=repository,
@@ -47,7 +47,7 @@ def test_create_tag(
 def test_delete_tag(
     random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
 ) -> None:
-    add_and_commit_change_on_branch(
+    commit_random_file_on_branch(
         random_file_factory=random_file_factory,
         fs=fs,
         repository=repository,

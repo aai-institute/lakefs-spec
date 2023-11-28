@@ -87,7 +87,7 @@ class RandomFileFactory:
         return random_file
 
 
-def add_and_commit_change_on_branch(
+def commit_random_file_on_branch(
     random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
 ) -> None:
     random_file = random_file_factory.make()
@@ -99,4 +99,3 @@ def add_and_commit_change_on_branch(
     commit = client_helpers.commit(
         client=fs.client, repository=repository, branch=temp_branch, message="Commit File Factory"
     )
-    print("did commit", commit.id)
