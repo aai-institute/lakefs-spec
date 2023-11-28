@@ -190,7 +190,7 @@ def create_tag(
         return client.tags_api.create_tag(repository=repository, tag_creation=tag_creation)
     except ApiException as e:
         if e.status == 409 and exist_ok:
-            logger.warning(f"The tag, '{tag}' already exists. It was not reassigned.")
+            logger.warning(f"tag {tag!r} already exists and is immutable")
             return client.tags_api.get_tag(repository=repository, tag=tag)
         raise e
 

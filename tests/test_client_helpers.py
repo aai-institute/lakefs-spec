@@ -38,7 +38,7 @@ def test_create_tag(
             existing_tag = client_helpers.create_tag(
                 client=fs.client, repository=repository, ref=temp_branch, tag=tag, exist_ok=True
             )
-        assert re.search(".*already exists.*not reassigned.*", caplog.text)
+        assert re.search("tag .* already exists", caplog.text)
         assert new_tag == existing_tag
     finally:
         fs.client.tags_api.delete_tag(repository=repository, tag=tag)
