@@ -57,10 +57,11 @@ def test_cannot_reassign_tag(
             repository=repository,
             temp_branch=temp_branch,
         )
-        with pytest.raises(ApiException):
+        with pytest.raises(ApiException) as e:
             client_helpers.create_tag(
                 client=fs.client, repository=repository, ref=temp_branch, tag=tagname
             )
+            assert e.status == 409
     finally:
         client_helpers.delete_tag(client=fs.client, repository=repository, tag=tagname)
 
