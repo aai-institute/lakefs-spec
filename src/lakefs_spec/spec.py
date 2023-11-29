@@ -194,7 +194,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         **kwargs: Any,
     ) -> None:
         rpath = stringify_path(rpath)
-        lpath = stringify_path(rpath)
+        lpath = stringify_path(lpath)
         lp = Path(lpath)
         if precheck and lp.exists() and lp.is_file():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
