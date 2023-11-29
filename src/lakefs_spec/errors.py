@@ -1,3 +1,10 @@
+"""
+Contains the error translation facilities to map lakeFS API errors to Python-native OS errors in the lakeFS file system.
+
+This is important to honor the fsspec API contract, which allows users to only deal with Python builtin exceptions to
+avoid complicated error handling setups.
+"""
+
 from __future__ import annotations
 
 import errno
@@ -20,7 +27,11 @@ def translate_lakefs_error(
     set_cause: bool = True,
     *args: Any,
 ) -> OSError:
-    """Convert a lakeFS client ApiException into a Python exception.
+    """
+    Convert a lakeFS API exception to a Python builtin exception.
+
+    For some subclasses of ``lakefs_sdk.ApiException``, a direct Python builtin equivalent exists.
+    In these cases, the suitable equivalent is returned. All other classes are converted to a standard ``IOError``.
 
     Parameters
     ----------
@@ -40,8 +51,7 @@ def translate_lakefs_error(
     Returns
     -------
     OSError
-        An instantiated exception ready to be thrown. If the error code isn't
-        recognized, an ``IOError`` with the original error message is returned.
+        A builtin Python exception ready to be thrown.
     """
     status, reason, body = error.status, error.reason, error.body
 
