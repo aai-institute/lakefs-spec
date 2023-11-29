@@ -1,9 +1,10 @@
 import hashlib
-import re
 import os
-import pathlib
+import re
+from pathlib import Path
 from typing import Any, Callable, Generator, Protocol, Union
 
+from fsspec.utils import stringify_path
 from lakefs_sdk import Pagination
 from lakefs_sdk import __version__ as __lakefs_sdk_version__
 
@@ -27,18 +28,9 @@ def depaginate(
             break
         kwargs["after"] = resp.pagination.next_offset
 
-def ensure_path_is_str(path: Union[str, os.PathLike, pathlib.Path]) -> str:
-    """
-    Convert a file path to a string.
-    """
-    try:
-        file_path_as_str = str(path)
-    except TypeError:
-        raise ValueError(f"Unsupported path type: {type(path)}.")
-    return file_path_as_str
 
-
-def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
+def md5_checksum(lpath: Union[str, os.PathLike[str], Path], blocksize: int = 2**22) -> str:
+    lpath = stringify_path(lpath)
     with open(lpath, "rb") as f:
         file_hash = hashlib.md5(usedforsecurity=False)
         chunk = f.read(blocksize)
@@ -48,7 +40,7 @@ def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
     return file_hash.hexdigest()
 
 
-def parse(path: str) -> tuple[str, str, str]:
+def parse(path: Union[str, os.PathLike[str], Path]) -> tuple[str, str, str]:
     """
     Parses a lakeFS URI in the form ``<repo>/<ref>/<resource>``.
 
@@ -70,11 +62,12 @@ def parse(path: str) -> tuple[str, str, str]:
     # https://docs.lakefs.io/understand/model.html#repository
     # Second regex is the branch: Only letters, digits, underscores
     # and dash, no leading dash
+    path_as_str = stringify_path(path)
     path_regex = re.compile(r"(?:lakefs://)?([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-]*)/(.*)")
-    results = path_regex.fullmatch(path)
+    results = path_regex.fullmatch(path_as_str)
     if results is None:
         raise ValueError(
-            f"expected path with structure lakefs://<repo>/<ref>/<resource>, got {path!r}"
+            f"expected path with structure lakefs://<repo>/<ref>/<resource>, got {path_as_str!r}"
         )
 
     repo, ref, resource = results.groups()
