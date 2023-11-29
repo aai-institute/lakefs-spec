@@ -1,9 +1,7 @@
-from __future__ import annotations
-
 import hashlib
+import re
 import os
 import pathlib
-import re
 from typing import Any, Callable, Generator, Protocol, Union
 
 from lakefs_sdk import Pagination
@@ -29,35 +27,19 @@ def depaginate(
             break
         kwargs["after"] = resp.pagination.next_offset
 
-
-class PathHandler:
-    def __init__(self, path: Union[str, os.PathLike, pathlib.Path, PathHandler]):
-        self.path = str(path)
-
-    @property
-    def as_str(self) -> str:
-        return self.path
-
-    @property
-    def as_path(self) -> pathlib.Path:
-        return pathlib.Path(self.path)
-
-    def exists(self) -> bool:
-        return self.as_path.exists()
-
-    def is_file(self) -> bool:
-        return self.as_path.is_file()
-
-    def __str__(self) -> str:
-        return self.as_str
+def ensure_path_is_str(path: Union[str, os.PathLike, pathlib.Path]) -> str:
+    """
+    Convert a file path to a string.
+    """
+    try:
+        file_path_as_str = str(path)
+    except TypeError:
+        raise ValueError(f"Unsupported path type: {type(path)}.")
+    return file_path_as_str
 
 
-FilePathType = Union[str, os.PathLike[str], pathlib.Path, PathHandler]
-
-
-def md5_checksum(lpath: FilePathType, blocksize: int = 2**22) -> str:
-    lpath = PathHandler(lpath)
-    with open(lpath.as_str, "rb") as f:
+def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
+    with open(lpath, "rb") as f:
         file_hash = hashlib.md5(usedforsecurity=False)
         chunk = f.read(blocksize)
         while chunk:
@@ -66,7 +48,7 @@ def md5_checksum(lpath: FilePathType, blocksize: int = 2**22) -> str:
     return file_hash.hexdigest()
 
 
-def parse(path: FilePathType) -> tuple[str, str, str]:
+def parse(path: str) -> tuple[str, str, str]:
     """
     Parses a lakeFS URI in the form ``<repo>/<ref>/<resource>``.
 
@@ -88,9 +70,8 @@ def parse(path: FilePathType) -> tuple[str, str, str]:
     # https://docs.lakefs.io/understand/model.html#repository
     # Second regex is the branch: Only letters, digits, underscores
     # and dash, no leading dash
-    path = PathHandler(path)
     path_regex = re.compile(r"(?:lakefs://)?([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-]*)/(.*)")
-    results = path_regex.fullmatch(path.as_str)
+    results = path_regex.fullmatch(path)
     if results is None:
         raise ValueError(
             f"expected path with structure lakefs://<repo>/<ref>/<resource>, got {path!r}"
