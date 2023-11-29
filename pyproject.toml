@@ -110,13 +110,14 @@ ignore = [
     # Allow capitalized variable names
     "F841",
 ]
+exclude = ["docs/tutorials"]
 
 [tool.ruff.per-file-ignores]
 # Ignore unused imports in all `__init__.py` files
 "__init__.py" = ["F401"]
 
 [tool.bandit]
-exclude_dirs = ["tests"]
+exclude_dirs = ["tests", "docs/tutorials"]
 
 [tool.pytest.ini_options]
 log_cli = true

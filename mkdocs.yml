@@ -43,6 +43,7 @@ plugins:
   - gen-files:
       scripts:
         - docs/_scripts/gen_api_ref_pages.py
+        - docs/_scripts/jupytext_convert.py
   - literate-nav:
       nav_file: SUMMARY.md
   - section-index
