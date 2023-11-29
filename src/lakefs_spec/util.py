@@ -6,6 +6,7 @@ import pathlib
 import re
 from typing import Any, Callable, Generator, Protocol, Union
 
+from fsspec.utils import stringify_path
 from lakefs_sdk import Pagination
 from lakefs_sdk import __version__ as __lakefs_sdk_version__
 
@@ -32,7 +33,7 @@ def depaginate(
 
 class PathHandler:
     def __init__(self, path: Union[str, os.PathLike, pathlib.Path, PathHandler]):
-        self.path = str(path)
+        self.path = stringify_path(path)
 
     @property
     def as_str(self) -> str:
