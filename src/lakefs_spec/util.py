@@ -1,6 +1,8 @@
 import hashlib
 import re
-from typing import Any, Callable, Generator, Protocol
+import os
+import pathlib
+from typing import Any, Callable, Generator, Protocol, Union
 
 from lakefs_sdk import Pagination
 from lakefs_sdk import __version__ as __lakefs_sdk_version__
@@ -24,6 +26,16 @@ def depaginate(
         if not resp.pagination.has_more:
             break
         kwargs["after"] = resp.pagination.next_offset
+
+def ensure_path_is_str(path: Union[str, os.PathLike, pathlib.Path]) -> str:
+    """
+    Convert a file path to a string.
+    """
+    try:
+        file_path_as_str = str(path)
+    except TypeError:
+        raise ValueError(f"Unsupported path type: {type(path)}.")
+    return file_path_as_str
 
 
 def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
