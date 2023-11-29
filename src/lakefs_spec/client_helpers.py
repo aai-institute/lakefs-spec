@@ -155,9 +155,7 @@ def create_repository(
         raise e
 
 
-def create_tag(
-    client: LakeFSClient, repository: str, ref: str | Commit, tag: str, exist_ok: bool = True
-) -> Ref:
+def create_tag(client: LakeFSClient, repository: str, ref: str | Commit, tag: str) -> Ref:
     """
     Create a new tag in the specified repository in the lakeFS file storage system.
 
@@ -171,18 +169,16 @@ def create_tag(
         Commit SHA or Commit object of the commit to which the tag will point.
     tag: str
         Name of the tag to be created.
-    exist_ok: bool, optional
-        Ignore creation errors if the tag already exists. The tag is not reassigned.
 
     Raises
     ------
     ApiException
-        If a tag of the same name already exists and ``exist_ok=False``.
+        If a tag of the same name already exists and points to a different ref.
 
     Returns
     -------
     Ref
-        Ref object of the lakeFS SDK representing the newly created or existing tag.
+        Ref object of the lakeFS SDK representing the tag.
     """
 
     if isinstance(ref, Commit):
@@ -192,9 +188,30 @@ def create_tag(
     try:
         return client.tags_api.create_tag(repository=repository, tag_creation=tag_creation)
     except ApiException as e:
-        if e.status == 409 and exist_ok:
-            return client.tags_api.get_tag(repository=repository, tag=tag)
+        if e.status == 409:
+            target_commit = rev_parse(client=client, repository=repository, ref=ref)
+            existing_tag = client.tags_api.get_tag(repository=repository, tag=tag)
+            if existing_tag.commit_id == target_commit.id:
+                return existing_tag
         raise e
+
+
+def delete_tag(client: LakeFSClient, repository: str, tag: str | Ref) -> None:
+    """
+    Delete the specified tag from a repository.
+
+    Parameters
+    ----------
+    client : LakeFSClient
+        lakeFS client object.
+    repository : str
+        Name of the repository from which the tag will be deleted.
+    tag : str | Ref
+        Tag to be deleted.
+    """
+    if isinstance(tag, Ref):
+        tag = tag.id
+    client.tags_api.delete_tag(repository=repository, tag=tag)
 
 
 def list_tags(client: LakeFSClient, repository: str) -> list[Ref]:

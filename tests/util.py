@@ -8,6 +8,9 @@ from typing import Optional, Union
 
 from lakefs_sdk.client import LakeFSClient
 
+import lakefs_spec.client_helpers as client_helpers
+from lakefs_spec import LakeFSFileSystem
+
 
 class APICounter:
     def __init__(self):
@@ -82,3 +85,20 @@ class RandomFileFactory:
         random_str = "".join(random.choices(string.ascii_letters + string.digits, k=size))
         random_file.write_text(random_str, encoding="utf-8")
         return random_file
+
+
+def commit_random_file_on_branch(
+    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
+) -> None:
+    random_file = random_file_factory.make()
+    lpath = str(random_file)
+    rpath = f"{repository}/{temp_branch}/{random_file.name}"
+
+    fs.put(lpath, rpath, precheck=False)
+
+    commit = client_helpers.commit(
+        client=fs.client,
+        repository=repository,
+        branch=temp_branch,
+        message=f"Add file {random_file.name!r}",
+    )

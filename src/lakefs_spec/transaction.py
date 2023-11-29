@@ -144,16 +144,12 @@ class LakeFSTransaction(Transaction):
         self.files.append((op, p))
         return p
 
-    def tag(
-        self, repository: str, ref: str | Placeholder[Commit], tag: str, exist_ok: bool = True
-    ) -> str:
+    def tag(self, repository: str, ref: str | Placeholder[Commit], tag: str) -> str:
         """Create a tag referencing a commit in a repository."""
 
         def tag_op(client: LakeFSClient, **kwargs: Any) -> Ref:
             kwargs = unwrap_placeholders(kwargs)
             return create_tag(client, **kwargs)
 
-        self.files.append(
-            (partial(tag_op, repository=repository, ref=ref, tag=tag, exist_ok=exist_ok), tag)
-        )
+        self.files.append((partial(tag_op, repository=repository, ref=ref, tag=tag), tag))
         return tag
