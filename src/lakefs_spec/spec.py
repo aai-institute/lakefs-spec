@@ -4,6 +4,7 @@ import io
 import logging
 import mimetypes
 import operator
+import pathlib
 import os
 import urllib.error
 import urllib.request
@@ -23,7 +24,7 @@ from lakefs_spec.client_helpers import create_branch
 from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
-from lakefs_spec.util import depaginate, md5_checksum, parse
+from lakefs_spec.util import depaginate, md5_checksum, parse, ensure_path_is_str
 
 _DEFAULT_CALLBACK = NoOpCallback()
 
@@ -183,13 +184,15 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def get_file(
         self,
-        rpath: str,
-        lpath: str,
+        rpath: str | os.PathLike[str] | pathlib.Path,
+        lpath: str | os.PathLike[str] | pathlib.Path,
         callback: Callback = _DEFAULT_CALLBACK,
         outfile: Any = None,
         precheck: bool = True,
         **kwargs: Any,
     ) -> None:
+        rpath = ensure_path_is_str(rpath)
+        lpath = ensure_path_is_str(rpath)
         lp = Path(lpath)
         if precheck and lp.exists() and lp.is_file():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
@@ -326,12 +329,14 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def put_file_to_blockstore(
         self,
-        lpath: str,
-        rpath: str,
+        lpath: str | os.PathLike[str] | pathlib.Path,
+        rpath: str | os.PathLike[str] | pathlib.Path,
         callback: Callback = _DEFAULT_CALLBACK,
         presign: bool = False,
         storage_options: dict[str, Any] | None = None,
     ) -> None:
+        rpath = ensure_path_is_str(rpath)
+        lpath = ensure_path_is_str(lpath)
         repository, branch, resource = parse(rpath)
 
         staging_location = self.client.staging_api.get_physical_address(
@@ -388,8 +393,8 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def put_file(
         self,
-        lpath: str,
-        rpath: str,
+        lpath: str | os.PathLike[str] | pathlib.Path,
+        rpath: str | os.PathLike[str] | pathlib.Path,
         callback: Callback = _DEFAULT_CALLBACK,
         precheck: bool = True,
         use_blockstore: bool = False,
@@ -397,6 +402,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         storage_options: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
+        lpath = ensure_path_is_str(lpath)
+        rpath = ensure_path_is_str(rpath)
         if precheck and Path(lpath).is_file():
             remote_checksum = self.checksum(rpath)
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
