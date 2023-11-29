@@ -96,14 +96,13 @@ def test_merge_into_branch(
 
     with temporary_branch_context("merge-into-branch-test") as new_branch:
         source_ref = f"{repository}/{new_branch}/{random_file.name}"
-        with fs.scope(create_branch_ok=True):
-            fs.put(str(random_file), source_ref)
-            client_helpers.commit(
-                client=fs.client,
-                repository=repository,
-                branch=new_branch,
-                message="Commit new file",
-            )
+        fs.put(str(random_file), source_ref)
+        client_helpers.commit(
+            client=fs.client,
+            repository=repository,
+            branch=new_branch,
+            message="Commit new file",
+        )
 
         assert (
             len(
@@ -162,11 +161,12 @@ def test_revert(
 ) -> None:
     random_file = random_file_factory.make()
     source_ref = f"{repository}/{temp_branch}/{random_file.name}"
-    with fs.scope(create_branch_ok=True):
-        fs.put(str(random_file), source_ref)
-        client_helpers.commit(
-            client=fs.client, repository=repository, branch=temp_branch, message="Commit new file"
-        )
+
+    fs.put(str(random_file), source_ref)
+    client_helpers.commit(
+        client=fs.client, repository=repository, branch=temp_branch, message="Commit new file"
+    )
+
     assert (
         len(
             fs.client.refs_api.diff_refs(
