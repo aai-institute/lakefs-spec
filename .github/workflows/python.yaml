@@ -66,4 +66,5 @@ jobs:
       uses: ./.github/actions/mike-docs
       with:
         version: development
+        pre_release: true  # include pre-release notification banner
         push: ${{ github.ref == 'refs/heads/main' }}  # build always, publish on 'main' only to prevent version clutter

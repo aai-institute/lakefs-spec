@@ -108,6 +108,7 @@ markdown_extensions:
 
 theme:
   name: "material"
+  custom_dir: docs/_theme_overrides
   logo: _images/aai-logo-cropped.png
   favicon: _images/aai-favicon.png
   font:
@@ -138,6 +139,7 @@ extra:
   copyright_link: https://appliedai-institute.de
   homepage: https://lakefs-spec.org
   generator: false
+  pre_release: !ENV [DOCS_PRERELEASE, false]
   version:
     provider: mike
     default: latest
