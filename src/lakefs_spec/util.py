@@ -1,10 +1,29 @@
 import hashlib
 import re
+from typing import Any, Callable, Generator, Protocol
 
+from lakefs_sdk import Pagination
 from lakefs_sdk import __version__ as __lakefs_sdk_version__
 
 lakefs_sdk_version = tuple(int(v) for v in __lakefs_sdk_version__.split("."))
 del __lakefs_sdk_version__
+
+
+class PaginatedApiResponse(Protocol):
+    pagination: Pagination
+    results: list
+
+
+def depaginate(
+    api: Callable[..., PaginatedApiResponse], *args: Any, **kwargs: Any
+) -> Generator[Any, None, None]:
+    """Send a number of lakeFS API response documents to a generator."""
+    while True:
+        resp = api(*args, **kwargs)
+        yield from resp.results
+        if not resp.pagination.has_more:
+            break
+        kwargs["after"] = resp.pagination.next_offset
 
 
 def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
