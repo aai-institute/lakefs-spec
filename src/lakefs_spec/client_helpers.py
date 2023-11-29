@@ -203,15 +203,12 @@ def delete_tag(client: LakeFSClient, repository: str, tag: str | Ref) -> None:
         lakeFS client object.
     repository : str
         Name of the repository from which the tag will be deleted.
-    tag : str
-        Name of the tag to be deleted.
+    tag : str | Ref
+        Tag to be deleted.
     """
-    if isinstance(tag, str):
-        client.tags_api.delete_tag(repository=repository, tag=tag)
-    elif isinstance(tag, Ref):
-        client.tags_api.delete_tag(repository=repository, tag=tag.id)
-    else:
-        raise ValueError(r"Type of tag must be str or Ref.")
+    if isinstance(tag, Ref):
+        tag = tag.id
+    client.tags_api.delete_tag(repository=repository, tag=tag)
 
 
 def list_tags(client: LakeFSClient, repository: str) -> list[Ref]:
