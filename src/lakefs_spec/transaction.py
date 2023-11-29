@@ -1,3 +1,7 @@
+"""
+Contains the ``LakeFSTransaction``, a subclass of ``fsspec.transaction.Transaction`` capable of conducting versioning operations between file uploads.
+"""
+
 from __future__ import annotations
 
 from collections import deque
@@ -22,21 +26,28 @@ if TYPE_CHECKING:
 
 @dataclass
 class Placeholder(Generic[T]):
+    """A generic placeholder for a value computed by the lakeFS server in a versioning operation during a transaction."""
+
     value: T | None = None
+    """The abstract value. Set only on completion of the versioning operation during the defining transaction."""
 
     def available(self):
+        """Whether the wrapped value is available, i.e. already computed."""
         return self.value is not None
 
     def set_value(self, value: T) -> None:
+        """Fill in the placeholder. Not meant to be called directly except in the completion of the transaction."""
         self.value = value
 
     def unwrap(self) -> T:
+        """Return the placeholder's value after it has been filled."""
         if self.value is None:
             raise RuntimeError("placeholder unfilled")
         return self.value
 
 
 def unwrap_placeholders(kwargs: dict[str, Any]) -> dict[str, Any]:
+    """Unwrap any placeholder values passed in a dictionary of keyword arguments."""
     return {k: v.unwrap() if isinstance(v, Placeholder) else v for k, v in kwargs.items()}
 
 
@@ -45,8 +56,7 @@ class LakeFSTransaction(Transaction):
 
     def __init__(self, fs: "LakeFSFileSystem"):
         """
-        Initialize a lakeFS transaction. The base class' `file` stack can also contain
-        versioning operations.
+        Initialize a lakeFS transaction. The base class' ``file`` stack can also contain versioning operations.
         """
         super().__init__(fs=fs)
         self.fs: "LakeFSFileSystem"
@@ -61,8 +71,23 @@ class LakeFSTransaction(Transaction):
     ) -> Placeholder[Commit]:
         """
         Create a commit on a branch in a repository with a commit message and attached metadata.
-        """
 
+        Parameters
+        ----------
+        repository: str
+            The repository to create the commit in.
+        branch: str
+            The name of the branch to commit on.
+        message: str
+            The commit message to attach to the newly created commit.
+        metadata: dict[str, str] | None
+            Optional metadata to enrich the created commit with (author, e-mail, etc.).
+
+        Returns
+        -------
+        Placeholder[Commit]
+            A placeholder for the commit created by the dispatched ``commit`` API call.
+        """
         # bind all arguments to the client helper function, and then add it to the file-/callstack.
         op = partial(
             commit, repository=repository, branch=branch, message=message, metadata=metadata
@@ -74,12 +99,18 @@ class LakeFSTransaction(Transaction):
 
     def complete(self, commit: bool = True) -> None:
         """
-        Finish transaction: Unwind file+versioning op stack via
-         1. Committing or discarding in case of a file, and
-         2. Conducting versioning operations using the file system's client.
+        Finish the transaction by unwinding the file/versioning op stack via
 
-         No operations happen and all files are discarded if `commit` is False,
-         which is the case e.g. if an exception happens in the context manager.
+        1. Committing or discarding in case of a file, and
+        2. Conducting versioning operations using the file system's client.
+
+        No operations happen and all files are discarded if ``commit == False``,
+        which is the case e.g. if an exception happens in the context manager.
+
+        Parameters
+        ----------
+        commit: bool
+            Whether to conduct operations queued in the transaction.
         """
         while self.files:
             # fsspec base class calls `append` on the file, which means we
@@ -106,7 +137,23 @@ class LakeFSTransaction(Transaction):
         self, repository: str, name: str, source_branch: str, exist_ok: bool = True
     ) -> str:
         """
-        Create a branch with the name `name` in a repository, branching off `source_branch`.
+        Create a branch with the name ``name`` in a repository, branching off ``source_branch``.
+
+        Parameters
+        ----------
+        repository: str
+            Repository name.
+        name: str
+            Name of the branch to be created.
+        source_branch: str
+            Name of the source branch that the new branch is created from.
+        exist_ok: bool
+            Ignore creation errors if the branch already exists.
+
+        Returns
+        -------
+        str
+            The requested branch name.
         """
         op = partial(
             create_branch,
@@ -119,13 +166,36 @@ class LakeFSTransaction(Transaction):
         return name
 
     def merge(self, repository: str, source_ref: str, into: str) -> None:
-        """Merge a branch into another branch in a repository."""
+        """
+        Merge a branch into another branch in a repository.
+
+        Parameters
+        ----------
+        repository: str
+            Name of the repository.
+        source_ref: str
+            Source reference containing the changes to merge. Can be a branch name or partial commit SHA.
+        into: str
+            Target branch into which the changes will be merged.
+        """
         op = partial(merge, repository=repository, source_ref=source_ref, target_branch=into)
         self.files.append((op, None))
         return None
 
     def revert(self, repository: str, branch: str, parent_number: int = 1) -> None:
-        """Revert a previous commit on a branch."""
+        """
+        Revert a previous commit on a branch.
+
+        Parameters
+        ----------
+        repository: str
+            Name of the repository.
+        branch: str
+            Branch on which the commit should be reverted.
+        parent_number: int
+            If there are multiple parents to a commit, specify to which parent the commit should be reverted.
+        """
+
         op = partial(revert, repository=repository, branch=branch, parent_number=parent_number)
         self.files.append((op, None))
         return None
@@ -133,7 +203,24 @@ class LakeFSTransaction(Transaction):
     def rev_parse(
         self, repository: str, ref: str | Placeholder[Commit], parent: int = 0
     ) -> Placeholder[Commit]:
-        """Parse a given reference or any of its parents in a repository."""
+        """
+        Parse a given reference or any of its parents in a repository.
+
+        Parameters
+        ----------
+        repository: str
+            Name of the repository.
+        ref: str | Commit
+            Commit SHA or commit placeholder object to resolve.
+        parent: int
+            Optionally parse a parent of ``ref`` instead of ``ref`` itself as indicated by the number.
+             Must be non-negative. ``parent = 0`` (the default) means the actual given ``ref``.
+
+        Returns
+        -------
+        Placeholder[Commit]
+            A placeholder for the commit created by the dispatched ``rev_parse`` API call.
+        """
 
         def rev_parse_op(client: LakeFSClient, **kwargs: Any) -> Commit:
             kwargs = unwrap_placeholders(kwargs)
@@ -145,7 +232,23 @@ class LakeFSTransaction(Transaction):
         return p
 
     def tag(self, repository: str, ref: str | Placeholder[Commit], tag: str) -> str:
-        """Create a tag referencing a commit in a repository."""
+        """
+        Create a tag referencing a commit in a repository.
+
+        Parameters
+        ----------
+        repository: str
+            Name of the repository.
+        ref: str | Placeholder[Commit]
+            Commit SHA or placeholder for a commit object to which the new tag will point.
+        tag: str
+            Name of the tag to be created.
+
+        Returns
+        -------
+        str
+            The name of the requested tag.
+        """
 
         def tag_op(client: LakeFSClient, **kwargs: Any) -> Ref:
             kwargs = unwrap_placeholders(kwargs)

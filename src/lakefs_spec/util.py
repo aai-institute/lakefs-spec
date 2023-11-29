@@ -1,3 +1,6 @@
+"""
+Contains a few useful utilities for handling lakeFS URIs and results of lakeFS API calls.
+"""
 from __future__ import annotations
 
 import hashlib
@@ -20,7 +23,23 @@ class PaginatedApiResponse(Protocol):
 def depaginate(
     api: Callable[..., PaginatedApiResponse], *args: Any, **kwargs: Any
 ) -> Generator[Any, None, None]:
-    """Send a number of lakeFS API response documents to a generator."""
+    """
+    Send a number of received lakeFS API response documents to a generator.
+
+    Parameters
+    ----------
+    api: Callable[..., PaginatedApiResponse]
+        The lakeFS client API to call. Must return a paginated response with the ``pagination`` and ``results`` fields set.
+    args: Any
+        Positional arguments to pass to the API call.
+    kwargs: Any
+        Keyword arguments to pass to the API call.
+
+    Yields
+    ------
+    pydantic.BaseModel
+        The obtained API result objects.
+    """
     while True:
         resp = api(*args, **kwargs)
         yield from resp.results
@@ -30,6 +49,21 @@ def depaginate(
 
 
 def md5_checksum(lpath: str | os.PathLike[str], blocksize: int = 2**22) -> str:
+    """
+    Calculate a local file's MD5 hash.
+
+    Parameters
+    ----------
+    lpath: str
+        The local path whose MD5 hash to calculate. Must be a file.
+    blocksize: int
+        Block size (in bytes) to use while reading in the file.
+
+    Returns
+    -------
+    str
+        The file's MD5 hash value, as a string.
+    """
     with open(lpath, "rb") as f:
         file_hash = hashlib.md5(usedforsecurity=False)
         chunk = f.read(blocksize)
@@ -41,13 +75,13 @@ def md5_checksum(lpath: str | os.PathLike[str], blocksize: int = 2**22) -> str:
 
 def parse(path: str) -> tuple[str, str, str]:
     """
-    Parses a lakeFS URI in the form ``<repo>/<ref>/<resource>``.
+    Parses a lakeFS URI in the form ``lakefs://<repo>/<ref>/<resource>``.
 
     Parameters
     ----------
     path: str
         String path, needs to conform to the lakeFS URI format described above.
-        The ``<resource>`` part can be the empty string.
+        The ``<resource>`` part can be the empty string; the leading ``lakefs://`` scheme can be omitted.
 
     Returns
     -------
@@ -56,11 +90,9 @@ def parse(path: str) -> tuple[str, str, str]:
     """
 
     # First regex reflects the lakeFS repository naming rules:
-    # only lowercase letters, digits and dash, no leading dash,
-    # minimum 3, maximum 63 characters
+    # only lowercase letters, digits and dash, no leading dash, minimum 3, maximum 63 characters
     # https://docs.lakefs.io/understand/model.html#repository
-    # Second regex is the branch: Only letters, digits, underscores
-    # and dash, no leading dash
+    # Second regex is the branch: Only letters, digits, underscores and dash, no leading dash.
     path_regex = re.compile(r"(?:lakefs://)?([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-]*)/(.*)")
     results = path_regex.fullmatch(path)
     if results is None:
