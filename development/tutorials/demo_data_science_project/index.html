@@ -1115,7 +1115,7 @@ Note: you may need to restart the kernel to use updated packages.
 <div class="output_area">
 <div class="output_text output_subarea output_execute_result">
 <pre>
-<code>('/home/runner/.lakectl.yaml', &lt;http.client.HTTPMessage at 0x7ff02c6c7610&gt;)</code>
+<code>('/home/runner/.lakectl.yaml', &lt;http.client.HTTPMessage at 0x7f0109ea9050&gt;)</code>
 </pre>
 </div>
 </div>
@@ -1640,7 +1640,7 @@ Updated test data shape: (4386, 15)
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>c0339085c8c421f4a78901e8154b4c800c31144b33a93030a2b6d047f1bbfe5f
+<code>8e3eca265af19de888d9fd0f2721f9a9a0193c8e9726fad232be07de075f201a
 </code>
 </pre>
 </div>
@@ -1719,7 +1719,7 @@ Is the pulled test data equal to the local test data? True
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="using-tags-instead-of-commit-shas-for-semantic-versioning">Using tags instead of commit SHAs for semantic versioning<a class="headerlink" href="#using-tags-instead-of-commit-shas-for-semantic-versioning" title="Permanent link">&para;</a></h2>
 <p>The above method for data versioning works great when you have experiment tracking tools to store and retrieve the commit SHA in automated pipelines. But it can be tedious to retrieve in manual prototyping. We can make selected versions of the dataset more accessible with semantic versioning by attaching a human-interpretable tag to a specific commit SHA.</p>
-<p>Creating a tag is easiest when done inside a transaction, just like the files we already uploaded. To do this, simply call <code>tx.tag</code> on the transaction and supply the repository name, the commit SHA to tag, and the intended tag name.</p>
+<p>Creating a tag is easiest when done inside a transaction, just like the files we already uploaded. To do this, simply call <code>tx.tag</code> on the transaction and supply the repository name, the commit SHA to tag, and the intended tag name. Tags are immutable once created, so attempting to tag two different commits with the same name will result in an error.</p>
 </div>
 </div>
 </div>
@@ -1768,7 +1768,7 @@ Is the pulled test data equal to the local test data? True
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Is the data tagged 'train-test-split-2010' equal to the data in commit c0339085? True
+<code>Is the data tagged 'train-test-split-2010' equal to the data in commit 8e3eca26? True
 </code>
 </pre>
 </div>
@@ -1782,7 +1782,7 @@ Is the pulled test data equal to the local test data? True
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-27</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-29</span>
       
     
   </small>
