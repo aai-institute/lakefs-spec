@@ -350,7 +350,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         out = self.ls(path, detail=True, **kwargs)
         if not out:
-            raise FileNotFoundError(404, os.strerror(errno.ENOENT), path)
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
         return {
             "name": path.rstrip("/"),
