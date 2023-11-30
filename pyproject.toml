@@ -84,6 +84,7 @@ lakefs_spec = ["py.typed"]
 [tool.setuptools_scm]
 
 [tool.mypy]
+allow_redefinition = true
 check_untyped_defs = true
 disallow_incomplete_defs = true
 pretty = true
