@@ -1,8 +1,7 @@
 import hashlib
 import os
 import re
-from pathlib import Path
-from typing import Any, Callable, Generator, Protocol, Union
+from typing import Any, Callable, Generator, Protocol
 
 from fsspec.utils import stringify_path
 from lakefs_sdk import Pagination
@@ -29,7 +28,7 @@ def depaginate(
         kwargs["after"] = resp.pagination.next_offset
 
 
-def md5_checksum(lpath: Union[str, os.PathLike[str], Path], blocksize: int = 2**22) -> str:
+def md5_checksum(lpath: str | os.PathLike[str], blocksize: int = 2**22) -> str:
     lpath = stringify_path(lpath)
     with open(lpath, "rb") as f:
         file_hash = hashlib.md5(usedforsecurity=False)
@@ -40,7 +39,7 @@ def md5_checksum(lpath: Union[str, os.PathLike[str], Path], blocksize: int = 2**
     return file_hash.hexdigest()
 
 
-def parse(path: Union[str, os.PathLike[str], Path]) -> tuple[str, str, str]:
+def parse(path: str) -> tuple[str, str, str]:
     """
     Parses a lakeFS URI in the form ``<repo>/<ref>/<resource>``.
 
@@ -62,12 +61,12 @@ def parse(path: Union[str, os.PathLike[str], Path]) -> tuple[str, str, str]:
     # https://docs.lakefs.io/understand/model.html#repository
     # Second regex is the branch: Only letters, digits, underscores
     # and dash, no leading dash
-    path_as_str = stringify_path(path)
+    path = stringify_path(path)
     path_regex = re.compile(r"(?:lakefs://)?([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-]*)/(.*)")
-    results = path_regex.fullmatch(path_as_str)
+    results = path_regex.fullmatch(path)
     if results is None:
         raise ValueError(
-            f"expected path with structure lakefs://<repo>/<ref>/<resource>, got {path_as_str!r}"
+            f"expected path with structure lakefs://<repo>/<ref>/<resource>, got {path!r}"
         )
 
     repo, ref, resource = results.groups()

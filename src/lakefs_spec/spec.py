@@ -5,12 +5,11 @@ import logging
 import mimetypes
 import operator
 import os
-import pathlib
 import urllib.error
 import urllib.request
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator, Iterable, Literal, Union, cast
+from typing import Any, Generator, Iterable, Literal, cast
 
 from fsspec import filesystem
 from fsspec.callbacks import Callback, NoOpCallback
@@ -141,14 +140,15 @@ class LakeFSFileSystem(AbstractFileSystem):
         except ApiException as e:
             raise translate_lakefs_error(e, message=message, set_cause=set_cause)
 
-    def checksum(self, path: Union[str, os.PathLike[str], pathlib.Path]) -> str | None:
+    def checksum(self, path: str | os.PathLike[str]) -> str | None:
         path = stringify_path(path)
         try:
             return self.info(path).get("checksum")
         except FileNotFoundError:
             return None
 
-    def exists(self, path: str, **kwargs: Any) -> bool:
+    def exists(self, path: str | os.PathLike[str], **kwargs: Any) -> bool:
+        path = stringify_path(path)
         repository, ref, resource = parse(path)
 
         try:
@@ -161,7 +161,11 @@ class LakeFSFileSystem(AbstractFileSystem):
             # decided, so raise the translated error.
             raise translate_lakefs_error(e)
 
-    def cp_file(self, path1: str, path2: str, **kwargs: Any) -> None:
+    def cp_file(
+        self, path1: str | os.PathLike[str], path2: str | os.PathLike[str], **kwargs: Any
+    ) -> None:
+        path1 = stringify_path(path1)
+        path2 = stringify_path(path2)
         if path1 == path2:
             return
 
@@ -186,8 +190,8 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def get_file(
         self,
-        rpath: Union[str, os.PathLike[str], pathlib.Path],
-        lpath: Union[str, os.PathLike[str], pathlib.Path],
+        rpath: str | os.PathLike[str],
+        lpath: str | os.PathLike[str],
         callback: Callback = _DEFAULT_CALLBACK,
         outfile: Any = None,
         precheck: bool = True,
@@ -208,10 +212,8 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         super().get_file(rpath=rpath, lpath=lpath, callback=callback, outfile=outfile, **kwargs)
 
-    def info(
-        self, path: Union[str, os.PathLike[str], pathlib.Path], **kwargs: Any
-    ) -> dict[str, Any]:
-        path_as_str = stringify_path(path)
+    def info(self, path: str | os.PathLike[str], **kwargs: Any) -> dict[str, Any]:
+        path = stringify_path(path)
         repository, ref, resource = parse(path)
         # first, try with `stat_object` in case of a file.
         # the condition below checks edge cases of resources that cannot be files.
@@ -241,19 +243,17 @@ class LakeFSFileSystem(AbstractFileSystem):
             except ApiException as e:
                 raise translate_lakefs_error(e)
 
-        out = self.ls(path_as_str, detail=True, **kwargs)
+        out = self.ls(path, detail=True, **kwargs)
         if not out:
-            raise FileNotFoundError(path_as_str)
+            raise FileNotFoundError(path)
 
         return {
-            "name": path_as_str.rstrip("/"),
+            "name": path.rstrip("/"),
             "size": sum(o.get("size", 0) for o in out),
             "type": "directory",
         }
 
-    def ls(
-        self, path: Union[str, os.PathLike[str], pathlib.Path], detail: bool = True, **kwargs: Any
-    ) -> list:
+    def ls(self, path: str | os.PathLike[str], detail: bool = True, **kwargs: Any) -> list:
         path = stringify_path(path)
         repository, ref, prefix = parse(path)
 
@@ -337,8 +337,8 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def put_file_to_blockstore(
         self,
-        lpath: Union[str, os.PathLike[str], pathlib.Path],
-        rpath: Union[str, os.PathLike[str], pathlib.Path],
+        lpath: str | os.PathLike[str],
+        rpath: str | os.PathLike[str],
         callback: Callback = _DEFAULT_CALLBACK,
         presign: bool = False,
         storage_options: dict[str, Any] | None = None,
@@ -401,8 +401,8 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def put_file(
         self,
-        lpath: Union[str, os.PathLike[str], pathlib.Path],
-        rpath: Union[str, os.PathLike[str], pathlib.Path],
+        lpath: str | os.PathLike[str],
+        rpath: str | os.PathLike[str],
         callback: Callback = _DEFAULT_CALLBACK,
         precheck: bool = True,
         use_blockstore: bool = False,
@@ -448,7 +448,7 @@ class LakeFSFile(AbstractBufferedFile):
     def __init__(
         self,
         fs: LakeFSFileSystem,
-        path: str,
+        path: str | os.PathLike[str],
         mode: Literal["rb", "wb"] = "rb",
         block_size: int | str = "default",
         autocommit: bool = True,
@@ -457,6 +457,7 @@ class LakeFSFile(AbstractBufferedFile):
         size: int | None = None,
         **kwargs: Any,
     ):
+        path = stringify_path(path)
         super().__init__(
             fs,
             path,
