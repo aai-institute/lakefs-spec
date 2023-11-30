@@ -38,11 +38,13 @@ This tutorial assumes that you have installed lakeFS-spec in a virtual environme
 
 ## Environment setup
 
-Install the necessary libraries for this notebook on the environment you have just created:
+Install the necessary libraries for this notebook on the environment you have just created. 
+You can do this either in a terminal via `pip install numpy pandas scikit-learn` or execute the next cell.
 """
 
 # %% tags=["Remove_all_output"]
-# %pip install numpy pandas scikit-learn
+import os
+os.system("pip install numpy pandas scikit-learn")
 
 # %% [markdown]
 """
@@ -388,6 +390,15 @@ Creating a tag is easiest when done inside a transaction, just like the files we
 To do this, simply call `tx.tag` on the transaction and supply the repository name, the commit SHA to tag, and the intended tag name.
 Tags are immutable once created, so attempting to tag two different commits with the same name will result in an error.
 """
+
+# %% tags=["Remove_input"]
+# Remove tag "train-test-split-2010" if it exists, ensuring idempotency
+# Cell hidden in docs
+from lakefs_spec.client_helpers import list_tags, delete_tag
+
+if any(tag.id == "train-test-split-2010" for tag in list_tags(fs.client, REPO_NAME)):
+    delete_tag(fs.client, repository=REPO_NAME, tag="train-test-split-2010")   
+
 
 # %%
 with fs.transaction as tx:
