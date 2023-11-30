@@ -16,9 +16,10 @@
 
 # %% [markdown]
 """
-# Introduction
+# Data Science with lakeFS-spec
 
-In this notebook, we will complete a small end-to-end data science tutorial that employs lakeFS-spec for data versioning. We will use versioned weather data to train a decision tree classifier to predict whether it is raining tomorrow given the current weather.
+In this notebook, we will complete a small end-to-end data science tutorial that employs lakeFS-spec for data versioning.
+We will use versioned weather data to train a decision tree classifier to predict whether it is raining tomorrow given the current weather.
 
 We will do the following:
 
@@ -54,13 +55,16 @@ Also install an appropriate lakeFS-spec version, which can be either the latest 
 
 With Docker Desktop or a similar runtime running set up lakeFS by executing the following `docker run` command (from the [lakeFS quickstart](https://docs.lakefs.io/quickstart/launch.html)) in your console:
 
-`docker run --name lakefs --pull always --rm --publish 8000:8000 treeverse/lakefs:latest run --quickstart`
+```shell
+docker run --name lakefs --pull always --rm --publish 8000:8000 treeverse/lakefs:latest run --quickstart
+```
 
 You find the authentication credentials in the terminal output. The default address for the local lakeFS GUI is http://localhost:8000/.
 
 ## Authenticating with the lakeFS server
 
-There are multiple ways to authenticate with lakeFS from Python code. In this tutorial, we choose the YAML file configuration. By executing the cell below, you will download a YAML file containing the default lakeFS quickstart credentials and server URL to your user directory.
+There are multiple ways to authenticate with lakeFS from Python code. In this tutorial, we choose the YAML file configuration.
+By executing the cell below, you will download a YAML file containing the default lakeFS quickstart credentials and server URL to your user directory.
 """
 
 # %%
@@ -74,7 +78,9 @@ urllib.request.urlretrieve(
 
 # %% [markdown]
 """
-We can now instantiate the `LakeFSFileSystem` with the credentials we just downloaded. Alternatively, we could have passed the credentials directly in the code. It is important that the credentials are available at the time of filesystem instantiation.
+We can now instantiate the `LakeFSFileSystem` with the credentials we just downloaded.
+Alternatively, we could have passed the credentials directly in the code.
+It is important that the credentials are available at the time of filesystem instantiation.
 """
 
 # %%
@@ -86,7 +92,8 @@ REPO_NAME = "weather"
 
 # %% [markdown]
 """
-We will create a repository using a helper function provided by lakeFS-spec. If you have already created one in the UI, make sure to set the `REPO_NAME` variable accordingly in the cell directly above.
+We will create a repository using a helper function provided by lakeFS-spec.
+If you have already created one in the UI, make sure to set the `REPO_NAME` variable accordingly in the cell directly above.
 """
 
 # %%
@@ -98,7 +105,7 @@ repo = create_repository(client=fs.client, name=REPO_NAME, storage_namespace=f"l
 """
 ## Data Ingestion
 
-Now it's time to get some data. We will use the [Open Meteo API](https://open-meteo.com/), where we can pull weather data from an API for free (as long as we are non-commercial) and without an API-token.
+Now it's time to get some data. We will use the [Open-Meteo API](https://open-meteo.com/), where we can pull weather data from an API for free (as long as we are non-commercial) and without an API token.
 
 For training our toy model, we download the full weather data of Munich for the year 2010:
 """
@@ -111,16 +118,24 @@ outfile, _ = urllib.request.urlretrieve(
 
 # %% [markdown]
 """
-The data is in JSON format. Therefore, we need to wrangle the data a bit to make it usable. But first, we will upload it to our lakeFS instance.
+The data is in JSON format.
+Therefore, we need to wrangle the data a bit to make it usable.
+But first, we will upload it to our lakeFS instance.
 """
 
 # %% [markdown]
 """
 ## Upload a file using transactions
 
-lakeFS works similar to `git` as a versioning system. You can create *commits* that contain specific changes to the data. You can also work with *branches* to create your own isolated view of the data independently of your colleagues. Every commit (on any branch) is identified by a commit SHA. This SHA can be used to programmatically interact with specific states of your data and enables logging of the specific data versions used to create a certain model.
+lakeFS works similar to `git` as a versioning system.
+You can create *commits* that contain specific changes to the data.
+You can also work with *branches* to create your own isolated view of the data independently of your colleagues.
+Every commit (on any branch) is identified by a commit SHA.
+This SHA can be used to programmatically interact with specific states of your data and enables logging of the specific data versions used to create a certain model.
 
-To easily carry out versioning operations while uploading files, you can use **transactions**. A transaction is a context manager that keeps track of all files that were uploaded in its scope, as well as all versioning operations happening between file uploads. All operations are deferred to the end of the transaction, and are executed sequentially on completion.
+To easily carry out versioning operations while uploading files, you can use **transactions**.
+A transaction is a context manager that keeps track of all files that were uploaded in its scope, as well as all versioning operations happening between file uploads.
+All operations are deferred to the end of the transaction, and are executed sequentially on completion.
 
 To create a commit after a file upload, you can run the following transaction:
 """
@@ -141,7 +156,8 @@ You can inspect this commit by selecting the `transform-raw-data` branch, and na
 """
 ## Data Transformation
 
-Now let's transform the data for our use case. We put the transformation into a function to be able to reuse it later.
+Now let's transform the data for our use case.
+We put the transformation into a function to be able to reuse it later.
 
 In this notebook, we use a simple toy model to predict whether it is raining at the same time tomorrow given weather data from right now.
 
@@ -174,7 +190,9 @@ df.head(5)
 
 # %% [markdown]
 """
-Next, we save this data as a CSV file into the main branch. When the transaction commit helper is called, the newly put CSV file is committed. You can verify the saving worked in the lakeFS UI in your browser by switching to the commits tab of the `main` branch.
+Next, we save this data as a CSV file into the main branch.
+When the transaction commit helper is called, the newly put CSV file is committed.
+You can verify the saving worked in the lakeFS UI in your browser by switching to the commits tab of the `main` branch.
 """
 
 # %%
@@ -198,7 +216,10 @@ train, test = sklearn.model_selection.train_test_split(model_data, random_state=
 
 # %% [markdown]
 """
-We save these train and test datasets into a new `training` branch. If the branch does not exist yet, as in this case, it is implicitly created by default. You can control this behaviour with the `create_branch_ok` flag when initializing the `LakeFSFileSystem`. By default, `create_branch_ok` is set to `True`, so we need to only set `fs = LakeFSFileSystem()` to enable implicit branch creation.
+We save these train and test datasets into a new `training` branch.
+If the branch does not exist yet, as in this case, it is implicitly created by default.
+You can control this behaviour with the `create_branch_ok` flag when initializing the `LakeFSFileSystem`.
+By default, `create_branch_ok` is set to `True`, so we need to only set `fs = LakeFSFileSystem()` to enable implicit branch creation.
 """
 
 # %%
@@ -215,7 +236,8 @@ with fs.transaction as tx:
 
 # %% [markdown]
 """
-Let's check the shape of train and test data. Later on, we will get back to this data version and reproduce the results of the experiment.
+Let's check the shape of train and test data.
+Later on, we will get back to this data version and reproduce the results of the experiment.
 """
 
 # %%
@@ -246,7 +268,8 @@ print(f"Test accuracy: {test_acc:.2%}")
 """
 ## Updating data and retraining the model
 
-Until now, we only have used data from 2010. Let's download additional 2020 data, transform it, and save it to LakeFS.
+Until now, we only have used data from 2010.
+Let's download additional 2020 data, transform it, and save it to lakeFS.
 """
 
 # %%
@@ -309,9 +332,12 @@ print(f"Test accuracy: {test_acc:.2%}")
 """
 ## Accessing data versions through commits and reproducing experiments
 
-If we need to go to our initial data and reproduce the first experiment (the model trained on the 2010 data with its initial accuracy), we can go back in the commit history of the `training` branch and select the appropriate commit data snapshot. Since we have created multiple commits on the same branch already, we will address different data versions by their commit SHAs.
+If we need to go to our initial data and reproduce the first experiment (the model trained on the 2010 data with its initial accuracy), we can go back in the commit history of the `training` branch and select the appropriate commit data snapshot.
+Since we have created multiple commits on the same branch already, we will address different data versions by their commit SHAs.
 
-To obtain the actual commit SHA from a branch, we have multiple options. Manually, we could go into the lakeFS UI, select the training branch, and navigate to the **Commits** tab. There, we take the parent of the previous commit, titled `Add train-test split of 2010 weather data`, and copy its revision SHA (also called `ID`).
+To obtain the actual commit SHA from a branch, we have multiple options.
+Manually, we could go into the lakeFS UI, select the training branch, and navigate to the **Commits** tab.
+There, we take the parent of the previous commit, titled `Add train-test split of 2010 weather data`, and copy its revision SHA (also called `ID`).
 
 In code, we can use a versioning helper called `rev_parse` to obtain commit SHAs for different revisions on the `training` branch.
 """
@@ -354,9 +380,13 @@ print(f"Test accuracy: {test_acc:.2%}")
 """
 ## Using tags instead of commit SHAs for semantic versioning
 
-The above method for data versioning works great when you have experiment tracking tools to store and retrieve the commit SHA in automated pipelines. But it can be tedious to retrieve in manual prototyping. We can make selected versions of the dataset more accessible with semantic versioning by attaching a human-interpretable tag to a specific commit SHA.
+The above method for data versioning works great when you have experiment tracking tools to store and retrieve the commit SHA in automated pipelines.
+But it can be tedious to retrieve in manual prototyping.
+We can make selected versions of the dataset more accessible with semantic versioning by attaching a human-interpretable tag to a specific commit SHA.
 
-Creating a tag is easiest when done inside a transaction, just like the files we already uploaded. To do this, simply call `tx.tag` on the transaction and supply the repository name, the commit SHA to tag, and the intended tag name. Tags are immutable once created, so attempting to tag two different commits with the same name will result in an error.
+Creating a tag is easiest when done inside a transaction, just like the files we already uploaded.
+To do this, simply call `tx.tag` on the transaction and supply the repository name, the commit SHA to tag, and the intended tag name.
+Tags are immutable once created, so attempting to tag two different commits with the same name will result in an error.
 """
 
 # %%
@@ -367,7 +397,8 @@ with fs.transaction as tx:
 
 # %% [markdown]
 """
-Now we can access the specific files with the semantic tag. Both the `fixed_commit_id` and `tag` reference the same version `ref` in lakeFS, whereas a branch name always points to the latest version on that respective branch.
+Now we can access the specific files with the semantic tag.
+Both the `fixed_commit_id` and `tag` reference the same version `ref` in lakeFS, whereas a branch name always points to the latest version on that respective branch.
 """
 
 # %%
