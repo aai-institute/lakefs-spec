@@ -13,7 +13,7 @@ def test_get_nonexistent_file(fs: LakeFSFileSystem, repository: str) -> None:
     """
     rpath = f"{repository}/main/hello-i-no-exist1234.txt"
 
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(FileNotFoundError, match=f"No such file or directory: {rpath!r}"):
         fs.get(rpath, "out.txt")
 
     assert not Path("out.txt").exists()
@@ -26,7 +26,7 @@ def test_get_from_nonexistent_repo(fs: LakeFSFileSystem) -> None:
     """
     rpath = "nonexistent-repo/main/a.txt"
 
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(FileNotFoundError, match=f"not found: {rpath!r}"):
         fs.get(rpath, "out.txt")
 
     assert not Path("out.txt").exists()
@@ -39,7 +39,7 @@ def test_get_from_nonexistent_branch(fs: LakeFSFileSystem, repository: str) -> N
     """
     rpath = f"{repository}/nonexistentbranch/a.txt"
 
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(FileNotFoundError, match=f"not found: {rpath!r}"):
         fs.get(rpath, "out.txt")
 
     assert not Path("out.txt").exists()
