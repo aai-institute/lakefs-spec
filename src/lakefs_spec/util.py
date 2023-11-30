@@ -1,11 +1,8 @@
-from __future__ import annotations
-
 import hashlib
 import os
 import re
 from typing import Any, Callable, Generator, Protocol
 
-from fsspec.utils import stringify_path
 from lakefs_sdk import Pagination
 from lakefs_sdk import __version__ as __lakefs_sdk_version__
 
@@ -31,7 +28,6 @@ def depaginate(
 
 
 def md5_checksum(lpath: str | os.PathLike[str], blocksize: int = 2**22) -> str:
-    lpath = stringify_path(lpath)
     with open(lpath, "rb") as f:
         file_hash = hashlib.md5(usedforsecurity=False)
         chunk = f.read(blocksize)
@@ -63,7 +59,6 @@ def parse(path: str) -> tuple[str, str, str]:
     # https://docs.lakefs.io/understand/model.html#repository
     # Second regex is the branch: Only letters, digits, underscores
     # and dash, no leading dash
-    path = stringify_path(path)
     path_regex = re.compile(r"(?:lakefs://)?([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-]*)/(.*)")
     results = path_regex.fullmatch(path)
     if results is None:
