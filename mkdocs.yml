@@ -27,7 +27,7 @@ nav:
     - guides/integrations.md
   - Tutorials:
     - tutorials/index.md
-    - tutorials/demo_data_science_project.ipynb
+    - Data Science with lakeFS-spec: tutorials/demo_data_science_project.ipynb
   - API Reference: reference/
   - Contributing: CONTRIBUTING.md
 
