@@ -41,7 +41,7 @@ This tutorial assumes that you have installed lakeFS-spec in a virtual environme
 Install the necessary libraries for this notebook on the environment you have just created:
 """
 
-# %% tags=["remove_output"]
+# %% tags=["Remove_all_output"]
 # %pip install numpy pandas scikit-learn
 
 # %% [markdown]

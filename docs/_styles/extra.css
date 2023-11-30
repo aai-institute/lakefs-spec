@@ -20,6 +20,12 @@ table {
     color: var(--md-accent-fg-color);
 }
 
-.celltag_remove_output .output_wrapper {
+.celltag_Remove_all_output .output_wrapper,
+.celltag_Remove_single_output .output_wrapper {
+    display: none !important
+}
+
+
+.celltag_Remove_input .input_wrapper {
     display: none !important
 }
