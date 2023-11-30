@@ -1,5 +1,5 @@
 """
-Contains a few useful utilities for handling lakeFS URIs and results of lakeFS API calls.
+Useful utilities for handling lakeFS URIs and results of lakeFS API calls.
 """
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ def depaginate(
     api: Callable[..., PaginatedApiResponse], *args: Any, **kwargs: Any
 ) -> Generator[Any, None, None]:
     """
-    Send a number of received lakeFS API response documents to a generator.
+    Unwrap the responses from a paginated lakeFS API method into a generator.
 
     Parameters
     ----------
@@ -37,7 +37,7 @@ def depaginate(
 
     Yields
     ------
-    pydantic.BaseModel
+    Any
         The obtained API result objects.
     """
     while True:
@@ -54,7 +54,7 @@ def md5_checksum(lpath: str | os.PathLike[str], blocksize: int = 2**22) -> str:
 
     Parameters
     ----------
-    lpath: str
+    lpath: str | os.PathLike[str]
         The local path whose MD5 hash to calculate. Must be a file.
     blocksize: int
         Block size (in bytes) to use while reading in the file.
@@ -81,7 +81,7 @@ def parse(path: str) -> tuple[str, str, str]:
     ----------
     path: str
         String path, needs to conform to the lakeFS URI format described above.
-        The ``<resource>`` part can be the empty string; the leading ``lakefs://`` scheme can be omitted.
+        The ``<resource>`` part can be the empty string; the leading ``lakefs://`` scheme may be omitted.
 
     Returns
     -------

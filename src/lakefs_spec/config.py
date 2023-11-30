@@ -1,5 +1,5 @@
 """
-A lightweight, immutable object holding ``lakectl`` configuration relevant for authentication in the lakeFS file system.
+Functionality for working with ``lakectl`` configuration files useable for authentication in the lakeFS file system.
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ class LakectlConfig(NamedTuple):
         Returns
         -------
         LakectlConfig
-            The immutable loaded configuration. All missing relevant values are filled with ``None`` placeholders.
+            The immutable loaded configuration. Missing values are filled with ``None`` placeholders.
 
         """
         if not Path(path).exists():

@@ -1,5 +1,5 @@
 """
-Contains the ``LakeFSTransaction``, a subclass of ``fsspec.transaction.Transaction`` capable of conducting versioning operations between file uploads.
+Functionality for extended lakeFS transactions to conduct versioning operations between file uploads.
 """
 
 from __future__ import annotations
@@ -52,12 +52,16 @@ def unwrap_placeholders(kwargs: dict[str, Any]) -> dict[str, Any]:
 
 
 class LakeFSTransaction(Transaction):
-    """A lakeFS transaction model capable of versioning operations in between file uploads."""
+    """
+    A lakeFS transaction model capable of versioning operations in between file uploads.
+
+    Parameters
+    ----------
+    fs: LakeFSFileSystem
+        The lakeFS file system associated with the transaction.
+    """
 
     def __init__(self, fs: "LakeFSFileSystem"):
-        """
-        Initialize a lakeFS transaction. The base class' ``file`` stack can also contain versioning operations.
-        """
         super().__init__(fs=fs)
         self.fs: "LakeFSFileSystem"
         self.files: deque[AbstractBufferedFile | VersioningOpTuple] = deque(self.files)
@@ -105,7 +109,7 @@ class LakeFSTransaction(Transaction):
         2. Conducting versioning operations using the file system's client.
 
         No operations happen and all files are discarded if ``commit == False``,
-        which is the case e.g. if an exception happens in the context manager.
+        which is the case, e.g., if an exception happens in the context manager.
 
         Parameters
         ----------
@@ -137,7 +141,7 @@ class LakeFSTransaction(Transaction):
         self, repository: str, name: str, source_branch: str, exist_ok: bool = True
     ) -> str:
         """
-        Create a branch with the name ``name`` in a repository, branching off ``source_branch``.
+        Create a branch ``name`` in a repository, branching off ``source_branch``.
 
         Parameters
         ----------
@@ -194,6 +198,7 @@ class LakeFSTransaction(Transaction):
             Branch on which the commit should be reverted.
         parent_number: int
             If there are multiple parents to a commit, specify to which parent the commit should be reverted.
+            ``parent_number = 1`` (the default)  refers to the first parent commit of the current ``branch`` tip.
         """
 
         op = partial(revert, repository=repository, branch=branch, parent_number=parent_number)
@@ -214,7 +219,7 @@ class LakeFSTransaction(Transaction):
             Commit SHA or commit placeholder object to resolve.
         parent: int
             Optionally parse a parent of ``ref`` instead of ``ref`` itself as indicated by the number.
-             Must be non-negative. ``parent = 0`` (the default) means the actual given ``ref``.
+            Must be non-negative. ``parent = 0`` (the default)  refers to ``ref`` itself.
 
         Returns
         -------

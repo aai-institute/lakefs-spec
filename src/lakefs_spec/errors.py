@@ -1,7 +1,7 @@
 """
-Contains the error translation facilities to map lakeFS API errors to Python-native OS errors in the lakeFS file system.
+Error translation facilities to map lakeFS API errors to Python-native OS errors in the lakeFS file system.
 
-This is important to honor the fsspec API contract, which allows users to only deal with Python builtin exceptions to
+This is important to honor the fsspec API contract, where users only need to expect builtin Python exceptions to
 avoid complicated error handling setups.
 """
 
@@ -39,11 +39,10 @@ def translate_lakefs_error(
     error : lakefs_client.ApiException
         The exception returned by the lakeFS API.
     message : str
-        An error message to use for the returned exception. If not given, the
-        error message returned by the lakeFS server is used instead.
+        An error message to use for the returned exception.
+         If not given, the error message returned by the lakeFS server is used instead.
     set_cause : bool
-        Whether to set the ``__cause__`` attribute to the previous exception if the
-        exception is translated.
+        Whether to set the ``__cause__`` attribute to the previous exception if the exception is translated.
     *args:
         Additional arguments to pass to the exception constructor, after the
         error message. Useful for passing the filename arguments to ``IOError``.
