@@ -51,8 +51,8 @@ def commit(
         Branch name.
     message: str
         Commit message.
-    metadata: dict[str, str] | None, optional
-        Additional metadata for the commit. Defaults to None.
+    metadata: dict[str, str] | None
+        Additional metadata for the commit.
 
     Returns
     -------
@@ -77,7 +77,7 @@ def create_branch(
     client: LakeFSClient, repository: str, name: str, source_branch: str, exist_ok: bool = True
 ) -> str:
     """
-    Create a branch in a lakeFS repository.
+    Create a branch ``name`` in a lakeFS repository.
 
     Parameters
     ----------
@@ -129,7 +129,7 @@ def create_repository(
         Name of the repository to be created. This must be unique within the lakeFS instance.
     storage_namespace: str
         Storage namespace where the repository data will reside, typically corresponding to a bucket in object storage (e.g., S3 bucket) or a local namespace (e.g. local://<repo_name>).
-    exist_ok: bool, optional
+    exist_ok: bool
         Ignore creation errors if the repository already exists.
 
     Returns
@@ -275,7 +275,8 @@ def revert(client: LakeFSClient, repository: str, branch: str, parent_number: in
     branch: str
         Branch on which the commit should be reverted.
     parent_number: int, optional
-        If there are multiple parents to a commit, specify to which parent the commit should be reverted. Index starts at 1.
+        If there are multiple parents to a commit, specify to which parent the commit should be reverted.
+        ``parent_number = 1`` (the default)  refers to the first parent commit of the current ``branch`` tip.
     """
     revert_creation = RevertCreation(ref=branch, parent_number=parent_number)
     client.branches_api.revert_branch(
@@ -300,8 +301,9 @@ def rev_parse(
         Name of the repository where the commit will be searched.
     ref: str | Commit
         Commit SHA or Commit object (with SHA stored in its ``id`` attribute) to resolve.
-    parent: int, optional
-        Number of parent commits to go back from the specified ``ref``. Defaults to 0, which means no parent traversal.
+    parent: int
+        Optionally parse a parent of ``ref`` instead of ``ref`` itself as indicated by the number.
+        Must be non-negative. ``parent = 0`` (the default)  refers to ``ref`` itself.
 
     Returns
     -------
