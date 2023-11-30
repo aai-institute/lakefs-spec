@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import hashlib
+import os
 import re
 from typing import Any, Callable, Generator, Protocol
 
@@ -26,7 +29,7 @@ def depaginate(
         kwargs["after"] = resp.pagination.next_offset
 
 
-def md5_checksum(lpath: str, blocksize: int = 2**22) -> str:
+def md5_checksum(lpath: str | os.PathLike[str], blocksize: int = 2**22) -> str:
     with open(lpath, "rb") as f:
         file_hash = hashlib.md5(usedforsecurity=False)
         chunk = f.read(blocksize)
