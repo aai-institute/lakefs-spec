@@ -38,13 +38,11 @@ This tutorial assumes that you have installed lakeFS-spec in a virtual environme
 
 ## Environment setup
 
-Install the necessary libraries for this notebook on the environment you have just created. 
-You can do this either in a terminal via `pip install numpy pandas scikit-learn` or execute the next cell.
+Install the necessary libraries for this notebook on the environment you have just created:
 """
 
-# %% tags=["Remove_all_output"]
-import os
-os.system("pip install numpy pandas scikit-learn")
+# %% tags=["Remove_single_output"] 
+# %pip install numpy pandas scikit-learn
 
 # %% [markdown]
 """
