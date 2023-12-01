@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import logging
+from typing import Optional
 
 from lakefs_sdk import BranchCreation
 from lakefs_sdk.client import LakeFSClient
@@ -113,6 +114,42 @@ def create_branch(
         if e.status == 409 and exist_ok:
             return name
         raise e
+    
+def delete_branch(client: LakeFSClient, repository:str, branch:str):
+    """
+    Delete the specified branch from a repository.
+
+    Parameters
+    ----------
+    client : LakeFSClient
+        lakeFS client object.
+    repository : str
+        Name of the repository from which the branch will be deleted.
+    branch : str 
+        Name of the branch to be deleted.
+    """
+    client.branches_api.delete_branch(repository=repository, branch=branch)
+
+def list_branches(client: LakeFSClient, repository:str, prefix:Optional[str] = None) -> list[Ref]:
+    """
+    List branches in a repository.
+
+    Parameters
+    ----------
+    client : LakeFSClient
+        lakeFS client object.
+    repository : str
+        Name of the repository from which the tag will be deleted.
+    prefix : str 
+        Return branches prefixed with this value.
+
+    Returns
+    -------
+    list[Ref]
+        List of Refs to the branches in the repository.
+    """
+    return list(depaginate(client.branches_api.list_branches, repository=repository, prefix=prefix))
+    
 
 
 def create_repository(
