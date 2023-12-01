@@ -5,6 +5,7 @@ from typing import Any
 
 import pytest
 from lakefs_sdk.exceptions import ApiException
+from lakefs_sdk.models import BranchCreation
 
 import lakefs_spec.client_helpers as client_helpers
 from lakefs_spec import LakeFSFileSystem
@@ -235,3 +236,18 @@ def test_rev_parse_error_on_parent_does_not_exist(
         client_helpers.rev_parse(
             client=fs.client, repository=repository, ref=temp_branch, parent=non_existent_parent
         )
+
+
+def test_delete_branch(fs: LakeFSFileSystem, repository: str) -> None:
+    temp_branch_name = f"Branch_{uuid.uuid4()}"
+    fs.client.branches_api.create_branch(
+        repository=repository,
+        branch_creation=BranchCreation(name=temp_branch_name, source="main"),
+    )
+    assert temp_branch_name in [
+        branch.id for branch in client_helpers.list_branches(fs.client, repository=repository)
+    ]
+    client_helpers.delete_branch(fs.client, repository=repository, branch=temp_branch_name)
+    assert temp_branch_name not in [
+        branch.id for branch in client_helpers.list_branches(fs.client, repository=repository)
+    ]
