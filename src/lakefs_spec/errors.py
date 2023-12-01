@@ -39,15 +39,14 @@ def translate_lakefs_error(
 
     Parameters
     ----------
-
     error: lakefs_client.ApiException
         The exception returned by the lakeFS API.
-    rpath: str or None
+    rpath: str | None
         The remote resource path involved in the error.
-    message : str
+    message: str | None
         An error message to use for the returned exception.
          If not given, the error message returned by the lakeFS server is used instead.
-    set_cause : bool
+    set_cause: bool
         Whether to set the ``__cause__`` attribute to the previous exception if the exception is translated.
 
     Returns
@@ -61,12 +60,11 @@ def translate_lakefs_error(
     else:
         status, reason = error.code, error.reason
 
-    constructor = HTTP_CODE_TO_ERROR.get(status, partial(IOError, errno.EIO))
-
     emsg = f"{status} {reason}"
     if rpath:
         emsg += f": {rpath!r}"
 
+    constructor = HTTP_CODE_TO_ERROR.get(status, partial(IOError, errno.EIO))
     custom_exc = constructor(message or emsg)
 
     if set_cause:
