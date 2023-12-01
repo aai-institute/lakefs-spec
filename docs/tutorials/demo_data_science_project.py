@@ -35,7 +35,7 @@ We will do the following:
 !!! tip "Local Execution"
     If you want to execute the code in this tutorial as a Jupyter notebook yourself, download the `demo_data_science_project.py` file from the lakeFS-spec repository.
     
-    You can then convert the Python file to a notebook using Jupytext (`pip install jupytext`).
+    You can then convert the Python file to a notebook using [Jupytext](https://jupytext.readthedocs.io/en/latest/using-cli.html).
     
     Use the following command: `jupytext --to notebook demo_data_science_project.py`. Change the include the path to the `.py` file, if applicable.
 
@@ -431,4 +431,5 @@ from lakefs_spec.client_helpers import list_tags, delete_tag, list_branches, del
 for tag in list_tags(fs.client, REPO_NAME):
     delete_tag(fs.client, repository=REPO_NAME, tag=tag.id)
 for branch in list_branches(fs.client, repository=REPO_NAME):
-    if branch.id != "main": delete_branch(fs.client, repository=REPO_NAME, branch=branch.id)  
+    if branch.id != "main": 
+        delete_branch(fs.client, repository=REPO_NAME, branch=branch.id)  
