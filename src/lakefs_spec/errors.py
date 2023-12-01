@@ -56,24 +56,18 @@ def translate_lakefs_error(
         A builtin Python exception ready to be thrown.
     """
     if isinstance(error, ApiException):
-        status, body = error.status, error.body
+        status = error.status
+        reason = json.loads(error.body or "{}").get("message", "")
     else:
-        status, body = error.code, json.dumps({"message": error.reason})
+        status, reason = error.code, error.reason
 
     constructor = HTTP_CODE_TO_ERROR.get(status, partial(IOError, errno.EIO))
 
-    if message is not None:
-        eargs = [message]
-    else:
-        lakefs_msg: str = json.loads(body)["message"]
-        eargs = [status, lakefs_msg]
-        if rpath is not None:
-            eargs.append(rpath)
-        if isinstance(constructor, partial):
-            # the partial has the error code already built in
-            eargs = eargs[1:]
+    emsg = f"{status} {reason}"
+    if rpath:
+        emsg += f": {rpath!r}"
 
-    custom_exc = constructor(*eargs)
+    custom_exc = constructor(message or emsg)
 
     if set_cause:
         custom_exc.__cause__ = error
