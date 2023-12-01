@@ -389,14 +389,6 @@ To do this, simply call `tx.tag` on the transaction and supply the repository na
 Tags are immutable once created, so attempting to tag two different commits with the same name will result in an error.
 """
 
-# %% tags=["Remove_input"]
-# Remove tag "train-test-split-2010" if it exists, ensuring idempotency
-# Cell hidden in docs
-from lakefs_spec.client_helpers import list_tags, delete_tag
-
-if any(tag.id == "train-test-split-2010" for tag in list_tags(fs.client, REPO_NAME)):
-    delete_tag(fs.client, repository=REPO_NAME, tag="train-test-split-2010")   
-
 
 # %%
 with fs.transaction as tx:
@@ -425,3 +417,13 @@ We can verify this by comparing the `DataFrame`s. We see that the `train_from_co
 print(
     f"Is the data tagged {tag!r} equal to the data in commit {fixed_commit_id[:8]}? {train_from_commit.equals(train_from_tag)}"
 )
+
+# %% tags=["Remove_input", "Remove_all_output"]
+# Clean-up cell removing artifacts created in notebook execution to ensure idempotency.
+# Cell hidden in docs
+from lakefs_spec.client_helpers import list_tags, delete_tag, list_branches, delete_branch
+
+for tag in list_tags(fs.client, REPO_NAME):
+    delete_tag(fs.client, repository=REPO_NAME, tag=tag.id)
+for branch in list_branches(fs.client, repository=REPO_NAME):
+    if branch.id != "main": delete_branch(fs.client, repository=REPO_NAME, branch=branch.id)  
