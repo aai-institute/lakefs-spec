@@ -5,6 +5,7 @@ namely the ``LakeFSFileSystem`` and ``LakeFSFile`` classes.
 
 from __future__ import annotations
 
+import errno
 import io
 import logging
 import mimetypes
@@ -138,7 +139,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         return self.transaction
 
     @contextmanager
-    def wrapped_api_call(self, message: str | None = None, set_cause: bool = True) -> EmptyYield:
+    def wrapped_api_call(
+        self, rpath: str | None = None, message: str | None = None, set_cause: bool = True
+    ) -> EmptyYield:
         """
         A context manager to wrap lakeFS API calls, translating any PI errors to Python-native OS errors.
 
@@ -146,6 +149,8 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         Parameters
         ----------
+        rpath: str | None
+            The remote path involved in the requested API call.
         message: str | None
             A custom error message to emit instead of parsing the API error response.
         set_cause: bool
@@ -154,7 +159,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         try:
             yield
         except ApiException as e:
-            raise translate_lakefs_error(e, message=message, set_cause=set_cause)
+            raise translate_lakefs_error(e, rpath=rpath, message=message, set_cause=set_cause)
 
     def checksum(self, path: str | os.PathLike[str]) -> str | None:
         """
@@ -293,7 +298,8 @@ class LakeFSFileSystem(AbstractFileSystem):
                 )
                 return
 
-        super().get_file(rpath=rpath, lpath=lpath, callback=callback, outfile=outfile, **kwargs)
+        with self.wrapped_api_call(rpath=rpath):
+            super().get_file(rpath, lpath, callback=callback, outfile=outfile, **kwargs)
 
     def info(self, path: str | os.PathLike[str], **kwargs: Any) -> dict[str, Any]:
         """
@@ -340,11 +346,11 @@ class LakeFSFileSystem(AbstractFileSystem):
                 # fall through, retry with `ls` if it's a directory.
                 pass
             except ApiException as e:
-                raise translate_lakefs_error(e)
+                raise translate_lakefs_error(e, rpath=path)
 
         out = self.ls(path, detail=True, **kwargs)
         if not out:
-            raise FileNotFoundError(path)
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
         return {
             "name": path.rstrip("/"),
@@ -398,7 +404,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         info = []
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
-        with self.wrapped_api_call():
+        with self.wrapped_api_call(rpath=path):
             objects = depaginate(self.client.objects_api.list_objects, repository, ref, **kwargs)
             for obj in cast(Iterable[ObjectStats], objects):
                 info.append(
@@ -533,14 +539,11 @@ class LakeFSFileSystem(AbstractFileSystem):
                     if not remote_url.lower().startswith("http"):
                         raise ValueError("Wrong protocol for remote connection")
                     else:
-                        logger.info(f"Begin upload of {lpath}")
+                        logger.debug(f"Begin upload of {lpath}")
                         with urllib.request.urlopen(request):  # nosec [B310:blacklist] # We catch faulty protocols above.
-                            logger.info(f"Successfully uploaded {lpath}")
+                            logger.debug(f"Successfully uploaded {lpath}")
                 except urllib.error.HTTPError as e:
-                    urllib_http_error_as_lakefs_api_exception = ApiException(
-                        status=e.code, reason=e.reason
-                    )
-                    raise translate_lakefs_error(error=urllib_http_error_as_lakefs_api_exception)
+                    raise translate_lakefs_error(e, rpath=rpath)
         else:
             blockstore_type = self.client.config_api.get_config().storage_config.blockstore_type
             # lakeFS blockstore name is "azure", but Azure's fsspec registry entry is "az".
@@ -622,7 +625,8 @@ class LakeFSFileSystem(AbstractFileSystem):
                 storage_options=storage_options,
             )
         else:
-            super().put_file(lpath=lpath, rpath=rpath, callback=callback, **kwargs)
+            with self.wrapped_api_call(rpath=rpath):
+                super().put_file(lpath, rpath, callback=callback, **kwargs)
 
     def rm_file(self, path: str | os.PathLike[str]) -> None:
         """
@@ -638,7 +642,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         path = stringify_path(path)
         repository, branch, resource = parse(path)
 
-        with self.wrapped_api_call():
+        with self.wrapped_api_call(rpath=path):
             self.client.objects_api.delete_object(
                 repository=repository, branch=branch, path=resource
             )
@@ -733,7 +737,7 @@ class LakeFSFile(AbstractBufferedFile):
         """
         repository, branch, resource = parse(self.path)
 
-        with self.fs.wrapped_api_call():
+        with self.fs.wrapped_api_call(rpath=self.path):
             # empty buffer is equivalent to a touch()
             self.buffer.seek(0)
             self.fs.client.objects_api.upload_object(
@@ -811,7 +815,7 @@ class LakeFSFile(AbstractBufferedFile):
             A byte array holding the downloaded data from lakeFS.
         """
         repository, ref, resource = parse(self.path)
-        with self.fs.wrapped_api_call():
+        with self.fs.wrapped_api_call(rpath=self.path):
             return self.fs.client.objects_api.get_object(
                 repository, ref, resource, range=f"bytes={start}-{end - 1}", **self.kwargs
             )

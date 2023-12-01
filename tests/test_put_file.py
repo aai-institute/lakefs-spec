@@ -65,7 +65,7 @@ def test_implicit_branch_creation(
     fs.create_branch_ok = False
     another_non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
     rpath = f"{repository}/{another_non_existing_branch}/{random_file.name}"
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(FileNotFoundError, match=f"not found: {rpath!r}"):
         fs.put(lpath, rpath)
 
 
@@ -73,7 +73,7 @@ def test_put_client_caching(
     random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
 ) -> None:
     """
-    Tests that `precheck=True` prevents a second upload of an identical file by matching checksums.
+    Tests that ``precheck=True`` prevents a second upload of an identical file by matching checksums.
     """
     fs.client, counter = with_counter(fs.client)
 
