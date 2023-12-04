@@ -13,12 +13,11 @@ runs:
         python-version: ${{ inputs.pythonVersion }}
         cache: 'pip'
         cache-dependency-path: |
-          requirements.txt
           requirements-dev.txt
           requirements-docs.txt
           pyproject.toml
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt -r requirements-dev.txt -r requirements-docs.txt
+        pip install -r requirements-dev.txt -r requirements-docs.txt
         pip install -e . --no-deps
       shell: bash

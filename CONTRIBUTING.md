@@ -21,7 +21,7 @@ To get started with development, you can follow these steps:
     cd lakefs-spec
     python3 -m venv venv --system-site-packages
     source venv/bin/activate
-    python -m pip install -r requirements.txt -r requirements-dev.txt
+    python -m pip install -r requirements-dev.txt
     python -m pip install -e . --no-deps
     ```
 
