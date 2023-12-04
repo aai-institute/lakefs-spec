@@ -123,13 +123,13 @@ def delete_branch(
 
     Parameters
     ----------
-    client : LakeFSClient
+    client: LakeFSClient
         lakeFS client object.
-    repository : str
+    repository: str
         Name of the repository from which the branch will be deleted.
-    branch : str
+    branch: str
         Name of the branch to be deleted.
-    missing_ok : bool
+    missing_ok: bool
         Ignore errors if the requested branch does not exist in the repository.
     """
     try:
@@ -145,17 +145,17 @@ def list_branches(client: LakeFSClient, repository: str, prefix: str | None = No
 
     Parameters
     ----------
-    client : LakeFSClient
+    client: LakeFSClient
         lakeFS client object.
-    repository : str
-        Name of the repository from which the branches will be listed.
-    prefix : str
+    repository: str
+        Name of the repository for which to list branches.
+    prefix: str
         Return branches prefixed with this value.
 
     Returns
     -------
     list[Ref]
-        List of Refs to the branches in the repository.
+        A list of qualified branches in the repository.
     """
     return list(depaginate(client.branches_api.list_branches, repository=repository, prefix=prefix))
 
@@ -249,11 +249,11 @@ def delete_tag(client: LakeFSClient, repository: str, tag: str | Ref) -> None:
 
     Parameters
     ----------
-    client : LakeFSClient
+    client: LakeFSClient
         lakeFS client object.
-    repository : str
+    repository: str
         Name of the repository from which the tag will be deleted.
-    tag : str | Ref
+    tag: str | Ref
         Tag to be deleted.
     """
     if isinstance(tag, Ref):
