@@ -253,5 +253,5 @@ def test_delete_undefined_branch_error(fs: LakeFSFileSystem, repository: str) ->
     not_existing_branch_name = f"Branch_{uuid.uuid4()}"
     with pytest.raises(NotFoundException):
         client_helpers.delete_branch(
-            fs.client, repository=repository, branch=not_existing_branch_name
+            fs.client, repository=repository, branch=not_existing_branch_name, missing_ok=False
         )

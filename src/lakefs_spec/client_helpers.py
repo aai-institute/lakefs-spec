@@ -116,7 +116,9 @@ def create_branch(
         raise e
 
 
-def delete_branch(client: LakeFSClient, repository: str, branch: str) -> None:
+def delete_branch(
+    client: LakeFSClient, repository: str, branch: str, missing_ok: bool = False
+) -> None:
     """
     Delete the specified branch from a repository.
 
@@ -128,8 +130,14 @@ def delete_branch(client: LakeFSClient, repository: str, branch: str) -> None:
         Name of the repository from which the branch will be deleted.
     branch : str
         Name of the branch to be deleted.
+    missing_ok : bool
+        Whether to allow deletion of a branch that does not exist.
     """
-    client.branches_api.delete_branch(repository=repository, branch=branch)
+    try:
+        client.branches_api.delete_branch(repository=repository, branch=branch)
+    except NotFoundException as e:
+        if not missing_ok:
+            raise e
 
 
 def list_branches(client: LakeFSClient, repository: str, prefix: Optional[str] = None) -> list[Ref]:
