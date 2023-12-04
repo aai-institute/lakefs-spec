@@ -35,9 +35,7 @@ We will do the following:
 !!! tip "Local Execution"
     If you want to execute the code in this tutorial as a Jupyter notebook yourself, download the `demo_data_science_project.py` file from the lakeFS-spec repository.
     
-    You can then convert the Python file to a notebook using [Jupytext](https://jupytext.readthedocs.io/en/latest/using-cli.html).
-    
-    Use the following command: `jupytext --to notebook demo_data_science_project.py`. Change the include the path to the `.py` file, if applicable.
+    You can then convert the Python file to a notebook using [Jupytext](https://jupytext.readthedocs.io/en/latest/using-cli.html) using the following command: `jupytext --to notebook demo_data_science_project.py`.
 
 This tutorial assumes that you have installed lakeFS-spec in a virtual environment, and that you have followed the [quickstart guide](../quickstart.md) to set up a local lakeFS instance.
 
@@ -352,6 +350,7 @@ from lakefs_spec.client_helpers import rev_parse
 
 # parent is the parent number of a commit relative to HEAD (the latest commit, for which parent = 0).
 previous_commit = rev_parse(fs.client, REPO_NAME, TRAINING_BRANCH, parent=1)
+print(previous_commit)
 fixed_commit_id = previous_commit.id
 print(fixed_commit_id)
 
