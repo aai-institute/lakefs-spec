@@ -350,7 +350,6 @@ from lakefs_spec.client_helpers import rev_parse
 
 # parent is the parent number of a commit relative to HEAD (the latest commit, for which parent = 0).
 previous_commit = rev_parse(fs.client, REPO_NAME, TRAINING_BRANCH, parent=1)
-print(previous_commit)
 fixed_commit_id = previous_commit.id
 print(fixed_commit_id)
 
