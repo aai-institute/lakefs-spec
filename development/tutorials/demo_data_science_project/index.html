@@ -1024,14 +1024,18 @@ We will use versioned weather data to train a decision tree classifier to predic
 <li>Accessing data versions and reproducing experiments</li>
 <li>Using tags for semantic versioning</li>
 </ul>
-<p>To execute the code in this tutorial as a Jupyter notebook, download the <code>.ipynb</code> file from the lakeFS-spec repository.</p>
+<div class="admonition tip">
+<p class="admonition-title">Local Execution</p>
+<p>If you want to execute the code in this tutorial as a Jupyter notebook yourself, download the <code>demo_data_science_project.py</code> file from the lakeFS-spec repository.</p>
+<p>You can then convert the Python file to a notebook using <a href="https://jupytext.readthedocs.io/en/latest/using-cli.html">Jupytext</a> using the following command: <code>jupytext --to notebook demo_data_science_project.py</code>.</p>
+</div>
 <p>This tutorial assumes that you have installed lakeFS-spec in a virtual environment, and that you have followed the <a href="../../quickstart/">quickstart guide</a> to set up a local lakeFS instance.</p>
 <h2 id="environment-setup">Environment setup<a class="headerlink" href="#environment-setup" title="Permanent link">&para;</a></h2>
 <p>Install the necessary libraries for this notebook on the environment you have just created:</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered celltag_Remove_all_output">
+<div class="cell border-box-sizing code_cell rendered celltag_Remove_single_output">
 <div class="input">
 
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">numpy</span> <span class="n">pandas</span> <span class="n">scikit</span><span class="o">-</span><span class="n">learn</span>
@@ -1118,7 +1122,7 @@ By executing the cell below, you will download a YAML file containing the defaul
 <div class="output_area">
 <div class="output_text output_subarea output_execute_result">
 <pre>
-<code>('/home/runner/.lakectl.yaml', &lt;http.client.HTTPMessage at 0x7fbb64984fd0&gt;)</code>
+<code>('/home/runner/.lakectl.yaml', &lt;http.client.HTTPMessage at 0x7f9cccadcdd0&gt;)</code>
 </pre>
 </div>
 </div>
@@ -1683,7 +1687,7 @@ There, we take the parent of the previous commit, titled <code>Add train-test sp
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>dd1d3ecd3bd0e20f7353151f6bbff4c74e2833887d32c5de40377b913f3d9882
+<code>d1e4c941d39da10ca6f15ade28429bfbb538280cfe6b536fecfa3df0e0a3b40e
 </code>
 </pre>
 </div>
@@ -1820,7 +1824,7 @@ Both the <code>fixed_commit_id</code> and <code>tag</code> reference the same ve
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Is the data tagged 'train-test-split-2010' equal to the data in commit dd1d3ecd? True
+<code>Is the data tagged 'train-test-split-2010' equal to the data in commit d1e4c941? True
 </code>
 </pre>
 </div>
@@ -1828,13 +1832,14 @@ Both the <code>fixed_commit_id</code> and <code>tag</code> reference the same ve
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing code_cell rendered celltag_Remove_input celltag_Remove_all_output"></div>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-01</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-04</span>
       
     
   </small>
