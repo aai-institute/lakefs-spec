@@ -115,6 +115,51 @@ def create_branch(
         raise e
 
 
+def delete_branch(
+    client: LakeFSClient, repository: str, branch: str, missing_ok: bool = False
+) -> None:
+    """
+    Delete the specified branch from a repository.
+
+    Parameters
+    ----------
+    client: LakeFSClient
+        lakeFS client object.
+    repository: str
+        Name of the repository from which the branch will be deleted.
+    branch: str
+        Name of the branch to be deleted.
+    missing_ok: bool
+        Ignore errors if the requested branch does not exist in the repository.
+    """
+    try:
+        client.branches_api.delete_branch(repository=repository, branch=branch)
+    except NotFoundException as e:
+        if not missing_ok:
+            raise e
+
+
+def list_branches(client: LakeFSClient, repository: str, prefix: str | None = None) -> list[Ref]:
+    """
+    List branches in a repository.
+
+    Parameters
+    ----------
+    client: LakeFSClient
+        lakeFS client object.
+    repository: str
+        Name of the repository for which to list branches.
+    prefix: str
+        Return branches prefixed with this value.
+
+    Returns
+    -------
+    list[Ref]
+        A list of qualified branches in the repository.
+    """
+    return list(depaginate(client.branches_api.list_branches, repository=repository, prefix=prefix))
+
+
 def create_repository(
     client: LakeFSClient, name: str, storage_namespace: str, exist_ok: bool = True
 ) -> Repository:
@@ -204,11 +249,11 @@ def delete_tag(client: LakeFSClient, repository: str, tag: str | Ref) -> None:
 
     Parameters
     ----------
-    client : LakeFSClient
+    client: LakeFSClient
         lakeFS client object.
-    repository : str
+    repository: str
         Name of the repository from which the tag will be deleted.
-    tag : str | Ref
+    tag: str | Ref
         Tag to be deleted.
     """
     if isinstance(tag, Ref):

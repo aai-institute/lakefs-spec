@@ -102,3 +102,7 @@ def commit_random_file_on_branch(
         branch=temp_branch,
         message=f"Add file {random_file.name!r}",
     )
+
+
+def list_branch_names(fs: LakeFSFileSystem, repository: str) -> list[str]:
+    return [branch.id for branch in client_helpers.list_branches(fs.client, repository=repository)]

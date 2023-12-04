@@ -32,7 +32,10 @@ We will do the following:
 * Accessing data versions and reproducing experiments
 * Using tags for semantic versioning
 
-To execute the code in this tutorial as a Jupyter notebook, download the `.ipynb` file from the lakeFS-spec repository.
+!!! tip "Local Execution"
+    If you want to execute the code in this tutorial as a Jupyter notebook yourself, download the `demo_data_science_project.py` file from the lakeFS-spec repository.
+    
+    You can then convert the Python file to a notebook using [Jupytext](https://jupytext.readthedocs.io/en/latest/using-cli.html) using the following command: `jupytext --to notebook demo_data_science_project.py`.
 
 This tutorial assumes that you have installed lakeFS-spec in a virtual environment, and that you have followed the [quickstart guide](../quickstart.md) to set up a local lakeFS instance.
 
@@ -41,7 +44,7 @@ This tutorial assumes that you have installed lakeFS-spec in a virtual environme
 Install the necessary libraries for this notebook on the environment you have just created:
 """
 
-# %% tags=["Remove_all_output"]
+# %% tags=["Remove_single_output"] 
 # %pip install numpy pandas scikit-learn
 
 # %% [markdown]
@@ -389,6 +392,7 @@ To do this, simply call `tx.tag` on the transaction and supply the repository na
 Tags are immutable once created, so attempting to tag two different commits with the same name will result in an error.
 """
 
+
 # %%
 with fs.transaction as tx:
     # the `tag` result is simply the tag name, in this case 'train-test-split-2010'.
@@ -416,3 +420,14 @@ We can verify this by comparing the `DataFrame`s. We see that the `train_from_co
 print(
     f"Is the data tagged {tag!r} equal to the data in commit {fixed_commit_id[:8]}? {train_from_commit.equals(train_from_tag)}"
 )
+
+# %% tags=["Remove_input", "Remove_all_output"]
+# Clean-up cell removing artifacts created in notebook execution to ensure idempotency.
+# Cell hidden in docs
+from lakefs_spec.client_helpers import list_tags, delete_tag, list_branches, delete_branch
+
+for tag in list_tags(fs.client, REPO_NAME):
+    delete_tag(fs.client, repository=REPO_NAME, tag=tag.id)
+for branch in list_branches(fs.client, repository=REPO_NAME):
+    if branch.id != "main": 
+        delete_branch(fs.client, repository=REPO_NAME, branch=branch.id)  
