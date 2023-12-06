@@ -14,6 +14,10 @@ Highlights:
 - Zero-config option through config autodiscovery
 - Automatic up-/download management to avoid unnecessary transfers for unchanged files
 
+> [!NOTE]
+> lakeFS-spec is a young project - we are looking for early adopters!
+> Please reach out via [Github Discussions](https://github.com/aai-institute/lakefs-spec/discussions) if you are interested in using the library and want to get in touch with us.
+
 ## Installation
 
 lakeFS-spec is published on PyPI, you can simply install it using your favorite package manager:
