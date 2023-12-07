@@ -1,6 +1,6 @@
 import pytest
 
-from lakefs_spec import LakeFSFileSystem
+from lakefs_spec import LakeFSFileSystem, client_helpers
 from tests.util import RandomFileFactory, with_counter
 
 
@@ -100,7 +100,7 @@ def test_ls_no_detail(fs: LakeFSFileSystem, repository: str) -> None:
 
     expected = [f"{resource}/lakes.source.md"]
     # first, verify the API fetch does the expected...
-    assert fs.ls(resource, detail=False) == expected
+    assert fs.ls(f"{resource}/", detail=False) == expected
     assert list(fs.dircache.keys()) == [resource]
 
     # ...as well as the cache fetch.
@@ -112,3 +112,39 @@ def test_ls_no_detail(fs: LakeFSFileSystem, repository: str) -> None:
     fs.ls(resource, detail=False)
 
     assert set(fs.dircache.keys()) == {f"{prefix}/data", f"{prefix}/images"}
+
+
+def test_ls_dircache_remove_uncached(fs: LakeFSFileSystem, repository: str) -> None:
+    branch = "main"
+    prefix = f"{repository}/{branch}"
+    resource = f"{prefix}/"
+
+    try:
+        listing_pre = fs.ls(resource)
+        fs.rm(listing_pre[0]["name"])
+
+        # List again, bypassing the cache...
+        listing_post = fs.ls(resource, refresh=True)
+        assert len(listing_post) == len(listing_pre) - 1
+
+        # ... and through the cache (which should have been updated above)
+        listing_post = fs.ls(resource)
+        assert len(listing_post) == len(listing_pre) - 1
+    finally:
+        client_helpers.reset_branch(fs.client, repository, branch)
+
+
+def test_ls_dircache_remove_cached(fs: LakeFSFileSystem, repository: str) -> None:
+    branch = "main"
+    prefix = f"{repository}/{branch}"
+    resource = f"{prefix}/"
+
+    try:
+        listing_pre = fs.ls(resource)
+        fs.rm(listing_pre[0]["name"])
+
+        # List again, cache should have been invalidated by rm
+        listing_post = fs.ls(resource)
+        assert len(listing_post) == len(listing_pre) - 1
+    finally:
+        client_helpers.reset_branch(fs.client, repository, branch)

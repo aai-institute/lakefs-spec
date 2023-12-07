@@ -348,17 +348,22 @@ class LakeFSFileSystem(AbstractFileSystem):
             except ApiException as e:
                 raise translate_lakefs_error(e, rpath=path)
 
-        out = self.ls(path, detail=True, **kwargs)
+        out = self.ls(path, detail=True, recursive=True, **kwargs)
         if not out:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
         return {
             "name": path.rstrip("/"),
-            "size": sum(o.get("size", 0) for o in out),
+            "size": sum(o.get("size") or 0 for o in out),
             "type": "directory",
         }
 
-    def ls(self, path: str | os.PathLike[str], detail: bool = True, **kwargs: Any) -> list:
+    def ls(
+        self,
+        path: str | os.PathLike[str],
+        detail: bool = True,
+        **kwargs: Any,
+    ) -> list:
         """
         List all available objects under a given path in lakeFS.
 
@@ -371,6 +376,10 @@ class LakeFSFileSystem(AbstractFileSystem):
             Whether to obtain all metadata on the requested objects or just their names.
         **kwargs: Any
             Additional keyword arguments to pass to ``LakeFSClient.objects_api.list_objects()``.
+
+            In particular:
+                `refresh: bool`: whether to skip the directory listing cache,
+                `recursive: bool`: whether to list subdirectory contents recursively
 
         Returns
         -------
@@ -400,12 +409,23 @@ class LakeFSFileSystem(AbstractFileSystem):
                     return [e["name"] for e in cache_entry]
                 return cache_entry[:]
 
+        recursive = kwargs.get("recursive", False)
+        if "recursive" in kwargs:
+            del kwargs["recursive"]
+
         kwargs["prefix"] = prefix
 
         info = []
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         with self.wrapped_api_call(rpath=path):
-            objects = depaginate(self.client.objects_api.list_objects, repository, ref, **kwargs)
+            delimiter = "" if recursive else "/"
+            objects = depaginate(
+                self.client.objects_api.list_objects,
+                repository,
+                ref,
+                delimiter=delimiter,
+                **kwargs,
+            )
             for obj in cast(Iterable[ObjectStats], objects):
                 info.append(
                     {
@@ -421,6 +441,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         # cache the info if not empty.
         if info:
             # assumes that the returned info is name-sorted.
+            # All directories included in this listing
+            directories = {str(Path(e["name"]).parent) for e in info}
+
             pp = self._parent(info[0]["name"])
             info_copy = info[:]
             if pp in self.dircache:
@@ -665,6 +688,10 @@ class LakeFSFileSystem(AbstractFileSystem):
             self.client.objects_api.delete_object(
                 repository=repository, branch=branch, path=resource
             )
+            # Directory listing cache for the containing folder must be invalidated
+            parent_path = str(Path(path).parent)
+            if parent_path in self.dircache:
+                del self.dircache[parent_path]
 
 
 class LakeFSFile(AbstractBufferedFile):
