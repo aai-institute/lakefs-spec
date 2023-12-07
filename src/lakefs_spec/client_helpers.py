@@ -21,6 +21,7 @@ from lakefs_sdk.models import (
     Ref,
     Repository,
     RepositoryCreation,
+    ResetCreation,
     RevertCreation,
     TagCreation,
 )
@@ -326,6 +327,25 @@ def revert(client: LakeFSClient, repository: str, branch: str, parent_number: in
     revert_creation = RevertCreation(ref=branch, parent_number=parent_number)
     client.branches_api.revert_branch(
         repository=repository, branch=branch, revert_creation=revert_creation
+    )
+
+
+def reset_branch(client: LakeFSClient, repository: str, branch: str) -> None:
+    """
+    Reset the specified branch to its head.
+
+    Parameters
+    ----------
+    client: LakeFSClient
+        lakeFS client object.
+    repository: str
+        Repository in which the specified branch is located.
+    branch: str
+        Branch on which the commit should be reverted.
+    """
+    reset_creation = ResetCreation(type="reset")
+    client.branches_api.reset_branch(
+        repository=repository, branch=branch, reset_creation=reset_creation
     )
 
 

@@ -255,3 +255,21 @@ def test_delete_undefined_branch_error(fs: LakeFSFileSystem, repository: str) ->
         client_helpers.delete_branch(
             fs.client, repository=repository, branch=not_existing_branch_name, missing_ok=False
         )
+
+
+def test_reset_branch(
+    fs: LakeFSFileSystem,
+    repository: str,
+    random_file_factory: RandomFileFactory,
+) -> None:
+    branch = "main"
+
+    lpath = random_file_factory.make()
+    lpath.write_text("Hello")
+
+    rpath = f"lakefs://{repository}/{branch}/{lpath.name}"
+
+    fs.put(str(lpath), rpath)
+    client_helpers.reset_branch(fs.client, repository, branch)
+    with pytest.raises(FileNotFoundError):
+        fs.info(rpath)
