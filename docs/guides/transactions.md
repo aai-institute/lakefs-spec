@@ -61,7 +61,7 @@ The full list of supported lakeFS versioning operations:
 
     ```python
     with fs.transaction as tx:
-        tx.put_file("my-file.txt", "repo/branch/my-file.txt")
+        fs.put_file("my-file.txt", "repo/branch/my-file.txt")
         sha = tx.commit("repo", "branch", message="Add my-file.txt")
     
     # This will not work: `sha` is of type `Placeholder[Commit]`
@@ -79,7 +79,7 @@ To reuse the value later in your code, you can call `unwrap()` on the resulting 
 
 ```python
 with fs.transaction as tx:
-    tx.put_file("my-file.txt", "repo/branch/my-file.txt")
+    fs.put_file("my-file.txt", "repo/branch/my-file.txt")
     sha = tx.commit("repo", "branch", message="Add my-file.txt")
 
 # Obtain the SHA value by unwrapping the placeholder first.
