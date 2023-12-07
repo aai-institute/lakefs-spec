@@ -14,6 +14,7 @@ import os
 import urllib.error
 import urllib.request
 from contextlib import contextmanager
+from functools import partial
 from pathlib import Path
 from typing import Any, Generator, Iterable, Literal, cast
 
@@ -398,7 +399,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             if cache_entry is not None:
                 if not detail:
                     return [e["name"] for e in cache_entry]
-                return cache_entry
+                return cache_entry[:]
 
         kwargs["prefix"] = prefix
 
@@ -422,14 +423,29 @@ class LakeFSFileSystem(AbstractFileSystem):
         if info:
             # assumes that the returned info is name-sorted.
             pp = self._parent(info[0]["name"])
+            info_copy = info[:]
             if pp in self.dircache:
                 # ls info has files not in cache, so we update them in the cache entry.
-                cache_entry = self.dircache[pp]
-                # extend the entry by the new ls results
-                cache_entry.extend(info)
+                cache_entry = self.dircache[pp][:]
+
+                # Overwrite existing entries in the cache with its updated values
+                for idx, entry in enumerate(cache_entry):
+
+                    def _matches(e, name):
+                        return e["name"] == name
+
+                    info_entry = next(
+                        filter(partial(_matches, name=entry["name"]), info_copy),
+                        None,
+                    )
+                    if not info_entry:
+                        continue
+                    cache_entry[idx] = info_entry
+                    info_copy.remove(info_entry)
+                cache_entry.extend(info_copy)
                 self.dircache[pp] = sorted(cache_entry, key=operator.itemgetter("name"))
             else:
-                self.dircache[pp] = info
+                self.dircache[pp] = info[:]
 
         if not detail:
             info = [o["name"] for o in info]

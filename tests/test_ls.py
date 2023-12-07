@@ -1,8 +1,11 @@
+import pytest
+
 from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory, with_counter
 
 
-def test_paginated_ls(fs: LakeFSFileSystem, repository: str) -> None:
+@pytest.mark.parametrize("pagesize", [1, 2, 5, 10, 50])
+def test_paginated_ls(fs: LakeFSFileSystem, repository: str, pagesize: int) -> None:
     """
     Check that all results of an ``ls`` call are returned independently of page size.
     """
@@ -11,9 +14,8 @@ def test_paginated_ls(fs: LakeFSFileSystem, repository: str) -> None:
     # default amount of 100 objects per page
     all_results = fs.ls(resource)
 
-    for pagesize in [2, 5, 10, 50]:
-        paged_results = fs.ls(resource, amount=pagesize)
-        assert paged_results == all_results
+    paged_results = fs.ls(resource, amount=pagesize, refresh=True)
+    assert paged_results == all_results
 
 
 def test_ls_caching(fs: LakeFSFileSystem, repository: str) -> None:
