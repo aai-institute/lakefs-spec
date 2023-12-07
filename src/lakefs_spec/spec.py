@@ -14,7 +14,6 @@ import os
 import urllib.error
 import urllib.request
 from contextlib import contextmanager
-from functools import partial
 from pathlib import Path
 from typing import Any, Generator, Iterable, Literal, cast
 
@@ -428,20 +427,24 @@ class LakeFSFileSystem(AbstractFileSystem):
                 # ls info has files not in cache, so we update them in the cache entry.
                 cache_entry = self.dircache[pp][:]
 
+                old_names = {e["name"] for e in cache_entry}
+                new_names = {e["name"] for e in info_copy}
+
+                to_remove = old_names - new_names
+                to_update = old_names.intersection(new_names)
+
+                # Remove all entries no longer present in the current listing
+                cache_entry = [e for e in cache_entry if e["name"] not in to_remove]
+
                 # Overwrite existing entries in the cache with its updated values
-                for idx, entry in enumerate(cache_entry):
+                for name in to_update:
+                    old_idx = next(idx for idx, e in enumerate(cache_entry) if e["name"] == name)
+                    new_entry = next(e for e in info_copy if e["name"] == name)
 
-                    def _matches(e, name):
-                        return e["name"] == name
+                    cache_entry[old_idx] = new_entry
+                    info_copy.remove(new_entry)
 
-                    info_entry = next(
-                        filter(partial(_matches, name=entry["name"]), info_copy),
-                        None,
-                    )
-                    if not info_entry:
-                        continue
-                    cache_entry[idx] = info_entry
-                    info_copy.remove(info_entry)
+                # Add the remaining (new) entries to the cache
                 cache_entry.extend(info_copy)
                 self.dircache[pp] = sorted(cache_entry, key=operator.itemgetter("name"))
             else:
