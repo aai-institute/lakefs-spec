@@ -986,7 +986,7 @@ The following is an example of file uploads with commit creations, with a tag be
 For example, the <code>sha</code> return value of <code>tx.commit</code> will be a placeholder for the actual commit SHA computed by the lakeFS server on commit creation.</p>
 <p>While you can directly use some values (branch/tag names) returned by transaction versioning helpers, care needs to be taken with computed objects like commit SHAs:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;repo/branch/my-file.txt&quot;</span><span class="p">)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;repo/branch/my-file.txt&quot;</span><span class="p">)</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;branch&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add my-file.txt&quot;</span><span class="p">)</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># This will not work: `sha` is of type `Placeholder[Commit]`</span>
@@ -1000,7 +1000,7 @@ An example of this is a commit SHA, which is only available once created by the 
 In the above example, a commit is created directly after a file upload, but its actual SHA identifier will not be available until the transaction is complete.
 To reuse the value later in your code, you can call <code>unwrap()</code> on the resulting <a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.Placeholder"><code>Placeholder</code></a> object:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;repo/branch/my-file.txt&quot;</span><span class="p">)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;repo/branch/my-file.txt&quot;</span><span class="p">)</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;branch&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add my-file.txt&quot;</span><span class="p">)</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># Obtain the SHA value by unwrapping the placeholder first.</span>
@@ -1014,7 +1014,7 @@ To reuse the value later in your code, you can call <code>unwrap()</code> on the
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-11-27</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-07</span>
       
     
   </small>
