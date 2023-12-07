@@ -409,9 +409,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                     return [e["name"] for e in cache_entry]
                 return cache_entry[:]
 
-        recursive = kwargs.get("recursive", False)
-        if "recursive" in kwargs:
-            del kwargs["recursive"]
+        recursive = kwargs.pop("recursive", False)
 
         kwargs["prefix"] = prefix
 
@@ -441,9 +439,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         # cache the info if not empty.
         if info:
             # assumes that the returned info is name-sorted.
-            # All directories included in this listing
-            directories = {str(Path(e["name"]).parent) for e in info}
-
             pp = self._parent(info[0]["name"])
             info_copy = info[:]
             if pp in self.dircache:
@@ -689,9 +684,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 repository=repository, branch=branch, path=resource
             )
             # Directory listing cache for the containing folder must be invalidated
-            parent_path = str(Path(path).parent)
-            if parent_path in self.dircache:
-                del self.dircache[parent_path]
+            self.dircache.pop(self._parent(path), None)
 
 
 class LakeFSFile(AbstractBufferedFile):

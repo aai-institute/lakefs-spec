@@ -341,7 +341,7 @@ def reset_branch(client: LakeFSClient, repository: str, branch: str) -> None:
     repository: str
         Repository in which the specified branch is located.
     branch: str
-        Branch on which the commit should be reverted.
+        Branch to reset.
     """
     reset_creation = ResetCreation(type="reset")
     client.branches_api.reset_branch(
