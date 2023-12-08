@@ -618,8 +618,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                         raise ValueError("Wrong protocol for remote connection")
                     else:
                         logger.debug(f"Begin upload of {lpath}")
-                        # nosec [B310:blacklist] # We catch faulty protocols above.
-                        with urllib.request.urlopen(request):
+                        with urllib.request.urlopen(request):  # nosec [B310:blacklist] # We catch faulty protocols above.
                             logger.debug(f"Successfully uploaded {lpath}")
                 except urllib.error.HTTPError as e:
                     raise translate_lakefs_error(e, rpath=rpath)
