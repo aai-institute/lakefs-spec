@@ -8,7 +8,7 @@ def test_walk_single_dir(fs: LakeFSFileSystem, repository: str) -> None:
     path = f"{repository}/{branch}/{resource}/"
 
     dirname, dirs, files = next(fs.walk(path))
-    assert dirname == path.rstrip("/")
+    assert dirname == path
     assert dirs == []
     assert len(files) == 37  # NOTE: hardcoded for quickstart repo
 
