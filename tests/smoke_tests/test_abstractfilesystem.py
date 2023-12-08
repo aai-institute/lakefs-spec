@@ -22,3 +22,9 @@ def test_walk_repo_root(fs: LakeFSFileSystem, repository: str) -> None:
     assert dirname == path
     assert len(dirs) == 2
     assert len(files) == 2
+
+
+def test_find_in_folder(fs: LakeFSFileSystem, repository: str) -> None:
+    path = f"{repository}/main/"
+    # Find the 37 elements in images directory in test repo
+    assert len(fs.find(path + "images")) == 37
