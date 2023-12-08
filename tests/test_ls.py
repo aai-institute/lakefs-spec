@@ -1,8 +1,11 @@
-from lakefs_spec import LakeFSFileSystem
+import pytest
+
+from lakefs_spec import LakeFSFileSystem, client_helpers
 from tests.util import RandomFileFactory, with_counter
 
 
-def test_paginated_ls(fs: LakeFSFileSystem, repository: str) -> None:
+@pytest.mark.parametrize("pagesize", [1, 2, 5, 10, 50])
+def test_paginated_ls(fs: LakeFSFileSystem, repository: str, pagesize: int) -> None:
     """
     Check that all results of an ``ls`` call are returned independently of page size.
     """
@@ -11,9 +14,8 @@ def test_paginated_ls(fs: LakeFSFileSystem, repository: str) -> None:
     # default amount of 100 objects per page
     all_results = fs.ls(resource)
 
-    for pagesize in [2, 5, 10, 50]:
-        paged_results = fs.ls(resource, amount=pagesize)
-        assert paged_results == all_results
+    paged_results = fs.ls(resource, amount=pagesize, refresh=True)
+    assert paged_results == all_results
 
 
 def test_ls_caching(fs: LakeFSFileSystem, repository: str) -> None:
@@ -103,10 +105,48 @@ def test_ls_no_detail(fs: LakeFSFileSystem, repository: str) -> None:
 
     # ...as well as the cache fetch.
     assert fs.ls(resource, detail=False) == expected
-    assert counter.count("objects_api.list_objects") == 1
+
+    # One API call for the directory object, and one for listing its contents
+    assert counter.count("objects_api.list_objects") == 2
 
     # test the same thing with a subfolder + file prefix
     resource = f"{prefix}/images/duckdb"
     fs.ls(resource, detail=False)
 
     assert set(fs.dircache.keys()) == {f"{prefix}/data", f"{prefix}/images"}
+
+
+def test_ls_dircache_remove_uncached(fs: LakeFSFileSystem, repository: str) -> None:
+    branch = "main"
+    prefix = f"{repository}/{branch}"
+    resource = f"{prefix}/"
+
+    try:
+        listing_pre = fs.ls(resource)
+        fs.rm(listing_pre[0]["name"])
+
+        # List again, bypassing the cache...
+        listing_post = fs.ls(resource, refresh=True)
+        assert len(listing_post) == len(listing_pre) - 1
+
+        # ... and through the cache (which should have been updated above)
+        listing_post = fs.ls(resource)
+        assert len(listing_post) == len(listing_pre) - 1
+    finally:
+        client_helpers.reset_branch(fs.client, repository, branch)
+
+
+def test_ls_dircache_remove_cached(fs: LakeFSFileSystem, repository: str) -> None:
+    branch = "main"
+    prefix = f"{repository}/{branch}"
+    resource = f"{prefix}/"
+
+    try:
+        listing_pre = fs.ls(resource)
+        fs.rm(listing_pre[0]["name"])
+
+        # List again, cache should have been invalidated by rm
+        listing_post = fs.ls(resource)
+        assert len(listing_post) == len(listing_pre) - 1
+    finally:
+        client_helpers.reset_branch(fs.client, repository, branch)

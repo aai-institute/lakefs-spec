@@ -348,17 +348,22 @@ class LakeFSFileSystem(AbstractFileSystem):
             except ApiException as e:
                 raise translate_lakefs_error(e, rpath=path)
 
-        out = self.ls(path, detail=True, **kwargs)
+        out = self.ls(path, detail=True, recursive=True, **kwargs)
         if not out:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
         return {
             "name": path.rstrip("/"),
-            "size": sum(o.get("size", 0) for o in out),
+            "size": sum(o.get("size") or 0 for o in out),
             "type": "directory",
         }
 
-    def ls(self, path: str | os.PathLike[str], detail: bool = True, **kwargs: Any) -> list:
+    def ls(
+        self,
+        path: str | os.PathLike[str],
+        detail: bool = True,
+        **kwargs: Any,
+    ) -> list:
         """
         List all available objects under a given path in lakeFS.
 
@@ -372,12 +377,26 @@ class LakeFSFileSystem(AbstractFileSystem):
         **kwargs: Any
             Additional keyword arguments to pass to ``LakeFSClient.objects_api.list_objects()``.
 
+            In particular:
+                `refresh: bool`: whether to skip the directory listing cache,
+                `recursive: bool`: whether to list subdirectory contents recursively
+
         Returns
         -------
         list[str | dict[str, Any]]
             A list of all objects' metadata under the given remote path if ``detail=True``, or alternatively only their names if ``detail=False``.
         """
-        path = stringify_path(path)
+
+        def _api_path_type_to_info(path_type: str) -> Literal["file", "directory"]:
+            """Convert ``list_objects()`` API response field ``path_type`` to ``info.type``."""
+            if path_type == "object":
+                return "file"
+            elif path_type == "common_prefix":
+                return "directory"
+            else:
+                raise ValueError(f"unexpected path type {path_type!r}")
+
+        path = cast(str, stringify_path(path))
         repository, ref, prefix = parse(path)
 
         # Try lookup in dircache unless explicitly disabled by `refresh=True` kwarg
@@ -398,14 +417,23 @@ class LakeFSFileSystem(AbstractFileSystem):
             if cache_entry is not None:
                 if not detail:
                     return [e["name"] for e in cache_entry]
-                return cache_entry
+                return cache_entry[:]
+
+        recursive = kwargs.pop("recursive", False)
 
         kwargs["prefix"] = prefix
 
         info = []
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         with self.wrapped_api_call(rpath=path):
-            objects = depaginate(self.client.objects_api.list_objects, repository, ref, **kwargs)
+            delimiter = "" if recursive else "/"
+            objects = depaginate(
+                self.client.objects_api.list_objects,
+                repository,
+                ref,
+                delimiter=delimiter,
+                **kwargs,
+            )
             for obj in cast(Iterable[ObjectStats], objects):
                 info.append(
                     {
@@ -414,22 +442,52 @@ class LakeFSFileSystem(AbstractFileSystem):
                         "mtime": obj.mtime,
                         "name": f"{repository}/{ref}/{obj.path}",
                         "size": obj.size_bytes,
-                        "type": "file",
+                        "type": _api_path_type_to_info(obj.path_type),
                     }
                 )
+
+        # Retry the API call with appended slash if the current result
+        # is just a single directory entry only (not its contents).
+        # This is useful to allow `ls("repo/branch/dir")` calls without
+        # a trailing slash.
+        if len(info) == 1 and info[0]["type"] == "directory":
+            return self.ls(
+                path + "/",
+                detail=detail,
+                **kwargs | {"refresh": not use_dircache, "recursive": recursive},
+            )
 
         # cache the info if not empty.
         if info:
             # assumes that the returned info is name-sorted.
             pp = self._parent(info[0]["name"])
+            info_copy = info[:]
             if pp in self.dircache:
                 # ls info has files not in cache, so we update them in the cache entry.
-                cache_entry = self.dircache[pp]
-                # extend the entry by the new ls results
-                cache_entry.extend(info)
+                cache_entry = self.dircache[pp][:]
+
+                old_names = {e["name"] for e in cache_entry}
+                new_names = {e["name"] for e in info_copy}
+
+                to_remove = old_names - new_names
+                to_update = old_names.intersection(new_names)
+
+                # Remove all entries no longer present in the current listing
+                cache_entry = [e for e in cache_entry if e["name"] not in to_remove]
+
+                # Overwrite existing entries in the cache with its updated values
+                for name in to_update:
+                    old_idx = next(idx for idx, e in enumerate(cache_entry) if e["name"] == name)
+                    new_entry = next(e for e in info_copy if e["name"] == name)
+
+                    cache_entry[old_idx] = new_entry
+                    info_copy.remove(new_entry)
+
+                # Add the remaining (new) entries to the cache
+                cache_entry.extend(info_copy)
                 self.dircache[pp] = sorted(cache_entry, key=operator.itemgetter("name"))
             else:
-                self.dircache[pp] = info
+                self.dircache[pp] = info[:]
 
         if not detail:
             info = [o["name"] for o in info]
@@ -646,6 +704,8 @@ class LakeFSFileSystem(AbstractFileSystem):
             self.client.objects_api.delete_object(
                 repository=repository, branch=branch, path=resource
             )
+            # Directory listing cache for the containing folder must be invalidated
+            self.dircache.pop(self._parent(path), None)
 
 
 class LakeFSFile(AbstractBufferedFile):
