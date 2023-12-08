@@ -105,6 +105,8 @@ def test_ls_no_detail(fs: LakeFSFileSystem, repository: str) -> None:
 
     # ...as well as the cache fetch.
     assert fs.ls(resource, detail=False) == expected
+
+    # One API call for the directory object, and one for listing its contents
     assert counter.count("objects_api.list_objects") == 2
 
     # test the same thing with a subfolder + file prefix
