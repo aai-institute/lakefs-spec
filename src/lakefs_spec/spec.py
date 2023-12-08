@@ -396,7 +396,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             else:
                 raise ValueError(f"unexpected path type {path_type!r}")
 
-        path = stringify_path(path)
+        path = cast(str, stringify_path(path))
         repository, ref, prefix = parse(path)
 
         # Try lookup in dircache unless explicitly disabled by `refresh=True` kwarg
@@ -451,7 +451,11 @@ class LakeFSFileSystem(AbstractFileSystem):
         # This is useful to allow `ls("repo/branch/dir")` calls without
         # a trailing slash.
         if len(info) == 1 and info[0]["type"] == "directory":
-            return self.ls(path + "/", detail=detail, **kwargs | {"refresh": not use_dircache})
+            return self.ls(
+                path + "/",
+                detail=detail,
+                **kwargs | {"refresh": not use_dircache, "recursive": recursive},
+            )
 
         # cache the info if not empty.
         if info:
