@@ -386,6 +386,16 @@ class LakeFSFileSystem(AbstractFileSystem):
         list[str | dict[str, Any]]
             A list of all objects' metadata under the given remote path if ``detail=True``, or alternatively only their names if ``detail=False``.
         """
+
+        def _api_path_type_to_info(path_type: str) -> Literal["file", "directory"]:
+            """Convert ``list_objects()`` API response field ``path_type`` to ``info.type``."""
+            if path_type == "object":
+                return "file"
+            elif path_type == "common_prefix":
+                return "directory"
+            else:
+                raise ValueError(f"unexpected path type {path_type!r}")
+
         path = stringify_path(path)
         repository, ref, prefix = parse(path)
 
@@ -432,7 +442,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                         "mtime": obj.mtime,
                         "name": f"{repository}/{ref}/{obj.path}",
                         "size": obj.size_bytes,
-                        "type": "file",
+                        "type": _api_path_type_to_info(obj.path_type),
                     }
                 )
 
