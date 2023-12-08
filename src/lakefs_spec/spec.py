@@ -446,6 +446,13 @@ class LakeFSFileSystem(AbstractFileSystem):
                     }
                 )
 
+        # Retry the API call with appended slash if the current result
+        # is just a single directory entry only (not its contents).
+        # This is useful to allow `ls("repo/branch/dir")` calls without
+        # a trailing slash.
+        if len(info) == 1 and info[0]["type"] == "directory":
+            return self.ls(path + "/", detail=detail, **kwargs | {"refresh": not use_dircache})
+
         # cache the info if not empty.
         if info:
             # assumes that the returned info is name-sorted.
