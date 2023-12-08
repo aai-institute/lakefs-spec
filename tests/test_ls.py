@@ -100,7 +100,7 @@ def test_ls_no_detail(fs: LakeFSFileSystem, repository: str) -> None:
 
     expected = [f"{resource}/lakes.source.md"]
     # first, verify the API fetch does the expected...
-    assert fs.ls(f"{resource}", detail=False) == expected
+    assert fs.ls(resource, detail=False) == expected
     assert list(fs.dircache.keys()) == [resource]
 
     # ...as well as the cache fetch.
