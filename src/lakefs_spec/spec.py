@@ -163,7 +163,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self, rpath: str | None = None, message: str | None = None, set_cause: bool = True
     ) -> EmptyYield:
         """
-        A context manager to wrap lakeFS API calls, translating any PI errors to Python-native OS errors.
+        A context manager to wrap lakeFS API calls, translating any API errors to Python-native OS errors.
 
         Meant for internal use.
 
