@@ -1,6 +1,10 @@
 # lakefs-spec: An fsspec backend for lakeFS
 
-Welcome to lakeFS-spec, a [filesystem-spec](https://github.com/fsspec/filesystem_spec) backend implementation for the [lakeFS](https://lakefs.io/) data lake.
+!!! tip "Early Adopters"
+    We are seeking early adopters who would like to actively participate in our feedback process and shape the future of the library.
+    If you are interested in using the library and want to get in touch with us, please reach out via [Github Discussions](https://github.com/aai-institute/lakefs-spec/discussions){: target="_blank" rel="noopener"}.
+
+Welcome to lakeFS-spec, a [filesystem-spec](https://github.com/fsspec/filesystem_spec){: target="_blank" rel="noopener"} backend implementation for the [lakeFS](https://lakefs.io/){: target="_blank" rel="noopener"} data lake.
 Our primary goal is to streamline versioned data operations in lakeFS, enabling seamless integration with popular data science tools such as Pandas, Polars, and DuckDB directly from Python.
 
 Highlights:
