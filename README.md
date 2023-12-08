@@ -15,8 +15,8 @@ Highlights:
 - Automatic up-/download management to avoid unnecessary transfers for unchanged files
 
 > [!NOTE]
-> lakeFS-spec is a young project - we are looking for early adopters!
-> Please reach out via [Github Discussions](https://github.com/aai-institute/lakefs-spec/discussions) if you are interested in using the library and want to get in touch with us.
+> We are seeking early adopters who would like to actively participate in our feedback process and shape the future of the library.
+If you are interested in using the library and want to get in touch with us, please reach out via [Github Discussions](https://github.com/aai-institute/lakefs-spec/discussions).
 
 ## Installation
 
