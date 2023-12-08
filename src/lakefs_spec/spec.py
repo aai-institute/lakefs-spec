@@ -15,7 +15,7 @@ import urllib.error
 import urllib.request
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator, Iterable, Literal, cast
+from typing import Any, Generator, Iterable, Literal, cast, overload
 
 from fsspec import filesystem
 from fsspec.callbacks import _DEFAULT_CALLBACK, Callback
@@ -116,6 +116,26 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.client = LakeFSClient(configuration=configuration)
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
+
+    @classmethod
+    @overload
+    def _strip_protocol(cls, path: str | os.PathLike[str] | Path) -> str:
+        ...
+
+    @classmethod
+    @overload
+    def _strip_protocol(cls, path: list[str | os.PathLike[str] | Path]) -> list[str]:
+        ...
+
+    @classmethod
+    def _strip_protocol(cls, path):
+        """Copied verbatim from the base class, save for the slash rstrip."""
+        if isinstance(path, list):
+            return [cls._strip_protocol(p) for p in path]
+        spath = super()._strip_protocol(path)
+        if stringify_path(path).endswith("/"):
+            return spath + "/"
+        return spath
 
     @property
     def transaction(self):
@@ -598,7 +618,8 @@ class LakeFSFileSystem(AbstractFileSystem):
                         raise ValueError("Wrong protocol for remote connection")
                     else:
                         logger.debug(f"Begin upload of {lpath}")
-                        with urllib.request.urlopen(request):  # nosec [B310:blacklist] # We catch faulty protocols above.
+                        # nosec [B310:blacklist] # We catch faulty protocols above.
+                        with urllib.request.urlopen(request):
                             logger.debug(f"Successfully uploaded {lpath}")
                 except urllib.error.HTTPError as e:
                     raise translate_lakefs_error(e, rpath=rpath)
