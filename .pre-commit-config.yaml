@@ -47,3 +47,7 @@ repos:
           - --output-file=requirements-docs.txt
           - pyproject.toml
         files: ^(pyproject\.toml|requirements-docs\.txt)$
+  - repo: https://github.com/jsh9/pydoclint
+    rev: 0.3.8
+    hooks:
+      - id: pydoclint

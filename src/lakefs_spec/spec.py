@@ -17,8 +17,9 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Generator, Iterable, Literal, cast, overload
 
+import fsspec.callbacks
 from fsspec import filesystem
-from fsspec.callbacks import _DEFAULT_CALLBACK, Callback
+from fsspec.callbacks import _DEFAULT_CALLBACK
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import stringify_path
 from lakefs_sdk import Configuration
@@ -33,8 +34,6 @@ from lakefs_spec.transaction import LakeFSTransaction
 from lakefs_spec.util import depaginate, md5_checksum, parse
 
 logger = logging.getLogger(__name__)
-
-EmptyYield = Generator[None, None, None]
 
 
 class LakeFSFileSystem(AbstractFileSystem):
@@ -65,6 +64,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         A custom certificate PEM file to use to verify the peer in SSL connections.
     proxy: str | None
         Proxy address to use when connecting to a lakeFS server.
+    configfile: str
+        ``lakectl`` YAML configuration file to read credentials from.
     create_branch_ok: bool
         Whether to create branches implicitly when not-existing branches are referenced on file uploads.
     source_branch: str
@@ -161,7 +162,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     @contextmanager
     def wrapped_api_call(
         self, rpath: str | None = None, message: str | None = None, set_cause: bool = True
-    ) -> EmptyYield:
+    ) -> Generator[None, None, None]:
         """
         A context manager to wrap lakeFS API calls, translating any API errors to Python-native OS errors.
 
@@ -175,6 +176,16 @@ class LakeFSFileSystem(AbstractFileSystem):
             A custom error message to emit instead of parsing the API error response.
         set_cause: bool
             Whether to include the original lakeFS API error in the resulting traceback.
+
+        Yields
+        ------
+        None
+            An empty generator, to be used as a context manager.
+
+        Raises
+        ------
+        OSError
+            Translated error from the lakeFS API call, if any.
         """
         try:
             yield
@@ -253,6 +264,11 @@ class LakeFSFileSystem(AbstractFileSystem):
             The (remote) target location to which to copy the file.
         **kwargs: Any
             Additional keyword arguments to pass to ``LakeFSClient.objects_api.copy_object()``.
+
+        Raises
+        ------
+        ValueError
+            When attempting to copy objects between repositories.
         """
         path1 = stringify_path(path1)
         path2 = stringify_path(path2)
@@ -282,7 +298,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self,
         rpath: str | os.PathLike[str],
         lpath: str | os.PathLike[str],
-        callback: Callback = _DEFAULT_CALLBACK,
+        callback: fsspec.callbacks.Callback = _DEFAULT_CALLBACK,
         outfile: Any = None,
         precheck: bool = True,
         **kwargs: Any,
@@ -298,7 +314,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             The local path on disk to save the downloaded file to.
         callback: fsspec.callbacks.Callback
             An fsspec callback to use during the operation. Can be used to report download progress.
-        outfile: File-like object
+        outfile: Any
             A file-like object to save the downloaded content to. Can be used in place of ``lpath``.
         precheck: bool
             Check if ``lpath`` already exists and compare its checksum with that of ``rpath``, skipping the download if they match.
@@ -337,6 +353,11 @@ class LakeFSFileSystem(AbstractFileSystem):
         -------
         dict[str, Any]
             A dictionary containing metadata on the object, including its full remote path and object type (file or directory).
+
+        Raises
+        ------
+        FileNotFoundError
+            If the ``path`` refers to a non-file path that does not exist in the repository.
         """
         path = stringify_path(path)
         repository, ref, resource = parse(path)
@@ -403,7 +424,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         Returns
         -------
-        list[str | dict[str, Any]]
+        list
             A list of all objects' metadata under the given remote path if ``detail=True``, or alternatively only their names if ``detail=False``.
         """
 
@@ -548,6 +569,11 @@ class LakeFSFileSystem(AbstractFileSystem):
         -------
         LakeFSFile
             A local file-like object ready to hold data to be received from / sent to a lakeFS server.
+
+        Raises
+        ------
+        NotImplementedError
+            If ``mode`` is not supported.
         """
         if mode not in {"rb", "wb"}:
             raise NotImplementedError(f"unsupported mode {mode!r}")
@@ -566,7 +592,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self,
         lpath: str | os.PathLike[str],
         rpath: str | os.PathLike[str],
-        callback: Callback = _DEFAULT_CALLBACK,
+        callback: fsspec.callbacks.Callback = _DEFAULT_CALLBACK,
         presign: bool = False,
         storage_options: dict[str, Any] | None = None,
     ) -> None:
@@ -592,6 +618,11 @@ class LakeFSFileSystem(AbstractFileSystem):
             Whether to use pre-signed URLs to upload the object via HTTP(S) using ``urllib.request``.
         storage_options: dict[str, Any] | None
             Additional file system configuration options to pass to the block storage file system.
+
+        Raises
+        ------
+        ValueError
+            If the blockstore type returned by the lakeFS API is not supported by fsspec.
         """
         rpath = stringify_path(rpath)
         lpath = stringify_path(lpath)
@@ -650,7 +681,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self,
         lpath: str | os.PathLike[str],
         rpath: str | os.PathLike[str],
-        callback: Callback = _DEFAULT_CALLBACK,
+        callback: fsspec.callbacks.Callback = _DEFAULT_CALLBACK,
         precheck: bool = True,
         use_blockstore: bool = False,
         presign: bool = False,
@@ -750,8 +781,8 @@ class LakeFSFile(AbstractBufferedFile):
         The file block size to read at a time. If not set, falls back to fsspec's default blocksize of 5 MB.
     autocommit: bool
         Whether to write the file buffer automatically to lakeFS on file closing in write mode.
-    cache_type: Any of {"readahead", "none", "mmap", "bytes"}
-        Cache policy in read mode. See ``AbstractBufferedFile`` for details.
+    cache_type: str
+        Cache policy in read mode (any of ``readahead``, ``none``, ``mmap``, ``bytes``). See ``AbstractBufferedFile`` for details.
     cache_options: dict[str, Any] | None
         Additional options passed to the constructor for the cache specified by ``cache_type``.
     size: int | None
@@ -850,6 +881,11 @@ class LakeFSFile(AbstractBufferedFile):
         force: bool
             When closing, write the last block even if it is smaller than
             blocks are allowed to be. Disallows further writing to this file.
+
+        Raises
+        ------
+        ValueError
+            If the file is closed, or has already been forcibly flushed and ``force=True``.
         """
 
         if self.closed:
@@ -891,7 +927,7 @@ class LakeFSFile(AbstractBufferedFile):
 
         Returns
         -------
-        bytearray
+        bytes
             A byte array holding the downloaded data from lakeFS.
         """
         repository, ref, resource = parse(self.path)

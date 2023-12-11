@@ -49,6 +49,7 @@ dev = [
     "pre-commit>=3.3.3",
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",
+    "pydoclint",
 ]
 docs = [
     "mkdocs",
@@ -123,6 +124,10 @@ exclude_dirs = ["tests", "docs/tutorials"]
 [tool.pytest.ini_options]
 log_cli = true
 log_cli_level = "WARNING"
+
+[tool.pydoclint]
+style = 'numpy'
+exclude = '\.git|venv'
 
 [tool.coverage.report]
 exclude_lines = ["pragma: not covered", "@overload"]
