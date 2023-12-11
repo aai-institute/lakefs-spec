@@ -45,7 +45,7 @@ body:
   - type: textarea
     id: related_issues
     attributes:
-      label: Related issues
+      label: Related GitHub issue(s)
       description: use "#issue number"
     validations:
       required: false      
