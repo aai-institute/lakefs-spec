@@ -1,8 +1,8 @@
 name: Feature Request
 description: File a feature request or task
 title: "[FTR]: "
-labels: ["triage"]
-projects: ["Team Engineering Project"]
+labels: ["feature request", "triage"]
+projects: ["aai-institute/4"]
 body:
   - type: textarea
     id: motivation
@@ -63,5 +63,4 @@ body:
       label: Definition of Done (mandatory to close an issue as completed)
       options:
         - label: All applicable Definition of Done criteria met
-          required: false  
-  
+          required: false
