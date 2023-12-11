@@ -1,4 +1,5 @@
 from lakefs_spec.spec import LakeFSFileSystem
+from tests.util import RandomFileFactory
 
 
 def test_walk_single_dir(fs: LakeFSFileSystem, repository: str) -> None:
@@ -136,7 +137,8 @@ def test_cat_ranges(
     fs.write_text(rpaths[0], content, encoding=encoding)
     fs.write_text(rpaths[1], content, encoding=encoding)
 
-    ranges = fs.cat_ranges(rpaths, starts=0, ends=1)  # fetch first byte of each file
+    # fetch first byte of each file
+    ranges = fs.cat_ranges(rpaths, starts=0, ends=1)
     for idx in range(2):
         assert str(ranges[idx], encoding=encoding) == content[0]
 
@@ -158,3 +160,22 @@ def test_head_tail(
 
     tail = fs.tail(rpath, size=size)
     assert str(tail, encoding=encoding) == content[len(content) - size :]
+
+
+def test_mv(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: str,
+    temp_branch: str,
+) -> None:
+    random_file = random_file_factory.make()
+    lpath = str(random_file)
+    rpath = f"{repository}/{temp_branch}/new_dir/{random_file.name}"
+
+    fs.put_file(lpath=lpath, rpath=rpath)
+    assert fs.exists(rpath)
+    assert not fs.exists(f"{repository}/{temp_branch}/{random_file.name}")
+
+    fs.mv(rpath, f"{repository}/{temp_branch}/{random_file.name}")
+    assert not fs.exists(rpath)
+    assert fs.exists(f"{repository}/{temp_branch}/{random_file.name}")
