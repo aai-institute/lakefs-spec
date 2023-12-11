@@ -35,7 +35,7 @@ body:
     attributes:
       label: Logs, screens, other evidence of a bug
       description: Attach logs, screens, other evidence if available
-      placeholder: 
+      placeholder: ""
     validations:
       required: false
   - type: input
