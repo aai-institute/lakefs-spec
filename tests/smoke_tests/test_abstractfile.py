@@ -40,3 +40,22 @@ def test_info(
     expected_keys = ["checksum", "content-type", "mtime", "name", "size", "type"]
     for key in expected_keys:
         assert key in details.keys()
+
+
+def test_readuntil(fs: LakeFSFileSystem, repository: str, temp_branch: str) -> None:
+    lpath = Path("tmp_file.txt")
+
+    content_first_part = (
+        "This is a test file\nthat contains an occurence until which we want to read:7"
+    )
+    content_second_part = "\nand some words after it."
+    try:
+        lpath.write_text(content_first_part + content_second_part)
+        rpath = f"{repository}/{temp_branch}/tmp_file.txt"
+        fs.put_file(lpath, rpath)
+        with fs._open(rpath, "rb") as rf:
+            remote_readuntil = rf.readuntil(b"7").decode("utf-8")
+            assert content_first_part == remote_readuntil
+            assert content_second_part not in remote_readuntil
+    finally:
+        lpath.unlink(missing_ok=True)
