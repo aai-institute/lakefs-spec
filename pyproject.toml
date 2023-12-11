@@ -128,3 +128,6 @@ log_cli_level = "WARNING"
 [tool.pydoclint]
 style = 'numpy'
 exclude = '\.git|venv'
+
+[tool.coverage.report]
+exclude_lines = ["pragma: not covered", "@overload"]

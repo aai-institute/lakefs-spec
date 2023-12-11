@@ -1,0 +1,98 @@
+name: Bug Report
+description: File a bug report
+title: "[BUG]: "
+labels: ["bug", "triage"]
+projects: ["aai-institute/4"]
+body:
+  - type: textarea
+    id: bug_description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is
+      placeholder: e.g. Given the latest version of lakefs_spec is installed on my env, when importing lakefs-spec, then getting error No module named lakefs_spec
+    validations:
+      required: true
+  - type: textarea
+    id: to_reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the behavior
+      placeholder: e.g. Just run `import lakefs_spec` inside your venv 
+    validations:
+      required: true
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behaviour
+      description: A clear and concise description of what you expected to happen
+      placeholder: e.g. `lakefs_spec` is imported without errors 
+    validations:
+      required: false
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs, screens, other evidence of a bug
+      description: Attach logs, screens, other evidence if available
+      placeholder: 
+    validations:
+      required: false
+  - type: input
+    id: operating_system
+    attributes:
+      label: Your operating system
+      placeholder: e.g. Windows 11 Pro
+    validations:
+      required: true
+  - type: input
+    id: python_version
+    attributes:
+      label: Python version
+      description: Python version used to reproduce the problem (`python -V`)
+      placeholder: e.g. Python 3.11.7
+    validations:
+      required: true
+  - type: input
+    id: lakeFS-spec_version
+    attributes:
+      label: lakeFS-spec version
+      description: The version of the lakeFS-spec package (`pip show lakefs-spec`).
+      placeholder: e.g. v0.4.0
+    validations:
+      required: true
+  - type: input
+    id: lakeFS_version
+    attributes:
+      label: lakeFS server version
+      placeholder: e.g. v1.3.0
+    validations:
+      required: true
+  - type: input
+    id: lakeFS_SDK_version
+    attributes:
+      label: lakeFS SDK version
+      description: The version of the lakeFS SDK package (`pip show lakefs-sdk`).
+      placeholder: e.g. v1.3.0
+    validations:
+      required: true
+  - type: input
+    id: lakeFS-deployment
+    attributes:
+      label: How is lakeFS deployed?
+      placeholder: e.g. local Docker/Kubernetes setup (`local`/`s3`/`gcs`/`azure` blockstorage?), lakeFS Cloud
+    validations:
+      required: false
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here
+      placeholder: 
+    validations:
+      required: false
+  - type: textarea
+    id: related_issues
+    attributes:
+      label: Related GitHub issue(s)
+      description: use "#issue number"
+    validations:
+      required: false      

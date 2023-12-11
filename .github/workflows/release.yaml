@@ -11,8 +11,8 @@ jobs:
     name: Build source distribution and wheel
     runs-on: ubuntu-latest
     services:
-      lakefs:  # required for building documentation
-        image: treeverse/lakefs:1.3.0
+      lakefs: # required for building documentation
+        image: treeverse/lakefs:1.3.1
         ports:
           - 8000:8000
         env:
@@ -26,7 +26,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # for documentation builds
+          fetch-depth: 0 # for documentation builds
       - name: Set up Python and dependencies
         uses: ./.github/actions/python-deps
         with:
@@ -47,7 +47,7 @@ jobs:
           push: true
   publish_pypi:
     name: Publish wheels to PyPI
-    needs: [ build ]
+    needs: [build]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -60,7 +60,7 @@ jobs:
       - name: Publish distribution 📦 to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          skip-existing: true  # tolerate release package file duplicates
+          skip-existing: true # tolerate release package file duplicates
           repository-url: https://test.pypi.org/legacy/
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
