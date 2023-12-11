@@ -39,7 +39,7 @@ def translate_lakefs_error(
 
     Parameters
     ----------
-    error: lakefs_client.ApiException
+    error: ApiException | HTTPError
         The exception returned by the lakeFS API.
     rpath: str | None
         The remote resource path involved in the error.

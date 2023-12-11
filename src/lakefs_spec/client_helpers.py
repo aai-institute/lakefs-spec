@@ -43,7 +43,7 @@ def commit(
     Create a new commit of all uncommitted changes on the branch in the lakeFS file storage.
 
     Parameters
-    -------
+    ----------
     client: LakeFSClient
         lakeFS client object.
     repository: str
@@ -132,6 +132,11 @@ def delete_branch(
         Name of the branch to be deleted.
     missing_ok: bool
         Ignore errors if the requested branch does not exist in the repository.
+
+    Raises
+    ------
+    NotFoundException
+        If the branch does not exist in the repository and ``missing_ok=False``.
     """
     try:
         client.branches_api.delete_branch(repository=repository, branch=branch)
@@ -150,7 +155,7 @@ def list_branches(client: LakeFSClient, repository: str, prefix: str | None = No
         lakeFS client object.
     repository: str
         Name of the repository for which to list branches.
-    prefix: str
+    prefix: str | None
         Return branches prefixed with this value.
 
     Returns

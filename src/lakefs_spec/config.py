@@ -29,7 +29,7 @@ class LakectlConfig(NamedTuple):
 
         Parameters
         ----------
-        path: str
+        path: str | Path
             Path to the YAML configuration file.
 
         Returns
@@ -37,6 +37,10 @@ class LakectlConfig(NamedTuple):
         LakectlConfig
             The immutable loaded configuration. Missing values are filled with ``None`` placeholders.
 
+        Raises
+        ------
+        FileNotFoundError
+            If the configuration file does not exist.
         """
         if not Path(path).exists():
             raise FileNotFoundError(path)

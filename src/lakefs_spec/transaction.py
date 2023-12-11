@@ -215,7 +215,7 @@ class LakeFSTransaction(Transaction):
         ----------
         repository: str
             Name of the repository.
-        ref: str | Commit
+        ref: str | Placeholder[Commit]
             Commit SHA or commit placeholder object to resolve.
         parent: int
             Optionally parse a parent of ``ref`` instead of ``ref`` itself as indicated by the number.

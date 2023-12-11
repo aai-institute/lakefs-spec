@@ -30,9 +30,9 @@ def depaginate(
     ----------
     api: Callable[..., PaginatedApiResponse]
         The lakeFS client API to call. Must return a paginated response with the ``pagination`` and ``results`` fields set.
-    args: Any
+    *args: Any
         Positional arguments to pass to the API call.
-    kwargs: Any
+    **kwargs: Any
         Keyword arguments to pass to the API call.
 
     Yields
@@ -85,8 +85,13 @@ def parse(path: str) -> tuple[str, str, str]:
 
     Returns
     -------
-    str
+    tuple[str, str, str]
         A 3-tuple of repository name, reference, and resource name.
+
+    Raises
+    ------
+    ValueError
+        If the path does not conform to the lakeFS URI format.
     """
 
     # First regex reflects the lakeFS repository naming rules:
