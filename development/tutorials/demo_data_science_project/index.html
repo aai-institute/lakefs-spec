@@ -1106,33 +1106,38 @@ We will use versioned weather data to train a decision tree classifier to predic
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
 <code>Collecting numpy
-  Using cached numpy-1.26.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+  Downloading numpy-1.26.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+     <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">61.2/61.2 kB</span> <span class="ansi-red-fg">1.9 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
 Collecting pandas
-  Using cached pandas-2.1.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (18 kB)
+  Downloading pandas-2.1.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (18 kB)
 Collecting scikit-learn
-  Using cached scikit_learn-1.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from pandas) (2.8.2)
-Requirement already satisfied: pytz&gt;=2020.1 in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from pandas) (2023.3.post1)
+  Downloading scikit_learn-1.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/hostedtoolcache/Python/3.11.7/x64/lib/python3.11/site-packages (from pandas) (2.8.2)
+Requirement already satisfied: pytz&gt;=2020.1 in /opt/hostedtoolcache/Python/3.11.7/x64/lib/python3.11/site-packages (from pandas) (2023.3.post1)
 Collecting tzdata&gt;=2022.1 (from pandas)
-  Using cached tzdata-2023.3-py2.py3-none-any.whl (341 kB)
+  Downloading tzdata-2023.3-py2.py3-none-any.whl (341 kB)
+     <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">341.8/341.8 kB</span> <span class="ansi-red-fg">8.7 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
 Collecting scipy&gt;=1.5.0 (from scikit-learn)
-  Using cached scipy-1.11.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (60 kB)
+  Downloading scipy-1.11.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (60 kB)
+     <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">60.4/60.4 kB</span> <span class="ansi-red-fg">13.3 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
 Collecting joblib&gt;=1.1.1 (from scikit-learn)
-  Using cached joblib-1.3.2-py3-none-any.whl.metadata (5.4 kB)
+  Downloading joblib-1.3.2-py3-none-any.whl.metadata (5.4 kB)
 Collecting threadpoolctl&gt;=2.0.0 (from scikit-learn)
-  Using cached threadpoolctl-3.2.0-py3-none-any.whl.metadata (10.0 kB)
-Requirement already satisfied: six&gt;=1.5 in /opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
-Using cached numpy-1.26.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.2 MB)
-Using cached pandas-2.1.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.2 MB)
-Using cached scikit_learn-1.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (10.9 MB)
-Using cached joblib-1.3.2-py3-none-any.whl (302 kB)
-Using cached scipy-1.11.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (36.4 MB)
-Using cached threadpoolctl-3.2.0-py3-none-any.whl (15 kB)
+  Downloading threadpoolctl-3.2.0-py3-none-any.whl.metadata (10.0 kB)
+Requirement already satisfied: six&gt;=1.5 in /opt/hostedtoolcache/Python/3.11.7/x64/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
+Downloading numpy-1.26.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.2 MB)
+   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">18.2/18.2 MB</span> <span class="ansi-red-fg">94.5 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+Downloading pandas-2.1.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.2 MB)
+   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">12.2/12.2 MB</span> <span class="ansi-red-fg">95.5 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+Downloading scikit_learn-1.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (10.9 MB)
+   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">10.9/10.9 MB</span> <span class="ansi-red-fg">104.5 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+Downloading joblib-1.3.2-py3-none-any.whl (302 kB)
+   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">302.2/302.2 kB</span> <span class="ansi-red-fg">51.8 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+Downloading scipy-1.11.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (36.4 MB)
+   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">36.4/36.4 MB</span> <span class="ansi-red-fg">67.2 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+Downloading threadpoolctl-3.2.0-py3-none-any.whl (15 kB)
 Installing collected packages: tzdata, threadpoolctl, numpy, joblib, scipy, pandas, scikit-learn
-Successfully installed joblib-1.3.2 numpy-1.26.2 pandas-2.1.3 scikit-learn-1.3.2 scipy-1.11.4 threadpoolctl-3.2.0 tzdata-2023.3
-
-<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> A new release of pip is available: <span class="ansi-red-fg">23.2.1</span> -&gt; <span class="ansi-green-fg">23.3.1</span>
-<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> To update, run: <span class="ansi-green-fg">pip3.11 install --upgrade pip</span>
+Successfully installed joblib-1.3.2 numpy-1.26.2 pandas-2.1.4 scikit-learn-1.3.2 scipy-1.11.4 threadpoolctl-3.2.0 tzdata-2023.3
 Note: you may need to restart the kernel to use updated packages.
 </code>
 </pre>
@@ -1180,7 +1185,7 @@ By executing the cell below, you will download a YAML file containing the defaul
 <div class="output_area">
 <div class="output_text output_subarea output_execute_result">
 <pre>
-<code>('/home/runner/.lakectl.yaml', &lt;http.client.HTTPMessage at 0x7feab079d790&gt;)</code>
+<code>('/home/runner/.lakectl.yaml', &lt;http.client.HTTPMessage at 0x7fd42064b690&gt;)</code>
 </pre>
 </div>
 </div>
@@ -1745,7 +1750,7 @@ There, we take the parent of the previous commit, titled <code>Add train-test sp
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>226bd6ff2cdeddfe5cb292bef79b598a391ee4f2d33d79978c7157a84410cf12
+<code>2d17f5eb0d2b8815771a7e640e22b3bcd4b19fb601c4b999e18559e8a102b223
 </code>
 </pre>
 </div>
@@ -1882,7 +1887,7 @@ Both the <code>fixed_commit_id</code> and <code>tag</code> reference the same ve
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Is the data tagged 'train-test-split-2010' equal to the data in commit 226bd6ff? True
+<code>Is the data tagged 'train-test-split-2010' equal to the data in commit 2d17f5eb? True
 </code>
 </pre>
 </div>
@@ -1911,7 +1916,7 @@ Both the <code>fixed_commit_id</code> and <code>tag</code> reference the same ve
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-08</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-11</span>
   </span>
 
     
