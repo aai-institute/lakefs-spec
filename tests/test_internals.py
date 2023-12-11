@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
-from typing import TypeAlias
 
 import pytest
+from typing_extensions import TypeAlias
 
 from lakefs_spec import LakeFSFileSystem
 
