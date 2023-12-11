@@ -17,7 +17,7 @@ body:
     attributes:
       label: To reproduce
       description: Steps to reproduce the behavior
-      placeholder: e.g. Just run `import lakefs_spec` on your venv 
+      placeholder: e.g. Just run `import lakefs_spec` inside your venv 
     validations:
       required: true
   - type: textarea
