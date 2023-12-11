@@ -601,7 +601,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         Raises
         ------
         ValueError
-            If the blockstore type returned by the lakeFS API is not supported.
+            If the blockstore type returned by the lakeFS API is not supported by fsspec.
         """
         rpath = stringify_path(rpath)
         lpath = stringify_path(lpath)
