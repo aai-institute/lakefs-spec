@@ -1,0 +1,67 @@
+name: Feature Request
+description: File a feature request or task
+title: "[FTR]: "
+labels: ["triage"]
+projects: ["Team Engineering Project"]
+body:
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: A clear and concise description of the problem or use case
+      placeholder: e.g. It is difficult to get and use one of the previous versions of data (already overwritten by updated data) in your ML experiment.  
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Requested solution
+      description: A clear and concise description of what you want to happen or achieve
+      placeholder: e.g. I want to get previous (overwritten) data version after indicating a commit SHA 
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ### ADDITIONAL INFORMATION (Primarily for Project Team):
+        This sections below this line are typically completed by our project team to enhance issue preparation and tracking. However, if you have any relevant information or insights you'd like to share, please feel free to add them here.
+  - type: textarea
+    id: proposed_approach
+    attributes:
+      label: Proposed implementation approach
+      description: A clear and concise description of how want to implement your solution
+      placeholder:  
+    validations:
+      required: false
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here
+      placeholder: ""
+    validations:
+      required: false
+  - type: textarea
+    id: related_issues
+    attributes:
+      label: Related GitHub issue(s)
+      description: use "#issue number"
+    validations:
+      required: false      
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria (mandatory to start implementation)
+      description: Use "Task list" option to build a list of testable acceptance criteria
+      placeholder: ""
+    validations:
+      required: false
+  - type: checkboxes
+    id: dod
+    attributes:
+      label: Definition of Done (mandatory to close an issue as completed)
+      options:
+        - label: All applicable Definition of Done criteria met
+          required: false  
+  
