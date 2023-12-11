@@ -1,12 +1,13 @@
 import os
 from pathlib import Path
+from typing import Union
 
 import pytest
 from typing_extensions import TypeAlias
 
 from lakefs_spec import LakeFSFileSystem
 
-AnyPath: TypeAlias = str | os.PathLike[str] | Path
+AnyPath: TypeAlias = Union[str, os.PathLike[str], Path]
 
 
 @pytest.mark.parametrize(
@@ -27,8 +28,8 @@ AnyPath: TypeAlias = str | os.PathLike[str] | Path
 )
 def test_strip_protocol(
     fs: LakeFSFileSystem,
-    path: AnyPath | list[AnyPath],
-    expected: str | list[str],
+    path: Union[AnyPath, list[AnyPath]],
+    expected: Union[str, list[str]],
 ) -> None:
     actual = fs._strip_protocol(path)
     assert actual == expected
