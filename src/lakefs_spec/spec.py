@@ -17,8 +17,9 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Generator, Iterable, Literal, cast
 
+import fsspec.callbacks
 from fsspec import filesystem
-from fsspec.callbacks import _DEFAULT_CALLBACK, Callback
+from fsspec.callbacks import _DEFAULT_CALLBACK
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import stringify_path
 from lakefs_sdk import Configuration
@@ -163,7 +164,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         Raises
         ------
-        ApiException
+        OSError
             Translated error from the lakeFS API call, if any.
         """
         try:
@@ -277,7 +278,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self,
         rpath: str | os.PathLike[str],
         lpath: str | os.PathLike[str],
-        callback: Callback = _DEFAULT_CALLBACK,
+        callback: fsspec.callbacks.Callback = _DEFAULT_CALLBACK,
         outfile: Any = None,
         precheck: bool = True,
         **kwargs: Any,
@@ -291,7 +292,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             The remote path to download to local storage. Must be a fully qualified lakeFS URI, and point to a single file.
         lpath: str | os.PathLike[str]
             The local path on disk to save the downloaded file to.
-        callback: Callback
+        callback: fsspec.callbacks.Callback
             An fsspec callback to use during the operation. Can be used to report download progress.
         outfile: Any
             A file-like object to save the downloaded content to. Can be used in place of ``lpath``.
@@ -571,7 +572,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self,
         lpath: str | os.PathLike[str],
         rpath: str | os.PathLike[str],
-        callback: Callback = _DEFAULT_CALLBACK,
+        callback: fsspec.callbacks.Callback = _DEFAULT_CALLBACK,
         presign: bool = False,
         storage_options: dict[str, Any] | None = None,
     ) -> None:
@@ -591,7 +592,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             The local path to upload to the lakeFS block storage.
         rpath: str | os.PathLike[str]
             The remote target path to upload the local file to. Must be a fully qualified lakeFS URI.
-        callback: Callback
+        callback: fsspec.callbacks.Callback
             An fsspec callback to use during the operation. Can be used to report download progress.
         presign: bool
             Whether to use pre-signed URLs to upload the object via HTTP(S) using ``urllib.request``.
@@ -660,7 +661,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self,
         lpath: str | os.PathLike[str],
         rpath: str | os.PathLike[str],
-        callback: Callback = _DEFAULT_CALLBACK,
+        callback: fsspec.callbacks.Callback = _DEFAULT_CALLBACK,
         precheck: bool = True,
         use_blockstore: bool = False,
         presign: bool = False,
@@ -678,7 +679,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             The local path on disk to upload to the lakeFS server.
         rpath: str | os.PathLike[str]
             The remote target path to upload the local file to. Must be a fully qualified lakeFS URI.
-        callback: Callback
+        callback: fsspec.callbacks.Callback
             An fsspec callback to use during the operation. Can be used to report download progress.
         precheck: bool
             Check if ``lpath`` already exists and compare its checksum with that of ``rpath``, skipping the download if they match.
