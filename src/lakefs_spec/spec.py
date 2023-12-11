@@ -15,7 +15,7 @@ import urllib.error
 import urllib.request
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator, Iterable, Literal, cast
+from typing import Any, Generator, Iterable, Literal, cast, overload
 
 from fsspec import filesystem
 from fsspec.callbacks import _DEFAULT_CALLBACK, Callback
@@ -117,6 +117,26 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
 
+    @classmethod
+    @overload
+    def _strip_protocol(cls, path: str | os.PathLike[str] | Path) -> str:
+        ...
+
+    @classmethod
+    @overload
+    def _strip_protocol(cls, path: list[str | os.PathLike[str] | Path]) -> list[str]:
+        ...
+
+    @classmethod
+    def _strip_protocol(cls, path):
+        """Copied verbatim from the base class, save for the slash rstrip."""
+        if isinstance(path, list):
+            return [cls._strip_protocol(p) for p in path]
+        spath = super()._strip_protocol(path)
+        if stringify_path(path).endswith("/"):
+            return spath + "/"
+        return spath
+
     @property
     def transaction(self):
         """
@@ -143,7 +163,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self, rpath: str | None = None, message: str | None = None, set_cause: bool = True
     ) -> EmptyYield:
         """
-        A context manager to wrap lakeFS API calls, translating any PI errors to Python-native OS errors.
+        A context manager to wrap lakeFS API calls, translating any API errors to Python-native OS errors.
 
         Meant for internal use.
 
