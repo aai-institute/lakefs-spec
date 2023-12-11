@@ -54,7 +54,7 @@ body:
     attributes:
       label: Acceptance Criteria (mandatory to start implementation)
       description: Use "Task list" option to build a list of testable acceptance criteria
-      placeholder: 
+      placeholder: ""
     validations:
       required: false
   - type: checkboxes
