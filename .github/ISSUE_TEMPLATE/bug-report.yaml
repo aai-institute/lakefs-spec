@@ -9,7 +9,7 @@ body:
     attributes:
       label: Describe the bug
       description: A clear and concise description of what the bug is
-      placeholder: e.g. Given the latest version of lakefs_spec is installed on my env, when importing lakefs-spec, then getting error "No module named lakefs_spec
+      placeholder: e.g. Given the latest version of lakefs_spec is installed on my env, when importing lakefs-spec, then getting error No module named lakefs_spec
     validations:
       required: true
   - type: textarea
