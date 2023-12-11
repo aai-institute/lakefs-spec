@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from lakefs_spec.spec import LakeFSFileSystem
 from tests.util import RandomFileFactory
 
@@ -17,6 +19,8 @@ def test_readline(
             native_open_line = f.readline()
             f.seek(0)
             native_open_lines = f.readlines()
+            f.seek(0)
+            firstline = next(f)
 
         rpath = f"{repository}/{temp_branch}/{Path(lpath).name}"
         fs.put_file(lpath, rpath)
@@ -26,6 +30,10 @@ def test_readline(
             assert rf.readline() == native_open_line
             rf.seek(0)
             assert rf.readlines() == native_open_lines
+            rf.seek(0)
+            # default char is linebreak (b'\n'),
+            # so `readuntil()` emulates the line iterator in its default state.
+            assert rf.readuntil() == firstline
     finally:
         lpath.unlink(missing_ok=True)
 
@@ -40,6 +48,10 @@ def test_info(
     expected_keys = ["checksum", "content-type", "mtime", "name", "size", "type"]
     for key in expected_keys:
         assert key in details.keys()
+
+    # opening a nonexistent file in read mode should immediately result in a ``FileNotFoundError``.
+    with pytest.raises(FileNotFoundError):
+        fs.open(f"{repository}/main/hello.tar.gz", "rb")
 
 
 def test_readuntil(fs: LakeFSFileSystem, repository: str, temp_branch: str) -> None:
