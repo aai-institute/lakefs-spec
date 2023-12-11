@@ -1,3 +1,6 @@
+import filecmp
+import tempfile
+
 from lakefs_spec.spec import LakeFSFileSystem
 from tests.util import RandomFileFactory
 
@@ -202,3 +205,20 @@ def test_copy(
     assert fs.exists(rpath2)
 
     assert fs.info(rpath1)["checksum"] == fs.info(rpath2)["checksum"]
+
+
+def test_get_file(
+    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
+) -> None:
+    try:
+        random_file = random_file_factory.make()
+        lpath1 = str(random_file)
+        rpath = f"{repository}/{temp_branch}/{random_file.name}"
+        fs.put(lpath=lpath1, rpath=rpath)
+
+        tmp_dir = tempfile.TemporaryDirectory()
+        lpath2 = f"{tmp_dir.name}/{random_file.name}"
+        fs.get(rpath=rpath, lpath=lpath2)
+        assert filecmp.cmp(lpath1, lpath2)
+    finally:
+        tmp_dir.cleanup()
