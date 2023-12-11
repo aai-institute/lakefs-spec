@@ -170,12 +170,35 @@ def test_mv(
 ) -> None:
     random_file = random_file_factory.make()
     lpath = str(random_file)
-    rpath = f"{repository}/{temp_branch}/new_dir/{random_file.name}"
+    rpath1 = f"{repository}/{temp_branch}/new_dir/{random_file.name}"
+    rpath2 = f"{repository}/{temp_branch}/{random_file.name}"
 
-    fs.put_file(lpath=lpath, rpath=rpath)
-    assert fs.exists(rpath)
-    assert not fs.exists(f"{repository}/{temp_branch}/{random_file.name}")
+    fs.put_file(lpath=lpath, rpath=rpath1)
+    assert fs.exists(rpath1)
+    assert not fs.exists(rpath2)
 
-    fs.mv(rpath, f"{repository}/{temp_branch}/{random_file.name}")
-    assert not fs.exists(rpath)
-    assert fs.exists(f"{repository}/{temp_branch}/{random_file.name}")
+    fs.mv(rpath1, rpath2)
+    assert not fs.exists(rpath1)
+    assert fs.exists(rpath2)
+
+
+def test_copy(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: str,
+    temp_branch: str,
+) -> None:
+    random_file = random_file_factory.make()
+    lpath = str(random_file)
+    rpath1 = f"{repository}/{temp_branch}/new_dir/{random_file.name}"
+    rpath2 = f"{repository}/{temp_branch}/{random_file.name}"
+
+    fs.put_file(lpath=lpath, rpath=rpath1)
+    assert fs.exists(rpath1)
+    assert not fs.exists(rpath2)
+
+    fs.cp(rpath1, rpath2)
+    assert fs.exists(rpath1)
+    assert fs.exists(rpath2)
+
+    assert fs.info(rpath1)["checksum"] == fs.info(rpath2)["checksum"]
