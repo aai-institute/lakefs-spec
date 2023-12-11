@@ -39,7 +39,7 @@ body:
     attributes:
       label: Additonal context
       description: Add any other context about the problem here
-      placeholder: 
+      placeholder: ""
     validations:
       required: false
   - type: textarea
