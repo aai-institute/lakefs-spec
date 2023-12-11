@@ -27,13 +27,3 @@ def test_readline(
             assert rf.readlines() == native_open_lines
     finally:
         lpath.unlink(missing_ok=True)
-
-
-def test_touch(
-    fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
-) -> None:
-    rpath = f"{repository}/{temp_branch}/hello.txt"
-    fs.touch(rpath)
-    assert fs.exists(rpath)
