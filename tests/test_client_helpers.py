@@ -261,15 +261,14 @@ def test_reset_branch(
     fs: LakeFSFileSystem,
     repository: str,
     random_file_factory: RandomFileFactory,
+    temp_branch: str,
 ) -> None:
-    branch = "main"
-
     lpath = random_file_factory.make()
     lpath.write_text("Hello")
 
-    rpath = f"lakefs://{repository}/{branch}/{lpath.name}"
+    rpath = f"lakefs://{repository}/{temp_branch}/{lpath.name}"
 
     fs.put(str(lpath), rpath)
-    client_helpers.reset_branch(fs.client, repository, branch)
+    client_helpers.reset_branch(fs.client, repository, temp_branch)
     with pytest.raises(FileNotFoundError):
         fs.info(rpath)

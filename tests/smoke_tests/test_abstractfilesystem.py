@@ -1,6 +1,8 @@
 import filecmp
 import tempfile
 
+import pytest
+
 from lakefs_spec.spec import LakeFSFileSystem
 from tests.util import RandomFileFactory
 
@@ -42,6 +44,12 @@ def test_touch(
     rpath = f"{repository}/{temp_branch}/hello.txt"
     fs.touch(rpath)
     assert fs.exists(rpath)
+
+    # mock the server config to an older version.
+    fs._lakefs_server_version = (1, 0, 0)
+
+    with pytest.raises(NotImplementedError, match=r"\.touch\(\) is not supported"):
+        fs.touch(rpath)
 
 
 def test_glob(
