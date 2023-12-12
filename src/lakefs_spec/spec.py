@@ -14,6 +14,7 @@ import os
 import urllib.error
 import urllib.request
 from contextlib import contextmanager
+from functools import cached_property
 from pathlib import Path
 from typing import Any, Generator, Iterable, Literal, cast, overload
 
@@ -117,6 +118,12 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.client = LakeFSClient(configuration=configuration)
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
+
+    @cached_property
+    def _lakefs_server_version(self):
+        with self.wrapped_api_call():
+            version_string = self.client.config_api.get_config().version_config.version
+            return tuple(int(t) for t in version_string.split("."))
 
     @classmethod
     @overload
@@ -757,6 +764,36 @@ class LakeFSFileSystem(AbstractFileSystem):
             )
             # Directory listing cache for the containing folder must be invalidated
             self.dircache.pop(self._parent(path), None)
+
+    def touch(self, path: str | os.PathLike[str], truncate: bool = True, **kwargs: Any) -> None:
+        """
+        Create an empty file or update an existing file on a lakeFS server.
+
+        Parameters
+        ----------
+        path: str | os.PathLike[str]
+            The file path to create or update. Must be a fully qualified lakeFS URI.
+        truncate: bool
+            Whether to set the file size to 0 (zero) bytes, even if the path already exists.
+        **kwargs: Any
+            Additional keyword arguments to pass to ``LakeFSFile.open()``.
+
+        Raises
+        ------
+        NotImplementedError
+            If the targeted lakeFS server version does not support `touch()` operations.
+        """
+
+        # empty buffer upload errors were fixed in https://github.com/treeverse/lakeFS/issues/7130,
+        # which was first released in lakeFS v1.3.1.
+        if self._lakefs_server_version < (1, 3, 1):
+            version_string = ".".join(str(v) for v in self._lakefs_server_version)
+            raise NotImplementedError(
+                "LakeFSFileSystem.touch() is not supported for your lakeFS server version. "
+                f"minimum required version: '1.3.1', actual version: {version_string!r}"
+            )
+
+        super().touch(path=path, truncate=truncate, **kwargs)
 
 
 class LakeFSFile(AbstractBufferedFile):
