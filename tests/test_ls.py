@@ -116,9 +116,12 @@ def test_ls_no_detail(fs: LakeFSFileSystem, repository: str) -> None:
     assert set(fs.dircache.keys()) == {f"{prefix}/data", f"{prefix}/images"}
 
 
-def test_ls_dircache_remove_uncached(fs: LakeFSFileSystem, repository: str) -> None:
-    branch = "main"
-    prefix = f"{repository}/{branch}"
+def test_ls_dircache_remove_uncached(
+    fs: LakeFSFileSystem,
+    repository: str,
+    temp_branch: str,
+) -> None:
+    prefix = f"{repository}/{temp_branch}"
     resource = f"{prefix}/"
 
     try:
@@ -133,12 +136,15 @@ def test_ls_dircache_remove_uncached(fs: LakeFSFileSystem, repository: str) -> N
         listing_post = fs.ls(resource)
         assert len(listing_post) == len(listing_pre) - 1
     finally:
-        client_helpers.reset_branch(fs.client, repository, branch)
+        client_helpers.reset_branch(fs.client, repository, temp_branch)
 
 
-def test_ls_dircache_remove_cached(fs: LakeFSFileSystem, repository: str) -> None:
-    branch = "main"
-    prefix = f"{repository}/{branch}"
+def test_ls_dircache_remove_cached(
+    fs: LakeFSFileSystem,
+    repository: str,
+    temp_branch: str,
+) -> None:
+    prefix = f"{repository}/{temp_branch}"
     resource = f"{prefix}/"
 
     try:
@@ -149,4 +155,4 @@ def test_ls_dircache_remove_cached(fs: LakeFSFileSystem, repository: str) -> Non
         listing_post = fs.ls(resource)
         assert len(listing_post) == len(listing_pre) - 1
     finally:
-        client_helpers.reset_branch(fs.client, repository, branch)
+        client_helpers.reset_branch(fs.client, repository, temp_branch)
