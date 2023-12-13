@@ -1,6 +1,5 @@
 name: Feature Request
 description: File a feature request or task
-title: "[FTR]: "
 labels: ["feature request", "triage"]
 projects: ["aai-institute/4"]
 body:
