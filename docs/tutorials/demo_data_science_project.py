@@ -34,7 +34,7 @@ We will do the following:
 
 !!! tip "Local Execution"
     If you want to execute the code in this tutorial as a Jupyter notebook yourself, download the `demo_data_science_project.py` file from the lakeFS-spec repository.
-    
+
     You can then convert the Python file to a notebook using [Jupytext](https://jupytext.readthedocs.io/en/latest/using-cli.html) using the following command: `jupytext --to notebook demo_data_science_project.py`.
 
 This tutorial assumes that you have installed lakeFS-spec in a virtual environment, and that you have followed the [quickstart guide](../quickstart.md) to set up a local lakeFS instance.
@@ -44,7 +44,7 @@ This tutorial assumes that you have installed lakeFS-spec in a virtual environme
 Install the necessary libraries for this notebook on the environment you have just created:
 """
 
-# %% tags=["Remove_single_output"] 
+# %% tags=["Remove_single_output"]
 # %pip install numpy pandas scikit-learn
 
 # %% [markdown]
@@ -70,9 +70,11 @@ There are multiple ways to authenticate with lakeFS from Python code. In this tu
 By executing the cell below, you will download a YAML file containing the default lakeFS quickstart credentials and server URL to your user directory.
 """
 
-# %%
+# %% tags=["Remove_all_output"]
 import os
+import tempfile
 import urllib.request
+from pathlib import Path
 
 urllib.request.urlretrieve(
     "https://raw.githubusercontent.com/aai-institute/lakefs-spec/main/docs/tutorials/.lakectl.yaml",
@@ -109,15 +111,26 @@ repo = create_repository(client=fs.client, name=REPO_NAME, storage_namespace=f"l
 ## Data Ingestion
 
 Now it's time to get some data. We will use the [Open-Meteo API](https://open-meteo.com/), where we can pull weather data from an API for free (as long as we are non-commercial) and without an API token.
+In order to prevent hitting the rate limits when repeatedly querying the API (and out of courtesy towards the operators of the API), the `_maybe_urlretrieve` function provides a simple local cache for the downloaded data.
 
 For training our toy model, we download the full weather data of Munich for the year 2010:
 """
 
 # %%
-outfile, _ = urllib.request.urlretrieve(
-    "https://archive-api.open-meteo.com/v1/archive?latitude=52.52&longitude=13.41&start_date=2010-01-01&end_date=2010-12-31&hourly=temperature_2m,relativehumidity_2m,rain,pressure_msl,surface_pressure,cloudcover,cloudcover_low,cloudcover_mid,cloudcover_high,windspeed_10m,windspeed_100m,winddirection_10m,winddirection_100m"
-)
+def _maybe_urlretrieve(url: str, filename: str) -> str:
+    # Avoid API rate limit errors by downloading to a fixed local location
+    destination = Path(tempfile.gettempdir()) / "lakefs-spec-tutorials" / filename
+    destination.parent.mkdir(exist_ok=True, parents=True)
+    if destination.exists():
+        return str(destination)
 
+    outfile, _ = urllib.request.urlretrieve(url, str(destination))
+    return outfile
+
+outfile = _maybe_urlretrieve(
+    "https://archive-api.open-meteo.com/v1/archive?latitude=52.52&longitude=13.41&start_date=2010-01-01&end_date=2010-12-31&hourly=temperature_2m,relativehumidity_2m,rain,pressure_msl,surface_pressure,cloudcover,cloudcover_low,cloudcover_mid,cloudcover_high,windspeed_10m,windspeed_100m,winddirection_10m,winddirection_100m",
+    "weather-2010.json"
+)
 
 # %% [markdown]
 """
@@ -276,8 +289,9 @@ Let's download additional 2020 data, transform it, and save it to lakeFS.
 """
 
 # %%
-outfile, _ = urllib.request.urlretrieve(
-    "https://archive-api.open-meteo.com/v1/archive?latitude=52.52&longitude=13.41&start_date=2020-01-01&end_date=2020-12-31&hourly=temperature_2m,relativehumidity_2m,rain,pressure_msl,surface_pressure,cloudcover,cloudcover_low,cloudcover_mid,cloudcover_high,windspeed_10m,windspeed_100m,winddirection_10m,winddirection_100m"
+outfile = _maybe_urlretrieve(
+    "https://archive-api.open-meteo.com/v1/archive?latitude=52.52&longitude=13.41&start_date=2020-01-01&end_date=2020-12-31&hourly=temperature_2m,relativehumidity_2m,rain,pressure_msl,surface_pressure,cloudcover,cloudcover_low,cloudcover_mid,cloudcover_high,windspeed_10m,windspeed_100m,winddirection_10m,winddirection_100m",
+    "weather-2020.json"
 )
 
 new_data = transform_json_weather_data(outfile)
@@ -424,10 +438,11 @@ print(
 # %% tags=["Remove_input", "Remove_all_output"]
 # Clean-up cell removing artifacts created in notebook execution to ensure idempotency.
 # Cell hidden in docs
-from lakefs_spec.client_helpers import list_tags, delete_tag, list_branches, delete_branch
+from lakefs_spec.client_helpers import (delete_branch, delete_tag,
+                                        list_branches, list_tags)
 
 for tag in list_tags(fs.client, REPO_NAME):
     delete_tag(fs.client, repository=REPO_NAME, tag=tag.id)
 for branch in list_branches(fs.client, repository=REPO_NAME):
-    if branch.id != "main": 
-        delete_branch(fs.client, repository=REPO_NAME, branch=branch.id)  
+    if branch.id != "main":
+        delete_branch(fs.client, repository=REPO_NAME, branch=branch.id)
