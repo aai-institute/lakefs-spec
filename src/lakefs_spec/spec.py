@@ -406,12 +406,39 @@ class LakeFSFileSystem(AbstractFileSystem):
             "type": "directory",
         }
 
+    @overload
+    def ls(
+        self,
+        path: str | os.PathLike[str],
+        detail: Literal[True] = ...,
+        **kwargs: Any,
+    ) -> list[dict[str, Any]]:
+        ...
+
+    @overload
+    def ls(
+        self,
+        path: str | os.PathLike[str],
+        detail: Literal[False],
+        **kwargs: Any,
+    ) -> list[str]:
+        ...
+
+    @overload
     def ls(
         self,
         path: str | os.PathLike[str],
         detail: bool = True,
         **kwargs: Any,
-    ) -> list:
+    ) -> list[str] | list[dict[str, Any]]:
+        ...
+
+    def ls(
+        self,
+        path: str | os.PathLike[str],
+        detail: bool = True,
+        **kwargs: Any,
+    ) -> list[str] | list[dict[str, Any]]:
         """
         List all available objects under a given path in lakeFS.
 
@@ -431,7 +458,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         Returns
         -------
-        list
+        list[str] | list[dict[str, Any]]
             A list of all objects' metadata under the given remote path if ``detail=True``, or alternatively only their names if ``detail=False``.
         """
 
