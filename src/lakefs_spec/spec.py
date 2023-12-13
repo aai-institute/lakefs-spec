@@ -859,6 +859,10 @@ class LakeFSFile(AbstractBufferedFile):
             repository, branch, resource = parse(path)
             create_branch(self.fs.client, repository, branch, self.fs.source_branch)
 
+    def __del__(self):
+        """Custom deleter, only here to unset the base class behavior."""
+        pass
+
     def _upload_chunk(self, final: bool = False) -> bool:
         """
         Commit the file on final chunk via single-shot upload, no-op otherwise.
