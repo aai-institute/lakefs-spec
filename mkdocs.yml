@@ -61,6 +61,7 @@ plugins:
             show_signature_annotations: true
             signature_crossrefs: true
             merge_init_into_class: false
+            filters: ["!^_{1,2}"]
   - mknotebooks:
       execute: true
       # https://github.com/greenape/mknotebooks/blob/master/examples/cell_tag_remove/mkdocs.yml
