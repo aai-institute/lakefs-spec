@@ -116,6 +116,7 @@ In order to prevent hitting the rate limits when repeatedly querying the API (an
 For training our toy model, we download the full weather data of Munich for the year 2010:
 """
 
+
 # %%
 def _maybe_urlretrieve(url: str, filename: str) -> str:
     # Avoid API rate limit errors by downloading to a fixed local location
@@ -127,9 +128,10 @@ def _maybe_urlretrieve(url: str, filename: str) -> str:
     outfile, _ = urllib.request.urlretrieve(url, str(destination))
     return outfile
 
+
 outfile = _maybe_urlretrieve(
     "https://archive-api.open-meteo.com/v1/archive?latitude=52.52&longitude=13.41&start_date=2010-01-01&end_date=2010-12-31&hourly=temperature_2m,relativehumidity_2m,rain,pressure_msl,surface_pressure,cloudcover,cloudcover_low,cloudcover_mid,cloudcover_high,windspeed_10m,windspeed_100m,winddirection_10m,winddirection_100m",
-    "weather-2010.json"
+    "weather-2010.json",
 )
 
 # %% [markdown]
@@ -291,7 +293,7 @@ Let's download additional 2020 data, transform it, and save it to lakeFS.
 # %%
 outfile = _maybe_urlretrieve(
     "https://archive-api.open-meteo.com/v1/archive?latitude=52.52&longitude=13.41&start_date=2020-01-01&end_date=2020-12-31&hourly=temperature_2m,relativehumidity_2m,rain,pressure_msl,surface_pressure,cloudcover,cloudcover_low,cloudcover_mid,cloudcover_high,windspeed_10m,windspeed_100m,winddirection_10m,winddirection_100m",
-    "weather-2020.json"
+    "weather-2020.json",
 )
 
 new_data = transform_json_weather_data(outfile)
@@ -438,8 +440,7 @@ print(
 # %% tags=["Remove_input", "Remove_all_output"]
 # Clean-up cell removing artifacts created in notebook execution to ensure idempotency.
 # Cell hidden in docs
-from lakefs_spec.client_helpers import (delete_branch, delete_tag,
-                                        list_branches, list_tags)
+from lakefs_spec.client_helpers import delete_branch, delete_tag, list_branches, list_tags
 
 for tag in list_tags(fs.client, REPO_NAME):
     delete_tag(fs.client, repository=REPO_NAME, tag=tag.id)
