@@ -7,7 +7,7 @@ from __future__ import annotations
 from collections import deque
 from dataclasses import dataclass
 from functools import partial
-from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Generic, Type, TypeVar
 
 import wrapt
 from fsspec.spec import AbstractBufferedFile
@@ -26,11 +26,14 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class Placeholder(Generic[T], wrapt.ObjectProxy):
+class Placeholder(wrapt.ObjectProxy, Generic[T]):
     """A generic placeholder for a value computed by the lakeFS server in a versioning operation during a transaction."""
 
-    def __init__(self, wrapped: T | None = None):
+    _expect: Type[T] | None = None
+
+    def __init__(self, wrapped: T | None = None, expect: Type[T] | None = None):
         super(Placeholder, self).__init__(wrapped)
+        self._expect = expect
 
     @property
     def available(self) -> bool:
@@ -52,11 +55,13 @@ class Placeholder(Generic[T], wrapt.ObjectProxy):
     def __str__(self):
         """Override to return the string representation of the wrapped object."""
         if self.__wrapped__ is None:
-            raise RuntimeError(f"Placeholder of '{type(self).__name__}' is unfilled.")
+            return f"<Placeholder{f' for {self._expect.__name__}' if self._expect is not None else ''}>"
         return str(self.__wrapped__)
 
     def __repr__(self):
         """Override representation to represent the wrapped object."""
+        if self.__wrapped__ is None:
+            return repr(self._expect)
         return repr(self.__wrapped__)
 
 
@@ -105,7 +110,7 @@ class LakeFSTransaction(Transaction):
         op = partial(
             commit, repository=repository, branch=branch, message=message, metadata=metadata
         )
-        p: Placeholder[Commit] = Placeholder()
+        p: Placeholder[Commit] = Placeholder(expect=Commit)
         self.files.append((op, p))
         # return a placeholder for the commit.
         return p
@@ -239,7 +244,7 @@ class LakeFSTransaction(Transaction):
         def rev_parse_op(client: LakeFSClient, **kwargs: Any) -> Commit:
             return rev_parse(client, **kwargs)
 
-        p: Placeholder[Commit] = Placeholder()
+        p: Placeholder[Commit] = Placeholder(expect=Commit)
         op = partial(rev_parse_op, repository=repository, ref=ref, parent=parent)
         self.files.append((op, p))
         return p
