@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from functools import partial
 from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
 
+import wrapt
 from fsspec.spec import AbstractBufferedFile
 from fsspec.transaction import Transaction
 from lakefs_sdk.client import LakeFSClient
@@ -25,30 +26,28 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class Placeholder(Generic[T]):
+class Placeholder(Generic[T], wrapt.ObjectProxy):
     """A generic placeholder for a value computed by the lakeFS server in a versioning operation during a transaction."""
 
-    value: T | None = None
-    """The abstract value. Set only on completion of the versioning operation during the defining transaction."""
+    def __init__(self, wrapped: T = None):
+        super(Placeholder, self).__init__(wrapped)
 
-    def available(self):
+    @property
+    def available(self) -> bool:
         """Whether the wrapped value is available, i.e. already computed."""
-        return self.value is not None
+        return self.__wrapped__ is not None
 
     def set_value(self, value: T) -> None:
         """Fill in the placeholder. Not meant to be called directly except in the completion of the transaction."""
-        self.value = value
+        self.__wrapped__ = value
 
-    def unwrap(self) -> T:
-        """Return the placeholder's value after it has been filled."""
-        if self.value is None:
-            raise RuntimeError("placeholder unfilled")
-        return self.value
-
-
-def unwrap_placeholders(kwargs: dict[str, Any]) -> dict[str, Any]:
-    """Unwrap any placeholder values passed in a dictionary of keyword arguments."""
-    return {k: v.unwrap() if isinstance(v, Placeholder) else v for k, v in kwargs.items()}
+    def __getattr__(self, name):
+        """Override __getattr__ to access the attributes of the wrapped object directly."""
+        if self.__wrapped__ is None:
+            raise RuntimeError(
+                f" '{name}' attribute of object '{type(self).__name__}' is unfilled."
+            )
+        return getattr(self.__wrapped__, name)
 
 
 class LakeFSTransaction(Transaction):
@@ -228,7 +227,6 @@ class LakeFSTransaction(Transaction):
         """
 
         def rev_parse_op(client: LakeFSClient, **kwargs: Any) -> Commit:
-            kwargs = unwrap_placeholders(kwargs)
             return rev_parse(client, **kwargs)
 
         p: Placeholder[Commit] = Placeholder()
@@ -256,7 +254,6 @@ class LakeFSTransaction(Transaction):
         """
 
         def tag_op(client: LakeFSClient, **kwargs: Any) -> Ref:
-            kwargs = unwrap_placeholders(kwargs)
             return create_tag(client, **kwargs)
 
         self.files.append((partial(tag_op, repository=repository, ref=ref, tag=tag), tag))
