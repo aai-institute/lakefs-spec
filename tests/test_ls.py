@@ -167,7 +167,7 @@ def test_ls_dircache_recursive(
 
     # Dircache invariant: all files in an entry must be direct descendants of its parent
     for cache_dir, files in fs.dircache.items():
-        assert all([fs._parent(v["name"]) == cache_dir for v in files])
+        assert all([fs._parent(v["name"].rstrip("/")) == cache_dir for v in files])
 
     # (2) Dircache correctness, recursive
     cached_listing_recursive = fs.ls(prefix + "/", recursive=True)
@@ -177,7 +177,8 @@ def test_ls_dircache_recursive(
     # (3) Dircache correctness, non-recursive
     cached_listing_nonrecursive = fs.ls(prefix + "/", recursive=False)
     # Non-recursive listing from cache most only contain direct descendants of the listed directory
-    assert all([fs._parent(o["name"]) == prefix for o in cached_listing_nonrecursive])
+    # (and the subfolders directly contained therein)
+    assert all([fs._parent(o["name"].rstrip("/")) == prefix for o in cached_listing_nonrecursive])
 
     # (4) Adding a file should only modify a single dircache entry
     directory = "data"
@@ -197,4 +198,4 @@ def test_ls_dircache_recursive(
 
     # Dircache invariant is maintained
     for cache_dir, files in fs.dircache.items():
-        assert all([fs._parent(v["name"]) == cache_dir for v in files])
+        assert all([fs._parent(v["name"].rstrip("/")) == cache_dir for v in files])

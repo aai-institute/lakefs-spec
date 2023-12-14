@@ -411,8 +411,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         parents = {self._parent(i["name"]) for i in info}
         for pp in parents:
             # subset of info entries which are direct descendants of `parent`
-            dir_info = [i for i in info if self._parent(i["name"]) == pp]
-
+            dir_info = [i for i in info if self._parent(i["name"].rstrip("/")) == pp]
             if pp not in self.dircache:
                 self.dircache[pp] = dir_info
                 continue
@@ -584,8 +583,22 @@ class LakeFSFileSystem(AbstractFileSystem):
                 **kwargs | {"refresh": not use_dircache, "recursive": recursive},
             )
 
+        if recursive:
+            subdirs = {
+                self._parent(o["name"]) for o in info if self._parent(o["name"]) != path.rstrip("/")
+            }
+            for subdir in subdirs:
+                info.append(
+                    {
+                        "type": "directory",
+                        "name": subdir + "/",
+                        "size": 0,
+                    }
+                )
+
         # cache the info if not empty.
         if info:
+            # If recursive, the API doesn't return info items for directories, so they need to be added
             self._update_dircache(info[:])
 
         if not detail:
