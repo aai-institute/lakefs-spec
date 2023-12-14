@@ -11,9 +11,9 @@ readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [{ name = "appliedAI Initiative", email = "info+oss@appliedai.de" }]
 maintainers = [
-    { name = "Nicholas Junge", email = "n.junge@appliedai.de" },
-    { name = "Max Mynter", email = "m.mynter@appliedai.de" },
-    { name = "Adrian Rumpold", email = "a.rumpold@appliedai.de" },
+    { name = "Nicholas Junge", email = "n.junge@appliedai-institute.de" },
+    { name = "Max Mynter", email = "m.mynter@appliedai-institute.de" },
+    { name = "Adrian Rumpold", email = "a.rumpold@appliedai-institute.de" },
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
