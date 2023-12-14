@@ -1,6 +1,9 @@
 from typing import Any
 
+from lakefs_sdk.models import Commit
+
 from lakefs_spec import LakeFSFileSystem
+from lakefs_spec.transaction import Placeholder
 from tests.util import RandomFileFactory, with_counter
 
 
@@ -166,3 +169,37 @@ def test_transaction_failure(
 
     # assert that no commit happens because of the exception.
     assert counter.count("commits_api.commit") == 0
+
+
+def test_placeholder_representations(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: str,
+    temp_branch: str,
+) -> None:
+    random_file = random_file_factory.make()
+
+    lpath = str(random_file)
+    rpath = f"{repository}/{temp_branch}/{random_file.name}"
+
+    message = f"Add file {random_file.name}"
+
+    with fs.transaction as tx:
+        fs.put_file(lpath, rpath)
+        sha = tx.commit(repository, temp_branch, message=message)
+        assert str(sha) == "<Placeholder for Commit>"
+        assert repr(sha) == repr(Commit)
+    latest_commit = fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results[
+        0
+    ]
+    assert sha.id == latest_commit.id
+    assert repr(sha.id) == repr(latest_commit.id)
+
+
+def test_placeholder_initialization() -> None:
+    unexpected_placeholder: Placeholder = Placeholder()
+    assert unexpected_placeholder._expect is None
+    assert unexpected_placeholder.available is False
+
+    expected_placeholder = Placeholder(expect=Commit)
+    assert expected_placeholder._expect == Commit
