@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 class Placeholder(Generic[T], wrapt.ObjectProxy):
     """A generic placeholder for a value computed by the lakeFS server in a versioning operation during a transaction."""
 
-    def __init__(self, wrapped: T = None):
+    def __init__(self, wrapped: T | None = None):
         super(Placeholder, self).__init__(wrapped)
 
     @property
