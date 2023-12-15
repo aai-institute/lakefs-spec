@@ -1,9 +1,6 @@
 from typing import Any
 
-from lakefs_sdk.models import Commit
-
 from lakefs_spec import LakeFSFileSystem
-from lakefs_spec.transaction import Placeholder
 from tests.util import RandomFileFactory, with_counter
 
 
@@ -187,19 +184,10 @@ def test_placeholder_representations(
     with fs.transaction as tx:
         fs.put_file(lpath, rpath)
         sha = tx.commit(repository, temp_branch, message=message)
-        assert str(sha) == "<Placeholder for Commit>"
-        assert repr(sha) == repr(Commit)
+        assert str(sha) == "<Placeholder>"
+        assert repr(sha) == "<Placeholder>"
     latest_commit = fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results[
         0
     ]
     assert sha.id == latest_commit.id
     assert repr(sha.id) == repr(latest_commit.id)
-
-
-def test_placeholder_initialization() -> None:
-    unexpected_placeholder: Placeholder = Placeholder()
-    assert unexpected_placeholder._expect is None
-    assert unexpected_placeholder.available is False
-
-    expected_placeholder = Placeholder(expect=Commit)
-    assert expected_placeholder._expect == Commit
