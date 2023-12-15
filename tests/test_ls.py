@@ -204,7 +204,7 @@ def test_ls_directories(
     repository: str,
     temp_branch: str,
 ) -> None:
-    """Validate that recursive and non-recusive ``ls`` handle directory entries identically."""
+    """Validate that recursive and non-recursive ``ls`` handle directory entries identically."""
     prefix = f"lakefs://{repository}/{temp_branch}"
 
     fs.rm(f"{prefix}/images/", recursive=True)
@@ -218,7 +218,7 @@ def test_ls_directories(
     ls_recursive = fs.ls(prefix + "/", recursive=True)
 
     dirs = [o for o in ls_recursive if o["type"] == "directory"]
-    assert len(dirs) == 2  # does not include root dir itself
+    assert len(dirs) == 2  # includes `dir1/` and `dir1/dir2`, but not the root.
 
     # (2) - non-recursive ls only includes virtual dir entries on the same level
     ls_nonrecursive = fs.ls(prefix + "/", recursive=False)
