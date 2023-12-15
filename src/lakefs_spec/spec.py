@@ -597,9 +597,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                     }
                 )
 
-        # cache the info if not empty.
         if info:
-            # If recursive, the API doesn't return info items for directories, so they need to be added
             self._update_dircache(info[:])
 
         if not detail:
