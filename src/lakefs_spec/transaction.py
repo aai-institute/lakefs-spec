@@ -31,7 +31,6 @@ class Placeholder(Generic[T], wrapt.ObjectProxy):
 
     def __init__(self, wrapped: T | None = None):
         super().__init__(wrapped)
-        self._self_value = wrapped
 
     @property
     def available(self) -> bool:
