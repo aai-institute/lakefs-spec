@@ -26,40 +26,26 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class Placeholder(wrapt.ObjectProxy, Generic[T]):
+class Placeholder(Generic[T], wrapt.ObjectProxy):
     """A generic placeholder for a value computed by the lakeFS server in a versioning operation during a transaction."""
 
     def __init__(self, wrapped: T | None = None):
-        super(Placeholder, self).__init__(wrapped)
+        super().__init__(wrapped)
+        self._self_value = wrapped
 
     @property
     def available(self) -> bool:
         """Whether the wrapped value is available, i.e. already computed."""
         return self.__wrapped__ is not None
 
-    def set_value(self, value: T) -> None:
+    @property
+    def value(self):
+        return self.__wrapped__
+
+    @value.setter
+    def value(self, val: T) -> None:
         """Fill in the placeholder. Not meant to be called directly except in the completion of the transaction."""
-        self.__wrapped__ = value
-
-    def __getattr__(self, name):
-        """Override __getattr__ to access the attributes of the wrapped object directly."""
-        if self.__wrapped__ is None:
-            raise RuntimeError(
-                f" '{name}' attribute of object '{type(self).__name__}' is unfilled."
-            )
-        return self.__wrapped__.__getattribute__(name)
-
-    def __str__(self):
-        """Override to return the string representation of the wrapped object."""
-        if self.__wrapped__ is None:
-            return "<Placeholder>"
-        return self.__wrapped__.__str__
-
-    def __repr__(self):
-        """Override representation to represent the wrapped object."""
-        if self.__wrapped__ is None:
-            return "<Placeholder>"
-        return self.__wrapped__.__repr__
+        self.__wrapped__ = val
 
 
 class LakeFSTransaction(Transaction):
@@ -144,7 +130,7 @@ class LakeFSTransaction(Transaction):
                     # if the transaction member returns a placeholder,
                     # fill it with the result of the client helper.
                     if isinstance(retval, Placeholder):
-                        retval.set_value(result)
+                        retval.value = result
 
         self.fs._intrans = False
 

@@ -1,5 +1,7 @@
 from typing import Any
 
+from lakefs_sdk.models import Commit
+
 from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory, with_counter
 
@@ -184,10 +186,9 @@ def test_placeholder_representations(
     with fs.transaction as tx:
         fs.put_file(lpath, rpath)
         sha = tx.commit(repository, temp_branch, message=message)
-        assert str(sha) == "<Placeholder>"
-        assert repr(sha) == "<Placeholder>"
     latest_commit = fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results[
         0
     ]
+    assert isinstance(sha, Commit)
     assert sha.id == latest_commit.id
     assert repr(sha.id) == repr(latest_commit.id)
