@@ -47,19 +47,19 @@ class Placeholder(wrapt.ObjectProxy, Generic[T]):
             raise RuntimeError(
                 f" '{name}' attribute of object '{type(self).__name__}' is unfilled."
             )
-        return getattr(self.__wrapped__, name)
+        return self.__wrapped__.__getattribute__(name)
 
     def __str__(self):
         """Override to return the string representation of the wrapped object."""
         if self.__wrapped__ is None:
             return "<Placeholder>"
-        return str(self.__wrapped__)
+        return self.__wrapped__.__str__
 
     def __repr__(self):
         """Override representation to represent the wrapped object."""
         if self.__wrapped__ is None:
             return "<Placeholder>"
-        return repr(self.__wrapped__)
+        return self.__wrapped__.__repr__
 
 
 class LakeFSTransaction(Transaction):
