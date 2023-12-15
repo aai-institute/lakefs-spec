@@ -406,6 +406,59 @@ class LakeFSFileSystem(AbstractFileSystem):
             "type": "directory",
         }
 
+    def _update_dircache(self, info: list) -> None:
+        """Update logic for dircache (optionally recursive) based on lakeFS API response"""
+        parents = {self._parent(i["name"]) for i in info}
+        for pp in parents:
+            # subset of info entries which are direct descendants of `parent`
+            dir_info = [i for i in info if self._parent(i["name"].rstrip("/")) == pp]
+            if pp not in self.dircache:
+                self.dircache[pp] = dir_info
+                continue
+
+            # Merge existing dircache entry with updated listing, which contains either:
+            # - files not present in the cache yet
+            # - a fresh listing (if `refresh=True`)
+
+            cache_entry = self.dircache[pp][:]
+
+            old_names = {e["name"] for e in cache_entry}
+            new_names = {e["name"] for e in dir_info}
+
+            to_remove = old_names - new_names
+            to_update = old_names.intersection(new_names)
+
+            # Remove all entries no longer present in the current listing
+            cache_entry = [e for e in cache_entry if e["name"] not in to_remove]
+
+            # Overwrite existing entries in the cache with its updated values
+            for name in to_update:
+                old_idx = next(idx for idx, e in enumerate(cache_entry) if e["name"] == name)
+                new_entry = next(e for e in info if e["name"] == name)
+
+                cache_entry[old_idx] = new_entry
+                dir_info.remove(new_entry)
+
+            # Add the remaining (new) entries to the cache
+            cache_entry.extend(dir_info)
+            self.dircache[pp] = sorted(cache_entry, key=operator.itemgetter("name"))
+
+    def _ls_from_cache(self, path: str, recursive: bool = False) -> list[dict[str, Any]] | None:
+        """Override of ``AbstractFileSystem._ls_from_cache`` with support for recursive listings."""
+        if not recursive:
+            return super()._ls_from_cache(path)
+
+        result = None
+        for key, files in self.dircache.items():
+            if not (key.startswith(path) or path == key + "/"):
+                continue
+            if result is None:
+                result = []
+            result.extend(files)
+        if not result:
+            return result
+        return sorted(result, key=operator.itemgetter("name"))
+
     @overload
     def ls(
         self,
@@ -474,16 +527,15 @@ class LakeFSFileSystem(AbstractFileSystem):
         path = cast(str, stringify_path(path))
         repository, ref, prefix = parse(path)
 
+        recursive = kwargs.pop("recursive", False)
+
         # Try lookup in dircache unless explicitly disabled by `refresh=True` kwarg
-        use_dircache = True
-        if "refresh" in kwargs:
-            use_dircache = not kwargs["refresh"]
-            del kwargs["refresh"]  # cannot be forwarded to the API
+        use_dircache = not kwargs.pop("refresh", False)
 
         if use_dircache:
             cache_entry: list[Any] | None = None
             try:
-                cache_entry = self._ls_from_cache(path)
+                cache_entry = self._ls_from_cache(path, recursive=recursive)
             except FileNotFoundError:
                 # we patch files missing from an ls call in the cache entry below,
                 # so this should not be an error.
@@ -493,8 +545,6 @@ class LakeFSFileSystem(AbstractFileSystem):
                 if not detail:
                     return [e["name"] for e in cache_entry]
                 return cache_entry[:]
-
-        recursive = kwargs.pop("recursive", False)
 
         kwargs["prefix"] = prefix
 
@@ -532,37 +582,23 @@ class LakeFSFileSystem(AbstractFileSystem):
                 **kwargs | {"refresh": not use_dircache, "recursive": recursive},
             )
 
-        # cache the info if not empty.
+        if recursive:
+            # To make recursive ls behave identical to the non-recursive case,
+            # add back virtual `directory` entries, which are only returned by
+            # the lakeFS API when querying non-recursively.
+            here = self._strip_protocol(path).rstrip("/")
+            subdirs = {parent for o in info if (parent := self._parent(o["name"])) != here}
+            for subdir in subdirs:
+                info.append(
+                    {
+                        "type": "directory",
+                        "name": subdir + "/",
+                        "size": 0,
+                    }
+                )
+
         if info:
-            # assumes that the returned info is name-sorted.
-            pp = self._parent(info[0]["name"])
-            info_copy = info[:]
-            if pp in self.dircache:
-                # ls info has files not in cache, so we update them in the cache entry.
-                cache_entry = self.dircache[pp][:]
-
-                old_names = {e["name"] for e in cache_entry}
-                new_names = {e["name"] for e in info_copy}
-
-                to_remove = old_names - new_names
-                to_update = old_names.intersection(new_names)
-
-                # Remove all entries no longer present in the current listing
-                cache_entry = [e for e in cache_entry if e["name"] not in to_remove]
-
-                # Overwrite existing entries in the cache with its updated values
-                for name in to_update:
-                    old_idx = next(idx for idx, e in enumerate(cache_entry) if e["name"] == name)
-                    new_entry = next(e for e in info_copy if e["name"] == name)
-
-                    cache_entry[old_idx] = new_entry
-                    info_copy.remove(new_entry)
-
-                # Add the remaining (new) entries to the cache
-                cache_entry.extend(info_copy)
-                self.dircache[pp] = sorted(cache_entry, key=operator.itemgetter("name"))
-            else:
-                self.dircache[pp] = info[:]
+            self._update_dircache(info[:])
 
         if not detail:
             info = [o["name"] for o in info]
