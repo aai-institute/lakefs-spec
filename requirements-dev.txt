@@ -32,6 +32,7 @@ six==1.16.0
 typing-extensions==4.8.0
 urllib3==2.0.7
 virtualenv==20.25.0
+wrapt==1.16.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

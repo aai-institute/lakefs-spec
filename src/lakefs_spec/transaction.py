@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from functools import partial
 from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
 
+import wrapt
 from fsspec.spec import AbstractBufferedFile
 from fsspec.transaction import Transaction
 from lakefs_sdk.client import LakeFSClient
@@ -25,30 +26,25 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class Placeholder(Generic[T]):
+class Placeholder(Generic[T], wrapt.ObjectProxy):
     """A generic placeholder for a value computed by the lakeFS server in a versioning operation during a transaction."""
 
-    value: T | None = None
-    """The abstract value. Set only on completion of the versioning operation during the defining transaction."""
+    def __init__(self, wrapped: T | None = None):
+        super().__init__(wrapped)
 
-    def available(self):
+    @property
+    def available(self) -> bool:
         """Whether the wrapped value is available, i.e. already computed."""
-        return self.value is not None
+        return self.__wrapped__ is not None
 
-    def set_value(self, value: T) -> None:
+    @property
+    def value(self):
+        return self.__wrapped__
+
+    @value.setter
+    def value(self, val: T) -> None:
         """Fill in the placeholder. Not meant to be called directly except in the completion of the transaction."""
-        self.value = value
-
-    def unwrap(self) -> T:
-        """Return the placeholder's value after it has been filled."""
-        if self.value is None:
-            raise RuntimeError("placeholder unfilled")
-        return self.value
-
-
-def unwrap_placeholders(kwargs: dict[str, Any]) -> dict[str, Any]:
-    """Unwrap any placeholder values passed in a dictionary of keyword arguments."""
-    return {k: v.unwrap() if isinstance(v, Placeholder) else v for k, v in kwargs.items()}
+        self.__wrapped__ = val
 
 
 class LakeFSTransaction(Transaction):
@@ -133,7 +129,7 @@ class LakeFSTransaction(Transaction):
                     # if the transaction member returns a placeholder,
                     # fill it with the result of the client helper.
                     if isinstance(retval, Placeholder):
-                        retval.set_value(result)
+                        retval.value = result
 
         self.fs._intrans = False
 
@@ -228,7 +224,6 @@ class LakeFSTransaction(Transaction):
         """
 
         def rev_parse_op(client: LakeFSClient, **kwargs: Any) -> Commit:
-            kwargs = unwrap_placeholders(kwargs)
             return rev_parse(client, **kwargs)
 
         p: Placeholder[Commit] = Placeholder()
@@ -256,7 +251,6 @@ class LakeFSTransaction(Transaction):
         """
 
         def tag_op(client: LakeFSClient, **kwargs: Any) -> Ref:
-            kwargs = unwrap_placeholders(kwargs)
             return create_tag(client, **kwargs)
 
         self.files.append((partial(tag_op, repository=repository, ref=ref, tag=tag), tag))

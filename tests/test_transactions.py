@@ -1,5 +1,7 @@
 from typing import Any
 
+from lakefs_sdk.models import Commit
+
 from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory, with_counter
 
@@ -24,9 +26,9 @@ def test_transaction_commit(
         sha = tx.commit(repository, temp_branch, message=message)
         # stack contains the file to upload, and the commit op.
         assert len(tx.files) == 2
-        assert not sha.available()
+        assert not sha.available
 
-    assert sha.available()
+    assert sha.available
 
     commits = fs.client.refs_api.log_commits(
         repository=repository,
@@ -35,7 +37,7 @@ def test_transaction_commit(
     latest_commit = commits.results[0]
 
     assert latest_commit.message == message
-    assert latest_commit.id == sha.value.id
+    assert latest_commit.id == sha.id
 
 
 def test_transaction_tag(fs: LakeFSFileSystem, repository: str) -> None:
@@ -45,11 +47,11 @@ def test_transaction_tag(fs: LakeFSFileSystem, repository: str) -> None:
             sha = tx.rev_parse(repository, "main")
             tag = tx.tag(repository=repository, ref=sha, tag="v2")
 
-        assert sha.available()
+        assert sha.available
 
         tags = fs.client.tags_api.list_tags(repository).results
         assert tags[0].id == tag
-        assert tags[0].commit_id == sha.value.id
+        assert tags[0].commit_id == sha.id
     finally:
         fs.client.tags_api.delete_tag(repository=repository, tag=tag)
 
@@ -166,3 +168,27 @@ def test_transaction_failure(
 
     # assert that no commit happens because of the exception.
     assert counter.count("commits_api.commit") == 0
+
+
+def test_placeholder_representations(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: str,
+    temp_branch: str,
+) -> None:
+    random_file = random_file_factory.make()
+
+    lpath = str(random_file)
+    rpath = f"{repository}/{temp_branch}/{random_file.name}"
+
+    message = f"Add file {random_file.name}"
+
+    with fs.transaction as tx:
+        fs.put_file(lpath, rpath)
+        sha = tx.commit(repository, temp_branch, message=message)
+    latest_commit = fs.client.refs_api.log_commits(repository=repository, ref=temp_branch).results[
+        0
+    ]
+    assert isinstance(sha, Commit)
+    assert sha.id == latest_commit.id
+    assert repr(sha.id) == repr(latest_commit.id)
