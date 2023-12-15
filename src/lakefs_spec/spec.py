@@ -443,7 +443,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             cache_entry.extend(dir_info)
             self.dircache[pp] = sorted(cache_entry, key=operator.itemgetter("name"))
 
-    def _ls_from_cache(self, path: str, recursive: bool = False) -> Any | list | None:
+    def _ls_from_cache(self, path: str, recursive: bool = False) -> list[dict[str, Any]] | None:
         """Override of ``AbstractFileSystem._ls_from_cache`` with support for recursive listings."""
         if not recursive:
             return super()._ls_from_cache(path)
@@ -455,7 +455,9 @@ class LakeFSFileSystem(AbstractFileSystem):
             if result is None:
                 result = []
             result.extend(files)
-        return result
+        if not result:
+            return result
+        return sorted(result, key=operator.itemgetter("name"))
 
     @overload
     def ls(
@@ -528,10 +530,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         recursive = kwargs.pop("recursive", False)
 
         # Try lookup in dircache unless explicitly disabled by `refresh=True` kwarg
-        use_dircache = True
-        if "refresh" in kwargs:
-            use_dircache = not kwargs["refresh"]
-            del kwargs["refresh"]  # cannot be forwarded to the API
+        use_dircache = not kwargs.pop("refresh", False)
 
         if use_dircache:
             cache_entry: list[Any] | None = None
@@ -584,9 +583,11 @@ class LakeFSFileSystem(AbstractFileSystem):
             )
 
         if recursive:
-            subdirs = {
-                self._parent(o["name"]) for o in info if self._parent(o["name"]) != path.rstrip("/")
-            }
+            # To make recursive ls behave identical to the non-recursive case,
+            # add back virtual `directory` entries, which are only returned by
+            # the lakeFS API when querying non-recursively.
+            here = self._strip_protocol(path).rstrip("/")
+            subdirs = {parent for o in info if (parent := self._parent(o["name"])) != here}
             for subdir in subdirs:
                 info.append(
                     {
