@@ -77,6 +77,7 @@ plugins:
           - Remove_input
   - mike:
       canonical_version: latest
+  - privacy
   - search:
   - git-revision-date-localized:
       type: iso_date
