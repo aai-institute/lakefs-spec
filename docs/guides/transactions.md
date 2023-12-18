@@ -75,15 +75,15 @@ The full list of supported lakeFS versioning operations:
 Some transaction versioning helpers create new objects in the lakeFS instance that are not known before said helpers are actually executed.
 An example of this is a commit SHA, which is only available once created by the lakeFS server.
 In the above example, a commit is created directly after a file upload, but its actual SHA identifier will not be available until the transaction is complete.
-To reuse the value later in your code, you can call `unwrap()` on the resulting [`Placeholder`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.Placeholder) object:
+After the transaction is completed, you can reuse the computed value (a [`Placeholder`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.Placeholder) object) in your code like you would any other lakeFS server result:
 
 ```python
 with fs.transaction as tx:
     fs.put_file("my-file.txt", "repo/branch/my-file.txt")
     sha = tx.commit("repo", "branch", message="Add my-file.txt")
 
-# Obtain the SHA value by unwrapping the placeholder first.
-fs.get_file(f"repo/{sha.unwrap()}/my-file.txt", "my-new-file.txt")
+# after transaction completion, just use the SHA value as normal.
+fs.get_file(f"repo/{sha.id}/my-file.txt", "my-new-file.txt")
 ```
 
 ## Thread safety
