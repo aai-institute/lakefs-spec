@@ -88,10 +88,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         # TODO: `lakefs` does not consider configfiles other than ~/.lakectl.yaml,
         #  do we keep any file or do we drop configfile support and defer?
-        if all(c is None for c in [host, username, password]):
-            self.client = None  # implicit instantiation by `lakefs`
-        else:
-            self.client = Client(host=host, username=username, password=password)
+        self.client = Client(host=host, username=username, password=password)
 
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
@@ -99,8 +96,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     @cached_property
     def _lakefs_server_version(self):
         with self.wrapped_api_call():
-            version_string = self.client.config_api.get_config().version_config.version
-            return tuple(int(t) for t in version_string.split("."))
+            return tuple(int(t) for t in self.client.version.split("."))
 
     @classmethod
     @overload
