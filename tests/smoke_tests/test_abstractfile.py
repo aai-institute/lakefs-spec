@@ -38,7 +38,7 @@ def test_readline(
         lpath.unlink(missing_ok=True)
 
 
-def test_info(
+def test_fileinfo(
     random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
 ) -> None:
     rnd_file = random_file_factory.make()

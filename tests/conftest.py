@@ -64,7 +64,7 @@ def lakefs_client(lakefs_options: LakeFSOptions) -> LakeFSClient:
 
 
 @pytest.fixture(scope="session")
-def ensurerepo(lakefs_client: LakeFSClient) -> str:
+def repository(lakefs_client: LakeFSClient) -> str:
     # no loop, assumes there exist fewer than 100 repos.
     reponames = [r.id for r in lakefs_client.repositories_api.list_repositories().results]
 
@@ -85,11 +85,6 @@ def ensurerepo(lakefs_client: LakeFSClient) -> str:
             )
         )
     return _TEST_REPO
-
-
-@pytest.fixture(scope="session")
-def repository(ensurerepo: str) -> str:
-    return ensurerepo
 
 
 @pytest.fixture

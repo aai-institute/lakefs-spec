@@ -1,5 +1,5 @@
 import filecmp
-import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -216,17 +216,17 @@ def test_copy(
 
 
 def test_get_file(
-    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: str,
+    temp_branch: str,
+    tmp_path: Path,
 ) -> None:
-    try:
-        random_file = random_file_factory.make()
-        lpath1 = str(random_file)
-        rpath = f"{repository}/{temp_branch}/{random_file.name}"
-        fs.put(lpath=lpath1, rpath=rpath)
+    random_file = random_file_factory.make()
+    lpath1 = str(random_file)
+    rpath = f"{repository}/{temp_branch}/{random_file.name}"
+    fs.put(lpath=lpath1, rpath=rpath)
 
-        tmp_dir = tempfile.TemporaryDirectory()
-        lpath2 = f"{tmp_dir.name}/{random_file.name}"
-        fs.get(rpath=rpath, lpath=lpath2)
-        assert filecmp.cmp(lpath1, lpath2)
-    finally:
-        tmp_dir.cleanup()
+    lpath2 = str(tmp_path / random_file.name)
+    fs.get(rpath=rpath, lpath=lpath2)
+    assert filecmp.cmp(lpath1, lpath2)
