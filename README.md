@@ -8,11 +8,13 @@ Our primary goal is to streamline versioned data operations in lakeFS, enabling 
 
 Highlights:
 
-- High-level abstraction over basic lakeFS repository operations
-- Seamless integration into the fsspec ecosystem
-- Transaction support
-- Zero-config option through config autodiscovery
-- Automatic up-/download management to avoid unnecessary transfers for unchanged files
+- Simple repository operations in lakeFS
+- Easy access to underlying storage and versioning operations
+- Seamless integration with the fsspec ecosystem
+- Directly access lakeFS objects from popular data science libraries (including Pandas, Polars, DuckDB, PyArrow) with minimal code
+- Transaction support for reliable data version control
+- Smart data transfers through client-side caching (up-/download)
+- Auto-discovery configuration
 
 > [!NOTE]
 > We are seeking early adopters who would like to actively participate in our feedback process and shape the future of the library.
