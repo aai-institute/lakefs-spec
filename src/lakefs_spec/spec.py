@@ -24,10 +24,10 @@ from fsspec.callbacks import _DEFAULT_CALLBACK
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import stringify_path
 from lakefs.client import Client
+from lakefs.repository import Repository
 from lakefs_sdk.exceptions import ApiException, NotFoundException
 from lakefs_sdk.models import ObjectCopyCreation, ObjectStats, StagingMetadata
 
-from lakefs_spec.client_helpers import create_branch
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
 from lakefs_spec.util import depaginate, md5_checksum, parse
@@ -892,8 +892,9 @@ class LakeFSFile(AbstractBufferedFile):
 
         self.buffer: io.BytesIO
         if mode == "wb" and self.fs.create_branch_ok:
-            repository, branch, resource = parse(path)
-            create_branch(self.fs.client, repository, branch, self.fs.source_branch)
+            repository, branch, _ = parse(path)
+            repo = Repository(repository, client=self.fs.client)
+            repo.branch(branch).create(self.fs.source_branch, exist_ok=True)
 
     def __del__(self):
         """Custom deleter, only here to unset the base class behavior."""
@@ -928,7 +929,7 @@ class LakeFSFile(AbstractBufferedFile):
         with self.fs.wrapped_api_call(rpath=self.path):
             # empty buffer is equivalent to a touch()
             self.buffer.seek(0)
-            self.fs.client.objects_api.upload_object(
+            self.fs.client.sdk_client.objects_api.upload_object(
                 repository=repository,
                 branch=branch,
                 path=resource,
@@ -1009,6 +1010,6 @@ class LakeFSFile(AbstractBufferedFile):
         """
         repository, ref, resource = parse(self.path)
         with self.fs.wrapped_api_call(rpath=self.path):
-            return self.fs.client.objects_api.get_object(
+            return self.fs.client.sdk_client.objects_api.get_object(
                 repository, ref, resource, range=f"bytes={start}-{end - 1}", **self.kwargs
             )
