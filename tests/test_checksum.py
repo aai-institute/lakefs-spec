@@ -1,5 +1,8 @@
 import time
 
+from lakefs.branch import Branch
+from lakefs.repository import Repository
+
 from lakefs_spec import LakeFSFileSystem
 from lakefs_spec.spec import md5_checksum
 from tests.util import RandomFileFactory, with_counter
@@ -8,15 +11,15 @@ from tests.util import RandomFileFactory, with_counter
 def test_checksum_matching(
     random_file_factory: RandomFileFactory,
     fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
+    repository: Repository,
+    temp_branch: Branch,
 ) -> None:
     random_file = random_file_factory.make()
 
-    fs.client, counter = with_counter(fs.client)
+    fs.client._client, counter = with_counter(fs.client._client)
 
     lpath = str(random_file)
-    rpath = f"{repository}/{temp_branch}/{random_file.name}"
+    rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"
     fs.put_file(lpath, rpath)
 
     # assert that MD5 hash is insensitive to the block size
