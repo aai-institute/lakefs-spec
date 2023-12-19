@@ -16,7 +16,7 @@ def test_checksum_matching(
 ) -> None:
     random_file = random_file_factory.make()
 
-    fs.client._client, counter = with_counter(fs.client._client)
+    fs.client, counter = with_counter(fs.client)
 
     lpath = str(random_file)
     rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"

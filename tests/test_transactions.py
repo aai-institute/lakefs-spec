@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any
 
 from lakefs.branch import Branch
@@ -5,7 +6,7 @@ from lakefs.reference import Reference
 from lakefs.repository import Repository
 
 from lakefs_spec import LakeFSFileSystem
-from tests.util import RandomFileFactory, with_counter
+from tests.util import RandomFileFactory, put_random_file_on_branch, with_counter
 
 
 def test_transaction_commit(
@@ -33,7 +34,6 @@ def test_transaction_commit(
     assert sha.available
 
     commits = list(temp_branch.log())
-    assert len(commits) > 0
     latest_commit = commits[0]
     assert latest_commit.message == message
     assert latest_commit.id == sha.id
@@ -141,7 +141,7 @@ def test_transaction_failure(
 
     message = f"Add file {random_file.name}"
 
-    fs.client._client, counter = with_counter(fs.client._client)
+    fs.client, counter = with_counter(fs.client)
     try:
         with fs.transaction as tx:
             fs.put_file(lpath, rpath)
@@ -160,20 +160,13 @@ def test_placeholder_representations(
     repository: Repository,
     temp_branch: Branch,
 ) -> None:
-    random_file = random_file_factory.make()
-
-    lpath = str(random_file)
-    rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"
-
-    message = f"Add file {random_file.name}"
-
     with fs.transaction as tx:
-        fs.put_file(lpath, rpath)
+        rpath = put_random_file_on_branch(random_file_factory, fs, repository, temp_branch)
+        message = f"Add file {Path(rpath).name}"
         sha = tx.commit(repository, temp_branch, message=message)
 
     assert isinstance(sha, Reference)
     commits = list(temp_branch.log())
-    assert len(commits) > 0
     latest_commit = commits[0]
     assert sha.id == latest_commit.id
     assert repr(sha.id) == repr(latest_commit.id)
