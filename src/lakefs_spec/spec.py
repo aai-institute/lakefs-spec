@@ -221,7 +221,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, ref, resource = parse(path)
 
         try:
-            self.client.objects_api.head_object(repository, ref, resource, **kwargs)
+            self.client.sdk_client.objects_api.head_object(repository, ref, resource, **kwargs)
             return True
         except NotFoundException:
             return False
@@ -266,7 +266,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         with self.wrapped_api_call():
             object_copy_creation = ObjectCopyCreation(src_path=orig_path, src_ref=orig_ref)
-            self.client.objects_api.copy_object(
+            self.client.sdk_client.objects_api.copy_object(
                 repository=dest_repo,
                 branch=dest_ref,
                 dest_path=dest_path,
@@ -352,7 +352,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 stat_keywords = ["presign", "user_metadata"]
                 stat_kwargs = {k: v for k, v in kwargs.items() if k in stat_keywords}
 
-                res = self.client.objects_api.stat_object(
+                res = self.client.sdk_client.objects_api.stat_object(
                     repository=repository, ref=ref, path=resource, **stat_kwargs
                 )
                 return {
@@ -526,7 +526,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call(rpath=path):
             delimiter = "" if recursive else "/"
             objects = depaginate(
-                self.client.objects_api.list_objects,
+                self.client.sdk_client.objects_api.list_objects,
                 repository,
                 ref,
                 delimiter=delimiter,
@@ -671,7 +671,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         lpath = stringify_path(lpath)
         repository, branch, resource = parse(rpath)
 
-        staging_location = self.client.staging_api.get_physical_address(
+        staging_location = self.client.sdk_client.staging_api.get_physical_address(
             repository, branch, resource, presign=presign
         )
 
@@ -697,7 +697,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 except urllib.error.HTTPError as e:
                     raise translate_lakefs_error(e, rpath=rpath)
         else:
-            blockstore_type = self.client.config_api.get_config().storage_config.blockstore_type
+            blockstore_type = self.client.storage_config.blockstore_type
             # lakeFS blockstore name is "azure", but Azure's fsspec registry entry is "az".
             if blockstore_type == "azure":
                 blockstore_type = "az"
@@ -716,7 +716,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             checksum=md5_checksum(lpath, blocksize=self.blocksize),
             size_bytes=os.path.getsize(lpath),
         )
-        self.client.staging_api.link_physical_address(
+        self.client.sdk_client.staging_api.link_physical_address(
             repository, branch, resource, staging_metadata
         )
 
@@ -795,7 +795,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, branch, resource = parse(path)
 
         with self.wrapped_api_call(rpath=path):
-            self.client.objects_api.delete_object(
+            self.client.sdk_client.objects_api.delete_object(
                 repository=repository, branch=branch, path=resource
             )
             # Directory listing cache for the containing folder must be invalidated
