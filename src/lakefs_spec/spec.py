@@ -23,13 +23,11 @@ from fsspec import filesystem
 from fsspec.callbacks import _DEFAULT_CALLBACK
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import stringify_path
-from lakefs_sdk import Configuration
-from lakefs_sdk.client import LakeFSClient
+from lakefs.client import Client
 from lakefs_sdk.exceptions import ApiException, NotFoundException
 from lakefs_sdk.models import ObjectCopyCreation, ObjectStats, StagingMetadata
 
 from lakefs_spec.client_helpers import create_branch
-from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
 from lakefs_spec.util import depaginate, md5_checksum, parse
@@ -82,40 +80,19 @@ class LakeFSFileSystem(AbstractFileSystem):
         host: str | None = None,
         username: str | None = None,
         password: str | None = None,
-        api_key: str | None = None,
-        api_key_prefix: str | None = None,
-        access_token: str | None = None,
-        verify_ssl: bool = True,
-        ssl_ca_cert: str | None = None,
-        proxy: str | None = None,
-        configfile: str = "~/.lakectl.yaml",
         create_branch_ok: bool = True,
         source_branch: str = "main",
         **storage_options: Any,
     ):
         super().__init__(**storage_options)
 
-        if (p := Path(configfile).expanduser()).exists():
-            lakectl_config = LakectlConfig.read(p)
+        # TODO: `lakefs` does not consider configfiles other than ~/.lakectl.yaml,
+        #  do we keep any file or do we drop configfile support and defer?
+        if all(c is None for c in [host, username, password]):
+            self.client = None  # implicit instantiation by `lakefs`
         else:
-            # empty config.
-            lakectl_config = LakectlConfig()
+            self.client = Client(host=host, username=username, password=password)
 
-        configuration = Configuration(
-            host=host or os.getenv("LAKEFS_HOST") or lakectl_config.host,
-            api_key=api_key or os.getenv("LAKEFS_API_KEY"),
-            api_key_prefix=api_key_prefix or os.getenv("LAKEFS_API_KEY_PREFIX"),
-            access_token=access_token or os.getenv("LAKEFS_ACCESS_TOKEN"),
-            username=username or os.getenv("LAKEFS_USERNAME") or lakectl_config.username,
-            password=password or os.getenv("LAKEFS_PASSWORD") or lakectl_config.password,
-            ssl_ca_cert=ssl_ca_cert or os.getenv("LAKEFS_SSL_CA_CERT"),
-        )
-        # proxy address, not part of the constructor
-        configuration.proxy = proxy
-        # whether to verify SSL certs, not part of the constructor
-        configuration.verify_ssl = verify_ssl
-
-        self.client = LakeFSClient(configuration=configuration)
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
 
