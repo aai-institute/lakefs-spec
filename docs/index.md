@@ -12,7 +12,7 @@ Highlights:
 - Simple repository operations in lakeFS
 - Easy access to underlying storage and versioning operations
 - Seamless integration with the fsspec ecosystem
-- Directly access lakeFS objects from popular data science libraries (including Pandas, Numpy, Polars, DuckDB, PyArrow) with minimal code
+- Directly access lakeFS objects from popular data science libraries (including Pandas, Polars, DuckDB, PyArrow) with minimal code
 - Transaction support for reliable data version control
 - Smart data transfers through client-side caching (up-/download)
 - Auto-discovery configuration
