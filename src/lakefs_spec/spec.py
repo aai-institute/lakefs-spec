@@ -23,13 +23,11 @@ from fsspec import filesystem
 from fsspec.callbacks import _DEFAULT_CALLBACK
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import stringify_path
-from lakefs_sdk import Configuration
-from lakefs_sdk.client import LakeFSClient
+from lakefs.client import Client
+from lakefs.repository import Repository
 from lakefs_sdk.exceptions import ApiException, NotFoundException
 from lakefs_sdk.models import ObjectCopyCreation, ObjectStats, StagingMetadata
 
-from lakefs_spec.client_helpers import create_branch
-from lakefs_spec.config import LakectlConfig
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
 from lakefs_spec.util import depaginate, md5_checksum, parse
@@ -65,8 +63,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         A custom certificate PEM file to use to verify the peer in SSL connections.
     proxy: str | None
         Proxy address to use when connecting to a lakeFS server.
-    configfile: str
-        ``lakectl`` YAML configuration file to read credentials from.
     create_branch_ok: bool
         Whether to create branches implicitly when not-existing branches are referenced on file uploads.
     source_branch: str
@@ -88,42 +84,41 @@ class LakeFSFileSystem(AbstractFileSystem):
         verify_ssl: bool = True,
         ssl_ca_cert: str | None = None,
         proxy: str | None = None,
-        configfile: str = "~/.lakectl.yaml",
         create_branch_ok: bool = True,
         source_branch: str = "main",
         **storage_options: Any,
     ):
         super().__init__(**storage_options)
 
-        if (p := Path(configfile).expanduser()).exists():
-            lakectl_config = LakectlConfig.read(p)
+        # lakeFS client arguments
+        cargs = [host, username, password, api_key, api_key_prefix, access_token, ssl_ca_cert]
+
+        if all(arg is None for arg in cargs):
+            # empty kwargs means envvar and configfile autodiscovery
+            self.client = Client()
         else:
-            # empty config.
-            lakectl_config = LakectlConfig()
+            self.client = Client(
+                host=host,
+                username=username,
+                password=password,
+                api_key=api_key,
+                api_key_prefix=api_key_prefix,
+                access_token=access_token,
+                ssl_ca_cert=ssl_ca_cert,
+            )
 
-        configuration = Configuration(
-            host=host or os.getenv("LAKEFS_HOST") or lakectl_config.host,
-            api_key=api_key or os.getenv("LAKEFS_API_KEY"),
-            api_key_prefix=api_key_prefix or os.getenv("LAKEFS_API_KEY_PREFIX"),
-            access_token=access_token or os.getenv("LAKEFS_ACCESS_TOKEN"),
-            username=username or os.getenv("LAKEFS_USERNAME") or lakectl_config.username,
-            password=password or os.getenv("LAKEFS_PASSWORD") or lakectl_config.password,
-            ssl_ca_cert=ssl_ca_cert or os.getenv("LAKEFS_SSL_CA_CERT"),
-        )
         # proxy address, not part of the constructor
-        configuration.proxy = proxy
+        self.client.config.proxy = proxy
         # whether to verify SSL certs, not part of the constructor
-        configuration.verify_ssl = verify_ssl
+        self.client.config.verify_ssl = verify_ssl
 
-        self.client = LakeFSClient(configuration=configuration)
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
 
     @cached_property
     def _lakefs_server_version(self):
         with self.wrapped_api_call():
-            version_string = self.client.config_api.get_config().version_config.version
-            return tuple(int(t) for t in version_string.split("."))
+            return tuple(int(t) for t in self.client.version.split("."))
 
     @classmethod
     @overload
@@ -248,7 +243,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, ref, resource = parse(path)
 
         try:
-            self.client.objects_api.head_object(repository, ref, resource, **kwargs)
+            self.client.sdk_client.objects_api.head_object(repository, ref, resource, **kwargs)
             return True
         except NotFoundException:
             return False
@@ -293,7 +288,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         with self.wrapped_api_call():
             object_copy_creation = ObjectCopyCreation(src_path=orig_path, src_ref=orig_ref)
-            self.client.objects_api.copy_object(
+            self.client.sdk_client.objects_api.copy_object(
                 repository=dest_repo,
                 branch=dest_ref,
                 dest_path=dest_path,
@@ -379,7 +374,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 stat_keywords = ["presign", "user_metadata"]
                 stat_kwargs = {k: v for k, v in kwargs.items() if k in stat_keywords}
 
-                res = self.client.objects_api.stat_object(
+                res = self.client.sdk_client.objects_api.stat_object(
                     repository=repository, ref=ref, path=resource, **stat_kwargs
                 )
                 return {
@@ -553,7 +548,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call(rpath=path):
             delimiter = "" if recursive else "/"
             objects = depaginate(
-                self.client.objects_api.list_objects,
+                self.client.sdk_client.objects_api.list_objects,
                 repository,
                 ref,
                 delimiter=delimiter,
@@ -698,7 +693,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         lpath = stringify_path(lpath)
         repository, branch, resource = parse(rpath)
 
-        staging_location = self.client.staging_api.get_physical_address(
+        staging_location = self.client.sdk_client.staging_api.get_physical_address(
             repository, branch, resource, presign=presign
         )
 
@@ -724,7 +719,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 except urllib.error.HTTPError as e:
                     raise translate_lakefs_error(e, rpath=rpath)
         else:
-            blockstore_type = self.client.config_api.get_config().storage_config.blockstore_type
+            blockstore_type = self.client.storage_config.blockstore_type
             # lakeFS blockstore name is "azure", but Azure's fsspec registry entry is "az".
             if blockstore_type == "azure":
                 blockstore_type = "az"
@@ -743,7 +738,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             checksum=md5_checksum(lpath, blocksize=self.blocksize),
             size_bytes=os.path.getsize(lpath),
         )
-        self.client.staging_api.link_physical_address(
+        self.client.sdk_client.staging_api.link_physical_address(
             repository, branch, resource, staging_metadata
         )
 
@@ -822,7 +817,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, branch, resource = parse(path)
 
         with self.wrapped_api_call(rpath=path):
-            self.client.objects_api.delete_object(
+            self.client.sdk_client.objects_api.delete_object(
                 repository=repository, branch=branch, path=resource
             )
             # Directory listing cache for the containing folder must be invalidated
@@ -919,8 +914,9 @@ class LakeFSFile(AbstractBufferedFile):
 
         self.buffer: io.BytesIO
         if mode == "wb" and self.fs.create_branch_ok:
-            repository, branch, resource = parse(path)
-            create_branch(self.fs.client, repository, branch, self.fs.source_branch)
+            repository, branch, _ = parse(path)
+            repo = Repository(repository, client=self.fs.client)
+            repo.branch(branch).create(self.fs.source_branch, exist_ok=True)
 
     def __del__(self):
         """Custom deleter, only here to unset the base class behavior."""
@@ -955,7 +951,7 @@ class LakeFSFile(AbstractBufferedFile):
         with self.fs.wrapped_api_call(rpath=self.path):
             # empty buffer is equivalent to a touch()
             self.buffer.seek(0)
-            self.fs.client.objects_api.upload_object(
+            self.fs.client.sdk_client.objects_api.upload_object(
                 repository=repository,
                 branch=branch,
                 path=resource,
@@ -1036,6 +1032,6 @@ class LakeFSFile(AbstractBufferedFile):
         """
         repository, ref, resource = parse(self.path)
         with self.fs.wrapped_api_call(rpath=self.path):
-            return self.fs.client.objects_api.get_object(
+            return self.fs.client.sdk_client.objects_api.get_object(
                 repository, ref, resource, range=f"bytes={start}-{end - 1}", **self.kwargs
             )

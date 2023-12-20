@@ -1,14 +1,16 @@
+from __future__ import annotations
+
 import collections
 import random
 import string
 import uuid
 from inspect import ismethod
 from pathlib import Path
-from typing import Optional, Union
 
-from lakefs_sdk.client import LakeFSClient
+from lakefs.branch import Branch
+from lakefs.client import Client
+from lakefs.repository import Repository
 
-import lakefs_spec.client_helpers as client_helpers
 from lakefs_spec import LakeFSFileSystem
 
 
@@ -34,7 +36,7 @@ class APICounter:
         self._counts[name] += 1
 
 
-def with_counter(client: LakeFSClient) -> tuple[LakeFSClient, APICounter]:
+def with_counter(client: Client) -> tuple[Client, APICounter]:
     """Instruments a lakeFS API client with an API counter."""
     counter = APICounter()
 
@@ -47,7 +49,7 @@ def with_counter(client: LakeFSClient) -> tuple[LakeFSClient, APICounter]:
 
         return wrapped_fn
 
-    for api_name, api in client.__dict__.items():
+    for api_name, api in client.sdk_client.__dict__.items():
         if api_name == "_api":
             continue
 
@@ -64,17 +66,16 @@ def with_counter(client: LakeFSClient) -> tuple[LakeFSClient, APICounter]:
 
 
 class RandomFileFactory:
-    def __init__(self, path: Union[str, Path]):
+    def __init__(self, path: str | Path):
         path = Path(path)
         if not path.is_dir():
-            raise ValueError(f"input path needs to be a directory, got {path}")
-
+            raise NotADirectoryError(path)
         self.path = path
 
     def list(self) -> list[Path]:
         return list(self.path.iterdir())
 
-    def make(self, fname: Optional[str] = None, size: int = 2**10) -> Path:
+    def make(self, fname: str | None = None, size: int = 2**10) -> Path:
         """
         Generate a random file named ``fname`` with a random string of size
         ``size`` (in bytes) as content.
@@ -87,22 +88,25 @@ class RandomFileFactory:
         return random_file
 
 
-def commit_random_file_on_branch(
-    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
-) -> None:
+def put_random_file_on_branch(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: str | Branch,
+    commit: bool = False,
+) -> str:
     random_file = random_file_factory.make()
+    branch = temp_branch.id if isinstance(temp_branch, Branch) else temp_branch
     lpath = str(random_file)
-    rpath = f"{repository}/{temp_branch}/{random_file.name}"
+    rpath = f"{repository.id}/{branch}/{random_file.name}"
 
     fs.put(lpath, rpath, precheck=False)
-
-    commit = client_helpers.commit(
-        client=fs.client,
-        repository=repository,
-        branch=temp_branch,
-        message=f"Add file {random_file.name!r}",
-    )
+    if commit:
+        if isinstance(temp_branch, str):
+            temp_branch = repository.branch(temp_branch)
+        temp_branch.commit(message=f"Add file {random_file.name!r}")
+    return rpath
 
 
-def list_branch_names(fs: LakeFSFileSystem, repository: str) -> list[str]:
-    return [branch.id for branch in client_helpers.list_branches(fs.client, repository=repository)]
+def list_branchnames(repository: Repository) -> list[str]:
+    return [branch.id for branch in repository.branches()]

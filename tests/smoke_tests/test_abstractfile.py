@@ -1,6 +1,8 @@
 from pathlib import Path
 
 import pytest
+from lakefs.branch import Branch
+from lakefs.repository import Repository
 
 from lakefs_spec.spec import LakeFSFileSystem
 from tests.util import RandomFileFactory
@@ -8,8 +10,8 @@ from tests.util import RandomFileFactory
 
 def test_readline(
     fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
+    repository: Repository,
+    temp_branch: Branch,
 ) -> None:
     """Checks that `fs.open()` behaves like builtin `open` for `readline(s)` APIs."""
     lpath = Path("random_file.txt")
@@ -22,7 +24,7 @@ def test_readline(
             f.seek(0)
             firstline = next(f)
 
-        rpath = f"{repository}/{temp_branch}/{Path(lpath).name}"
+        rpath = f"{repository.id}/{temp_branch.id}/{Path(lpath).name}"
         fs.put_file(lpath, rpath)
 
         with fs.open(rpath, "rb") as rf:
@@ -39,10 +41,13 @@ def test_readline(
 
 
 def test_fileinfo(
-    random_file_factory: RandomFileFactory, fs: LakeFSFileSystem, repository: str, temp_branch: str
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: Branch,
 ) -> None:
     rnd_file = random_file_factory.make()
-    rpath = f"{repository}/{temp_branch}/{rnd_file.name}"
+    rpath = f"{repository.id}/{temp_branch.id}/{rnd_file.name}"
     fs.put(str(rnd_file), rpath)
     details = fs.open(rpath).info()
     expected_keys = ["checksum", "content-type", "mtime", "name", "size", "type"]
@@ -51,10 +56,10 @@ def test_fileinfo(
 
     # opening a nonexistent file in read mode should immediately result in a ``FileNotFoundError``.
     with pytest.raises(FileNotFoundError):
-        fs.open(f"{repository}/main/hello.tar.gz", "rb")
+        fs.open(f"{repository.id}/main/hello.tar.gz", "rb")
 
 
-def test_readuntil(fs: LakeFSFileSystem, repository: str, temp_branch: str) -> None:
+def test_readuntil(fs: LakeFSFileSystem, repository: Repository, temp_branch: Branch) -> None:
     lpath = Path("tmp_file.txt")
 
     content_first_part = (
@@ -63,7 +68,7 @@ def test_readuntil(fs: LakeFSFileSystem, repository: str, temp_branch: str) -> N
     content_second_part = "\nand some words after it."
     try:
         lpath.write_text(content_first_part + content_second_part)
-        rpath = f"{repository}/{temp_branch}/tmp_file.txt"
+        rpath = f"{repository.id}/{temp_branch.id}/tmp_file.txt"
         fs.put_file(lpath, rpath)
         with fs._open(rpath, "rb") as rf:
             remote_readuntil = rf.readuntil(b"7").decode("utf-8")

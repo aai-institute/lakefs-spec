@@ -32,7 +32,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 
-dependencies = ["fsspec>=2023.6.0", "lakefs-sdk>=1.0.0", "pyyaml>=6.0.1", "wrapt"]
+dependencies = ["fsspec>=2023.6.0", "lakefs", "wrapt"]
 
 dynamic = ["version"]
 

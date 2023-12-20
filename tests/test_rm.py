@@ -1,12 +1,15 @@
+from lakefs.branch import Branch
+from lakefs.repository import Repository
+
 from lakefs_spec import LakeFSFileSystem
 
 
 def test_rm(
     fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
+    repository: Repository,
+    temp_branch: Branch,
 ) -> None:
-    path = f"{repository}/{temp_branch}/README.md"
+    path = f"{repository.id}/{temp_branch.id}/README.md"
 
     fs.rm(path)
     assert not fs.exists(path)
@@ -14,20 +17,17 @@ def test_rm(
 
 def test_rm_with_postcommit(
     fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
+    repository: Repository,
+    temp_branch: Branch,
 ) -> None:
-    path = f"{repository}/{temp_branch}/README.md"
+    path = f"{repository.id}/{temp_branch.id}/README.md"
     msg = "Remove file README.md"
 
     with fs.transaction as tx:
         fs.rm(path)
-        tx.commit(repository=repository, branch=temp_branch, message=msg)
+        tx.commit(repository, temp_branch, message=msg)
     assert not fs.exists(path)
 
-    commits = fs.client.refs_api.log_commits(
-        repository=repository,
-        ref=temp_branch,
-    )
-    latest_commit = commits.results[0]
+    commits = list(temp_branch.log())
+    latest_commit = commits[0]
     assert latest_commit.message == msg

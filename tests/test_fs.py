@@ -37,28 +37,28 @@ def test_initialization(monkeypatch: MonkeyPatch, temporary_lakectl_config: str)
     # Verify behaviors in reverse priority order.
     # Case 1: Instantiation from ~/.lakectl.yaml.
     cfg_fs = LakeFSFileSystem()
-    config = cfg_fs.client._api.configuration
+    config = cfg_fs.client.config
     assert config.host == "http://hello-world-xyz/api/v1"
     assert config.username == "hello"
     assert config.password == "world"
 
-    monkeypatch.setenv("LAKEFS_HOST", "http://localhost:1000")
-    monkeypatch.setenv("LAKEFS_USERNAME", "my-user")
-    monkeypatch.setenv("LAKEFS_PASSWORD", "my-password-12345")
+    monkeypatch.setenv("LAKECTL_SERVER_ENDPOINT_URL", "http://localhost:1000")
+    monkeypatch.setenv("LAKECTL_CREDENTIALS_ACCESS_KEY_ID", "my-user")
+    monkeypatch.setenv("LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY", "my-password-12345")
 
     # Case 2: Instantiation from envvars.
     # Clear the instance cache first, since we otherwise would get a cache hit
     # due to the instantiation being the same as from `.lakectl.yaml` above.
     LakeFSFileSystem.clear_instance_cache()
     envvar_fs = LakeFSFileSystem()
-    config = envvar_fs.client._api.configuration
+    config = envvar_fs.client.config
     assert config.host == "http://localhost:1000/api/v1"
     assert config.username == "my-user"
     assert config.password == "my-password-12345"
 
     # Case 3: Explicit initialization.
     fs = LakeFSFileSystem(host="http://lakefs.hello", username="my-user", password="my-password")
-    config = fs.client._api.configuration
+    config = fs.client.config
     assert config.host == "http://lakefs.hello/api/v1"
     assert config.username == "my-user"
     assert config.password == "my-password"
