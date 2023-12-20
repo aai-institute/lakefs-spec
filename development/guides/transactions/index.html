@@ -694,48 +694,6 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../../reference/lakefs_spec/client_helpers/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    client_helpers
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../reference/lakefs_spec/config/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    config
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../reference/lakefs_spec/errors/" class="md-nav__link">
         
   
@@ -980,31 +938,17 @@ The following is an example of file uploads with commit creations, with a tag be
 <li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.rev_parse"><code>rev_parse</code></a>, for parsing revisions like branch/tag names and SHA fragments into full commit SHAs.</li>
 <li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.tag"><code>tag</code></a>, for creating a tag pointing to a commit.</li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>All of the operations above are deferred, and their results are not available until completion of the transaction.
-For example, the <code>sha</code> return value of <code>tx.commit</code> will be a placeholder for the actual commit SHA computed by the lakeFS server on commit creation.</p>
-<p>While you can directly use some values (branch/tag names) returned by transaction versioning helpers, care needs to be taken with computed objects like commit SHAs:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;repo/branch/my-file.txt&quot;</span><span class="p">)</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;branch&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add my-file.txt&quot;</span><span class="p">)</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># This will not work: `sha` is of type `Placeholder[Commit]`</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">fs</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;repo/</span><span class="si">{</span><span class="n">sha</span><span class="si">}</span><span class="s2">/my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;my-new-file.txt&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-<p>See the following section on how to reuse commits created during transactions. </p>
-</div>
 <h3 id="reusing-resources-created-in-transactions">Reusing resources created in transactions<a class="headerlink" href="#reusing-resources-created-in-transactions" title="Permanent link">&para;</a></h3>
 <p>Some transaction versioning helpers create new objects in the lakeFS instance that are not known before said helpers are actually executed.
 An example of this is a commit SHA, which is only available once created by the lakeFS server.
 In the above example, a commit is created directly after a file upload, but its actual SHA identifier will not be available until the transaction is complete.
 After the transaction is completed, you can reuse the computed value (a <a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.Placeholder"><code>Placeholder</code></a> object) in your code like you would any other lakeFS server result:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;repo/branch/my-file.txt&quot;</span><span class="p">)</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;branch&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add my-file.txt&quot;</span><span class="p">)</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># after transaction completion, just use the SHA value as normal.</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">fs</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;repo/</span><span class="si">{</span><span class="n">sha</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;my-new-file.txt&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;repo/branch/my-file.txt&quot;</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;branch&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add my-file.txt&quot;</span><span class="p">)</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># after transaction completion, just use the SHA value as normal.</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">fs</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;repo/</span><span class="si">{</span><span class="n">sha</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;my-new-file.txt&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="thread-safety">Thread safety<a class="headerlink" href="#thread-safety" title="Permanent link">&para;</a></h2>
 <p>Through its use of <code>collections.deque</code> as a store for uploads, upload queueing and file transfers are thread-safe.</p>
@@ -1028,7 +972,7 @@ After the transaction is completed, you can reuse the computed value (a <a href=
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-18</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-20</span>
   </span>
 
     
