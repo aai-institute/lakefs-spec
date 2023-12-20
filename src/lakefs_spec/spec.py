@@ -63,8 +63,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         A custom certificate PEM file to use to verify the peer in SSL connections.
     proxy: str | None
         Proxy address to use when connecting to a lakeFS server.
-    configfile: str
-        ``lakectl`` YAML configuration file to read credentials from.
     create_branch_ok: bool
         Whether to create branches implicitly when not-existing branches are referenced on file uploads.
     source_branch: str
@@ -80,15 +78,41 @@ class LakeFSFileSystem(AbstractFileSystem):
         host: str | None = None,
         username: str | None = None,
         password: str | None = None,
+        api_key: str | None = None,
+        api_key_prefix: str | None = None,
+        access_token: str | None = None,
+        verify_ssl: bool = True,
+        ssl_ca_cert: str | None = None,
+        proxy: str | None = None,
         create_branch_ok: bool = True,
         source_branch: str = "main",
         **storage_options: Any,
     ):
         super().__init__(**storage_options)
 
-        # TODO: `lakefs` does not consider configfiles other than ~/.lakectl.yaml,
-        #  do we keep any file or do we drop configfile support and defer?
-        self.client = Client(host=host, username=username, password=password)
+        # lakeFS client arguments
+        cargs = [host, username, password, api_key, api_key_prefix, access_token, ssl_ca_cert]
+
+        if all(arg is None for arg in cargs):
+            # empty kwargs means envvar and configfile autodiscovery
+            self.client = Client()
+        else:
+            # TODO: `lakefs` does not consider configfiles other than ~/.lakectl.yaml,
+            #  do we keep any file or do we drop configfile support and defer?
+            self.client = Client(
+                host=host,
+                username=username,
+                password=password,
+                api_key=api_key,
+                api_key_prefix=api_key_prefix,
+                access_token=access_token,
+                ssl_ca_cert=ssl_ca_cert,
+            )
+
+        # proxy address, not part of the constructor
+        self.client.config.proxy = proxy
+        # whether to verify SSL certs, not part of the constructor
+        self.client.config.verify_ssl = verify_ssl
 
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
