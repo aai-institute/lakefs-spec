@@ -52,24 +52,6 @@ The full list of supported lakeFS versioning operations:
 * [`rev_parse`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.LakeFSTransaction.rev_parse), for parsing revisions like branch/tag names and SHA fragments into full commit SHAs.
 * [`tag`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.LakeFSTransaction.tag), for creating a tag pointing to a commit.
 
-!!! Warning
-
-    All of the operations above are deferred, and their results are not available until completion of the transaction.
-    For example, the `sha` return value of `tx.commit` will be a placeholder for the actual commit SHA computed by the lakeFS server on commit creation.
-
-    While you can directly use some values (branch/tag names) returned by transaction versioning helpers, care needs to be taken with computed objects like commit SHAs:
-
-    ```python
-    with fs.transaction as tx:
-        fs.put_file("my-file.txt", "repo/branch/my-file.txt")
-        sha = tx.commit("repo", "branch", message="Add my-file.txt")
-    
-    # This will not work: `sha` is of type `Placeholder[Commit]`
-    fs.get_file(f"repo/{sha}/my-file.txt", "my-new-file.txt")
-    ```
-    
-    See the following section on how to reuse commits created during transactions. 
-
 ### Reusing resources created in transactions
 
 Some transaction versioning helpers create new objects in the lakeFS instance that are not known before said helpers are actually executed.
