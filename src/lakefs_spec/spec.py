@@ -97,8 +97,6 @@ class LakeFSFileSystem(AbstractFileSystem):
             # empty kwargs means envvar and configfile autodiscovery
             self.client = Client()
         else:
-            # TODO: `lakefs` does not consider configfiles other than ~/.lakectl.yaml,
-            #  do we keep any file or do we drop configfile support and defer?
             self.client = Client(
                 host=host,
                 username=username,
