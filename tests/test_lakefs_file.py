@@ -44,8 +44,8 @@ def test_lakefs_file_open_write(
         fp.write(orig_text)
 
     # pulling the written file down again, using ONLY built-in open (!)
-    prpath = Path(rpath)
-    lpath = prpath.with_name(prpath.name + "_copy")
+    plpath = Path(lpath)
+    lpath = plpath.with_name(plpath.name + "_copy")
 
     blocksize = fs.blocksize
     fs.blocksize = 256
