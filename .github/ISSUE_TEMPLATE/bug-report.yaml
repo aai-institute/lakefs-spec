@@ -1,4 +1,4 @@
-name: Issue: Report a bug
+name: "Issue: Report a bug"
 description: Report problems or issues with lakeFS-spec.
 labels: ["bug", "triage"]
 projects: ["aai-institute/4"]
