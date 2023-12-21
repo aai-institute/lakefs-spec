@@ -803,7 +803,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             with self.wrapped_api_call(rpath=rpath):
                 super().put_file(lpath, rpath, callback=callback, **kwargs)
 
-    def rm_file(self, path: str | os.PathLike[str]) -> None:
+    def rm_file(self, path: str | os.PathLike[str]) -> None:  # pragma: no cover
         """
         Stage a remote file for removal on a lakeFS server.
 
