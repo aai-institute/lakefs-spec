@@ -13,8 +13,7 @@ body:
       label: What is the use case?
       description: Provide a brief description of the use case.
       placeholder: |
-        Please provide a short description of the use case and the context to help
-        us understand what you would like to see added/changed to lakeFS-spec. 
+        Please provide a short description of the use case and the context to help us understand what you would like to see added/changed to lakeFS-spec. 
     validations:
       required: true
   - type: textarea
@@ -22,5 +21,4 @@ body:
       label: How can we implement this feature?
       description: Provide a description of the ideal solution
       placeholder: |
-        Please provide a short description/example of how the solution looks like, and how we can
-        implement the solution. 
+        Please provide a short description/example of how the solution looks like, and how we can implement the solution. 
