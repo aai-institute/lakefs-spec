@@ -26,13 +26,13 @@ body:
   - type: input
     attributes:
       label: lakeFS-spec version
-      placeholder: `pip show lakefs-spec`
+      placeholder: "`pip show lakefs-spec`"
     validations:
       required: true
   - type: input
     attributes:
       label: lakeFS SDK version
-      placeholder: `pip show lakefs-sdk`
+      placeholder: "`pip show lakefs-sdk`"
     validations:
       required: true
   - type: input
