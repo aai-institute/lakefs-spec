@@ -841,7 +841,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, branch, prefix = parse(path)
 
         with self.wrapped_api_call(rpath=path):
-            lakefs_branch = lakefs.repository(repository).branch(branch)
+            lakefs_branch = lakefs.Repository(repository, client=self.client).branch(branch)
             objs = lakefs_branch.objects(prefix=prefix)
             lakefs_branch.delete_objects([obj.path for obj in objs])
 
