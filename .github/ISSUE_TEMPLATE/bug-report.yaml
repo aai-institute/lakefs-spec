@@ -13,8 +13,7 @@ body:
       label: What happened?
       description: Provide a brief description of the problem or issue.
       placeholder: |
-        Please provide a short description of the problem and the context in which it happened. When possible, provide the
-        instructions how we can reproduce the problem.
+        Please provide a short description of the problem and the context in which it happened. When possible, provide the instructions how we can reproduce the problem.
     validations:
       required: true
   - type: textarea
