@@ -30,8 +30,8 @@ body:
       required: true
   - type: input
     attributes:
-      label: lakeFS SDK version
-      placeholder: "`pip show lakefs-sdk`"
+      label: lakeFS version
+      placeholder: "`pip show lakefs`"
     validations:
       required: true
   - type: input
