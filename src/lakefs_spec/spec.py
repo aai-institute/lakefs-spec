@@ -838,12 +838,11 @@ class LakeFSFileSystem(AbstractFileSystem):
         """
 
         path = stringify_path(path)
-        repository, branch, prefix = parse(path)
+        repository, ref, prefix = parse(path)
 
         with self.wrapped_api_call(rpath=path):
-            lakefs_branch = lakefs.Repository(repository, client=self.client).branch(branch)
-            objs = lakefs_branch.objects(prefix=prefix)
-            lakefs_branch.delete_objects([obj.path for obj in objs])
+            branch = lakefs.Branch(repository, ref, client=self.client)
+            branch.delete_objects([obj.path for obj in branch.objects(prefix=prefix)])
 
             # Directory listing cache for the containing folder must be invalidated
             self.dircache.pop(self._parent(path), None)
