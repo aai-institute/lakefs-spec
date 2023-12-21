@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any, Generator, Iterable, Literal, cast, overload
 
 import fsspec.callbacks
+import lakefs
 from fsspec import filesystem
 from fsspec.callbacks import _DEFAULT_CALLBACK
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
@@ -813,13 +814,37 @@ class LakeFSFileSystem(AbstractFileSystem):
         path: str | os.PathLike[str]
             The remote file to delete. Must be a fully qualified lakeFS URI.
         """
+        self.rm(path)
+
+    def rm(
+        self, path: str | os.PathLike[str], recursive: bool = False, maxdepth: int | None = None
+    ) -> None:
+        """
+        Stage multiple remote files for removal on a lakeFS server.
+
+        The files will not actually be removed from the requested branch until a commit is created.
+
+        Parameters
+        ----------
+        path: str | os.PathLike[str]
+            File(s) to delete.
+        recursive: bool
+            If file(s) are directories, recursively delete contents and then
+            also remove the directory.
+        maxdepth: int | None
+            Depth to pass to walk for finding files to delete, if recursive.
+            If None, there will be no limit and infinite recursion may be
+            possible.
+        """
+
         path = stringify_path(path)
-        repository, branch, resource = parse(path)
+        repository, branch, prefix = parse(path)
 
         with self.wrapped_api_call(rpath=path):
-            self.client.sdk_client.objects_api.delete_object(
-                repository=repository, branch=branch, path=resource
-            )
+            lakefs_branch = lakefs.repository(repository).branch(branch)
+            objs = lakefs_branch.objects(prefix=prefix)
+            lakefs_branch.delete_objects([obj.path for obj in objs])
+
             # Directory listing cache for the containing folder must be invalidated
             self.dircache.pop(self._parent(path), None)
 
