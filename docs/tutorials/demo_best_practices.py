@@ -189,5 +189,5 @@ with fs.transaction as tx:
 Now we have the data on different branches. If new data comes in, we can perform necessary preprocessing on a separate branch and merge it to `main` once we are sure about its compatibility and we have run all the necessary tests.
 Should the new data be important for the experimentation as well, then we can merge the new main branch into the experimentation branch. 
 You should then create (and add) a new tag for the dataset. To reassign tags, delete them and create a new one. However, beware as this might break reproducibility in other places (i.e. colleagues might expect unchanged data). 
-If you want to have failsafe versioning use the commit sha's of
+If you want to have failsafe versioning use the commit sha's of the commits.
 """
