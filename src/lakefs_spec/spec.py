@@ -641,18 +641,19 @@ class LakeFSFileSystem(AbstractFileSystem):
         NotImplementedError
             If ``mode`` is not supported.
         """
-        if mode not in {"rb", "wb"}:
+
+        repository, ref, path = parse(path)
+
+        if mode == "rb":
+            obj = lakefs.object.StoredObject(repository, ref, path, client=self.client)
+            handler = lakefs.object.ObjectReader(obj, mode=mode, client=self.client)
+        elif mode == "wb":
+            obj = lakefs.object.WriteableObject(repository, ref, path, client=self.client)
+            handler = lakefs.object.ObjectWriter(obj, mode=mode, client=self.client)
+        else:
             raise NotImplementedError(f"unsupported mode {mode!r}")
 
-        return LakeFSFile(
-            self,
-            path=path,
-            mode=mode,
-            block_size=block_size or self.blocksize,
-            autocommit=autocommit,
-            cache_options=cache_options,
-            **kwargs,
-        )
+        return handler
 
     def put_file_to_blockstore(
         self,

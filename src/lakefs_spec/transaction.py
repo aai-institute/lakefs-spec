@@ -143,9 +143,9 @@ class LakeFSTransaction(Transaction):
             # fsspec base class calls `append` on the file, which means we
             # have to pop from the left to preserve order.
             f = self.files.popleft()
-            if isinstance(f, AbstractBufferedFile):
+            if isinstance(f, lakefs.object.LakeFSIOBase):
                 if commit:
-                    f.commit()
+                    f.close()
                 else:
                     f.discard()
             else:
