@@ -24,6 +24,12 @@
     --md-code-font-family: "Source Code Pro", monospace
 }
 
+[data-md-color-scheme="aai-light"] img[src$="#only-dark"],
+[data-md-color-scheme="aai-light"] img[src$="#gh-dark-mode-only"] {
+    display: none;
+    /* Hide dark images in light mode */
+}
+
 .md-header {
     background: rgb(24, 165, 167);
     background: linear-gradient(30deg, rgb(24, 165, 167), 90%, rgb(191, 255, 199));

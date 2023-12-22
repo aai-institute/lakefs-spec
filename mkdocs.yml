@@ -1,4 +1,4 @@
-site_name: lakefs-spec
+site_name: lakeFS-spec
 site_dir: public/docs
 site_url: https://lakefs-spec.org
 repo_url: https://github.com/aai-institute/lakefs-spec
@@ -30,9 +30,6 @@ nav:
     - Data Science with lakeFS-spec: tutorials/demo_data_science_project.ipynb
   - API Reference: reference/
   - Contributing: CONTRIBUTING.md
-
-exclude_docs: |
-  use-cases.md
 
 # Rebuild docs in `mkdocs serve` for changes in source code
 watch:
@@ -113,7 +110,7 @@ theme:
   name: "material"
   custom_dir: docs/_theme_overrides
   logo: _images/aai-logo-cropped.png
-  favicon: _images/aai-favicon.png
+  favicon: _images/lakefs-spec-favicon.png
   font:
     text: IBM Plex Sans  # Arial replacement
     code: Source Code Pro
