@@ -1,4 +1,4 @@
-site_name: lakefs-spec
+site_name: lakeFS-spec
 site_dir: public/docs
 site_url: https://lakefs-spec.org
 repo_url: https://github.com/aai-institute/lakefs-spec
