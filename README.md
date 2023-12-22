@@ -3,10 +3,10 @@
   <img alt="lakeFS-spec logo" src="docs/_images/lakefs-spec-logo-dark.png">
 </picture>
 
+# lakeFS-spec: An fsspec backend for lakeFS
+
 [![](https://img.shields.io/pypi/v/lakefs-spec)](https://pypi.org/project/lakefs-spec) ![GitHub](https://img.shields.io/github/license/aai-institute/lakefs-spec) [![docs](https://img.shields.io/badge/docs-latest-blue)](https://lakefs-spec.org)
  ![GitHub](https://img.shields.io/github/stars/aai-institute/lakefs-spec)
-
-# lakeFS-spec: An fsspec backend for lakeFS
 
 Welcome to lakeFS-spec, a [filesystem-spec](https://github.com/fsspec/filesystem_spec) backend implementation for the [lakeFS](https://lakefs.io/) data lake.
 Our primary goal is to streamline versioned data operations in lakeFS, enabling seamless integration with popular data science tools such as Pandas, Polars, and DuckDB directly from Python.
