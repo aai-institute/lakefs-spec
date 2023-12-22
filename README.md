@@ -1,10 +1,10 @@
-[![](https://img.shields.io/pypi/v/lakefs-spec)](https://pypi.org/project/lakefs-spec) ![GitHub](https://img.shields.io/github/license/aai-institute/lakefs-spec) [![docs](https://img.shields.io/badge/docs-latest-blue)](https://lakefs-spec.org)
- ![GitHub](https://img.shields.io/github/stars/aai-institute/lakefs-spec)
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/_images/lakefs-spec-logo-light.png">
   <img alt="lakeFS-spec logo" src="docs/_images/lakefs-spec-logo-dark.png">
 </picture>
+
+[![](https://img.shields.io/pypi/v/lakefs-spec)](https://pypi.org/project/lakefs-spec) ![GitHub](https://img.shields.io/github/license/aai-institute/lakefs-spec) [![docs](https://img.shields.io/badge/docs-latest-blue)](https://lakefs-spec.org)
+ ![GitHub](https://img.shields.io/github/stars/aai-institute/lakefs-spec)
 
 # lakeFS-spec: An fsspec backend for lakeFS
 
