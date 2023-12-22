@@ -110,7 +110,7 @@ theme:
   name: "material"
   custom_dir: docs/_theme_overrides
   logo: _images/aai-logo-cropped.png
-  favicon: _images/aai-favicon.png
+  favicon: _images/lakefs-spec-favicon.png
   font:
     text: IBM Plex Sans  # Arial replacement
     code: Source Code Pro

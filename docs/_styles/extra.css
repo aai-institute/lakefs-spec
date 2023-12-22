@@ -3,6 +3,21 @@ code>.err:first-of-type {
     display: none;
 }
 
+/* Hide empty root heading (-> `#`) */
+h1#_1 {
+    display: none;
+}
+
+.logo {
+    /* No wider than the screen on smaller screens */
+    max-width: min(100%, 100vw) !important;
+    max-height: 196px;
+
+    /* Horizontally centered */
+    display: block;
+    margin: 0 auto;
+}
+
 table {
     display: block;
     max-width: -moz-fit-content;
