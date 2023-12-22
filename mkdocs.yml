@@ -31,9 +31,6 @@ nav:
   - API Reference: reference/
   - Contributing: CONTRIBUTING.md
 
-exclude_docs: |
-  use-cases.md
-
 # Rebuild docs in `mkdocs serve` for changes in source code
 watch:
   - src/
