@@ -13,7 +13,7 @@ body:
       label: What happened?
       description: Provide a brief description of the problem or issue.
       placeholder: |
-        Please provide a short description of the problem and the context in which it happened. When possible, provide the instructions how we can reproduce the problem.
+        Describe the problem and the context in which it happened. If possible, give instructions on how to reproduce the problem.
     validations:
       required: true
   - type: textarea
@@ -25,13 +25,13 @@ body:
   - type: input
     attributes:
       label: lakeFS-spec version
-      placeholder: "`pip show lakefs-spec`"
+      placeholder: "Version tag shown in output of `pip show lakefs-spec`"
     validations:
       required: true
   - type: input
     attributes:
       label: lakeFS version
-      placeholder: "`pip show lakefs`"
+      placeholder: "Version tag shown in output of `pip show lakefs`"
     validations:
       required: true
   - type: input

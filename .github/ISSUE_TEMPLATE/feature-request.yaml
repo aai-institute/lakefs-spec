@@ -10,10 +10,10 @@ body:
         If you are willing to submit a PR the feature (this is not required), please let us know!
   - type: textarea
     attributes:
-      label: What is the use case?
+      label: What is the motivation and/or use case?
       description: Provide a brief description of the use case.
       placeholder: |
-        Please provide a short description of the use case and the context to help us understand what you would like to see added/changed to lakeFS-spec. 
+        A short description of the use case and context to help us understand what you would like to see added/changed to lakeFS-spec.
     validations:
       required: true
   - type: textarea
@@ -21,4 +21,4 @@ body:
       label: How can we implement this feature?
       description: Provide a description of the ideal solution
       placeholder: |
-        Please provide a short description/example of how the solution looks like, and how we can implement the solution. 
+        A short description or example of how the solution could look like, and (optionally) how we could implement it.
