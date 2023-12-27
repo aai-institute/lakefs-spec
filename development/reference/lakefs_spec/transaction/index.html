@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../_images/lakefs-spec-favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.1">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.45e1311d.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.50c56a3b.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
@@ -1547,7 +1547,7 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-115"><a id="__codelineno-0-115" name="__codelineno-0-115"></a>
 </span><span id="__span-0-116"><a id="__codelineno-0-116" name="__codelineno-0-116"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">diff</span><span class="p">:</span>
 </span><span id="__span-0-117"><a id="__codelineno-0-117" name="__codelineno-0-117"></a>                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No changes to commit on branch </span><span class="si">{</span><span class="n">branch</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</span><span id="__span-0-118"><a id="__codelineno-0-118" name="__codelineno-0-118"></a>                <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</span><span id="__span-0-118"><a id="__codelineno-0-118" name="__codelineno-0-118"></a>                <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">head</span>
 </span><span id="__span-0-119"><a id="__codelineno-0-119" name="__codelineno-0-119"></a>            <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">message_</span><span class="p">,</span> <span class="n">metadata_</span><span class="p">)</span>
 </span><span id="__span-0-120"><a id="__codelineno-0-120" name="__codelineno-0-120"></a>
 </span><span id="__span-0-121"><a id="__codelineno-0-121" name="__codelineno-0-121"></a>        <span class="n">op</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">commit_op</span><span class="p">,</span> <span class="n">repo_</span><span class="o">=</span><span class="n">repository</span><span class="p">,</span> <span class="n">ref_</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span> <span class="n">message_</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">metadata_</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
@@ -1990,7 +1990,7 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-115"><a id="__codelineno-0-115" name="__codelineno-0-115"></a>
 </span><span id="__span-0-116"><a id="__codelineno-0-116" name="__codelineno-0-116"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">diff</span><span class="p">:</span>
 </span><span id="__span-0-117"><a id="__codelineno-0-117" name="__codelineno-0-117"></a>            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No changes to commit on branch </span><span class="si">{</span><span class="n">branch</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</span><span id="__span-0-118"><a id="__codelineno-0-118" name="__codelineno-0-118"></a>            <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</span><span id="__span-0-118"><a id="__codelineno-0-118" name="__codelineno-0-118"></a>            <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">head</span>
 </span><span id="__span-0-119"><a id="__codelineno-0-119" name="__codelineno-0-119"></a>        <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">message_</span><span class="p">,</span> <span class="n">metadata_</span><span class="p">)</span>
 </span><span id="__span-0-120"><a id="__codelineno-0-120" name="__codelineno-0-120"></a>
 </span><span id="__span-0-121"><a id="__codelineno-0-121" name="__codelineno-0-121"></a>    <span class="n">op</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">commit_op</span><span class="p">,</span> <span class="n">repo_</span><span class="o">=</span><span class="n">repository</span><span class="p">,</span> <span class="n">ref_</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span> <span class="n">message_</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">metadata_</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
@@ -3003,7 +3003,7 @@ Must be non-negative. <code>parent = 0</code> (the default)  refers to <code>ref
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-22</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-27</span>
   </span>
 
     
