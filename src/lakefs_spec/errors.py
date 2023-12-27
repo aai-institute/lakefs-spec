@@ -8,11 +8,10 @@ avoid complicated error handling setups.
 from __future__ import annotations
 
 import errno
-import json
 from functools import partial
 from urllib.error import HTTPError
 
-from lakefs_sdk import ApiException
+from lakefs.exceptions import ServerException
 
 HTTP_CODE_TO_ERROR: dict[int, type[OSError] | partial[OSError]] = {
     400: partial(IOError, errno.EINVAL),
@@ -26,7 +25,7 @@ HTTP_CODE_TO_ERROR: dict[int, type[OSError] | partial[OSError]] = {
 
 
 def translate_lakefs_error(
-    error: ApiException | HTTPError,
+    error: ServerException | HTTPError,
     rpath: str | None = None,
     message: str | None = None,
     set_cause: bool = True,
@@ -39,7 +38,7 @@ def translate_lakefs_error(
 
     Parameters
     ----------
-    error: ApiException | HTTPError
+    error: ServerException | HTTPError
         The exception returned by the lakeFS API.
     rpath: str | None
         The remote resource path involved in the error.
@@ -54,9 +53,9 @@ def translate_lakefs_error(
     OSError
         A builtin Python exception ready to be thrown.
     """
-    if isinstance(error, ApiException):
-        status = error.status
-        reason = json.loads(error.body or "{}").get("message", "")
+    if isinstance(error, ServerException):
+        status = error.status_code
+        reason = error.body
     else:
         status, reason = error.code, error.reason
 
