@@ -979,10 +979,10 @@ class LakeFSFile(AbstractBufferedFile):
 
         self.buffer = io.BytesIO()
 
+    @property
     def details(self):  # pragma: no cover
-        if self._details is None:
-            with self.fs.wrapped_api_call(rpath=self.path):
-                return super().details()
+        with self.fs.wrapped_api_call(rpath=self.path):
+            return super().details
 
     def discard(self):
         """Discard the file's current buffer."""
