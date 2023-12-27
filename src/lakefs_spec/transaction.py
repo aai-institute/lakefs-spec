@@ -25,7 +25,7 @@ T = TypeVar("T")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from lakefs_spec import LakeFSFileSystem
 
     VersioningOpTuple = tuple[Callable[[LakeFSFileSystem], None], Any]

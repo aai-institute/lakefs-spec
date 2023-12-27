@@ -337,8 +337,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 )
                 return
 
-        with self.wrapped_api_call(rpath=rpath):
-            super().get_file(rpath, lpath, callback=callback, outfile=outfile, **kwargs)
+        super().get_file(rpath, lpath, callback=callback, outfile=outfile, **kwargs)
 
     def info(self, path: str | os.PathLike[str], **kwargs: Any) -> dict[str, Any]:
         """
@@ -800,8 +799,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 storage_options=storage_options,
             )
         else:
-            with self.wrapped_api_call(rpath=rpath):
-                super().put_file(lpath, rpath, callback=callback, **kwargs)
+            super().put_file(lpath, rpath, callback=callback, **kwargs)
 
     def rm_file(self, path: str | os.PathLike[str]) -> None:  # pragma: no cover
         """
@@ -984,6 +982,11 @@ class LakeFSFile(AbstractBufferedFile):
             )
 
         self.buffer = io.BytesIO()
+
+    def details(self):  # pragma: no cover
+        if self._details is None:
+            with self.fs.wrapped_api_call(rpath=self.path):
+                return super().details()
 
     def discard(self):
         """Discard the file's current buffer."""
