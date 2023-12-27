@@ -27,7 +27,7 @@ from fsspec.utils import stringify_path
 from lakefs.client import Client
 from lakefs.repository import Repository
 from lakefs_sdk.exceptions import ApiException, NotFoundException
-from lakefs_sdk.models import ObjectCopyCreation, ObjectStats, StagingMetadata
+from lakefs_sdk.models import ObjectStats, StagingMetadata
 
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
@@ -288,14 +288,10 @@ class LakeFSFileSystem(AbstractFileSystem):
             )
 
         with self.wrapped_api_call():
-            object_copy_creation = ObjectCopyCreation(src_path=orig_path, src_ref=orig_ref)
-            self.client.sdk_client.objects_api.copy_object(
-                repository=dest_repo,
-                branch=dest_ref,
-                dest_path=dest_path,
-                object_copy_creation=object_copy_creation,
-                **kwargs,
-            )
+            # branch->branch copy.
+            # TODO (n.junge): Are commit/tag->branch copies supported?
+            branch = lakefs.Branch(orig_repo, orig_ref, client=self.client)
+            branch.object(orig_path).copy(dest_ref, dest_path)
 
     def get_file(
         self,
