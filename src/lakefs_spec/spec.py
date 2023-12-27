@@ -16,7 +16,7 @@ import urllib.request
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Generator, Iterable, Literal, cast, overload
+from typing import Any, Generator, Literal, overload
 
 import fsspec.callbacks
 import lakefs
@@ -25,13 +25,14 @@ from fsspec.callbacks import _DEFAULT_CALLBACK
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import stringify_path
 from lakefs.client import Client
+from lakefs.models import CommonPrefix, ObjectInfo
 from lakefs.repository import Repository
 from lakefs_sdk.exceptions import ApiException, NotFoundException
-from lakefs_sdk.models import ObjectStats, StagingMetadata
+from lakefs_sdk.models import StagingMetadata
 
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
-from lakefs_spec.util import depaginate, md5_checksum, parse
+from lakefs_spec.util import md5_checksum, parse
 
 logger = logging.getLogger(__name__)
 
@@ -505,17 +506,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         list[str] | list[dict[str, Any]]
             A list of all objects' metadata under the given remote path if ``detail=True``, or alternatively only their names if ``detail=False``.
         """
-
-        def _api_path_type_to_info(path_type: str) -> Literal["file", "directory"]:
-            """Convert ``list_objects()`` API response field ``path_type`` to ``info.type``."""
-            if path_type == "object":
-                return "file"
-            elif path_type == "common_prefix":
-                return "directory"
-            else:
-                raise ValueError(f"unexpected path type {path_type!r}")
-
-        path = cast(str, stringify_path(path))
+        path = stringify_path(path)
         repository, ref, prefix = parse(path)
 
         recursive = kwargs.pop("recursive", False)
@@ -541,16 +532,20 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         info = []
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
-        with self.wrapped_api_call(rpath=path):
-            delimiter = "" if recursive else "/"
-            objects = depaginate(
-                self.client.sdk_client.objects_api.list_objects,
-                repository,
-                ref,
-                delimiter=delimiter,
-                **kwargs,
-            )
-            for obj in cast(Iterable[ObjectStats], objects):
+        delimiter = "" if recursive else "/"
+        # TODO (n.junge): Inquire how this can work for a commit.
+        branch = lakefs.Branch(repository, ref, client=self.client)
+        for obj in branch.objects(prefix=prefix, delimiter=delimiter):
+            if isinstance(obj, CommonPrefix):
+                # prefixes are added below.
+                info.append(
+                    {
+                        "name": f"{repository}/{ref}/{obj.path}",
+                        "size": 0,
+                        "type": "directory",
+                    }
+                )
+            elif isinstance(obj, ObjectInfo):
                 info.append(
                     {
                         "checksum": obj.checksum,
@@ -558,14 +553,13 @@ class LakeFSFileSystem(AbstractFileSystem):
                         "mtime": obj.mtime,
                         "name": f"{repository}/{ref}/{obj.path}",
                         "size": obj.size_bytes,
-                        "type": _api_path_type_to_info(obj.path_type),
+                        "type": "object",
                     }
                 )
 
         # Retry the API call with appended slash if the current result
         # is just a single directory entry only (not its contents).
-        # This is useful to allow `ls("repo/branch/dir")` calls without
-        # a trailing slash.
+        # This is useful to allow `ls("repo/branch/dir")` calls without a trailing slash.
         if len(info) == 1 and info[0]["type"] == "directory":
             return self.ls(
                 path + "/",
@@ -582,9 +576,9 @@ class LakeFSFileSystem(AbstractFileSystem):
             for subdir in subdirs:
                 info.append(
                     {
-                        "type": "directory",
                         "name": subdir + "/",
                         "size": 0,
+                        "type": "directory",
                     }
                 )
 
@@ -592,7 +586,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             self._update_dircache(info[:])
 
         if not detail:
-            info = [o["name"] for o in info]
+            info = [o["name"] for o in info]  # type: ignore
 
         return info
 
