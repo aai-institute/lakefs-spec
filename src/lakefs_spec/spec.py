@@ -25,9 +25,9 @@ from fsspec.callbacks import _DEFAULT_CALLBACK
 from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
 from fsspec.utils import stringify_path
 from lakefs.client import Client
+from lakefs.exceptions import NotFoundException, ServerException
 from lakefs.models import CommonPrefix, ObjectInfo
 from lakefs.repository import Repository
-from lakefs_sdk.exceptions import ApiException, NotFoundException
 from lakefs_sdk.models import StagingMetadata
 
 from lakefs_spec.errors import translate_lakefs_error
@@ -193,7 +193,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         """
         try:
             yield
-        except ApiException as e:
+        except ServerException as e:
             raise translate_lakefs_error(e, rpath=rpath, message=message, set_cause=set_cause)
 
     def checksum(self, path: str | os.PathLike[str]) -> str | None:
@@ -243,13 +243,10 @@ class LakeFSFileSystem(AbstractFileSystem):
         """
         path = stringify_path(path)
         repository, ref, resource = parse(path)
-
         try:
-            self.client.sdk_client.objects_api.head_object(repository, ref, resource, **kwargs)
-            return True
-        except NotFoundException:
-            return False
-        except ApiException as e:
+            reference = lakefs.Reference(repository, ref, client=self.client)
+            return reference.object(resource).exists()
+        except ServerException as e:
             # in case of an error other than "not found", existence cannot be
             # decided, so raise the translated error.
             raise translate_lakefs_error(e)
@@ -289,10 +286,8 @@ class LakeFSFileSystem(AbstractFileSystem):
             )
 
         with self.wrapped_api_call():
-            # branch->branch copy.
-            # TODO (n.junge): Are commit/tag->branch copies supported?
-            branch = lakefs.Branch(orig_repo, orig_ref, client=self.client)
-            branch.object(orig_path).copy(dest_ref, dest_path)
+            reference = lakefs.Reference(orig_repo, orig_ref, client=self.client)
+            reference.object(orig_path).copy(dest_ref, dest_path)
 
     def get_file(
         self,
@@ -364,16 +359,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         # the condition below checks edge cases of resources that cannot be files.
         if resource and not resource.endswith("/"):
             try:
-                # the set of keyword arguments allowed in `list_objects` is a
-                # superset of the keyword arguments for `stat_object`.
-                # Ensure that only admissible keyword arguments are actually
-                # passed to `stat_object`.
-                stat_keywords = ["presign", "user_metadata"]
-                stat_kwargs = {k: v for k, v in kwargs.items() if k in stat_keywords}
-
-                res = self.client.sdk_client.objects_api.stat_object(
-                    repository=repository, ref=ref, path=resource, **stat_kwargs
-                )
+                reference = lakefs.Reference(repository, ref, client=self.client)
+                res = reference.object(resource).stat()
                 return {
                     "checksum": res.checksum,
                     "content-type": res.content_type,
@@ -385,7 +372,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             except NotFoundException:
                 # fall through, retry with `ls` if it's a directory.
                 pass
-            except ApiException as e:
+            except ServerException as e:
                 raise translate_lakefs_error(e, rpath=path)
 
         out = self.ls(path, detail=True, recursive=True, **kwargs)
@@ -533,9 +520,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         info = []
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         delimiter = "" if recursive else "/"
-        # TODO (n.junge): Inquire how this can work for a commit.
-        branch = lakefs.Branch(repository, ref, client=self.client)
-        for obj in branch.objects(prefix=prefix, delimiter=delimiter):
+        reference = lakefs.Reference(repository, ref, client=self.client)
+        for obj in reference.objects(prefix=prefix, delimiter=delimiter):
             if isinstance(obj, CommonPrefix):
                 # prefixes are added below.
                 info.append(
