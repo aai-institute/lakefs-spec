@@ -115,7 +115,7 @@ class LakeFSTransaction(Transaction):
 
             if not diff:
                 logger.warning(f"No changes to commit on branch {branch!r}.")
-                return b.head()
+                return b.head
             return b.commit(message_, metadata_)
 
         op = partial(commit_op, repo_=repository, ref_=branch, message_=message, metadata_=metadata)
