@@ -6,7 +6,6 @@ namely the ``LakeFSFileSystem`` and ``LakeFSFile`` classes.
 from __future__ import annotations
 
 import errno
-import io
 import logging
 import mimetypes
 import operator
@@ -22,13 +21,12 @@ import fsspec.callbacks
 import lakefs
 from fsspec import filesystem
 from fsspec.callbacks import _DEFAULT_CALLBACK
-from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
+from fsspec.spec import AbstractFileSystem
 from fsspec.utils import stringify_path
 from lakefs.client import Client
 from lakefs.exceptions import NotFoundException, ServerException
 from lakefs.models import CommonPrefix, ObjectInfo
 from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
-from lakefs.repository import Repository
 from lakefs_sdk.models import StagingMetadata
 
 from lakefs_spec.errors import translate_lakefs_error
@@ -891,191 +889,3 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.open(path, "rb") as f:
             f.seek(max(-size, -f._obj.stat().size_bytes), 2)
             return f.read()
-
-
-class LakeFSFile(AbstractBufferedFile):
-    """
-    lakeFS file implementation.
-
-    Notes
-    -----
-    Creates a local buffer on disk for the given remote path for up- or downloads depending on ``mode``.
-
-    Read operations are buffered, write operations are unbuffered. This means that local files to be uploaded will be loaded entirely into memory.
-
-    Parameters
-    ----------
-    fs: LakeFSFileSystem
-        The lakeFS file system associated to this file.
-    path: str | os.PathLike[str]
-        The remote path to either up- or download depending on ``mode``. Must be a fully qualified lakeFS URI.
-    mode: Literal["rb", "wb"]
-        The file mode indicating its purpose. Use ``rb`` for downloads from lakeFS, ``wb`` for uploads to lakeFS.
-    block_size: int | str
-        The file block size to read at a time. If not set, falls back to fsspec's default blocksize of 5 MB.
-    autocommit: bool
-        Whether to write the file buffer automatically to lakeFS on file closing in write mode.
-    cache_type: str
-        Cache policy in read mode (any of ``readahead``, ``none``, ``mmap``, ``bytes``). See ``AbstractBufferedFile`` for details.
-    cache_options: dict[str, Any] | None
-        Additional options passed to the constructor for the cache specified by ``cache_type``.
-    size: int | None
-        If given and ``mode='rb'``, this will be used as the file size (in bytes) instead of determining it from the remote file.
-    **kwargs: Any
-        Additional keyword arguments to pass to ``LakeFSClient.objects_api.get_object()`` on download (``mode='rb'``),
-        or ``LakeFSClient.objects_api.put_object()`` on upload (``mode='wb'``).
-    """
-
-    def __init__(
-        self,
-        fs: LakeFSFileSystem,
-        path: str | os.PathLike[str],
-        mode: Literal["rb", "wb"] = "rb",
-        block_size: int | str = "default",
-        autocommit: bool = True,
-        cache_type: str = "readahead",
-        cache_options: dict[str, Any] | None = None,
-        size: int | None = None,
-        **kwargs: Any,
-    ):
-        path = stringify_path(path)
-        super().__init__(
-            fs,
-            path,
-            mode=mode,
-            block_size=block_size,
-            autocommit=autocommit,
-            cache_type=cache_type,
-            cache_options=cache_options,
-            size=size,
-            **kwargs,
-        )
-
-        self.buffer: io.BytesIO
-        if mode == "wb" and self.fs.create_branch_ok:
-            repository, branch, _ = parse(path)
-            repo = Repository(repository, client=self.fs.client)
-            repo.branch(branch).create(self.fs.source_branch, exist_ok=True)
-
-    def __del__(self):
-        """Custom deleter, only here to unset the base class behavior."""
-        pass
-
-    def _upload_chunk(self, final: bool = False) -> bool:
-        """
-        Commit the file on final chunk via single-shot upload, no-op otherwise.
-
-        Parameters
-        ----------
-        final: bool
-            Proceed with uploading the file if ``self.autocommit=True``.
-
-        Returns
-        -------
-        bool
-            If the file buffer needs more data to be written before initiating the upload.
-        """
-        if final and self.autocommit:
-            self.commit()
-        return not final
-
-    def commit(self):
-        """
-        Upload the file to lakeFS in single-shot mode.
-
-        Results in an unbuffered upload, and a memory allocation in the magnitude of the file size on the caller's host machine.
-        """
-        repository, branch, resource = parse(self.path)
-
-        with self.fs.wrapped_api_call(rpath=self.path):
-            # empty buffer is equivalent to a touch()
-            self.buffer.seek(0)
-            self.fs.client.sdk_client.objects_api.upload_object(
-                repository=repository,
-                branch=branch,
-                path=resource,
-                content=self.buffer.read(),
-                **self.kwargs,
-            )
-
-        self.buffer = io.BytesIO()
-
-    @property
-    def details(self):  # pragma: no cover
-        with self.fs.wrapped_api_call(rpath=self.path):
-            return super().details
-
-    def discard(self):
-        """Discard the file's current buffer."""
-        self.buffer = io.BytesIO()  # discards the data, but in a type-safe way.
-
-    def flush(self, force: bool = False) -> None:
-        """
-        Write buffered data to backend store.
-
-        Writes the current buffer, if it is larger than the block-size, or if
-        the file is being closed.
-
-        In contrast to the abstract class, this implementation does NOT unload the buffer
-        if it is larger than the block size, because the lakeFS server does not support
-        multipart uploads.
-
-        Parameters
-        ----------
-        force: bool
-            When closing, write the last block even if it is smaller than
-            blocks are allowed to be. Disallows further writing to this file.
-
-        Raises
-        ------
-        ValueError
-            If the file is closed, or has already been forcibly flushed and ``force=True``.
-        """
-
-        if self.closed:
-            raise ValueError("Flush on closed file")
-        self.forced: bool
-        if force and self.forced:
-            raise ValueError("Force flush cannot be called more than once")
-        if force:
-            self.forced = True
-
-        if self.mode != "wb":
-            # no-op to flush on read-mode
-            return
-
-        if not force and self.buffer.tell() < self.blocksize:
-            # Defer write on small block
-            return
-
-        self.offset: int
-        if self.offset is None:
-            # Initialize an upload
-            self.offset = 0
-
-        if self._upload_chunk(final=force) is not False:
-            self.offset += self.buffer.seek(0, 2)
-
-    def _fetch_range(self, start: int, end: int) -> bytes:
-        """
-        Fetch a byte range of the ``LakeFSFile``'s target remote path.
-
-        The byte range is right-exclusive, meaning that the amount of transferred bytes equals ``end - start``.
-
-        Parameters
-        ----------
-        start: int
-            Start of the byte range, inclusive.
-        end: int
-            End of the byte range, exclusive. Must be greater than ``start``.
-
-        Returns
-        -------
-        bytes
-            A byte array holding the downloaded data from lakeFS.
-        """
-        repository, ref, resource = parse(self.path)
-        with self.fs.wrapped_api_call(rpath=self.path):
-            return self.fs.client.sdk_client.objects_api.get_object(
-                repository, ref, resource, range=f"bytes={start}-{end - 1}", **self.kwargs
-            )
