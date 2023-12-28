@@ -2,7 +2,7 @@
 
 from importlib.metadata import PackageNotFoundError, version
 
-from .spec import LakeFSFile, LakeFSFileSystem
+from .spec import LakeFSFileSystem
 from .transaction import LakeFSTransaction
 
 try:

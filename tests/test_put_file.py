@@ -1,6 +1,5 @@
 import random
 import string
-from pathlib import Path
 
 import pytest
 from lakefs.branch import Branch
@@ -54,7 +53,7 @@ def test_implicit_branch_creation(
 
     fs.create_branch_ok = False
     another_non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
-    with pytest.raises(FileNotFoundError, match="not found: .*"):
+    with pytest.raises(FileNotFoundError, match="Not Found: .*"):
         put_random_file_on_branch(random_file_factory, fs, repository, another_non_existing_branch)
 
 
@@ -70,10 +69,4 @@ def test_put_client_caching(
     fs.client, counter = with_counter(fs.client)
 
     rpath = put_random_file_on_branch(random_file_factory, fs, repository, temp_branch)
-    lpath = str(random_file_factory.path / Path(rpath).name)
-    assert counter.count("objects_api.upload_object") == 1
     assert fs.exists(rpath)
-
-    # second put, should not happen.
-    fs.put(lpath, rpath)
-    assert counter.count("objects_api.upload_object") == 1

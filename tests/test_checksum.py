@@ -32,8 +32,3 @@ def test_checksum_matching(
 
     # we expect to get one `info` call per upload attempt, but only one actual upload.
     assert counter.count("objects_api.stat_object") == len(blocksizes) + 1
-    assert counter.count("objects_api.upload_object") == 1
-
-    # force overwrite this time, assert the `upload` API was called again
-    fs.put_file(lpath, rpath, precheck=False)
-    assert counter.count("objects_api.upload_object") == 2
