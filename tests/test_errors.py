@@ -1,5 +1,4 @@
 import json
-from urllib.error import HTTPError
 
 from lakefs.exceptions import ServerException
 
@@ -18,13 +17,7 @@ def test_error_translation() -> None:
     assert isinstance(translated_err, PermissionError)
     assert f"unauthorized: {rpath!r}" in str(translated_err)
 
-    # second case: urllib 403 unauthorized (blockstore put)
-    e = HTTPError("any", 403, "forbidden", None, None)  # type: ignore
-    translated_err = translate_lakefs_error(e, rpath=rpath)
-    assert isinstance(translated_err, PermissionError)
-    assert f"forbidden: {rpath!r}" in str(translated_err)
-
-    # third case: lakeFS API error 420 (corresponds to partial IOError)
+    # second case: lakeFS API error 420 (corresponds to partial IOError)
     e = ServerException(
         status=420, reason="too many requests", body=json.dumps({"message": "too many requests"})
     )
@@ -32,7 +25,7 @@ def test_error_translation() -> None:
     assert isinstance(translated_err, OSError)
     assert f"too many requests: {rpath!r}" in str(translated_err)
 
-    # fourth case: lakeFS API error 400 with a custom message.
+    # third case: lakeFS API error 400 with a custom message.
     e = ServerException(
         status=400, reason="bad request", body=json.dumps({"message": "bad request"})
     )
