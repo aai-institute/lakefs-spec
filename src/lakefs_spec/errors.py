@@ -55,7 +55,11 @@ def translate_lakefs_error(
     """
     if isinstance(error, ServerException):
         status = error.status_code
-        reason = error.body
+        if hasattr(error, "body"):
+            # error has a JSON response body attached
+            reason = error.body["message"]
+        else:
+            reason = error.reason
     else:
         status, reason = error.code, error.reason
 
