@@ -16,6 +16,7 @@ from fsspec.spec import AbstractBufferedFile
 from fsspec.transaction import Transaction
 from lakefs.branch import Branch, Reference
 from lakefs.client import Client
+from lakefs.object import ObjectWriter
 from lakefs.reference import Commit
 from lakefs.repository import Repository
 from lakefs.tag import Tag
@@ -143,10 +144,8 @@ class LakeFSTransaction(Transaction):
             # fsspec base class calls `append` on the file, which means we
             # have to pop from the left to preserve order.
             f = self.files.popleft()
-            if isinstance(f, AbstractBufferedFile):
-                if commit:
-                    f.commit()
-                else:
+            if isinstance(f, ObjectWriter):
+                if not commit:
                     f.discard()
             else:
                 # client helper + return value case.

@@ -15,7 +15,7 @@ def test_get_nonexistent_file(fs: LakeFSFileSystem, repository: Repository) -> N
     """
     rpath = f"{repository.id}/main/hello-i-no-exist1234.txt"
 
-    with pytest.raises(FileNotFoundError, match=f"No such file or directory: {rpath!r}"):
+    with pytest.raises(FileNotFoundError, match=rpath):
         fs.get(rpath, "out.txt")
 
     assert not Path("out.txt").exists()
@@ -28,7 +28,7 @@ def test_get_from_nonexistent_repo(fs: LakeFSFileSystem) -> None:
     """
     rpath = "nonexistent-repo/main/a.txt"
 
-    with pytest.raises(FileNotFoundError, match=f"not found: {rpath!r}"):
+    with pytest.raises(FileNotFoundError, match=rpath):
         fs.get(rpath, "out.txt")
 
     assert not Path("out.txt").exists()
@@ -41,7 +41,7 @@ def test_get_from_nonexistent_branch(fs: LakeFSFileSystem, repository: Repositor
     """
     rpath = f"{repository.id}/nonexistentbranch/a.txt"
 
-    with pytest.raises(FileNotFoundError, match=f"not found: {rpath!r}"):
+    with pytest.raises(FileNotFoundError, match=rpath):
         fs.get(rpath, "out.txt")
 
     assert not Path("out.txt").exists()
@@ -66,5 +66,4 @@ def test_get_client_caching(
     # try to get file, should not initiate a download due to checksum matching.
     lpath = str(random_file_factory.path / Path(rpath).name)
     fs.get(rpath, lpath)
-    assert counter.count("objects_api.upload_object") == 1
     assert counter.count("objects_api.get_object") == 0

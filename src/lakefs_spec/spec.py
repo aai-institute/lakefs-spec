@@ -27,6 +27,7 @@ from fsspec.utils import stringify_path
 from lakefs.client import Client
 from lakefs.exceptions import NotFoundException, ServerException
 from lakefs.models import CommonPrefix, ObjectInfo
+from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
 from lakefs.repository import Repository
 from lakefs_sdk.models import StagingMetadata
 
@@ -229,7 +230,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         path: str | os.PathLike[str]
             The remote path whose existence to check. Must be a fully qualified lakeFS URI.
         **kwargs: Any
-            Additional keyword arguments to pass to ``LakeFSClient.objects_api.head_object()``.
+            Additional keyword arguments for fsspec compatibility, unused.
 
         Returns
         -------
@@ -264,7 +265,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         path2: str | os.PathLike[str]
             The (remote) target location to which to copy the file.
         **kwargs: Any
-            Additional keyword arguments to pass to ``LakeFSClient.objects_api.copy_object()``.
+            Additional keyword arguments for fsspec compatibility, unused.
 
         Raises
         ------
@@ -329,7 +330,8 @@ class LakeFSFileSystem(AbstractFileSystem):
                 )
                 return
 
-        super().get_file(rpath, lpath, callback=callback, outfile=outfile, **kwargs)
+        with self.wrapped_api_call(rpath=rpath):
+            super().get_file(rpath, lpath, callback=callback, outfile=outfile, **kwargs)
 
     def info(self, path: str | os.PathLike[str], **kwargs: Any) -> dict[str, Any]:
         """
@@ -340,8 +342,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         path: str | os.PathLike[str]
             The object for which to obtain metadata. Must be a fully qualified lakeFS URI, can either point to a file or a directory.
         **kwargs: Any
-            Additional keyword arguments to pass to either ``LakeFSClient.objects_api.stat_object()``
-            (if ``path`` points to a file) or ``LakeFSClient.objects_api.list_objects()`` (if ``path`` points to a directory).
+            Additional keyword arguments to pass to ``LakeFSFileSystem.ls()`` if ``path`` points to a directory.
 
         Returns
         -------
@@ -482,7 +483,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         detail: bool
             Whether to obtain all metadata on the requested objects or just their names.
         **kwargs: Any
-            Additional keyword arguments to pass to ``LakeFSClient.objects_api.list_objects()``.
+            Additional keyword arguments for fsspec compatibility.
 
             In particular:
                 `refresh: bool`: whether to skip the directory listing cache,
@@ -521,27 +522,29 @@ class LakeFSFileSystem(AbstractFileSystem):
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         delimiter = "" if recursive else "/"
         reference = lakefs.Reference(repository, ref, client=self.client)
-        for obj in reference.objects(prefix=prefix, delimiter=delimiter):
-            if isinstance(obj, CommonPrefix):
-                # prefixes are added below.
-                info.append(
-                    {
-                        "name": f"{repository}/{ref}/{obj.path}",
-                        "size": 0,
-                        "type": "directory",
-                    }
-                )
-            elif isinstance(obj, ObjectInfo):
-                info.append(
-                    {
-                        "checksum": obj.checksum,
-                        "content-type": obj.content_type,
-                        "mtime": obj.mtime,
-                        "name": f"{repository}/{ref}/{obj.path}",
-                        "size": obj.size_bytes,
-                        "type": "object",
-                    }
-                )
+
+        with self.wrapped_api_call(rpath=path):
+            for obj in reference.objects(prefix=prefix, delimiter=delimiter):
+                if isinstance(obj, CommonPrefix):
+                    # prefixes are added below.
+                    info.append(
+                        {
+                            "name": f"{repository}/{ref}/{obj.path}",
+                            "size": 0,
+                            "type": "directory",
+                        }
+                    )
+                elif isinstance(obj, ObjectInfo):
+                    info.append(
+                        {
+                            "checksum": obj.checksum,
+                            "content-type": obj.content_type,
+                            "mtime": obj.mtime,
+                            "name": f"{repository}/{ref}/{obj.path}",
+                            "size": obj.size_bytes,
+                            "type": "object",
+                        }
+                    )
 
         # Retry the API call with appended slash if the current result
         # is just a single directory entry only (not its contents).
@@ -578,13 +581,10 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def _open(
         self,
-        path: str,
-        mode: Literal["rb", "wb"] = "rb",
-        block_size: int | None = None,
-        autocommit: bool = True,
-        cache_options: dict[str, str] | None = None,
+        path: str | os.PathLike[str],
+        mode: Literal["rb", "wb", "xb"] = "rb",
         **kwargs: Any,
-    ) -> LakeFSFile:
+    ) -> LakeFSIOBase:
         """
         Dispatch a lakeFS file (local buffer on disk) for the given remote path for up- or downloads depending on ``mode``.
 
@@ -592,23 +592,20 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         Parameters
         ----------
-        path: str
+        path: str | os.PathLike[str]
             The remote path for which to open a local ``LakeFSFile``. Must be a fully qualified lakeFS URI.
-        mode: Literal["rb", "wb"]
-            The file mode indicating its purpose. Use ``rb`` for downloads from lakeFS, ``wb`` for uploads to lakeFS.
-        block_size: int | None
-            The file block size to read at a time. If not set, falls back to fsspec's default blocksize of 5 MB.
-        autocommit: bool
-            Whether to write the file buffer automatically on file closing in write mode.
-        cache_options: dict[str, str] | None
-            Additional caching options to pass to the ``AbstractBufferedFile`` superclass.
+        mode: Literal["rb", "wb", "xb"]
+            The file mode indicating its purpose. Use ``rb`` for downloads from lakeFS, ``wb/xb`` for uploads to lakeFS.
         **kwargs: Any
-            Additional keyword arguments to pass to ``LakeFSClient.objects_api.get_object()`` on download (``mode = 'rb'``),
-            or ``LakeFSClient.objects_api.put_object()`` on upload (``mode='wb'``).
+            Additional keyword arguments for fsspec compatibility, may contain:
+
+                `pre_sign: bool`: whether to use a pre-signed URL for the file up-/download,
+                `content_type: str | None`: content type to use for the file (upload only),
+                `metadata: dict[str, str] | None`: Additional metadata to attach to the file (upload only).
 
         Returns
         -------
-        LakeFSFile
+        LakeFSIOBase
             A local file-like object ready to hold data to be received from / sent to a lakeFS server.
 
         Raises
@@ -616,18 +613,41 @@ class LakeFSFileSystem(AbstractFileSystem):
         NotImplementedError
             If ``mode`` is not supported.
         """
-        if mode not in {"rb", "wb"}:
+        if mode not in {"rb", "wb", "xb"}:
             raise NotImplementedError(f"unsupported mode {mode!r}")
 
-        return LakeFSFile(
-            self,
-            path=path,
-            mode=mode,
-            block_size=block_size or self.blocksize,
-            autocommit=autocommit,
-            cache_options=cache_options,
-            **kwargs,
-        )
+        path = stringify_path(path)
+        repo, ref, resource = parse(path)
+
+        pre_sign = kwargs.pop("pre_sign", False)
+
+        if mode == "rb":
+            reference = lakefs.Reference(repo, ref, client=self.client)
+            obj = reference.object(resource)
+
+            if not obj.exists():
+                raise FileNotFoundError(path)
+            handler = ObjectReader(obj, mode=mode, pre_sign=pre_sign, client=self.client)
+        else:
+            # ref must be a branch
+            branch = lakefs.Branch(repo, ref, client=self.client)
+            if self.create_branch_ok:
+                branch.create(self.source_branch, exist_ok=True)
+
+            content_type = kwargs.pop("content_type", None)
+            metadata = kwargs.pop("metadata", None)
+
+            obj = branch.object(resource)
+            handler = ObjectWriter(
+                obj,
+                mode=mode,
+                pre_sign=pre_sign,
+                content_type=content_type,
+                metadata=metadata,
+                client=self.client,
+            )
+
+        return handler
 
     def put_file_to_blockstore(
         self,
@@ -752,7 +772,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         storage_options: dict[str, Any] | None
             Additional file system configuration options to pass to the block storage file system if ``use_blockstore=True``.
         **kwargs: Any
-            Additional keyword arguments to pass to ``AbstractFileSystem.open()``.
+            Additional keyword arguments to pass to ``LakeFSFileSystem.open()``.
         """
         lpath = stringify_path(lpath)
         rpath = stringify_path(rpath)
@@ -775,7 +795,8 @@ class LakeFSFileSystem(AbstractFileSystem):
                 storage_options=storage_options,
             )
         else:
-            super().put_file(lpath, rpath, callback=callback, **kwargs)
+            with self.wrapped_api_call(rpath=rpath):
+                super().put_file(lpath, rpath, callback=callback, **kwargs)
 
     def rm_file(self, path: str | os.PathLike[str]) -> None:  # pragma: no cover
         """
@@ -803,8 +824,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         path: str | os.PathLike[str]
             File(s) to delete.
         recursive: bool
-            If file(s) are directories, recursively delete contents and then
-            also remove the directory.
+            If file(s) include nested directories, recursively delete their contents.
         maxdepth: int | None
             Depth to pass to walk for finding files to delete, if recursive.
             If None, there will be no limit and infinite recursion may be
@@ -832,7 +852,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         truncate: bool
             Whether to set the file size to 0 (zero) bytes, even if the path already exists.
         **kwargs: Any
-            Additional keyword arguments to pass to ``LakeFSFile.open()``.
+            Additional keyword arguments to pass to ``LakeFSFileSystem.open()``.
 
         Raises
         ------
@@ -850,6 +870,27 @@ class LakeFSFileSystem(AbstractFileSystem):
             )
 
         super().touch(path=path, truncate=truncate, **kwargs)
+
+    def tail(self, path: str | os.PathLike[str], size: int = 1024) -> bytes:
+        """
+        Get the last ``size`` bytes from a remote file.
+
+        Parameters
+        ----------
+        path: str | os.PathLike[str]
+            The file path to read. Must be a fully qualified lakeFS URI.
+        size: int
+            The amount of bytes to get.
+
+        Returns
+        -------
+        bytes
+            The bytes at the end of the requested file.
+        """
+        f: ObjectReader
+        with self.open(path, "rb") as f:
+            f.seek(max(-size, -f._obj.stat().size_bytes), 2)
+            return f.read()
 
 
 class LakeFSFile(AbstractBufferedFile):
