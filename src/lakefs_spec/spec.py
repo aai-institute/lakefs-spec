@@ -7,11 +7,8 @@ from __future__ import annotations
 
 import errno
 import logging
-import mimetypes
 import operator
 import os
-import urllib.error
-import urllib.request
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
@@ -19,7 +16,6 @@ from typing import Any, Generator, Literal, overload
 
 import fsspec.callbacks
 import lakefs
-from fsspec import filesystem
 from fsspec.callbacks import _DEFAULT_CALLBACK
 from fsspec.spec import AbstractFileSystem
 from fsspec.utils import stringify_path
@@ -27,7 +23,6 @@ from lakefs.client import Client
 from lakefs.exceptions import NotFoundException, ServerException
 from lakefs.models import CommonPrefix, ObjectInfo
 from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
-from lakefs_sdk.models import StagingMetadata
 
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
@@ -647,104 +642,12 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         return handler
 
-    def put_file_to_blockstore(
-        self,
-        lpath: str | os.PathLike[str],
-        rpath: str | os.PathLike[str],
-        callback: fsspec.callbacks.Callback = _DEFAULT_CALLBACK,
-        presign: bool = False,
-        storage_options: dict[str, Any] | None = None,
-    ) -> None:
-        """
-        Upload a file to lakeFS by directly putting it into its underlying block storage, thereby reducing the request load
-        on the lakeFS server.
-
-        Requires the corresponding fsspec implementation for the block storage type used by your lakeFS server deployment.
-
-        Supported block storage types are S3 (needs ``s3fs``), GCS (needs ``gcsfs``), and Azure Blob Storage (needs ``adlfs``).
-
-        Note that depending on the block store type, additional configuration like credentials may need to be configured when ``presign=False``.
-
-        Parameters
-        ----------
-        lpath: str | os.PathLike[str]
-            The local path to upload to the lakeFS block storage.
-        rpath: str | os.PathLike[str]
-            The remote target path to upload the local file to. Must be a fully qualified lakeFS URI.
-        callback: fsspec.callbacks.Callback
-            An fsspec callback to use during the operation. Can be used to report download progress.
-        presign: bool
-            Whether to use pre-signed URLs to upload the object via HTTP(S) using ``urllib.request``.
-        storage_options: dict[str, Any] | None
-            Additional file system configuration options to pass to the block storage file system.
-
-        Raises
-        ------
-        ValueError
-            If the blockstore type returned by the lakeFS API is not supported by fsspec.
-        """
-        rpath = stringify_path(rpath)
-        lpath = stringify_path(lpath)
-        repository, branch, resource = parse(rpath)
-
-        staging_location = self.client.sdk_client.staging_api.get_physical_address(
-            repository, branch, resource, presign=presign
-        )
-
-        if presign:
-            remote_url = staging_location.presigned_url
-            content_type, _ = mimetypes.guess_type(lpath)
-            if content_type is None:
-                content_type = "application/octet-stream"
-            with open(lpath, "rb") as f:
-                headers = {
-                    "Content-Type": content_type,
-                }
-                request = urllib.request.Request(
-                    url=remote_url, data=f, headers=headers, method="PUT"
-                )
-                try:
-                    if not remote_url.lower().startswith("http"):
-                        raise ValueError("Wrong protocol for remote connection")
-                    else:
-                        logger.debug(f"Begin upload of {lpath}")
-                        with urllib.request.urlopen(request):  # nosec [B310:blacklist] # We catch faulty protocols above.
-                            logger.debug(f"Successfully uploaded {lpath}")
-                except urllib.error.HTTPError as e:
-                    raise translate_lakefs_error(e, rpath=rpath)
-        else:
-            blockstore_type = self.client.storage_config.blockstore_type
-            # lakeFS blockstore name is "azure", but Azure's fsspec registry entry is "az".
-            if blockstore_type == "azure":
-                blockstore_type = "az"
-
-            if blockstore_type not in ["s3", "gs", "az"]:
-                raise ValueError(
-                    f"Blockstore writes are not implemented for blockstore type {blockstore_type!r}"
-                )
-
-            remote_url = staging_location.physical_address
-            remote = filesystem(blockstore_type, **(storage_options or {}))
-            remote.put_file(lpath, remote_url, callback=callback)
-
-        staging_metadata = StagingMetadata(
-            staging=staging_location,
-            checksum=md5_checksum(lpath, blocksize=self.blocksize),
-            size_bytes=os.path.getsize(lpath),
-        )
-        self.client.sdk_client.staging_api.link_physical_address(
-            repository, branch, resource, staging_metadata
-        )
-
     def put_file(
         self,
         lpath: str | os.PathLike[str],
         rpath: str | os.PathLike[str],
         callback: fsspec.callbacks.Callback = _DEFAULT_CALLBACK,
         precheck: bool = True,
-        use_blockstore: bool = False,
-        presign: bool = False,
-        storage_options: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -762,13 +665,6 @@ class LakeFSFileSystem(AbstractFileSystem):
             An fsspec callback to use during the operation. Can be used to report download progress.
         precheck: bool
             Check if ``lpath`` already exists and compare its checksum with that of ``rpath``, skipping the download if they match.
-        use_blockstore: bool
-            Optionally upload the file directly to the underlying block storage, thereby bypassing the lakeFS server and saving a
-            file transfer. Preferable for uploads of large files.
-        presign: bool
-            Whether to use pre-signed URLs to upload the object if ``use_blockstore=True``.
-        storage_options: dict[str, Any] | None
-            Additional file system configuration options to pass to the block storage file system if ``use_blockstore=True``.
         **kwargs: Any
             Additional keyword arguments to pass to ``LakeFSFileSystem.open()``.
         """
@@ -784,17 +680,8 @@ class LakeFSFileSystem(AbstractFileSystem):
                 )
                 return
 
-        if use_blockstore:
-            self.put_file_to_blockstore(
-                lpath,
-                rpath,
-                presign=presign,
-                callback=callback,
-                storage_options=storage_options,
-            )
-        else:
-            with self.wrapped_api_call(rpath=rpath):
-                super().put_file(lpath, rpath, callback=callback, **kwargs)
+        with self.wrapped_api_call(rpath=rpath):
+            super().put_file(lpath, rpath, callback=callback, **kwargs)
 
     def rm_file(self, path: str | os.PathLike[str]) -> None:  # pragma: no cover
         """
