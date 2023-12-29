@@ -721,7 +721,11 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         with self.wrapped_api_call(rpath=path):
             branch = lakefs.Branch(repository, ref, client=self.client)
-            branch.delete_objects([obj.path for obj in branch.objects(prefix=prefix)])
+            objgen = branch.objects(prefix=prefix, delimiter="" if recursive else "/")
+            if maxdepth is not None:
+                branch.delete_objects(obj.path for obj in objgen)
+            else:
+                branch.delete_objects(obj.path for obj in objgen if obj.path.count("/") <= maxdepth)
 
             # Directory listing cache for the containing folder must be invalidated
             self.dircache.pop(self._parent(path), None)
