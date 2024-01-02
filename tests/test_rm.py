@@ -31,3 +31,20 @@ def test_rm_with_postcommit(
     commits = list(temp_branch.log())
     latest_commit = commits[0]
     assert latest_commit.message == msg
+
+
+def test_rm_recursive(
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: Branch,
+) -> None:
+    """Validate that recursive ``rm`` removes subdirectories as well."""
+    prefix = f"lakefs://{repository.id}/{temp_branch.id}"
+
+    fs.pipe(f"{prefix}/dir1/b.txt", b"b")
+    fs.pipe(f"{prefix}/dir1/dir2/c.txt", b"c")
+
+    fs.rm(f"{prefix}/dir1", recursive=False)
+    assert fs.exists(f"{prefix}/dir1/dir2/c.txt")
+    fs.rm(f"{prefix}/dir1", recursive=True)
+    assert not fs.exists(f"{prefix}/dir1/dir2/c.txt")
