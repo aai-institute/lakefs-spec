@@ -1,3 +1,4 @@
+import lakefs
 from lakefs.branch import Branch
 from lakefs.repository import Repository
 
@@ -13,6 +14,14 @@ def test_exists(fs: LakeFSFileSystem, repository: Repository) -> None:
 
     nonexistent_file = f"{repository.id}/main/nonexistent.parquet"
     assert not fs.exists(nonexistent_file)
+
+
+def test_exists_on_commit(fs: LakeFSFileSystem, repository: Repository) -> None:
+    """Test `fs.exists` works on commit SHAs to query existence of files in revisions."""
+    example_file = f"{repository.id}/main/README.md"
+    assert fs.exists(example_file)
+    head = lakefs.Branch(repository.id, "main", client=fs.client).head
+    assert fs.exists(f"{repository.id}/{head.id}/README.md")
 
 
 def test_exists_on_staged_file(
