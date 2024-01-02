@@ -312,6 +312,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         """
         rpath = stringify_path(rpath)
         lpath = stringify_path(lpath)
+
         lp = Path(lpath)
         if precheck and lp.exists() and lp.is_file():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
@@ -670,6 +671,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         """
         lpath = stringify_path(lpath)
         rpath = stringify_path(rpath)
+
         if precheck and Path(lpath).is_file():
             remote_checksum = self.checksum(rpath)
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
@@ -722,9 +724,10 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call(rpath=path):
             branch = lakefs.Branch(repository, ref, client=self.client)
             objgen = branch.objects(prefix=prefix, delimiter="" if recursive else "/")
-            if maxdepth is not None:
+            if maxdepth is None:
                 branch.delete_objects(obj.path for obj in objgen)
             else:
+                # nesting level is just the amount of "/"s in the path, no leading "/".
                 branch.delete_objects(obj.path for obj in objgen if obj.path.count("/") <= maxdepth)
 
             # Directory listing cache for the containing folder must be invalidated
