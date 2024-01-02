@@ -1,3 +1,4 @@
+import lakefs
 import pytest
 from lakefs.repository import Repository
 
@@ -36,3 +37,20 @@ def test_info_on_directory_no_trailing_slash(fs: LakeFSFileSystem, repository: R
 
     non_slash_resource = resource.rstrip("/")
     assert fs.info(non_slash_resource) == res
+
+
+def test_info_on_commit(
+    fs: LakeFSFileSystem,
+    repository: Repository,
+) -> None:
+    prefix = f"lakefs://{repository.id}"
+
+    head = lakefs.Branch(repository.id, "main", client=fs.client).head
+
+    binfo = fs.info(f"{prefix}/main/README.md")
+    branch_metadata = (binfo["checksum"], binfo["mtime"], binfo["size"])
+    # fetching directly from commit should yield the same result.
+    cinfo = fs.info(f"{prefix}/{head.id}/README.md")
+    commit_metadata = (cinfo["checksum"], cinfo["mtime"], cinfo["size"])
+
+    assert branch_metadata == commit_metadata

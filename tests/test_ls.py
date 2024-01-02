@@ -1,3 +1,4 @@
+import lakefs
 import pytest
 from lakefs.branch import Branch
 from lakefs.repository import Repository
@@ -221,3 +222,22 @@ def test_ls_directories(
 
     dirs = [o for o in ls_nonrecursive if o["type"] == "directory"]
     assert len(dirs) == 1  # only `dir1/`
+
+
+def test_ls_on_commit(
+    fs: LakeFSFileSystem,
+    repository: Repository,
+) -> None:
+    prefix = f"lakefs://{repository.id}"
+
+    head = lakefs.Branch(repository.id, "main", client=fs.client).head
+
+    from_branch = fs.ls(f"{prefix}/main/images")
+    # we cannot directly compare the objects since the names will be different -
+    # they are prefixed with the repository and requested reference.
+    branch_metadata = [(o["checksum"], o["mtime"], o["size"]) for o in from_branch]
+    # fetching directly from commit should yield the same result.
+    from_commit = fs.ls(f"{prefix}/{head.id}/images")
+    commit_metadata = [(o["checksum"], o["mtime"], o["size"]) for o in from_commit]
+
+    assert branch_metadata == commit_metadata
