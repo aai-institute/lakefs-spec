@@ -8,7 +8,7 @@ import logging
 from collections import deque
 from dataclasses import dataclass
 from functools import partial
-from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
+from typing import TYPE_CHECKING, Callable, Generic, TypeVar
 
 import lakefs
 import wrapt
@@ -17,7 +17,7 @@ from fsspec.transaction import Transaction
 from lakefs.branch import Branch, Reference
 from lakefs.client import Client
 from lakefs.object import ObjectWriter
-from lakefs.reference import Commit
+from lakefs.reference import Commit, ReferenceType
 from lakefs.repository import Repository
 from lakefs.tag import Tag
 
@@ -29,7 +29,7 @@ logger.setLevel(logging.INFO)
 if TYPE_CHECKING:  # pragma: no cover
     from lakefs_spec import LakeFSFileSystem
 
-    VersioningOpTuple = tuple[Callable[[LakeFSFileSystem], None], Any]
+    VersioningOpTuple = tuple[Callable[[Client], None], str | "Placeholder" | None]
 
 
 @dataclass
@@ -46,6 +46,8 @@ class Placeholder(Generic[T], wrapt.ObjectProxy):
 
     @property
     def value(self):
+        if self.__wrapped__ is None:
+            raise RuntimeError("placeholder unfilled")
         return self.__wrapped__
 
     @value.setter
@@ -160,7 +162,7 @@ class LakeFSTransaction(Transaction):
         self.fs._intrans = False
 
     def create_branch(
-        self, repository: str | Repository, name: str, source: str, exist_ok: bool = True
+        self, repository: str | Repository, name: str, source: str | Branch, exist_ok: bool = True
     ) -> str:
         """
         Create a branch ``name`` in a repository, branching off ``source_branch``.
@@ -171,8 +173,8 @@ class LakeFSTransaction(Transaction):
             Repository name.
         name: str
             Name of the branch to be created.
-        source: str
-            Name of the branch that the new branch is created from.
+        source: str | Branch
+            Name of the branch (or branch object) that the new branch is created from.
         exist_ok: bool
             Ignore creation errors if the branch already exists.
 
@@ -183,7 +185,11 @@ class LakeFSTransaction(Transaction):
         """
 
         def create_branch_op(
-            client: Client, repo_: str, branch_: str, source_: str, exist_ok_: bool
+            client: Client,
+            repo_: str | Repository,
+            branch_: str,
+            source_: str | Branch,
+            exist_ok_: bool,
         ) -> Branch:
             repo_id = repo_.id if isinstance(repo_, Repository) else repo_
             return lakefs.Branch(repo_id, branch_, client=client).create(
@@ -256,7 +262,7 @@ class LakeFSTransaction(Transaction):
         return None
 
     def rev_parse(
-        self, repository: str | Repository, ref: str | Placeholder[Reference], parent: int = 0
+        self, repository: str | Repository, ref: ReferenceType, parent: int = 0
     ) -> Placeholder[Commit]:
         """
         Parse a given reference or any of its parents in a repository.
@@ -265,8 +271,8 @@ class LakeFSTransaction(Transaction):
         ----------
         repository: str | Repository
             Name of the repository.
-        ref: str | Placeholder[Reference]
-            Commit SHA or commit placeholder object to resolve.
+        ref: ReferenceType
+            Reference object to resolve, can be a branch, commit SHA, or tag.
         parent: int
             Optionally parse a parent of ``ref`` instead of ``ref`` itself as indicated by the number.
             Must be non-negative. ``parent = 0`` (the default)  refers to ``ref`` itself.
@@ -278,12 +284,12 @@ class LakeFSTransaction(Transaction):
         """
 
         def rev_parse_op(
-            client: Client, repo_: str | Repository, ref_: str | Reference, parent_: int
+            client: Client, repo_: str | Repository, ref_: ReferenceType, parent_: int
         ) -> Commit:
             repo_id = repo_.id if isinstance(repo_, Repository) else repo_
             ref_id = ref_.id if isinstance(ref_, Reference) else ref_
-            # TODO: This will get wrecked if the ref is a tag -> switch resource type on Reference subclasses
-            commits = list(lakefs.Branch(repo_id, ref_id, client=client).log(parent_ + 1))
+
+            commits = list(lakefs.Reference(repo_id, ref_id, client=client).log(parent_ + 1))
             if len(commits) <= parent:
                 raise ValueError(
                     f"unable to fetch revision {ref_id}~{parent_}: "
@@ -296,9 +302,7 @@ class LakeFSTransaction(Transaction):
         self.files.append((op, p))
         return p
 
-    def tag(
-        self, repository: str | Repository, ref: str | Placeholder[Reference | Commit], tag: str
-    ) -> str:
+    def tag(self, repository: str | Repository, ref: ReferenceType, tag: str) -> str:
         """
         Create a tag referencing a commit in a repository.
 
@@ -306,7 +310,7 @@ class LakeFSTransaction(Transaction):
         ----------
         repository: str | Repository
             Name of the repository.
-        ref: str | Placeholder[Reference | Commit]
+        ref: ReferenceType
             Commit SHA or placeholder for a reference or commit object to which the new tag will point.
         tag: str
             Name of the tag to be created.
@@ -317,9 +321,7 @@ class LakeFSTransaction(Transaction):
             The name of the requested tag.
         """
 
-        def tag_op(
-            client: Client, repo_: str | Repository, ref_: str | Reference | Commit, tag_: str
-        ) -> Tag:
+        def tag_op(client: Client, repo_: str | Repository, ref_: ReferenceType, tag_: str) -> Tag:
             repo_id = repo_.id if isinstance(repo_, Repository) else repo_
             ref_id = ref_.id if isinstance(ref_, Commit) else ref_
             return lakefs.Tag(repo_id, tag_, client=client).create(ref_id)

@@ -128,4 +128,4 @@ style = 'numpy'
 exclude = '\.git|venv'
 
 [tool.coverage.report]
-exclude_lines = ["pragma: not covered", "@overload"]
+exclude_also = ["@overload"]
