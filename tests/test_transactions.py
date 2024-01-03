@@ -1,11 +1,13 @@
 from pathlib import Path
 from typing import Any
 
+import pytest
 from lakefs.branch import Branch
-from lakefs.reference import Reference
+from lakefs.reference import Commit, Reference
 from lakefs.repository import Repository
 
 from lakefs_spec import LakeFSFileSystem
+from lakefs_spec.transaction import Placeholder
 from tests.util import RandomFileFactory, put_random_file_on_branch, with_counter
 
 
@@ -170,3 +172,10 @@ def test_placeholder_representations(
     latest_commit = commits[0]
     assert sha.id == latest_commit.id
     assert repr(sha.id) == repr(latest_commit.id)
+
+
+def test_unfilled_placeholder_error() -> None:
+    p: Placeholder[Commit] = Placeholder()
+
+    with pytest.raises(RuntimeError):
+        _ = p.value
