@@ -25,6 +25,21 @@ T = TypeVar("T")
 YieldFixture = Generator[T, None, None]
 
 
+def pytest_report_header(config):
+    from importlib.metadata import version
+
+    lakefs_version = version("lakefs")
+    from lakefs_sdk import __version__ as __lakefs_sdk_version__
+
+    from lakefs_spec import __version__ as __lakefs_spec_version__
+
+    return [
+        f"lakefs version: {lakefs_version}",
+        f"lakeFS SDK version: {__lakefs_sdk_version__}",
+        f"lakeFS-spec version: {__lakefs_spec_version__}",
+    ]
+
+
 @pytest.fixture
 def fs() -> LakeFSFileSystem:
     LakeFSFileSystem.clear_instance_cache()
