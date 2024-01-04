@@ -36,4 +36,5 @@ body:
       required: true
   - type: input
     attributes:
-      label: lakeFS version
+      label: lakeFS-sdk version
+       placeholder: "Version tag shown in output of `pip show lakefs-sdk`"
