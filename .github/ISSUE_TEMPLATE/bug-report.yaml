@@ -34,6 +34,3 @@ body:
       placeholder: "Version tag shown in output of `pip show lakefs`"
     validations:
       required: true
-  - type: input
-    attributes:
-      label: lakeFS version
