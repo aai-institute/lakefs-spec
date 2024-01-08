@@ -33,11 +33,12 @@ For this demo project, we aim to build a weather predictor using data from a pub
 This simulates the dynamics within a real world scenario where we continuously collect more data.
 """
 
-# %% tags=["Remove_single_output"]
+# %% tags=["Remove_single_output", "Remove_input"]
 # %pip install numpy pandas scikit-learn
 
 # %%
 import json
+import os
 import tempfile
 import urllib.request
 from pathlib import Path
@@ -51,7 +52,7 @@ import lakefs_spec
 
 # %% [markdown]
 """
-The cell below contains a helper function to obtain the data. It is otherwise not relevant to this demonstration.
+The cell below contains a helper function to obtain the data and code to obtain the default lakeFS credentials. It is otherwise not relevant to this demonstration.
 """
 
 
@@ -70,6 +71,10 @@ def _maybe_urlretrieve(url: str, filename: str) -> str:
 outfile = _maybe_urlretrieve(
     "https://archive-api.open-meteo.com/v1/archive?latitude=52.52&longitude=13.41&start_date=2010-01-01&end_date=2010-12-31&hourly=temperature_2m,relativehumidity_2m,rain,pressure_msl,surface_pressure,cloudcover,cloudcover_low,cloudcover_mid,cloudcover_high,windspeed_10m,windspeed_100m,winddirection_10m,winddirection_100m",
     "weather-2010.json",
+)
+urllib.request.urlretrieve(
+    "https://raw.githubusercontent.com/aai-institute/lakefs-spec/main/docs/tutorials/.lakectl.yaml",
+    os.path.expanduser("~/.lakectl.yaml"),
 )
 # %% [markdown]
 """
