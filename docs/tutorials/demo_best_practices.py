@@ -206,7 +206,7 @@ df.head(5)
 
 # %% [markdown]
 """
-## Use Commits to Save Checkpoints and Merge Branches for Atomic Changes
+## Use commits as checkpoints and merge branches for atomic changes
 
 Now we can commit the updated data to the transform-raw-data branch in lakeFS repository.
 We write a descriptive commit message.
