@@ -30,7 +30,7 @@ We will explain the following best practices for data versioning in this example
 - Use descriptive naming where it matters .
 
 For this demo project, we aim to build a weather predictor using data from a public API.
-This simulates the dynamics within a real world scenario where we continuously collect more data.
+This simulates a world scenario where we continuously collect more data, albeit with less complexity.
 """
 
 # %% tags=["Remove_single_output", "Remove_input"]
@@ -85,7 +85,7 @@ Later, however, we want to use more data. Since our dataset will be evolving, we
 This ensure the reproducibility of our experiments, enables collaboration with colleagues, and ensures our dynamic dataset to stay a valuable asset.
 
 To set up our versioning, we need to decide on a versioning tool, set up a repository, and define which data is considered in scope and should be versioned and which is not.
-In this case, we want to version the weather data using lakeFS.
+
 Let us now set up a lakeFS repository using lakeFS-spec, our filesystem implementation for lakeFS.
 """
 
@@ -253,6 +253,7 @@ train, test = sklearn.model_selection.train_test_split(model_data, random_state=
 ## Descriptive Tags for Human-Readability and Uniqe SHAs for unique Identification
 
 Since the train test split of the new branch is something we expect to address quite often in development, we will also add a human-readable tag to it.
+In the code below we directly pass the commit as the reference. If we would pass a branch, the tag would point to the current HEAD (i.e. the latest) commit on the branch.
 This makes it easy to refer back to it and to communicate this specific state of the data to colleagues. Tags are immutable which ensures consistency.
 You and your colleagues can then also work with (the same state (i.e. train test split, etc.) of the data.
 """
@@ -273,8 +274,8 @@ with fs.transaction as tx:
 """
 Now we have the data on different branches. If new data comes in, we can perform necessary preprocessing on a separate branch and merge it to `main` once we are sure about its compatibility and we have run all the necessary tests.
 Should the new data be important for the experimentation as well, then we can merge the new main branch into the experimentation branch.
-You should then create a new tag for the dataset.
-You cannot directly reassign tags. If you want to do this anyways, for example to prevent namespace clutter, you have to delete the tag and create a new one.
+Then we can create a new tag for the dataset.
+Tags cannot be directly reassigned. If you want to do this anyways, for example to prevent namespace clutter, you have to delete the tag and create a new one.
 However, beware as this might break reproducibility in other places (i.e. colleagues might expect unchanged data).
-To ensure failsafe versioning use the SHA's of the commits in tracking tools.
+To ensure failsafe versioning use the SHA's of the commits instead of tags or branch names in experiment tracking tools.
 """
