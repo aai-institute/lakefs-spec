@@ -24,9 +24,10 @@ We assume you have lakeFS and lakeFS-spec setup. If you need help with it, look 
 We will explain the following best practices for data versioning in this example:
 - Define a data repository
 - Follow a branching strategy that ensures data integrity on the `main` branch, e.g. by running tests on feature branch datasets.
+- Utilize reusable and tested functions for data transformation.
 - Use commits to save checkpoints and merge branches for atomic changes.
 - Keep naming (of branches and commits) consistent, concise, and unique.
-- Use descriptive naming (where it matters).
+- Use descriptive naming where it matters .
 
 For this demo project, we aim to build a weather predictor using data from a public API.
 This simulates the dynamics within a real world scenario where we continuously collect more data.
@@ -109,37 +110,99 @@ with fs.transaction as tx:
 
 # %% [markdown]
 """
+## Utilize reusable and tested functions for data transformation
+
 Now that we have the data on the `transform-raw-data` branch, we can start with the transformation.
 
 It is good practice to encapsulate common transformations in functions.
-This way we can save some work by reusing our code. We can also add unit tests for the transformation functions.
-This increases our confidence in the data quality and serves as additional context to infer the purpose of the function should we or someone else come back at a later time.
-Since the focus of this demo is data version control, we wont write tests now.
 """
 
 
 # %%
-def transform_json_weather_data(filepath):
+def load_json_data(filepath):
     if hasattr(filepath, "close") and hasattr(filepath, "tell"):
-        data = json.load(filepath)
+        return json.load(filepath)
     else:
         with open(filepath, "r") as f:
-            data = json.load(f)
+            return json.load(f)
 
-    df = pd.DataFrame.from_dict(data["hourly"])
-    df.time = pd.to_datetime(df.time)
-    df["is_raining"] = df.rain > 0
-    df["is_raining_in_1_day"] = df.is_raining.shift(24).astype(bool)
-    df = df.dropna()
+
+# %%
+def create_dataframe_from_json(json_data):
+    df = pd.DataFrame.from_dict(json_data["hourly"])
     return df
 
 
-df = transform_json_weather_data(outfile)
+sample_json_data = {
+    "hourly": [{"time": "2023-01-01 00:00", "rain": 0}, {"time": "2023-01-01 01:00", "rain": 2}]
+}
+
+# Tests
+df_test = create_dataframe_from_json(sample_json_data)
+assert isinstance(df_test, pd.DataFrame), "Output should be a pandas DataFrame"
+assert list(df_test.columns) == ["time", "rain"], "DataFrame should have time and rain columns"
+assert len(df_test) == 2, "DataFrame should have two rows"
+
+
+# %%
+def convert_time_column_to_datetime(df):
+    df["time"] = pd.to_datetime(df["time"])
+    return df
+
+
+# Tests
+df_test = pd.DataFrame({"time": ["2023-01-01 00:00", "2023-01-01 01:00"], "rain": [0, 2]})
+
+df_test = convert_time_column_to_datetime(df_test)
+assert pd.api.types.is_datetime64_any_dtype(
+    df_test["time"]
+), "Time column should be of datetime type"
+
+
+# %%
+def add_rain_indicators(df):
+    df["is_raining"] = df.rain > 0
+    df["is_raining_in_1_day"] = df.is_raining.shift(24).astype(bool)
+    return df.dropna()
+
+
+# Tests
+df_test = pd.DataFrame(
+    {"time": pd.date_range(start="2023-01-01", periods=48, freq="H"), "rain": [0] * 24 + [2] * 24}
+)
+
+# Test the function
+df_test = add_rain_indicators(df_test)
+assert (
+    "is_raining" in df_test.columns and "is_raining_in_1_day" in df_test.columns
+), "Both indicator columns should be present"
+assert all(
+    df_test.loc[24:, "is_raining"]
+), "All values should be True in 'is_raining' for the second day"
+assert all(
+    df_test.loc[:23, "is_raining_in_1_day"]
+), "All values should be True in 'is_raining_in_1_day' for the first day"
+assert df_test.isna().sum().sum() == 0, "There should be no NaN values in the DataFrame"
+
+# %% [markdown]
+"""
+Encapsulating data processing steps in unit tested functions (which are also made available to the whole team or organisation) saves some work by reusing our code.
+Additionally, the tests increase our confidence in the data quality and serve as additional context to infer the purpose of the function should we or someone else come back at a later time.
+
+We can now apply the functions to process the data.
+"""
+
+# %%
+json_data = load_json_data(outfile)
+df = create_dataframe_from_json(json_data)
+df = convert_time_column_to_datetime(df)
+df = add_rain_indicators(df)
+
 df.head(5)
 
 # %% [markdown]
 """
-## Commits and Branch Merges for Atomic Changes
+## Use Commits to Save Checkpoints and Merge Branches for Atomic Changes
 
 Now we can commit the updated data to the transform-raw-data branch in lakeFS repository.
 We write a descriptive commit message.
@@ -178,7 +241,7 @@ train, test = sklearn.model_selection.train_test_split(model_data, random_state=
 
 # %% [markdown]
 """
-## Descriptive Tags for Human-Readability
+## Descriptive Tags for Human-Readability and Uniqe SHAs for unique Identification
 
 Since the train test split of the new branch is something we expect to address quite often in development, we will also add a human-readable tag to it.
 This makes it easy to refer back to it and to communicate this specific state of the data to colleagues. Tags are immutable which ensures consistency.
