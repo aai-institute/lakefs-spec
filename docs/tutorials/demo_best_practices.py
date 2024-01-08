@@ -21,14 +21,15 @@
 This notebook will guide you through the best practices for versioning data in a data science project.
 We assume you have lakeFS and lakeFS-spec setup. If you need help with it, look into the other parts of the docs or the other tutorial which is more focused on the setup.
 
-We will explain the following best practices for data versioning in this example: 
+We will explain the following best practices for data versioning in this example:
 - Define a data repository
-- Follow a branching strategy that ensures data integrity on the `main` branch, e.g. by running tests on feature branch datasets. 
+- Follow a branching strategy that ensures data integrity on the `main` branch, e.g. by running tests on feature branch datasets.
 - Use commits to save checkpoints and merge branches for atomic changes.
-- Keep naming (of branches and commits) consistent, concise, and unique
-- Use descriptive naming where it matters
+- Keep naming (of branches and commits) consistent, concise, and unique.
+- Use descriptive naming (where it matters).
 
 For this demo project, we aim to build a weather predictor using data from a public API. 
+This simulates the dynamics within a real world scenario where we continuously collect more data.
 """
 # %%
 import json
@@ -40,7 +41,10 @@ import lakefs_spec
 import sklearn
 import sklearn.model_selection
 
-
+# %% [markdown]
+"""
+The cell below contains a helper function to obtain the data. It is otherwise not relevant to this demonstration.
+"""
 # %%
 def _maybe_urlretrieve(url: str, filename: str) -> str:
     # Avoid API rate limit errors by downloading to a fixed local location
@@ -62,8 +66,9 @@ outfile = _maybe_urlretrieve(
 """
 ## Define a data repository
 
-We got the data for the year 2010. That should be enough for initial prototyping. 
-Later, however, we want to use more data. Since our dataset will be evolving, we should implement data version control to ensure the reproducibility of our experiments, enable collaboration with colleagues, and ensure our dynamic dataset stays a valuable asset.
+We got the data for the year 2010. That should be enough for initial prototyping.
+Later, however, we want to use more data. Since our dataset will be evolving, we implement data version control.
+This ensure the reproducibility of our experiments, enables collaboration with colleagues, and ensures our dynamic dataset to stay a valuable asset.
 
 To set up our versioning, we need to decide on a versioning tool, set up a repository, and define which data is considered in scope and should be versioned and which is not.
 In this case, we want to version the weather data using lakeFS.
@@ -83,10 +88,12 @@ repo = lakefs_spec.client_helpers.create_repository(client=fs.client, name=REPO_
 lakeFS works similarly to `git` as a versioning system.
 You can create *commits* that contain specific changes to the data.
 You can also work with *branches* to create an isolated view of the data.
-Every commit (on any branch) is identified by a commit SHA.
+Every commit (on any branch) is identified by a commit SHA, a unique identifier obtained via a hashing function.
+
+## Branching Strategy
 
 We recommend following a branching strategy that ensures the data integrity on the main branch.
-Since we are about to do some data wrangling, we will fork off a branch and merge it to `main` once we are sure everything works as expected. 
+Since we are about to do some data wrangling, we will fork off a branch and later merge it to `main` once we are sure everything works as expected.
 """
 
 # %%
@@ -99,9 +106,12 @@ with fs.transaction as tx:
 
 # %% [markdown]
 """
-Now that we have the data on the `transform-raw-data` branch, we can start with the transformation. 
-It is good practice to encapsulate the transformation in a function that ideally is tested. 
-We will not do the second part as we focus on data version control. 
+Now that we have the data on the `transform-raw-data` branch, we can start with the transformation.
+
+It is good practice to encapsulate common transformations in functions.
+This way we can save some work by reusing our code. We can also add unit tests for the transformation functions.
+This increases our confidence in the data quality and serves as additional context to infer the purpose of the function should we or someone else come back at a later time. 
+Since the focus of this demo is data version control, we wont write tests now.
 """
 
 
@@ -125,15 +135,17 @@ df = transform_json_weather_data(outfile)
 df.head(5)
 
 # %% [markdown]
-""" 
+"""
+## Commits and Branch Merges for Atomic Changes
+
 Now we can commit the updated data to the transform-raw-data branch in lakeFS repository.
-We choose a descriptive commit message.
+We write a descriptive commit message.
 """
 # %%
 with fs.transaction as tx:
     df.to_csv(f"lakefs://{REPO_NAME}/main/weather_2010.csv")
     commit = tx.commit(repository=REPO_NAME, branch="main",
-                       message="Apply preprocessing to 2010 data")
+                       message="Preprocess 2010 data")
 print(commit)
 
 # %% [markdown]
@@ -150,7 +162,7 @@ with fs.transaction as tx:
 # %% [markdown]
 """
 We will now start to develop our ML model. We recommend checking out a new branch for every set of experiments.
-Here, we will conduct the train test split and further experiment specific.
+Here, we will conduct the train test split and further experiment specific modifications, if applicable.
 """
 
 # %%
@@ -167,9 +179,11 @@ train, test = sklearn.model_selection.train_test_split(
 
 # %% [markdown]
 """
+## Descriptive Tags for Human-Readability
+
 Since the train test split of the new branch is something we expect to address quite often in development, we will also add a human-readable tag to it.
 This makes it easy to refer back to it and to communicate this specific state of the data to colleagues. Tags are immutable which ensures consistency.
-You and your colleagues can then also work on the same train test split of the data. 
+You and your colleagues can then also work with (the same state (i.e. train test split, etc.) of the data.
 """
 
 # %%
@@ -187,7 +201,9 @@ with fs.transaction as tx:
 # %% [markdown]
 """
 Now we have the data on different branches. If new data comes in, we can perform necessary preprocessing on a separate branch and merge it to `main` once we are sure about its compatibility and we have run all the necessary tests.
-Should the new data be important for the experimentation as well, then we can merge the new main branch into the experimentation branch. 
-You should then create (and add) a new tag for the dataset. To reassign tags, delete them and create a new one. However, beware as this might break reproducibility in other places (i.e. colleagues might expect unchanged data). 
-If you want to have failsafe versioning use the commit sha's of the commits.
+Should the new data be important for the experimentation as well, then we can merge the new main branch into the experimentation branch.
+You should then create a new tag for the dataset.
+You cannot directly reassign tags. If you want to do this anyways, for example to prevent namespace clutter, you have to delete the tag and create a new one. 
+However, beware as this might break reproducibility in other places (i.e. colleagues might expect unchanged data).
+To ensure failsafe versioning use the SHA's of the commits in tracking tools.
 """
