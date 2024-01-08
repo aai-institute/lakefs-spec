@@ -27,7 +27,7 @@ We will explain the following best practices for data versioning in this example
 - Utilize reusable and tested functions for data transformation.
 - Use commits to save checkpoints and merge branches for atomic changes.
 - Keep naming (of branches and commits) consistent, concise, and unique.
-- Use descriptive naming where it matters .
+- Use descriptive naming where it matters.
 
 For this demo project, we aim to build a weather predictor using data from a public API.
 This simulates the dynamics within a real world scenario where we continuously collect more data.
