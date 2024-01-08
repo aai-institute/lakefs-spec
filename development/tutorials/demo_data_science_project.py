@@ -358,13 +358,13 @@ To obtain the actual commit SHA from a branch, we have multiple options.
 Manually, we could go into the lakeFS UI, select the training branch, and navigate to the **Commits** tab.
 There, we take the parent of the previous commit, titled `Add train-test split of 2010 weather data`, and copy its revision SHA (also called `ID`).
 
-In code, we can use a versioning helper called `rev_parse` to obtain commit SHAs for different revisions on the `training` branch.
+In code, we can obtain commit SHAs for different revisions on the `training` branch by using `lakefs.Reference` objects.
 """
 
 # %%
 
-# parent is the parent number of a commit relative to HEAD (the latest commit, for which parent = 0).
-previous_commit = list(repo.branch(TRAINING_BRANCH).log(2))[-1]
+# access the data of the previous commit with a lakefs ref expression, in this case the same as in git.
+previous_commit = repo.ref(f"{TRAINING_BRANCH}~").get_commit()
 fixed_commit_id = previous_commit.id
 print(fixed_commit_id)
 
