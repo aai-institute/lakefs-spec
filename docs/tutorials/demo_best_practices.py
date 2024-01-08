@@ -19,7 +19,7 @@
 # Data Versioning Best Practices
 
 This notebook will guide you through the best practices for versioning data in a data science project.
-We assume you have lakeFS and lakeFS-spec setup. If you need help with it, look into the other parts of the docs or the other tutorial which is more focused on the setup.
+We assume you have lakeFS and lakeFS-spec set up. For guidance on setup and configuration, check the lakeFS-spec documentation.
 
 We will explain the following best practices for data versioning in this example:
 - Define a data repository
