@@ -32,6 +32,10 @@ We will explain the following best practices for data versioning in this example
 For this demo project, we aim to build a weather predictor using data from a public API.
 This simulates the dynamics within a real world scenario where we continuously collect more data.
 """
+
+# %% tags=["Remove_single_output"]
+# %pip install numpy pandas scikit-learn
+
 # %%
 import json
 import tempfile
