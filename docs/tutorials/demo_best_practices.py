@@ -28,28 +28,31 @@ We will explain the following best practices for data versioning in this example
 - Keep naming (of branches and commits) consistent, concise, and unique.
 - Use descriptive naming (where it matters).
 
-For this demo project, we aim to build a weather predictor using data from a public API. 
+For this demo project, we aim to build a weather predictor using data from a public API.
 This simulates the dynamics within a real world scenario where we continuously collect more data.
 """
 # %%
 import json
-import pandas as pd
 import tempfile
 import urllib.request
 from pathlib import Path
-import lakefs_spec
+
+import pandas as pd
 import sklearn
 import sklearn.model_selection
+
+import lakefs_spec
 
 # %% [markdown]
 """
 The cell below contains a helper function to obtain the data. It is otherwise not relevant to this demonstration.
 """
+
+
 # %%
 def _maybe_urlretrieve(url: str, filename: str) -> str:
     # Avoid API rate limit errors by downloading to a fixed local location
-    destination = Path(tempfile.gettempdir()) / \
-        "lakefs-spec-tutorials" / filename
+    destination = Path(tempfile.gettempdir()) / "lakefs-spec-tutorials" / filename
     destination.parent.mkdir(exist_ok=True, parents=True)
     if destination.exists():
         return str(destination)
@@ -80,8 +83,9 @@ fs = lakefs_spec.LakeFSFileSystem()
 
 REPO_NAME = "weatherpred"
 
-repo = lakefs_spec.client_helpers.create_repository(client=fs.client, name=REPO_NAME,
-                                                    storage_namespace=f"local://{REPO_NAME}")
+repo = lakefs_spec.client_helpers.create_repository(
+    client=fs.client, name=REPO_NAME, storage_namespace=f"local://{REPO_NAME}"
+)
 
 # %% [markdown]
 """
@@ -101,8 +105,7 @@ NEW_BRANCH_NAME = "transform-raw-data"
 
 with fs.transaction as tx:
     fs.put(outfile, f"{REPO_NAME}/{NEW_BRANCH_NAME}/weather-2010.json")
-    tx.commit(repository=REPO_NAME, branch=NEW_BRANCH_NAME,
-              message="Add 2010 weather data")
+    tx.commit(repository=REPO_NAME, branch=NEW_BRANCH_NAME, message="Add 2010 weather data")
 
 # %% [markdown]
 """
@@ -110,7 +113,7 @@ Now that we have the data on the `transform-raw-data` branch, we can start with 
 
 It is good practice to encapsulate common transformations in functions.
 This way we can save some work by reusing our code. We can also add unit tests for the transformation functions.
-This increases our confidence in the data quality and serves as additional context to infer the purpose of the function should we or someone else come back at a later time. 
+This increases our confidence in the data quality and serves as additional context to infer the purpose of the function should we or someone else come back at a later time.
 Since the focus of this demo is data version control, we wont write tests now.
 """
 
@@ -144,8 +147,7 @@ We write a descriptive commit message.
 # %%
 with fs.transaction as tx:
     df.to_csv(f"lakefs://{REPO_NAME}/main/weather_2010.csv")
-    commit = tx.commit(repository=REPO_NAME, branch="main",
-                       message="Preprocess 2010 data")
+    commit = tx.commit(repository=REPO_NAME, branch="main", message="Preprocess 2010 data")
 print(commit)
 
 # %% [markdown]
@@ -168,14 +170,11 @@ Here, we will conduct the train test split and further experiment specific modif
 # %%
 TRAINING_BRANCH = "experiment-1"
 with fs.transaction as tx:
-    tx.create_branch(repository=REPO_NAME,
-                     name=TRAINING_BRANCH, source_branch="main")
+    tx.create_branch(repository=REPO_NAME, name=TRAINING_BRANCH, source_branch="main")
 
-df = pd.read_csv(
-    f"lakefs://{REPO_NAME}/{TRAINING_BRANCH}/weather_2010.csv")
+df = pd.read_csv(f"lakefs://{REPO_NAME}/{TRAINING_BRANCH}/weather_2010.csv")
 model_data = df.drop("time", axis=1)
-train, test = sklearn.model_selection.train_test_split(
-    model_data, random_state=7)
+train, test = sklearn.model_selection.train_test_split(model_data, random_state=7)
 
 # %% [markdown]
 """
@@ -203,7 +202,7 @@ with fs.transaction as tx:
 Now we have the data on different branches. If new data comes in, we can perform necessary preprocessing on a separate branch and merge it to `main` once we are sure about its compatibility and we have run all the necessary tests.
 Should the new data be important for the experimentation as well, then we can merge the new main branch into the experimentation branch.
 You should then create a new tag for the dataset.
-You cannot directly reassign tags. If you want to do this anyways, for example to prevent namespace clutter, you have to delete the tag and create a new one. 
+You cannot directly reassign tags. If you want to do this anyways, for example to prevent namespace clutter, you have to delete the tag and create a new one.
 However, beware as this might break reproducibility in other places (i.e. colleagues might expect unchanged data).
 To ensure failsafe versioning use the SHA's of the commits in tracking tools.
 """
