@@ -3,21 +3,18 @@ import logging
 import random
 import string
 import sys
-from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Generator, TypeVar
 from unittest.mock import MagicMock
 
+import lakefs
 import pytest
 import yaml
-from lakefs_sdk import Configuration
-from lakefs_sdk.client import LakeFSClient
-from lakefs_sdk.models import BranchCreation, RepositoryCreation
+from lakefs.client import Client
+from lakefs.repository import Repository
 
 from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory
-
-_TEST_REPO = "lakefs-spec-tests"
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -28,99 +25,70 @@ T = TypeVar("T")
 YieldFixture = Generator[T, None, None]
 
 
-@dataclass
-class LakeFSOptions:
-    host: str
-    username: str
-    password: str
+def pytest_report_header(config):
+    from importlib.metadata import version
+
+    lakefs_version = version("lakefs")
+    from lakefs_sdk import __version__ as __lakefs_sdk_version__
+
+    from lakefs_spec import __version__ as __lakefs_spec_version__
+
+    return [
+        f"lakefs version: {lakefs_version}",
+        f"lakeFS SDK version: {__lakefs_sdk_version__}",
+        f"lakeFS-spec version: {__lakefs_spec_version__}",
+    ]
 
 
-@pytest.fixture(scope="session")
-def lakefs_options() -> LakeFSOptions:
-    """Raw configuration options for a lakeFS test instance."""
-    return LakeFSOptions(
+@pytest.fixture
+def fs() -> LakeFSFileSystem:
+    LakeFSFileSystem.clear_instance_cache()
+    return LakeFSFileSystem(
         host="localhost:8000",
         username="AKIAIOSFOLQUICKSTART",
         password="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
     )
 
 
-@pytest.fixture
-def fs(lakefs_options: LakeFSOptions) -> LakeFSFileSystem:
-    LakeFSFileSystem.clear_instance_cache()
-    return LakeFSFileSystem(**asdict(lakefs_options))
-
-
 @pytest.fixture(scope="session")
-def lakefs_client(lakefs_options: LakeFSOptions) -> LakeFSClient:
+def _client() -> Client:
     """A lakeFS client for API operations outside of the file system."""
-
-    configuration = Configuration(
-        host=lakefs_options.host,
-        username=lakefs_options.username,
-        password=lakefs_options.password,
+    return Client(
+        host="localhost:8000",
+        username="AKIAIOSFOLQUICKSTART",
+        password="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
     )
-    return LakeFSClient(configuration=configuration)
 
 
 @pytest.fixture(scope="session")
-def repository(lakefs_client: LakeFSClient) -> str:
-    # no loop, assumes there exist fewer than 100 repos.
-    reponames = [r.id for r in lakefs_client.repositories_api.list_repositories().results]
-
-    if _TEST_REPO in reponames:
-        logger.info(f"Test repository {_TEST_REPO!r} already exists.")
-    else:
-        storage_config = lakefs_client.config_api.get_config().storage_config
-        storage_namespace = f"{storage_config.default_namespace_prefix}/{_TEST_REPO}"
-        logger.info(
-            f"Creating test repository {_TEST_REPO!r} "
-            f"with associated storage namespace {storage_namespace!r}."
-        )
-        lakefs_client.repositories_api.create_repository(
-            RepositoryCreation(
-                name=_TEST_REPO,
-                storage_namespace=storage_namespace,
-                sample_data=True,
-            )
-        )
-    return _TEST_REPO
+def repository(_client: Client) -> Repository:
+    name = "lakefs-spec-tests"
+    storage_namespace = f"{_client.storage_config.default_namespace_prefix}/{name}"
+    repo = lakefs.Repository(name, client=_client).create(
+        storage_namespace=storage_namespace, include_samples=True, exist_ok=True
+    )
+    return repo
 
 
 @pytest.fixture
-def temporary_branch_context(lakefs_client: LakeFSClient, repository: str) -> Any:
+def temporary_branch_context(repository: Repository) -> Any:
     @contextlib.contextmanager
     def _wrapper(name: str) -> YieldFixture[str]:
+        branch = repository.branch(name)
         try:
-            lakefs_client.branches_api.create_branch(
-                repository=repository,
-                branch_creation=BranchCreation(name=name, source="main"),
-            )
-            yield name
+            yield branch.create("main", exist_ok=False)
         finally:
-            lakefs_client.branches_api.delete_branch(
-                repository=repository,
-                branch=name,
-            )
+            branch.delete()
 
     return _wrapper
 
 
 @pytest.fixture
-def temp_branch(lakefs_client: LakeFSClient, repository: str) -> YieldFixture[str]:
+def temp_branch(repository: str, temporary_branch_context: Any) -> YieldFixture[str]:
     """Create a temporary branch for a test."""
     name = "test-" + "".join(random.choices(string.digits, k=8))
-    try:
-        lakefs_client.branches_api.create_branch(
-            repository=repository,
-            branch_creation=BranchCreation(name=name, source="main"),
-        )
-        yield name
-    finally:
-        lakefs_client.branches_api.delete_branch(
-            repository=repository,
-            branch=name,
-        )
+    with temporary_branch_context(name) as tb:
+        yield tb
 
 
 @pytest.fixture

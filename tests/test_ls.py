@@ -1,15 +1,18 @@
+import lakefs
 import pytest
+from lakefs.branch import Branch
+from lakefs.repository import Repository
 
 from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory, with_counter
 
 
 @pytest.mark.parametrize("pagesize", [1, 2, 5, 10, 50])
-def test_paginated_ls(fs: LakeFSFileSystem, repository: str, pagesize: int) -> None:
+def test_paginated_ls(fs: LakeFSFileSystem, repository: Repository, pagesize: int) -> None:
     """
     Check that all results of an ``ls`` call are returned independently of page size.
     """
-    resource = f"{repository}/main/"
+    resource = f"{repository.id}/main/"
 
     # default amount of 100 objects per page
     all_results = fs.ls(resource)
@@ -18,14 +21,14 @@ def test_paginated_ls(fs: LakeFSFileSystem, repository: str, pagesize: int) -> N
     assert paged_results == all_results
 
 
-def test_ls_caching(fs: LakeFSFileSystem, repository: str) -> None:
+def test_ls_caching(fs: LakeFSFileSystem, repository: Repository) -> None:
     """
     Check that ls calls are properly cached.
     """
     fs.client, counter = with_counter(fs.client)
 
     testdir = "data"
-    resource = f"{repository}/main/{testdir}/"
+    resource = f"{repository.id}/main/{testdir}/"
 
     for _ in range(2):
         fs.ls(resource)
@@ -36,14 +39,13 @@ def test_ls_caching(fs: LakeFSFileSystem, repository: str) -> None:
     assert counter.count("objects_api.list_objects") == 1
 
 
-def test_ls_cache_refresh(fs: LakeFSFileSystem, repository: str) -> None:
+def test_ls_cache_refresh(fs: LakeFSFileSystem, repository: Repository) -> None:
     """
     Check that ls calls bypass the dircache if requested through ``refresh=False``
     """
     fs.client, counter = with_counter(fs.client)
 
-    testdir = "data"
-    resource = f"{repository}/main/{testdir}/"
+    resource = f"{repository.id}/main/data/"
 
     for _ in range(2):
         fs.ls(resource, refresh=True)
@@ -56,15 +58,13 @@ def test_ls_cache_refresh(fs: LakeFSFileSystem, repository: str) -> None:
 
 def test_ls_stale_cache_entry(
     fs: LakeFSFileSystem,
-    repository: str,
+    repository: Repository,
+    temp_branch: Branch,
     random_file_factory: RandomFileFactory,
-    temp_branch: str,
 ) -> None:
     fs.client, counter = with_counter(fs.client)
 
-    random_file = random_file_factory.make()
-
-    resource = f"{repository}/main/data/"
+    resource = f"{repository.id}/main/data/"
 
     res = fs.ls(resource)
     assert counter.count("objects_api.list_objects") == 1
@@ -74,8 +74,9 @@ def test_ls_stale_cache_entry(
     assert len(cache_entry) == 1
     assert cache_entry[0] == res[0]
 
+    random_file = random_file_factory.make()
     lpath = str(random_file)
-    rpath = f"{repository}/{temp_branch}/data/{random_file.name}"
+    rpath = f"{repository.id}/{temp_branch.id}/data/{random_file.name}"
 
     fs.put_file(lpath, rpath, precheck=False)
 
@@ -86,16 +87,16 @@ def test_ls_stale_cache_entry(
     assert len(cache_entry) == 1
 
     # ... but instead to the cache entry for the new branch
-    cache_entry = fs.dircache[f"{repository}/{temp_branch}/data"]
+    cache_entry = fs.dircache[f"{repository.id}/{temp_branch.id}/data"]
     assert len(cache_entry) == 1
     assert cache_entry[0] == res[0]
 
 
-def test_ls_no_detail(fs: LakeFSFileSystem, repository: str) -> None:
+def test_ls_no_detail(fs: LakeFSFileSystem, repository: Repository) -> None:
     fs.client, counter = with_counter(fs.client)
 
     branch = "main"
-    prefix = f"{repository}/{branch}"
+    prefix = f"{repository.id}/{branch}"
     resource = f"{prefix}/data"
 
     expected = [f"{resource}/lakes.source.md"]
@@ -118,12 +119,10 @@ def test_ls_no_detail(fs: LakeFSFileSystem, repository: str) -> None:
 
 def test_ls_dircache_remove_uncached(
     fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
+    repository: Repository,
+    temp_branch: Branch,
 ) -> None:
-    prefix = f"{repository}/{temp_branch}"
-    resource = f"{prefix}/"
-
+    resource = f"{repository.id}/{temp_branch.id}/"
     listing_pre = fs.ls(resource)
     fs.rm(listing_pre[0]["name"])
 
@@ -138,12 +137,10 @@ def test_ls_dircache_remove_uncached(
 
 def test_ls_dircache_remove_cached(
     fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
+    repository: Repository,
+    temp_branch: Branch,
 ) -> None:
-    prefix = f"{repository}/{temp_branch}"
-    resource = f"{prefix}/"
-
+    resource = f"{repository.id}/{temp_branch.id}/"
     listing_pre = fs.ls(resource)
     fs.rm(listing_pre[0]["name"])
 
@@ -154,10 +151,10 @@ def test_ls_dircache_remove_cached(
 
 def test_ls_dircache_recursive(
     fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
+    repository: Repository,
+    temp_branch: Branch,
 ) -> None:
-    prefix = f"{repository}/{temp_branch}"
+    prefix = f"{repository.id}/{temp_branch.id}"
 
     # (1) Basic recursive dircache filling
     listing = fs.ls(prefix + "/", recursive=True)
@@ -201,11 +198,11 @@ def test_ls_dircache_recursive(
 
 def test_ls_directories(
     fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
+    repository: Repository,
+    temp_branch: Branch,
 ) -> None:
     """Validate that recursive and non-recursive ``ls`` handle directory entries identically."""
-    prefix = f"lakefs://{repository}/{temp_branch}"
+    prefix = f"lakefs://{repository.id}/{temp_branch.id}"
 
     fs.rm(f"{prefix}/images/", recursive=True)
     fs.rm(f"{prefix}/data/", recursive=True)
@@ -225,3 +222,22 @@ def test_ls_directories(
 
     dirs = [o for o in ls_nonrecursive if o["type"] == "directory"]
     assert len(dirs) == 1  # only `dir1/`
+
+
+def test_ls_on_commit(
+    fs: LakeFSFileSystem,
+    repository: Repository,
+) -> None:
+    prefix = f"lakefs://{repository.id}"
+
+    head = lakefs.Branch(repository.id, "main", client=fs.client).head
+
+    from_branch = fs.ls(f"{prefix}/main/images")
+    # we cannot directly compare the objects since the names will be different -
+    # they are prefixed with the repository and requested reference.
+    branch_metadata = [(o["checksum"], o["mtime"], o["size"]) for o in from_branch]
+    # fetching directly from commit should yield the same result.
+    from_commit = fs.ls(f"{prefix}/{head.id}/images")
+    commit_metadata = [(o["checksum"], o["mtime"], o["size"]) for o in from_commit]
+
+    assert branch_metadata == commit_metadata

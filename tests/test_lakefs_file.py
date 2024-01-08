@@ -1,22 +1,24 @@
+from pathlib import Path
+
 import pytest
+from lakefs.branch import Branch
+from lakefs.repository import Repository
 
 from lakefs_spec import LakeFSFileSystem
-from tests.util import RandomFileFactory
+from tests.util import RandomFileFactory, put_random_file_on_branch
 
 
 def test_lakefs_file_open_read(
     fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
+    repository: Repository,
+    temp_branch: Branch,
     random_file_factory: RandomFileFactory,
 ) -> None:
-    random_file = random_file_factory.make()
-    with open(random_file, "rb") as f:
-        orig_text = f.read()
+    rpath = put_random_file_on_branch(random_file_factory, fs, repository, temp_branch)
+    lpath = str(random_file_factory.path / Path(rpath).name)
 
-    lpath = str(random_file)
-    rpath = f"{repository}/{temp_branch}/{random_file.name}"
-    fs.put_file(lpath, rpath)
+    with open(lpath, "rb") as f:
+        orig_text = f.read()
 
     # try opening the remote file
     with fs.open(rpath) as fp:
@@ -27,22 +29,23 @@ def test_lakefs_file_open_read(
 
 def test_lakefs_file_open_write(
     fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
+    repository: Repository,
+    temp_branch: Branch,
     random_file_factory: RandomFileFactory,
 ) -> None:
-    random_file = random_file_factory.make()
-    with open(random_file, "rb") as f:
-        orig_text = f.read()
+    rpath = put_random_file_on_branch(random_file_factory, fs, repository, temp_branch)
+    lpath = str(random_file_factory.path / Path(rpath).name)
 
-    rpath = f"{repository}/{temp_branch}/{random_file.name}"
+    with open(lpath, "rb") as f:
+        orig_text = f.read()
 
     # try opening the remote file and writing to it
     with fs.open(rpath, "wb") as fp:
         fp.write(orig_text)
 
     # pulling the written file down again, using ONLY built-in open (!)
-    lpath = random_file.with_name(random_file.name + "_copy")
+    plpath = Path(lpath)
+    lpath = plpath.with_name(plpath.name + "_copy")
 
     blocksize = fs.blocksize
     fs.blocksize = 256

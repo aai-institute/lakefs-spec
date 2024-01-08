@@ -8,11 +8,9 @@ avoid complicated error handling setups.
 from __future__ import annotations
 
 import errno
-import json
 from functools import partial
-from urllib.error import HTTPError
 
-from lakefs_sdk import ApiException
+from lakefs.exceptions import ServerException
 
 HTTP_CODE_TO_ERROR: dict[int, type[OSError] | partial[OSError]] = {
     400: partial(IOError, errno.EINVAL),
@@ -26,21 +24,21 @@ HTTP_CODE_TO_ERROR: dict[int, type[OSError] | partial[OSError]] = {
 
 
 def translate_lakefs_error(
-    error: ApiException | HTTPError,
+    error: ServerException,
     rpath: str | None = None,
     message: str | None = None,
     set_cause: bool = True,
 ) -> OSError:
     """
-    Convert a lakeFS API exception or urllib HTTP error to a Python builtin exception.
+    Convert a lakeFS server exception to a Python builtin exception.
 
-    For some subclasses of ``lakefs_sdk.ApiException``, a direct Python builtin equivalent exists.
+    For some subclasses of ``lakefs.exceptions.ServerException``, a direct Python builtin equivalent exists.
     In these cases, the suitable equivalent is returned. All other classes are converted to a standard ``IOError``.
 
     Parameters
     ----------
-    error: ApiException | HTTPError
-        The exception returned by the lakeFS API.
+    error: ServerException
+        The exception returned by the lakeFS SDK wrapper.
     rpath: str | None
         The remote resource path involved in the error.
     message: str | None
@@ -54,11 +52,13 @@ def translate_lakefs_error(
     OSError
         A builtin Python exception ready to be thrown.
     """
-    if isinstance(error, ApiException):
-        status = error.status
-        reason = json.loads(error.body or "{}").get("message", "")
+    status = error.status_code
+
+    if hasattr(error, "body"):
+        # error has a JSON response body attached
+        reason = error.body["message"]
     else:
-        status, reason = error.code, error.reason
+        reason = error.reason
 
     emsg = f"{status} {reason}"
     if rpath:

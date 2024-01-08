@@ -102,9 +102,9 @@ If you have already created one in the UI, make sure to set the `REPO_NAME` vari
 """
 
 # %%
-from lakefs_spec.client_helpers import create_repository
+import lakefs
 
-repo = create_repository(client=fs.client, name=REPO_NAME, storage_namespace=f"local://{REPO_NAME}")
+repo = lakefs.Repository(REPO_NAME, fs.client).create(storage_namespace=f"local://{REPO_NAME}")
 
 # %% [markdown]
 """
@@ -358,14 +358,13 @@ To obtain the actual commit SHA from a branch, we have multiple options.
 Manually, we could go into the lakeFS UI, select the training branch, and navigate to the **Commits** tab.
 There, we take the parent of the previous commit, titled `Add train-test split of 2010 weather data`, and copy its revision SHA (also called `ID`).
 
-In code, we can use a versioning helper called `rev_parse` to obtain commit SHAs for different revisions on the `training` branch.
+In code, we can obtain commit SHAs for different revisions on the `training` branch by using `lakefs.Reference` objects.
 """
 
 # %%
-from lakefs_spec.client_helpers import rev_parse
 
-# parent is the parent number of a commit relative to HEAD (the latest commit, for which parent = 0).
-previous_commit = rev_parse(fs.client, REPO_NAME, TRAINING_BRANCH, parent=1)
+# access the data of the previous commit with a lakefs ref expression, in this case the same as in git.
+previous_commit = repo.ref(f"{TRAINING_BRANCH}~").get_commit()
 fixed_commit_id = previous_commit.id
 print(fixed_commit_id)
 
@@ -440,10 +439,9 @@ print(
 # %% tags=["Remove_input", "Remove_all_output"]
 # Clean-up cell removing artifacts created in notebook execution to ensure idempotency.
 # Cell hidden in docs
-from lakefs_spec.client_helpers import delete_branch, delete_tag, list_branches, list_tags
 
-for tag in list_tags(fs.client, REPO_NAME):
-    delete_tag(fs.client, repository=REPO_NAME, tag=tag.id)
-for branch in list_branches(fs.client, repository=REPO_NAME):
-    if branch.id != "main":
-        delete_branch(fs.client, repository=REPO_NAME, branch=branch.id)
+for t in repo.tags():
+    t.delete()
+for b in repo.branches():
+    if b.id != "main":
+        b.delete()

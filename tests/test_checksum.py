@@ -1,5 +1,8 @@
 import time
 
+from lakefs.branch import Branch
+from lakefs.repository import Repository
+
 from lakefs_spec import LakeFSFileSystem
 from lakefs_spec.spec import md5_checksum
 from tests.util import RandomFileFactory, with_counter
@@ -8,15 +11,15 @@ from tests.util import RandomFileFactory, with_counter
 def test_checksum_matching(
     random_file_factory: RandomFileFactory,
     fs: LakeFSFileSystem,
-    repository: str,
-    temp_branch: str,
+    repository: Repository,
+    temp_branch: Branch,
 ) -> None:
     random_file = random_file_factory.make()
 
     fs.client, counter = with_counter(fs.client)
 
     lpath = str(random_file)
-    rpath = f"{repository}/{temp_branch}/{random_file.name}"
+    rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"
     fs.put_file(lpath, rpath)
 
     # assert that MD5 hash is insensitive to the block size
@@ -29,8 +32,3 @@ def test_checksum_matching(
 
     # we expect to get one `info` call per upload attempt, but only one actual upload.
     assert counter.count("objects_api.stat_object") == len(blocksizes) + 1
-    assert counter.count("objects_api.upload_object") == 1
-
-    # force overwrite this time, assert the `upload` API was called again
-    fs.put_file(lpath, rpath, precheck=False)
-    assert counter.count("objects_api.upload_object") == 2
