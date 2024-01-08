@@ -219,7 +219,7 @@ print(commit)
 
 # %% [markdown]
 """
-We see that the commit now has a unique id, the commit SHA which we can log to identify this particular state of the data.
+We see that the commit has a unique id, the commit SHA which we can log to identify this particular state of the data.
 
 As the data looks good, we can also merge the branch back into `main`.
 """
