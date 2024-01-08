@@ -313,8 +313,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         rpath = stringify_path(rpath)
         lpath = stringify_path(lpath)
 
-        lp = Path(lpath)
-        if precheck and lp.exists() and lp.is_file():
+        if precheck and Path(lpath).is_file():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.info(rpath).get("checksum")
             if local_checksum == remote_checksum:
