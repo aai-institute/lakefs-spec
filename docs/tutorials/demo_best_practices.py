@@ -102,7 +102,7 @@ Every commit (on any branch) is identified by a commit SHA, a unique identifier 
 ## Branching Strategy
 
 We recommend following a branching strategy that ensures the data integrity on the main branch.
-Since we are about to do some data wrangling, we will fork off a branch and later merge it to `main` once we are sure everything works as expected.
+Since we are about to do some data wrangling, we will branch off `main` and later merge back into it, once we are sure everything works as expected.
 """
 
 # %%
