@@ -29,7 +29,7 @@ We will explain the following best practices for data versioning in this example
 - Keep naming (of branches and commits) consistent, concise, and unique.
 - Use descriptive naming where it matters.
 
-For this demo project, we aim to build a weather predictor using data from a public API.
+In this demo project, we build a weather predictor using data from a public API.
 This simulates the dynamics within a real world scenario where we continuously collect more data.
 """
 
