@@ -245,7 +245,7 @@ train, test = sklearn.model_selection.train_test_split(model_data, random_state=
 
 # %% [markdown]
 """
-## Descriptive Tags for Human-Readability and Uniqe SHAs for unique Identification
+## Descriptive tags for human readability and unique SHAs for identification
 
 Since the train test split of the new branch is something we expect to address quite often in development, we will also add a human-readable tag to it.
 This makes it easy to refer back to it and to communicate this specific state of the data to colleagues. Tags are immutable which ensures consistency.
