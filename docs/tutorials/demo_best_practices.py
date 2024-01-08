@@ -19,7 +19,7 @@
 # Data Versioning Best Practices
 
 This notebook will guide you through the best practices for versioning data in a data science project.
-We assume you have lakeFS and lakeFS-spec setup. If you need help with it, look into the other parts of the docs or the other tutorial which is more focused on the setup.
+We assume you have lakeFS and lakeFS-spec set up. For guidance on setup and configuration, check the lakeFS-spec documentation.
 
 We will explain the following best practices for data versioning in this example:
 - Define a data repository
@@ -27,7 +27,7 @@ We will explain the following best practices for data versioning in this example
 - Utilize reusable and tested functions for data transformation.
 - Use commits to save checkpoints and merge branches for atomic changes.
 - Keep naming (of branches and commits) consistent, concise, and unique.
-- Use descriptive naming where it matters .
+- Use descriptive naming where it matters.
 
 For this demo project, we aim to build a weather predictor using data from a public API.
 This simulates a world scenario where we continuously collect more data, albeit with less complexity.
@@ -107,7 +107,7 @@ Every commit (on any branch) is identified by a commit SHA, a unique identifier 
 ## Branching Strategy
 
 We recommend following a branching strategy that ensures the data integrity on the main branch.
-Since we are about to do some data wrangling, we will fork off a branch and later merge it to `main` once we are sure everything works as expected.
+Since we are about to do some data wrangling, we will branch off `main` and later merge back into it, once we are sure everything works as expected.
 """
 
 # %%
@@ -211,7 +211,7 @@ df.head(5)
 
 # %% [markdown]
 """
-## Use Commits to Save Checkpoints and Merge Branches for Atomic Changes
+## Use commits as checkpoints and merge branches for atomic changes
 
 Now we can commit the updated data to the transform-raw-data branch in lakeFS repository.
 We write a descriptive commit message.
@@ -224,7 +224,7 @@ print(commit)
 
 # %% [markdown]
 """
-We see that the commit now has a unique id, the commit SHA which we can log to identify this particular state of the data.
+We see that the commit has a unique id, the commit SHA which we can log to identify this particular state of the data.
 
 As the data looks good, we can also merge the branch back into `main`.
 """
@@ -250,7 +250,7 @@ train, test = sklearn.model_selection.train_test_split(model_data, random_state=
 
 # %% [markdown]
 """
-## Descriptive Tags for Human-Readability and Uniqe SHAs for unique Identification
+## Descriptive tags for human readability and unique SHAs for identification
 
 Since the train test split of the new branch is something we expect to address quite often in development, we will also add a human-readable tag to it.
 In the code below we directly pass the commit as the reference. If we would pass a branch, the tag would point to the current HEAD (i.e. the latest) commit on the branch.
