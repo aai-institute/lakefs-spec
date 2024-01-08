@@ -38,6 +38,7 @@ import tempfile
 import urllib.request
 from pathlib import Path
 
+import lakefs
 import pandas as pd
 import sklearn
 import sklearn.model_selection
@@ -84,9 +85,8 @@ fs = lakefs_spec.LakeFSFileSystem()
 
 REPO_NAME = "weatherpred"
 
-repo = lakefs_spec.client_helpers.create_repository(
-    client=fs.client, name=REPO_NAME, storage_namespace=f"local://{REPO_NAME}"
-)
+repo = lakefs.Repository(REPO_NAME, fs.client).create(storage_namespace=f"local://{REPO_NAME}")
+
 
 # %% [markdown]
 """
@@ -233,7 +233,7 @@ Here, we will conduct the train test split and further experiment specific modif
 # %%
 TRAINING_BRANCH = "experiment-1"
 with fs.transaction as tx:
-    tx.create_branch(repository=REPO_NAME, name=TRAINING_BRANCH, source_branch="main")
+    tx.create_branch(repository=REPO_NAME, name=TRAINING_BRANCH, source="main")
 
 df = pd.read_csv(f"lakefs://{REPO_NAME}/{TRAINING_BRANCH}/weather_2010.csv")
 model_data = df.drop("time", axis=1)
