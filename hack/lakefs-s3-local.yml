@@ -5,7 +5,7 @@ version: "3"
 services:
   seaweedfs:
     container_name: sandbox-s3
-    image: chrislusf/seaweedfs:3.56
+    image: chrislusf/seaweedfs:3.61
     network_mode: host
     command: server -ip.bind 0.0.0.0 -master.volumeSizeLimitMB=1024 -volume.port=9000 -filer.collection=sandbox -s3 -s3.port 9001 -s3.config=/etc/seaweedfs/s3.json -s3.allowEmptyFolder=true -s3.allowDeleteBucketNotEmpty=true
     volumes:
@@ -13,7 +13,7 @@ services:
       - ./config/s3.json:/etc/seaweedfs/s3.json
 
   lakefs:
-    image: treeverse/lakefs:1.3.1
+    image: treeverse/lakefs:1.7.0
     network_mode: host
     depends_on:
       - seaweedfs
