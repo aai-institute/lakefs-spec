@@ -86,7 +86,7 @@ print(data.head())
 # Polars -- see https://pola-rs.github.io/polars/user-guide/io/cloud-storage/
 import polars as pl
 
-data = pl.read_parquet("lakefs://quickstart/main/lakes.parquet")
+data = pl.read_parquet("lakefs://quickstart/main/lakes.parquet", use_pyarrow=True)
 print(data.head())
 
 
