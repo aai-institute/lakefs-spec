@@ -14,7 +14,9 @@ storage_options = dict(
 )
 
 
-def test_pandas_integration(repository: Repository, temp_branch: Branch) -> None:
+def test_pandas_integration(
+    fs: LakeFSFileSystem, repository: Repository, temp_branch: Branch
+) -> None:
     """Assures the correctness of pandas DataFrame reads and writes, which use `fs.open()`."""
     df = pd.read_parquet(
         f"lakefs://{repository.id}/{temp_branch.id}/lakes.parquet", storage_options=storage_options
@@ -24,6 +26,7 @@ def test_pandas_integration(repository: Repository, temp_branch: Branch) -> None
         f"lakefs://{repository.id}/{temp_branch.id}/lakes_new.parquet",
         storage_options=storage_options,
     )
+    assert fs.exists(f"lakefs://{repository.id}/{temp_branch.id}/lakes_new.parquet")
 
 
 def test_polars_integration(repository: Repository) -> None:
