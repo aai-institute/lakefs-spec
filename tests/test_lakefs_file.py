@@ -59,6 +59,12 @@ def test_lakefs_file_open_write(
     assert new_text == orig_text
 
 
+def test_open_mode_coercion(fs: LakeFSFileSystem, repository: Repository) -> None:
+    """Checks that text mode indicators are stripped."""
+    with fs.open(f"{repository.id}/main/README.md", "rt") as f:
+        assert f.mode == "r"
+
+
 def test_lakefs_file_unknown_mode(fs: LakeFSFileSystem) -> None:
     """Test that a NotImplementedError is raised on unknown mode encounter."""
 
