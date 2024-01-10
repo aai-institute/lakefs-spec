@@ -572,29 +572,35 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         return info
 
-    def _open(
+    def open(
         self,
         path: str | os.PathLike[str],
-        mode: Literal["rb", "wb", "xb"] = "rb",
+        mode: Literal["r", "rb", "rt", "w", "wb", "wt", "x", "xb", "xt"] = "rb",
+        pre_sign: bool = False,
+        content_type: str | None = None,
+        metadata: dict[str, str] | None = None,
+        autocommit: bool = True,
         **kwargs: Any,
     ) -> LakeFSIOBase:
         """
-        Dispatch a lakeFS file (local buffer on disk) for the given remote path for up- or downloads depending on ``mode``.
-
-        Internal only, called by ``AbstractFileSystem.open()``.
+        Dispatch a lakeFS file-like object (local buffer on disk) for the given remote path for up- or downloads depending on ``mode``.
 
         Parameters
         ----------
         path: str | os.PathLike[str]
             The remote path for which to open a local ``LakeFSFile``. Must be a fully qualified lakeFS URI.
-        mode: Literal["rb", "wb", "xb"]
-            The file mode indicating its purpose. Use ``rb`` for downloads from lakeFS, ``wb/xb`` for uploads to lakeFS.
+        mode: Literal["r", "rb", "rt", "w", "wb", "wt", "x", "xb", "xt"]
+            The file mode indicating its purpose. Use ``r/rb`` for downloads from lakeFS, ``w/wb/x/xb`` for uploads to lakeFS.
+        pre_sign: bool
+            Whether to use a pre-signed URL for the file up-/download.
+        content_type: str | None
+            Content type to use for the file, relevant for uploads only.
+        metadata: dict[str, str] | None
+            Additional metadata to attach to the file, relevant for uploads only.
+        autocommit: bool
+            Whether to process the file immediately instead of queueing it for transaction while in a transaction context.
         **kwargs: Any
-            Additional keyword arguments for fsspec compatibility, may contain:
-
-                `pre_sign: bool`: whether to use a pre-signed URL for the file up-/download,
-                `content_type: str | None`: content type to use for the file (upload only),
-                `metadata: dict[str, str] | None`: Additional metadata to attach to the file (upload only).
+            Additional keyword arguments for fsspec compatibility, unused.
 
         Returns
         -------
@@ -606,15 +612,17 @@ class LakeFSFileSystem(AbstractFileSystem):
         NotImplementedError
             If ``mode`` is not supported.
         """
-        if mode not in {"rb", "wb", "xb"}:
+        if mode.endswith("t"):
+            # text modes {r,w,x}t are equivalent to {r,w,x} here respectively.
+            mode = mode[:-1]  # type: ignore
+
+        if mode not in {"r", "rb", "w", "wb", "x", "xb"}:
             raise NotImplementedError(f"unsupported mode {mode!r}")
 
         path = stringify_path(path)
         repo, ref, resource = parse(path)
 
-        pre_sign = kwargs.pop("pre_sign", False)
-
-        if mode == "rb":
+        if mode.startswith("r"):
             reference = lakefs.Reference(repo, ref, client=self.client)
             obj = reference.object(resource)
 
@@ -622,13 +630,10 @@ class LakeFSFileSystem(AbstractFileSystem):
                 raise FileNotFoundError(path)
             handler = ObjectReader(obj, mode=mode, pre_sign=pre_sign, client=self.client)
         else:
-            # ref must be a branch
+            # for writing ops, ref must be a branch
             branch = lakefs.Branch(repo, ref, client=self.client)
             if self.create_branch_ok:
                 branch.create(self.source_branch, exist_ok=True)
-
-            content_type = kwargs.pop("content_type", None)
-            metadata = kwargs.pop("metadata", None)
 
             obj = branch.object(resource)
             handler = ObjectWriter(
@@ -639,6 +644,10 @@ class LakeFSFileSystem(AbstractFileSystem):
                 metadata=metadata,
                 client=self.client,
             )
+
+        ac = kwargs.pop("autocommit", not self._intrans)
+        if not ac and "r" not in mode:
+            self.transaction.files.append(handler)
 
         return handler
 
