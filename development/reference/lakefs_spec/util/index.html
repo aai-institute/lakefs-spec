@@ -730,7 +730,7 @@ released. For the most accurate information, please <strong><a href="../../../..
         <li class="md-nav__item">
   <a href="#lakefs_spec.util.depaginate" class="md-nav__link">
     <span class="md-ellipsis">
-      depaginate()
+      depaginate
     </span>
   </a>
   
@@ -739,7 +739,7 @@ released. For the most accurate information, please <strong><a href="../../../..
         <li class="md-nav__item">
   <a href="#lakefs_spec.util.md5_checksum" class="md-nav__link">
     <span class="md-ellipsis">
-      md5_checksum()
+      md5_checksum
     </span>
   </a>
   
@@ -748,7 +748,7 @@ released. For the most accurate information, please <strong><a href="../../../..
         <li class="md-nav__item">
   <a href="#lakefs_spec.util.parse" class="md-nav__link">
     <span class="md-ellipsis">
-      parse()
+      parse
     </span>
   </a>
   
@@ -834,7 +834,7 @@ released. For the most accurate information, please <strong><a href="../../../..
         <li class="md-nav__item">
   <a href="#lakefs_spec.util.depaginate" class="md-nav__link">
     <span class="md-ellipsis">
-      depaginate()
+      depaginate
     </span>
   </a>
   
@@ -843,7 +843,7 @@ released. For the most accurate information, please <strong><a href="../../../..
         <li class="md-nav__item">
   <a href="#lakefs_spec.util.md5_checksum" class="md-nav__link">
     <span class="md-ellipsis">
-      md5_checksum()
+      md5_checksum
     </span>
   </a>
   
@@ -852,7 +852,7 @@ released. For the most accurate information, please <strong><a href="../../../..
         <li class="md-nav__item">
   <a href="#lakefs_spec.util.parse" class="md-nav__link">
     <span class="md-ellipsis">
-      parse()
+      parse
     </span>
   </a>
   
@@ -909,15 +909,14 @@ released. For the most accurate information, please <strong><a href="../../../..
 
 
 
-
 <h2 id="lakefs_spec.util.depaginate" class="doc doc-heading">
           <span class="doc doc-object-name doc-function-name">depaginate</span>
 
 
 <a href="#lakefs_spec.util.depaginate" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">depaginate</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">api</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">PaginatedApiResponse</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">api</span><span class="p">:</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n"><span title="lakefs_spec.util.PaginatedApiResponse">PaginatedApiResponse</span></span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Generator">Generator</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 </span></code></pre></div>
 
   <div class="doc doc-contents ">
@@ -1076,13 +1075,12 @@ released. For the most accurate information, please <strong><a href="../../../..
 
 
 
-
 <h2 id="lakefs_spec.util.md5_checksum" class="doc doc-heading">
           <span class="doc doc-object-name doc-function-name">md5_checksum</span>
 
 
 <a href="#lakefs_spec.util.md5_checksum" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">md5_checksum</span><span class="p">(</span><span class="n">lpath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">blocksize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">22</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+<div class="doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">md5_checksum</span><span class="p">(</span><span class="n">lpath</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="os.PathLike">PathLike</span></span><span class="p">[</span><span class="n">str</span><span class="p">],</span> <span class="n">blocksize</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">22</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">str</span>
 </span></code></pre></div>
 
   <div class="doc doc-contents ">
@@ -1217,13 +1215,12 @@ released. For the most accurate information, please <strong><a href="../../../..
 
 
 
-
 <h2 id="lakefs_spec.util.parse" class="doc doc-heading">
           <span class="doc doc-object-name doc-function-name">parse</span>
 
 
 <a href="#lakefs_spec.util.parse" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">parse</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<div class="doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">parse</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tuple</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">]</span>
 </span></code></pre></div>
 
   <div class="doc doc-contents ">

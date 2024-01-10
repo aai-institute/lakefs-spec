@@ -1063,17 +1063,8 @@ We will use versioned weather data to train a decision tree classifier to predic
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Collecting numpy
-  Using cached numpy-1.26.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
-</code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>Collecting pandas
-  Using cached pandas-2.1.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (18 kB)
+<code>Requirement already satisfied: numpy in /opt/hostedtoolcache/Python/3.11.7/x64/lib/python3.11/site-packages (1.26.3)
+Requirement already satisfied: pandas in /opt/hostedtoolcache/Python/3.11.7/x64/lib/python3.11/site-packages (2.1.4)
 </code>
 </pre>
 </div>
@@ -1092,8 +1083,7 @@ We will use versioned weather data to train a decision tree classifier to predic
 <pre>
 <code>Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/hostedtoolcache/Python/3.11.7/x64/lib/python3.11/site-packages (from pandas) (2.8.2)
 Requirement already satisfied: pytz&gt;=2020.1 in /opt/hostedtoolcache/Python/3.11.7/x64/lib/python3.11/site-packages (from pandas) (2023.3.post1)
-Collecting tzdata&gt;=2022.1 (from pandas)
-  Using cached tzdata-2023.4-py2.py3-none-any.whl.metadata (1.4 kB)
+Requirement already satisfied: tzdata&gt;=2022.1 in /opt/hostedtoolcache/Python/3.11.7/x64/lib/python3.11/site-packages (from pandas) (2023.4)
 </code>
 </pre>
 </div>
@@ -1103,6 +1093,8 @@ Collecting tzdata&gt;=2022.1 (from pandas)
 <pre>
 <code>Collecting scipy&gt;=1.5.0 (from scikit-learn)
   Using cached scipy-1.11.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (60 kB)
+Collecting joblib&gt;=1.1.1 (from scikit-learn)
+  Using cached joblib-1.3.2-py3-none-any.whl.metadata (5.4 kB)
 </code>
 </pre>
 </div>
@@ -1110,27 +1102,9 @@ Collecting tzdata&gt;=2022.1 (from pandas)
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Collecting joblib&gt;=1.1.1 (from scikit-learn)
-  Using cached joblib-1.3.2-py3-none-any.whl.metadata (5.4 kB)
-Collecting threadpoolctl&gt;=2.0.0 (from scikit-learn)
+<code>Collecting threadpoolctl&gt;=2.0.0 (from scikit-learn)
   Using cached threadpoolctl-3.2.0-py3-none-any.whl.metadata (10.0 kB)
 Requirement already satisfied: six&gt;=1.5 in /opt/hostedtoolcache/Python/3.11.7/x64/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
-</code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>Using cached numpy-1.26.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.3 MB)
-</code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>Using cached pandas-2.1.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.2 MB)
 Using cached scikit_learn-1.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (10.9 MB)
 </code>
 </pre>
@@ -1149,7 +1123,6 @@ Using cached scipy-1.11.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
 <code>Using cached threadpoolctl-3.2.0-py3-none-any.whl (15 kB)
-Using cached tzdata-2023.4-py2.py3-none-any.whl (346 kB)
 </code>
 </pre>
 </div>
@@ -1157,7 +1130,7 @@ Using cached tzdata-2023.4-py2.py3-none-any.whl (346 kB)
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Installing collected packages: tzdata, threadpoolctl, numpy, joblib, scipy, pandas, scikit-learn
+<code>Installing collected packages: threadpoolctl, scipy, joblib, scikit-learn
 </code>
 </pre>
 </div>
@@ -1165,7 +1138,7 @@ Using cached tzdata-2023.4-py2.py3-none-any.whl (346 kB)
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Successfully installed joblib-1.3.2 numpy-1.26.3 pandas-2.1.4 scikit-learn-1.3.2 scipy-1.11.4 threadpoolctl-3.2.0 tzdata-2023.4
+<code>Successfully installed joblib-1.3.2 scikit-learn-1.3.2 scipy-1.11.4 threadpoolctl-3.2.0
 </code>
 </pre>
 </div>
@@ -1222,7 +1195,7 @@ By executing the cell below, you will download a YAML file containing the defaul
 <div class="output_area">
 <div class="output_text output_subarea output_execute_result">
 <pre>
-<code>('/home/runner/.lakectl.yaml', &lt;http.client.HTTPMessage at 0x7fbb80f0c5d0&gt;)</code>
+<code>('/home/runner/.lakectl.yaml', &lt;http.client.HTTPMessage at 0x7fb6207fa510&gt;)</code>
 </pre>
 </div>
 </div>
@@ -1799,7 +1772,7 @@ There, we take the parent of the previous commit, titled <code>Add train-test sp
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>a1feda00fcb1bb18037e5824d61a5038312375c4d11f574cc14be99168789380
+<code>a3620c6555734d17afc9826c7f97822c22d6faf2ea676c5a68bb9253a4446162
 </code>
 </pre>
 </div>
@@ -1936,7 +1909,7 @@ Both the <code>fixed_commit_id</code> and <code>tag</code> reference the same ve
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Is the data tagged 'train-test-split-2010' equal to the data in commit a1feda00? True
+<code>Is the data tagged 'train-test-split-2010' equal to the data in commit a3620c65? True
 </code>
 </pre>
 </div>
