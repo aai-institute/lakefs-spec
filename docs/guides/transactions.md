@@ -6,6 +6,11 @@ A transaction is basically a context manager that collects all file uploads, def
 They are an "all or nothing" proposition: If an error occurs during the transaction, none of the queued files are uploaded.
 For more information on fsspec transactions, see the official [documentation](https://filesystem-spec.readthedocs.io/en/latest/features.html#transactions).
 
+!!! info
+    The transactions in `lakeFS-spec` are different from the transactions in the [lakeFS-SDK](https://docs.lakefs.io/integrations/python.html#transactions), which were added in `v0.2.0`. 
+    - `lakeFS-SDK` transactions create an ephemeral branch, perform the operations in the context block on this branch and, upon exiting the context manager, merge it back into the source branch. 
+    - `lakeFS-spec` transactions collect the actions and perform them one by one directly on the source branch once the context manager is exited. This allows, for example, multiple commits per transaction.  
+
 The main features of the lakeFS file system transaction are:
 
 ## Atomicity
