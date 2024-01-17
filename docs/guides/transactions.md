@@ -4,12 +4,13 @@ In addition to file operations, you can carry out versioning operations in your 
 
 A transaction is basically a context manager that collects all file uploads, defers them, and executes the uploads on completion of the transaction.
 They are an "all or nothing" proposition: If an error occurs during the transaction, none of the queued files are uploaded.
-For more information on fsspec transactions, see the official [documentation](https://filesystem-spec.readthedocs.io/en/latest/features.html#transactions).
 
 !!! info
-    The transactions in `lakeFS-spec` are different from the transactions in the [lakeFS-SDK](https://docs.lakefs.io/integrations/python.html#transactions), which were added in `v0.2.0`. 
-    - `lakeFS-SDK` transactions create an ephemeral branch, perform the operations in the context block on this branch and, upon exiting the context manager, merge it back into the source branch. 
-    - `lakeFS-spec` transactions collect the actions and perform them one by one directly on the source branch once the context manager is exited. This allows, for example, multiple commits per transaction.  
+    The transactions in lakeFS-spec are different from the transactions in the [high-level lakeFS SDK](https://docs.lakefs.io/integrations/python.html#transactions), which were added in v0.2.0. 
+    **High-level lakeFS SDK** transactions create an ephemeral branch, perform the operations in the context block on that ephemeral branch and, upon exiting the context manager, merge it back into the source branch.
+    **lakeFS-spec** transactions collect the actions and perform them one by one directly on the source branch once the context manager is exited. This allows for a more fine-grained control over the versioning operations performed. For example, multiple commits can be performed as part of a single transaction.
+
+The lakeFS-spec transaction inherit form fsspec transactions. For more information on fsspec transactions, see the official [documentation](https://filesystem-spec.readthedocs.io/en/latest/features.html#transactions).
 
 The main features of the lakeFS file system transaction are:
 
