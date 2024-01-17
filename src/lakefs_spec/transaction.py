@@ -159,8 +159,6 @@ class LakeFSTransaction(Transaction):
                     if isinstance(retval, Placeholder):
                         retval.value = result
 
-        self.fs._intrans = False
-
     def create_branch(
         self, repository: str | Repository, name: str, source: str | Branch, exist_ok: bool = True
     ) -> str:
