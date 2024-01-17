@@ -8,7 +8,7 @@ They are an "all or nothing" proposition: If an error occurs during the transact
 !!! info
     The transactions in lakeFS-spec are different from the transactions in the [high-level lakeFS SDK](https://docs.lakefs.io/integrations/python.html#transactions), which were added in v0.2.0. 
     **High-level lakeFS SDK** transactions create an ephemeral branch, perform the operations in the context block on that ephemeral branch and, upon exiting the context manager, merge it back into the source branch.
-    **lakeFS-spec** transactions collect the actions and perform them one by one directly on the source branch once the context manager is exited. This allows for a more fine-grained control over the versioning operations performed. For example, multiple commits can be performed as part of a single transaction.
+    **lakeFS-spec** transactions collect the versioning operations and perform them one by one directly on the source branch once the context manager is exited. This allows for a more fine-grained control over the applied versioning operations. For example, multiple commits can be created in a single lakeFS-spec transaction.
 
 The lakeFS-spec transaction inherit form fsspec transactions. For more information on fsspec transactions, see the official [documentation](https://filesystem-spec.readthedocs.io/en/latest/features.html#transactions).
 
