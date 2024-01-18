@@ -899,9 +899,16 @@ released. For the most accurate information, please <strong><a href="../../..">a
 
 <h1 id="using-transactions-on-the-lakefs-file-system">Using transactions on the lakeFS file system<a class="headerlink" href="#using-transactions-on-the-lakefs-file-system" title="Permanent link">&para;</a></h1>
 <p>In addition to file operations, you can carry out versioning operations in your Python code using file system <em>transactions</em>.</p>
-<p>A transaction is basically a context manager that collects all file uploads, defers them, and executes the uploads on completion of the transaction.
-They are an "all or nothing" proposition: If an error occurs during the transaction, none of the queued files are uploaded.
-For more information on fsspec transactions, see the official <a href="https://filesystem-spec.readthedocs.io/en/latest/features.html#transactions">documentation</a>.</p>
+<p>A transaction is essentially a context manager that collects all file uploads, defers them, and executes the uploads on completion of the transaction.
+They are an "all or nothing" proposition: If an error occurs during the transaction, none of the queued files are uploaded.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The transactions in lakeFS-spec are different from the transactions in the <a href="https://docs.lakefs.io/integrations/python.html#transactions">high-level lakeFS SDK</a>, which were added in v0.2.0.</p>
+<p><em>High-level lakeFS SDK</em> transactions create an ephemeral branch, perform the operations in the context block on that ephemeral branch, and merge it back into the source branch upon exiting the context manager.</p>
+<p><em>lakeFS-spec</em> transactions collect the versioning operations and perform them one by one directly on the source branch once the context manager is exited.
+This allows for a more fine-grained control over the applied versioning operations. For example, multiple commits can be created in a single lakeFS-spec transaction.</p>
+</div>
+<p>The lakeFS-spec transaction inherits from fsspec transactions. For more information on fsspec transactions, see the <a href="https://filesystem-spec.readthedocs.io/en/latest/features.html#transactions">official documentation</a>.</p>
 <p>The main features of the lakeFS file system transaction are:</p>
 <h2 id="atomicity">Atomicity<a class="headerlink" href="#atomicity" title="Permanent link">&para;</a></h2>
 <p>If an exception occurs anywhere during the transaction, all queued file uploads and versioning operations are discarded:</p>
@@ -972,7 +979,7 @@ After the transaction is completed, you can reuse the computed value (a <a href=
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-20</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-01-18</span>
   </span>
 
     
