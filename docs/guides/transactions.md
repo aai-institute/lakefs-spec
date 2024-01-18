@@ -2,15 +2,18 @@
 
 In addition to file operations, you can carry out versioning operations in your Python code using file system *transactions*.
 
-A transaction is basically a context manager that collects all file uploads, defers them, and executes the uploads on completion of the transaction.
+A transaction is essentially a context manager that collects all file uploads, defers them, and executes the uploads on completion of the transaction.
 They are an "all or nothing" proposition: If an error occurs during the transaction, none of the queued files are uploaded.
 
 !!! info
-    The transactions in lakeFS-spec are different from the transactions in the [high-level lakeFS SDK](https://docs.lakefs.io/integrations/python.html#transactions), which were added in v0.2.0. 
-    **High-level lakeFS SDK** transactions create an ephemeral branch, perform the operations in the context block on that ephemeral branch and, upon exiting the context manager, merge it back into the source branch.
-    **lakeFS-spec** transactions collect the versioning operations and perform them one by one directly on the source branch once the context manager is exited. This allows for a more fine-grained control over the applied versioning operations. For example, multiple commits can be created in a single lakeFS-spec transaction.
+    The transactions in lakeFS-spec are different from the transactions in the [high-level lakeFS SDK](https://docs.lakefs.io/integrations/python.html#transactions), which were added in v0.2.0.
 
-The lakeFS-spec transaction inherit form fsspec transactions. For more information on fsspec transactions, see the official [documentation](https://filesystem-spec.readthedocs.io/en/latest/features.html#transactions).
+    *High-level lakeFS SDK* transactions create an ephemeral branch, perform the operations in the context block on that ephemeral branch, and merge it back into the source branch upon exiting the context manager.
+
+    *lakeFS-spec* transactions collect the versioning operations and perform them one by one directly on the source branch once the context manager is exited.
+    This allows for a more fine-grained control over the applied versioning operations. For example, multiple commits can be created in a single lakeFS-spec transaction.
+
+The lakeFS-spec transaction inherits from fsspec transactions. For more information on fsspec transactions, see the [official documentation](https://filesystem-spec.readthedocs.io/en/latest/features.html#transactions).
 
 The main features of the lakeFS file system transaction are:
 
