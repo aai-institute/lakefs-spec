@@ -9,14 +9,16 @@ keywords = ["lakeFS", "fsspec"]
 requires-python = ">=3.9"
 readme = "README.md"
 license = { text = "Apache-2.0" }
-authors = [{ name = "appliedAI Initiative", email = "info+oss@appliedai.de" }]
+authors = [
+    { name = "appliedAI Institute for Europe", email = "lakefs-spec@appliedai-institute.de" },
+]
 maintainers = [
     { name = "Nicholas Junge", email = "n.junge@appliedai-institute.de" },
     { name = "Max Mynter", email = "m.mynter@appliedai-institute.de" },
     { name = "Adrian Rumpold", email = "a.rumpold@appliedai-institute.de" },
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License",
@@ -76,7 +78,6 @@ docs = [
 
 [tool.setuptools]
 package-dir = { "" = "src" }
-zip-safe = false
 
 [tool.setuptools.packages.find]
 where = ["src"]
