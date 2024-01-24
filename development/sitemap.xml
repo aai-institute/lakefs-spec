@@ -2,82 +2,82 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://lakefs-spec.org/latest/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/CONTRIBUTING/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/quickstart/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/guides/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/guides/configuration/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/guides/filesystem-usage/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/guides/integrations/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/guides/transactions/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/reference/SUMMARY/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/reference/lakefs_spec/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/reference/lakefs_spec/errors/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/reference/lakefs_spec/spec/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/reference/lakefs_spec/transaction/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/reference/lakefs_spec/util/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/tutorials/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://lakefs-spec.org/latest/tutorials/demo_data_science_project/</loc>
-         <lastmod>2024-01-18</lastmod>
+         <lastmod>2024-01-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
