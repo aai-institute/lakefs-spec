@@ -66,7 +66,13 @@ class LakeFSTransaction(Transaction):
         else:
             self.repository = repository.id
 
-        self.base_branch = base_branch
+        # base branch needs to be a lakefs.Branch, since it is being diffed
+        # with the ephemeral branch in __exit__.
+        if isinstance(base_branch, str):
+            self.base_branch = Branch(self.repository, base_branch, client=self.fs.client)
+        else:
+            self.base_branch = base_branch
+
         self.automerge = automerge
         self.delete = delete
 
@@ -82,7 +88,8 @@ class LakeFSTransaction(Transaction):
         self.complete(commit=exc_type is None)
 
         if self.automerge:
-            self._ephemeral_branch.merge_into(self.base_branch)
+            if exc_type is None and any(self.base_branch.diff(self._ephemeral_branch)):
+                self._ephemeral_branch.merge_into(self.base_branch)
         if self.delete:
             self._ephemeral_branch.delete()
 
