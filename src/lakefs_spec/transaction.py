@@ -5,6 +5,8 @@ Functionality for extended lakeFS transactions to conduct versioning operations 
 from __future__ import annotations
 
 import logging
+import random
+import string
 from collections import deque
 from dataclasses import dataclass
 from functools import partial
@@ -60,16 +62,47 @@ class LakeFSTransaction(Transaction):
     """
     A lakeFS transaction model capable of versioning operations in between file uploads.
 
+    Creates an ephemeral branch, grouping all file uploads and versioning operations on that branch,
+    and optionally merges them back on success.
+
     Parameters
     ----------
     fs: LakeFSFileSystem
         The lakeFS file system associated with the transaction.
+    base_branch: str | Branch
+        The branch to conduct the transaction on.
+    automerge: bool
+        Automatically merge the ephemeral branch into the base branch after successful
+        transaction completion.
+    delete: bool
+        Delete the ephemeral branch after the transaction.
     """
 
-    def __init__(self, fs: "LakeFSFileSystem"):
+    def __init__(
+        self,
+        fs: "LakeFSFileSystem",
+        repository: str | Repository,
+        base_branch: str | Branch = "main",
+        automerge: bool = True,
+        delete: bool = True,
+    ):
         super().__init__(fs=fs)
         self.fs: "LakeFSFileSystem"
         self.files: deque[AbstractBufferedFile | VersioningOpTuple] = deque(self.files)
+
+        if isinstance(repository, str):
+            self.repository = repository
+        else:
+            self.repository = repository.id
+
+        self.base_branch = base_branch
+        self.automerge = automerge
+        self.delete = delete
+
+        ephem_name = "transaction-" + "".join(random.choices(string.digits, k=8))
+        self.ephemeral_branch = Branch(self.repository, ephem_name, client=self.fs.client)
+        self.ephemeral_branch.create(base_branch, exist_ok=False)
+
 
     def __enter__(self):
         self.fs._intrans = True
