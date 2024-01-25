@@ -8,16 +8,11 @@ import logging
 import random
 import string
 from collections import deque
-from dataclasses import dataclass
-from functools import partial
-from typing import TYPE_CHECKING, Callable, Generic, TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 import lakefs
-import wrapt
-from fsspec.spec import AbstractBufferedFile
 from fsspec.transaction import Transaction
 from lakefs.branch import Branch, Reference
-from lakefs.client import Client
 from lakefs.object import ObjectWriter
 from lakefs.reference import Commit, ReferenceType
 from lakefs.repository import Repository
@@ -30,32 +25,6 @@ logger.setLevel(logging.INFO)
 
 if TYPE_CHECKING:  # pragma: no cover
     from lakefs_spec import LakeFSFileSystem
-
-    VersioningOpTuple = tuple[Callable[[Client], None], str | "Placeholder" | None]
-
-
-@dataclass
-class Placeholder(Generic[T], wrapt.ObjectProxy):
-    """A generic placeholder for a value computed by the lakeFS server in a versioning operation during a transaction."""
-
-    def __init__(self, wrapped: T | None = None):
-        super().__init__(wrapped)
-
-    @property
-    def available(self) -> bool:
-        """Whether the wrapped value is available, i.e. already computed."""
-        return self.__wrapped__ is not None
-
-    @property
-    def value(self):
-        if self.__wrapped__ is None:
-            raise RuntimeError("placeholder unfilled")
-        return self.__wrapped__
-
-    @value.setter
-    def value(self, val: T) -> None:
-        """Fill in the placeholder. Not meant to be called directly except in the completion of the transaction."""
-        self.__wrapped__ = val
 
 
 class LakeFSTransaction(Transaction):
