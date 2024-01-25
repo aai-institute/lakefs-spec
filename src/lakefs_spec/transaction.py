@@ -101,64 +101,43 @@ class LakeFSTransaction(Transaction):
 
         ephem_name = "transaction-" + "".join(random.choices(string.digits, k=8))
         self.ephemeral_branch = Branch(self.repository, ephem_name, client=self.fs.client)
-        self.ephemeral_branch.create(base_branch, exist_ok=False)
 
 
     def __enter__(self):
+        self.ephemeral_branch.create(self.base_branch, exist_ok=False)
         self.fs._intrans = True
         return self
 
     def commit(
         self,
-        repository: str | Repository,
-        branch: str | Branch,
         message: str,
         metadata: dict[str, str] | None = None,
-    ) -> Placeholder[Reference]:
+    ) -> Reference:
         """
-        Create a commit on a branch in a repository with a commit message and attached metadata.
+        Create a commit on this transaction's ephemeral branch with a commit message
+        and attached metadata.
 
         Parameters
         ----------
-        repository: str | Repository
-            The repository to create the commit in.
-        branch: str | Branch
-            The name of the branch to commit on.
         message: str
             The commit message to attach to the newly created commit.
         metadata: dict[str, str] | None
-            Optional metadata to enrich the created commit with (author, e-mail, etc.).
+            Optional metadata to enrich the created commit with (author, e-mail, ...).
 
         Returns
         -------
-        Placeholder[Reference]
-            A placeholder for the commit created by the dispatched ``commit`` API call.
+        Reference
+            The created commit.
         """
-        # bind all arguments to the client helper function, and then add it to the file-/callstack.
+        ephem = self.ephemeral_branch
 
-        def commit_op(
-            client: Client,
-            repo_: str | Repository,
-            ref_: str | Branch,
-            message_: str,
-            metadata_: dict[str, str] | None,
-        ) -> Reference:
-            repo_id = repo_.id if isinstance(repo_, Repository) else repo_
-            ref_id = ref_.id if isinstance(ref_, Branch) else ref_
-            b = lakefs.Branch(repo_id, ref_id, client=client)
+        diff = list(ephem.uncommitted())
 
-            diff = list(b.uncommitted())
+        if not diff:
+            logger.warning(f"No changes to commit on branch {ephem.id!r}.")
+            return ephem.head
 
-            if not diff:
-                logger.warning(f"No changes to commit on branch {branch!r}.")
-                return b.head
-            return b.commit(message_, metadata_)
-
-        op = partial(commit_op, repo_=repository, ref_=branch, message_=message, metadata_=metadata)
-        p: Placeholder[Reference] = Placeholder()
-        self.files.append((op, p))
-        # return a placeholder for the reference.
-        return p
+        return ephem.commit(message, metadata=metadata)
 
     def complete(self, commit: bool = True) -> None:
         """
