@@ -15,22 +15,22 @@ def test_rm(
     assert not fs.exists(path)
 
 
-def test_rm_with_postcommit(
+def test_rm_with_transaction(
     fs: LakeFSFileSystem,
     repository: Repository,
     temp_branch: Branch,
 ) -> None:
     path = f"{repository.id}/{temp_branch.id}/README.md"
-    msg = "Remove file README.md"
+    message = "Remove file README.md"
 
-    with fs.transaction as tx:
-        fs.rm(path)
-        tx.commit(repository, temp_branch, message=msg)
+    with fs.transaction(repository, temp_branch, automerge=True) as tx:
+        fs.rm(f"{repository.id}/{tx.branch.id}/README.md")
+        tx.commit(message=message)
+
+    commits = list(temp_branch.log(max_amount=2))
     assert not fs.exists(path)
-
-    commits = list(temp_branch.log())
-    latest_commit = commits[0]
-    assert latest_commit.message == msg
+    assert commits[-1].message == message
+    assert commits[0].message.startswith("Merge")
 
 
 def test_rm_recursive(
