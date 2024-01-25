@@ -17,19 +17,19 @@ repos:
        types_or: [ python, pyi ]
        args: [--ignore-missing-imports, --scripts-are-modules]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.11
+    rev: v0.1.14
     hooks:
       - id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
       - id: ruff-format
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.6
+    rev: 1.7.7
     hooks:
     - id: bandit
       args: [-c, pyproject.toml]
       additional_dependencies: ["bandit[toml]"]
   - repo: https://github.com/jsh9/pydoclint
-    rev: 0.3.8
+    rev: 0.3.9
     hooks:
       - id: pydoclint
   - repo: https://github.com/jazzband/pip-tools
