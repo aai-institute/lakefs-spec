@@ -38,8 +38,10 @@ class LakeFSTransaction(Transaction):
     ----------
     fs: LakeFSFileSystem
         The lakeFS file system associated with the transaction.
+    repository: str | Repository
+        The repository in which to conduct the transaction.
     base_branch: str | Branch
-        The branch to conduct the transaction on.
+        The branch on which the resulting files should end up.
     automerge: bool
         Automatically merge the ephemeral branch into the base branch after successful
         transaction completion.
@@ -57,7 +59,7 @@ class LakeFSTransaction(Transaction):
     ):
         super().__init__(fs=fs)
         self.fs: "LakeFSFileSystem"
-        self.files: deque[AbstractBufferedFile | VersioningOpTuple] = deque(self.files)
+        self.files: deque[ObjectWriter] = deque(self.files)
 
         if isinstance(repository, str):
             self.repository = repository
@@ -68,14 +70,47 @@ class LakeFSTransaction(Transaction):
         self.automerge = automerge
         self.delete = delete
 
-        ephem_name = "transaction-" + "".join(random.choices(string.digits, k=8))
-        self.ephemeral_branch = Branch(self.repository, ephem_name, client=self.fs.client)
-
+        ephem_name = "transaction-" + "".join(random.choices(string.digits, k=6))  # nosec: B311
+        self._ephemeral_branch = Branch(self.repository, ephem_name, client=self.fs.client)
 
     def __enter__(self):
-        self.ephemeral_branch.create(self.base_branch, exist_ok=False)
+        self._ephemeral_branch.create(self.base_branch, exist_ok=False)
         self.fs._intrans = True
         return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.complete(commit=exc_type is None)
+
+        if self.automerge:
+            self._ephemeral_branch.merge_into(self.base_branch)
+        if self.delete:
+            self._ephemeral_branch.delete()
+
+        self.fs._intrans = False
+        self.fs._transaction = None
+
+    @property
+    def branch(self):
+        return self._ephemeral_branch
+
+    def complete(self, commit: bool = True) -> None:
+        """
+        Finish the transaction by unwinding the file stack.
+
+        The branch will not be merged and all files are discarded if ``commit == False``,
+        which is the case, e.g., if an exception happens in the context manager.
+
+        Parameters
+        ----------
+        commit: bool
+            Whether to conduct operations queued in the transaction.
+        """
+        while self.files:
+            # fsspec base class calls `append` on the file, which means we
+            # have to pop from the left to preserve order.
+            f = self.files.popleft()
+            if not commit:
+                f.discard()
 
     def commit(
         self,
