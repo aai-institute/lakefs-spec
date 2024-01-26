@@ -149,7 +149,7 @@ class LakeFSTransaction(Transaction):
 
         return self.branch.commit(message, metadata=metadata)
 
-    def merge(self, source_ref: str | Branch, into: str | Branch) -> str:
+    def merge(self, source_ref: str | Branch, into: str | Branch) -> Commit:
         """
         Merge a branch into another branch in a repository.
 
@@ -166,17 +166,17 @@ class LakeFSTransaction(Transaction):
 
         Returns
         -------
-        str
-            The ID of either the created merge commit, or the tip of the target branch.
+        Commit
+            Either the created merge commit, or the head commit of the target branch.
         """
         source = ensurebranch(source_ref, self.repository, self.fs.client)
         dest = ensurebranch(into, self.repository, self.fs.client)
 
         if any(dest.diff(source)):
-            return source.merge_into(dest)
-        return dest.head.get_commit().id
+            source.merge_into(dest)
+        return dest.head.get_commit()
 
-    def revert(self, branch: str | Branch, ref: ReferenceType, parent_number: int = 1) -> None:
+    def revert(self, branch: str | Branch, ref: ReferenceType, parent_number: int = 1) -> Commit:
         """
         Revert a previous commit on a branch.
 
@@ -190,13 +190,18 @@ class LakeFSTransaction(Transaction):
             If there are multiple parents to a commit, specify to which parent
             the commit should be reverted. ``parent_number = 1`` (the default)
             refers to the first parent commit of the current ``branch`` tip.
+
+        Returns
+        -------
+        Commit
+            The created revert commit.
         """
 
         b = ensurebranch(branch, self.repository, self.fs.client)
 
         ref_id = ref if isinstance(ref, str) else ref.id
         b.revert(ref_id, parent_number=parent_number)
-        return None
+        return b.head.get_commit()
 
     def rev_parse(self, ref: ReferenceType) -> Commit:
         """

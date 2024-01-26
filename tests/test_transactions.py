@@ -85,18 +85,16 @@ def test_transaction_revert(
     random_file = random_file_factory.make()
 
     lpath = str(random_file)
-    rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"
-
     message = f"Add file {random_file.name}"
 
-    with fs.transaction(repository, temp_branch) as tx:
+    with fs.transaction(repository, temp_branch, automerge=True) as tx:
         fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
         tx.commit(message=message)
-        tx.revert(temp_branch, temp_branch.head)
+        revert_commit = tx.revert(temp_branch, temp_branch.head)
 
-    head, head_tilde = list(temp_branch.log(max_amount=2))
-    assert head.message.startswith("Merge")
-    assert head_tilde.message.startswith("Revert")
+    # first commit should be the merge commit
+    assert temp_branch.head.get_commit().message.startswith("Merge")
+    assert revert_commit.message.startswith("Revert")
 
 
 def test_transaction_failure(
@@ -109,7 +107,6 @@ def test_transaction_failure(
 
     lpath = str(random_file)
     rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"
-
     message = f"Add file {random_file.name}"
 
     try:
