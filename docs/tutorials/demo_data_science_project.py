@@ -161,9 +161,9 @@ To create a commit after a file upload, you can run the following transaction:
 # %%
 NEW_BRANCH_NAME = "transform-raw-data"
 
-with fs.transaction as tx:
-    fs.put(outfile, f"{REPO_NAME}/{NEW_BRANCH_NAME}/weather-2010.json")
-    tx.commit(repository=REPO_NAME, branch=NEW_BRANCH_NAME, message="Add 2010 weather data")
+with fs.transaction(REPO_NAME, NEW_BRANCH_NAME) as tx:
+    fs.put(outfile, f"{REPO_NAME}/{tx.branch.id}/weather-2010.json")
+    tx.commit(message="Add 2010 weather data")
 
 # %% [markdown]
 """
@@ -214,9 +214,9 @@ You can verify the saving worked in the lakeFS UI in your browser by switching t
 """
 
 # %%
-with fs.transaction as tx:
-    df.to_csv(f"lakefs://{REPO_NAME}/main/weather_2010.csv")
-    tx.commit(repository=REPO_NAME, branch="main", message="Update weather data")
+with fs.transaction(REPO_NAME, "main") as tx:
+    df.to_csv(f"lakefs://{REPO_NAME}/{tx.branch.id}/weather_2010.csv")
+    tx.commit(message="Update weather data")
 
 # %% [markdown]
 """
@@ -243,14 +243,10 @@ By default, `create_branch_ok` is set to `True`, so we need to only set `fs = La
 # %%
 TRAINING_BRANCH = "training"
 
-with fs.transaction as tx:
-    train.to_csv(f"lakefs://{REPO_NAME}/{TRAINING_BRANCH}/train_weather.csv")
-    test.to_csv(f"lakefs://{REPO_NAME}/{TRAINING_BRANCH}/test_weather.csv")
-    tx.commit(
-        repository=REPO_NAME,
-        branch=TRAINING_BRANCH,
-        message="Add train-test split of 2010 weather data",
-    )
+with fs.transaction(REPO_NAME, TRAINING_BRANCH) as tx:
+    train.to_csv(f"lakefs://{REPO_NAME}/{tx.branch.id}/train_weather.csv")
+    test.to_csv(f"lakefs://{REPO_NAME}/{tx.branch.id}/test_weather.csv")
+    tx.commit(message="Add train-test split of 2010 weather data")
 
 # %% [markdown]
 """
@@ -298,9 +294,9 @@ outfile = _maybe_urlretrieve(
 
 new_data = transform_json_weather_data(outfile)
 
-with fs.transaction as tx:
-    new_data.to_csv(f"lakefs://{REPO_NAME}/main/weather_2020.csv")
-    tx.commit(repository=REPO_NAME, branch="main", message="Add 2020 weather data")
+with fs.transaction(REPO_NAME, "main") as tx:
+    new_data.to_csv(f"lakefs://{REPO_NAME}/{tx.branch.id}/weather_2020.csv")
+    tx.commit(message="Add 2020 weather data")
 
 # Remove leftover temporary files from previous `urlretrieve` calls
 urllib.request.urlcleanup()
@@ -320,14 +316,10 @@ train_df, test_df = sklearn.model_selection.train_test_split(full_data, random_s
 print(f"Updated train data shape: {train_df.shape}")
 print(f"Updated test data shape: {test_df.shape}")
 
-with fs.transaction as tx:
-    train_df.to_csv(f"lakefs://{REPO_NAME}/{TRAINING_BRANCH}/train_weather.csv")
-    test_df.to_csv(f"lakefs://{REPO_NAME}/{TRAINING_BRANCH}/test_weather.csv")
-    tx.commit(
-        repository=REPO_NAME,
-        branch=TRAINING_BRANCH,
-        message="Add train-test split of 2010 and 2020 data",
-    )
+with fs.transaction(REPO_NAME, TRAINING_BRANCH) as tx:
+    train_df.to_csv(f"lakefs://{REPO_NAME}/{tx.branch.id}/train_weather.csv")
+    test_df.to_csv(f"lakefs://{REPO_NAME}/{tx.branch.id}/test_weather.csv")
+    tx.commit(message="Add train-test split of 2010 and 2020 data")
 
 # %% [markdown]
 """
@@ -409,9 +401,9 @@ Tags are immutable once created, so attempting to tag two different commits with
 
 
 # %%
-with fs.transaction as tx:
+with fs.transaction(REPO_NAME, "main") as tx:
     # the `tag` result is simply the tag name, in this case 'train-test-split-2010'.
-    tag = tx.tag(repository=REPO_NAME, ref=fixed_commit_id, tag="train-test-split-2010")
+    tag = tx.tag(ref=fixed_commit_id, tag="train-test-split-2010")
 
 
 # %% [markdown]
