@@ -404,8 +404,8 @@ Tags are immutable once created, so attempting to tag two different commits with
 
 # %%
 with fs.transaction(REPO_NAME, "main") as tx:
-    # the `tag` result is simply the tag name, in this case 'train-test-split-2010'.
-    tag = tx.tag(ref=fixed_commit_id, tag="train-test-split-2010")
+    # returns the tag as a lakeFS object.
+    tag = tx.tag(fixed_commit_id, name="train-test-split-2010")
 
 
 # %% [markdown]

@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, TypeVar
 import lakefs
 from fsspec.transaction import Transaction
 from lakefs.branch import Branch, Reference
+from lakefs.client import Client
 from lakefs.object import ObjectWriter
 from lakefs.reference import Commit, ReferenceType
 from lakefs.repository import Repository
@@ -25,6 +26,12 @@ logger.setLevel(logging.INFO)
 
 if TYPE_CHECKING:  # pragma: no cover
     from lakefs_spec import LakeFSFileSystem
+
+
+def ensurebranch(b: str | Branch, repository: str, client: Client) -> Branch:
+    if isinstance(b, str):
+        return Branch(repository, b, client=client)
+    return b
 
 
 class LakeFSTransaction(Transaction):
@@ -68,10 +75,7 @@ class LakeFSTransaction(Transaction):
 
         # base branch needs to be a lakefs.Branch, since it is being diffed
         # with the ephemeral branch in __exit__.
-        if isinstance(base_branch, str):
-            self.base_branch = Branch(self.repository, base_branch, client=self.fs.client)
-        else:
-            self.base_branch = base_branch
+        self.base_branch = ensurebranch(base_branch, self.repository, self.fs.client)
 
         self.automerge = automerge
         self.delete = delete
@@ -165,18 +169,11 @@ class LakeFSTransaction(Transaction):
         str
             The ID of either the created merge commit, or the tip of the target branch.
         """
-        if isinstance(source_ref, Branch):
-            b = source_ref
-        else:
-            b = lakefs.Branch(self.repository, source_ref, client=self.fs.client)
+        source = ensurebranch(source_ref, self.repository, self.fs.client)
+        dest = ensurebranch(into, self.repository, self.fs.client)
 
-        if isinstance(into, Branch):
-            dest = into
-        else:
-            dest = lakefs.Branch(self.repository, into, client=self.fs.client)
-
-        if any(dest.diff(b)):
-            return b.merge_into(dest)
+        if any(dest.diff(source)):
+            return source.merge_into(dest)
         return dest.head.get_commit().id
 
     def revert(self, branch: str | Branch, ref: ReferenceType, parent_number: int = 1) -> None:
@@ -195,10 +192,7 @@ class LakeFSTransaction(Transaction):
             refers to the first parent commit of the current ``branch`` tip.
         """
 
-        if isinstance(branch, Branch):
-            b = branch
-        else:
-            b = lakefs.Branch(self.repository, branch, client=self.fs.client)
+        b = ensurebranch(branch, self.repository, self.fs.client)
 
         ref_id = ref if isinstance(ref, str) else ref.id
         b.revert(ref_id, parent_number=parent_number)
@@ -223,7 +217,7 @@ class LakeFSTransaction(Transaction):
         reference = lakefs.Reference(self.repository, ref_id, client=self.fs.client)
         return reference.get_commit()
 
-    def tag(self, ref: ReferenceType, tag: str) -> Tag:
+    def tag(self, ref: ReferenceType, name: str) -> Tag:
         """
         Create a tag referencing a commit in a repository.
 
@@ -232,7 +226,7 @@ class LakeFSTransaction(Transaction):
         ref: ReferenceType
             Commit SHA or placeholder for a reference or commit object
             to which the new tag will point.
-        tag: str
+        name: str
             Name of the tag to be created.
 
         Returns
@@ -241,4 +235,4 @@ class LakeFSTransaction(Transaction):
             The requested tag.
         """
 
-        return lakefs.Tag(self.repository, tag, client=self.fs.client).create(ref)
+        return lakefs.Tag(self.repository, name, client=self.fs.client).create(ref)

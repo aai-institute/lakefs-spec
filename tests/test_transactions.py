@@ -37,7 +37,7 @@ def test_transaction_tag(fs: LakeFSFileSystem, repository: Repository) -> None:
         # tag gets created on exit of the context.
         with fs.transaction(repository) as tx:
             sha = tx.rev_parse("main")
-            tag = tx.tag(sha, tag="v2")
+            tag = tx.tag(sha, "v2")
 
         tags = list(repository.tags())
         assert len(tags) > 0
