@@ -4,13 +4,11 @@ from lakefs_spec import LakeFSFileSystem
 
 fs = LakeFSFileSystem()
 
-with fs.transaction as tx:
-    tx.create_branch("quickstart", "us-lakes", "main")
-
-    lakes = pl.read_parquet("lakefs://quickstart/main/lakes.parquet")
+with fs.transaction("quickstart", "main") as tx:
+    lakes = pl.read_parquet(f"lakefs://quickstart/{tx.branch.id}/lakes.parquet")
     us_lakes = lakes.filter(pl.col("Country") == "United States of America")
 
-    with fs.open("lakefs://quickstart/us-lakes/us_lakes.csv", "wb") as f:
+    with fs.open(f"lakefs://quickstart/{tx.branch.id}/us_lakes.csv", "wb") as f:
         us_lakes.write_csv(f)
 
-    tx.commit("quickstart", "us-lakes", "Add US lakes")
+    tx.commit(message="Add US lakes")
