@@ -149,6 +149,9 @@ class LakeFSTransaction(Transaction):
         """
         Merge a branch into another branch in a repository.
 
+        In case the branch contains no changes relevant to the target branch,
+        no merge happens, and the tip of the target branch is returned instead.
+
         Parameters
         ----------
         source_ref: str | Branch
@@ -160,14 +163,21 @@ class LakeFSTransaction(Transaction):
         Returns
         -------
         str
-            The created merge commit ID.
+            The ID of either the created merge commit, or the tip of the target branch.
         """
         if isinstance(source_ref, Branch):
             b = source_ref
         else:
             b = lakefs.Branch(self.repository, source_ref, client=self.fs.client)
 
-        return b.merge_into(into)
+        if isinstance(into, Branch):
+            dest = into
+        else:
+            dest = lakefs.Branch(self.repository, into, client=self.fs.client)
+
+        if any(dest.diff(b)):
+            return b.merge_into(dest)
+        return dest.head.get_commit().id
 
     def revert(self, branch: str | Branch, ref: ReferenceType, parent_number: int = 1) -> None:
         """

@@ -57,24 +57,23 @@ def test_transaction_merge(
     random_file = random_file_factory.make()
 
     with temporary_branch_context("transaction-merge-test") as new_branch:
-        resource = f"{repository.id}/{new_branch.id}/{random_file.name}"
         message = "Commit new file"
 
         with fs.transaction(repository, new_branch) as tx:
+            tbname = tx.branch.id
             lpath = str(random_file)
-            # stage a file on new_branch...
+            # stage a file on the transaction branch...
             fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
             # ... commit it with the above message
             tx.commit(message=message)
             # ... and merge it into temp_branch.
-            tx.merge(new_branch, into=temp_branch)
+            tx.merge(tx.branch, into=temp_branch)
 
-        # at last, verify temp_branch~ is the merge commit.
-        commits = list(temp_branch.log(max_amount=3))
-        head_tilde = commits[1]
-        assert head_tilde.message == f"Merge {new_branch.id!r} into {temp_branch.id!r}"
-        second_latest_commit = commits[2]
-        assert second_latest_commit.message == message
+        head, head_tilde = list(temp_branch.log(max_amount=2))
+        # HEAD should be the merge commit of the transaction branch.
+        assert head.message.startswith(f"Merge {tbname!r}")
+        # HEAD~ should be the commit message.
+        assert head_tilde.message == message
 
 
 def test_transaction_revert(
