@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       lakefs:
-        image: treeverse/lakefs:1.7.0
+        image: treeverse/lakefs:latest
         ports:
           - 8000:8000
         env:
@@ -70,8 +70,8 @@ jobs:
         python-version: 3.9
     - name: Test on oldest supported Python
       run: |
-        pip install -r requirements-dev.txt
-        pip install . --no-deps
+        python -m pip install -r requirements-dev.txt
+        python -m pip install -e .
         pytest -s --cov=src --cov=fsspec --cov-branch --cov-report=xml
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
@@ -80,6 +80,18 @@ jobs:
   docs:
     name: Build documentation for lakefs-spec
     runs-on: ubuntu-latest
+    services:
+      lakefs:
+        image: treeverse/lakefs:latest
+        ports:
+          - 8000:8000
+        env:
+          LAKEFS_INSTALLATION_USER_NAME: "quickstart"
+          LAKEFS_INSTALLATION_ACCESS_KEY_ID: "AKIAIOSFOLQUICKSTART"
+          LAKEFS_INSTALLATION_SECRET_ACCESS_KEY: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+          LAKEFS_DATABASE_TYPE: "local"
+          LAKEFS_AUTH_ENCRYPT_SECRET_KEY: "THIS_MUST_BE_CHANGED_IN_PRODUCTION"
+          LAKEFS_BLOCKSTORE_TYPE: "local"
     steps:
     - uses: actions/checkout@v4
       with:
@@ -96,7 +108,7 @@ jobs:
       run: |
         pip install -r requirements-docs.txt
         pip install . --no-deps
-    - name: Build (and optionally push) documentation using mike
+    - name: Build documentation using mike
       uses: ./.github/actions/mike-docs
       with:
         version: development
