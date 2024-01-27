@@ -133,4 +133,7 @@ style = 'numpy'
 exclude = '\.git|venv'
 
 [tool.coverage.report]
-exclude_also = ["@overload"]
+exclude_also = [
+    "@overload",
+    "raise NotImplementedError"
+]

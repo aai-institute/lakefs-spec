@@ -35,7 +35,8 @@ def test_transaction_commit(
 def test_transaction_tag(fs: LakeFSFileSystem, repository: Repository) -> None:
     try:
         # tag gets created on exit of the context.
-        with fs.transaction(repository) as tx:
+        # in this test, initialize with the repo name.
+        with fs.transaction(repository.id) as tx:
             sha = tx.rev_parse("main")
             tag = tx.tag(sha, "v2")
 
@@ -119,3 +120,22 @@ def test_transaction_failure(
 
     # assert that no commit happens because of the exception.
     assert not fs.exists(rpath)
+
+
+def test_transaction_no_automerge(
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: Branch,
+) -> None:
+    currhead = temp_branch.head.get_commit()
+
+    with fs.transaction(repository, temp_branch, automerge=False, delete=False) as tx:
+        transaction_branch = tx.branch
+
+    try:
+        # assert no merge commit is created on temp_branch.
+        assert currhead == next(temp_branch.log())
+        # assert the transaction branch still exists.
+        assert transaction_branch.id in [b.id for b in repository.branches()]
+    finally:
+        transaction_branch.delete()
