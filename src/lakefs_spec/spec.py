@@ -143,7 +143,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository: str | Repository,
         base_branch: str | Branch = "main",
         automerge: bool = True,
-        delete: bool = True,
+        delete: Literal["onsuccess", "always", "never"] = "onsuccess",
     ) -> LakeFSTransaction:
         """
         A context manager within which file uploads and versioning operations are deferred to a

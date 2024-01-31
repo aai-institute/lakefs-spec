@@ -129,7 +129,7 @@ def test_transaction_no_automerge(
 ) -> None:
     currhead = temp_branch.head.get_commit()
 
-    with fs.transaction(repository, temp_branch, automerge=False, delete=False) as tx:
+    with fs.transaction(repository, temp_branch, automerge=False, delete="never") as tx:
         transaction_branch = tx.branch
 
     try:

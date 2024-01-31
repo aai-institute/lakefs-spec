@@ -8,7 +8,7 @@ import logging
 import random
 import string
 from collections import deque
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Literal, TypeVar
 
 import lakefs
 from fsspec.transaction import Transaction
@@ -28,7 +28,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from lakefs_spec import LakeFSFileSystem
 
 
-def ensurebranch(b: str | Branch, repository: str, client: Client) -> Branch:
+def _ensurebranch(b: str | Branch, repository: str, client: Client) -> Branch:
     if isinstance(b, str):
         return Branch(repository, b, client=client)
     return b
@@ -39,7 +39,7 @@ class LakeFSTransaction(Transaction):
     A lakeFS transaction model capable of versioning operations in between file uploads.
 
     Creates an ephemeral branch, conducts all uploads and operations on that branch,
-    and optionally merges it back into the source branch on success.
+    and optionally merges it back into the source branch.
 
     Parameters
     ----------
@@ -48,12 +48,20 @@ class LakeFSTransaction(Transaction):
     repository: str | Repository
         The repository in which to conduct the transaction.
     base_branch: str | Branch
-        The branch on which the resulting files should end up.
+        The branch on which the transaction operations should be based.
     automerge: bool
         Automatically merge the ephemeral branch into the base branch after successful
         transaction completion.
-    delete: bool
-        Delete the ephemeral branch after the transaction.
+    delete: Literal["onsuccess", "always", "never"]
+        Cleanup policy / deletion handling for the ephemeral branch after the transaction.
+
+        If ``"onsuccess"``, the branch is deleted if the transaction succeeded,
+        or left over if an error occurred.
+
+        If ``"always"``, the ephemeral branch is always deleted after transaction regardless of success
+        or failure.
+
+        If ``"never"``, the transaction branch is always left in the repository.
     """
 
     def __init__(
@@ -62,7 +70,7 @@ class LakeFSTransaction(Transaction):
         repository: str | Repository,
         base_branch: str | Branch = "main",
         automerge: bool = True,
-        delete: bool = True,
+        delete: Literal["onsuccess", "always", "never"] = "onsuccess",
     ):
         super().__init__(fs=fs)
         self.fs: "LakeFSFileSystem"
@@ -75,7 +83,7 @@ class LakeFSTransaction(Transaction):
 
         # base branch needs to be a lakefs.Branch, since it is being diffed
         # with the ephemeral branch in __exit__.
-        self.base_branch = ensurebranch(base_branch, self.repository, self.fs.client)
+        self.base_branch = _ensurebranch(base_branch, self.repository, self.fs.client)
 
         self.automerge = automerge
         self.delete = delete
@@ -89,39 +97,26 @@ class LakeFSTransaction(Transaction):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.complete(commit=exc_type is None)
-
-        if self.automerge:
-            if exc_type is None and any(self.base_branch.diff(self._ephemeral_branch)):
-                self._ephemeral_branch.merge_into(self.base_branch)
-        if self.delete:
-            self._ephemeral_branch.delete()
-
-        self.fs._intrans = False
-        self.fs._transaction = None
-
-    @property
-    def branch(self):
-        return self._ephemeral_branch
-
-    def complete(self, commit: bool = True) -> None:
-        """
-        Finish the transaction by unwinding the file stack.
-
-        The branch will not be merged and all files are discarded if ``commit == False``,
-        which is the case, e.g., if an exception happens in the context manager.
-
-        Parameters
-        ----------
-        commit: bool
-            Whether to conduct operations queued in the transaction.
-        """
+        success = exc_type is None
         while self.files:
             # fsspec base class calls `append` on the file, which means we
             # have to pop from the left to preserve order.
             f = self.files.popleft()
-            if not commit:
+            if not success:
                 f.discard()
+
+        self.fs._intrans = False
+        self.fs._transaction = None
+
+        if success and self.automerge:
+            if any(self.base_branch.diff(self._ephemeral_branch)):
+                self._ephemeral_branch.merge_into(self.base_branch)
+        if self.delete == "always" or (success and self.delete == "onsuccess"):
+            self._ephemeral_branch.delete()
+
+    @property
+    def branch(self):
+        return self._ephemeral_branch
 
     def commit(self, message: str, metadata: dict[str, str] | None = None) -> Reference:
         """
@@ -169,8 +164,8 @@ class LakeFSTransaction(Transaction):
         Commit
             Either the created merge commit, or the head commit of the target branch.
         """
-        source = ensurebranch(source_ref, self.repository, self.fs.client)
-        dest = ensurebranch(into, self.repository, self.fs.client)
+        source = _ensurebranch(source_ref, self.repository, self.fs.client)
+        dest = _ensurebranch(into, self.repository, self.fs.client)
 
         if any(dest.diff(source)):
             source.merge_into(dest)
@@ -197,7 +192,7 @@ class LakeFSTransaction(Transaction):
             The created revert commit.
         """
 
-        b = ensurebranch(branch, self.repository, self.fs.client)
+        b = _ensurebranch(branch, self.repository, self.fs.client)
 
         ref_id = ref if isinstance(ref, str) else ref.id
         b.revert(ref_id, parent_number=parent_number)
