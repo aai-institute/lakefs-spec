@@ -454,42 +454,27 @@ released. For the most accurate information, please <strong><a href="../../..">a
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#atomicity" class="md-nav__link">
+  <a href="#versioning-operations" class="md-nav__link">
     <span class="md-ellipsis">
-      Atomicity
+      Versioning operations
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#versioning-helpers" class="md-nav__link">
+  <a href="#lifecycle-of-ephemeral-transaction-branches" class="md-nav__link">
     <span class="md-ellipsis">
-      Versioning helpers
+      Lifecycle of ephemeral transaction branches
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Versioning helpers">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#reusing-resources-created-in-transactions" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reusing resources created in transactions
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#thread-safety" class="md-nav__link">
+  <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
-      Thread safety
+      Error handling
     </span>
   </a>
   
@@ -833,42 +818,27 @@ released. For the most accurate information, please <strong><a href="../../..">a
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#atomicity" class="md-nav__link">
+  <a href="#versioning-operations" class="md-nav__link">
     <span class="md-ellipsis">
-      Atomicity
+      Versioning operations
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#versioning-helpers" class="md-nav__link">
+  <a href="#lifecycle-of-ephemeral-transaction-branches" class="md-nav__link">
     <span class="md-ellipsis">
-      Versioning helpers
+      Lifecycle of ephemeral transaction branches
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Versioning helpers">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#reusing-resources-created-in-transactions" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reusing resources created in transactions
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#thread-safety" class="md-nav__link">
+  <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
-      Thread safety
+      Error handling
     </span>
   </a>
   
@@ -899,66 +869,54 @@ released. For the most accurate information, please <strong><a href="../../..">a
 
 <h1 id="using-transactions-on-the-lakefs-file-system">Using transactions on the lakeFS file system<a class="headerlink" href="#using-transactions-on-the-lakefs-file-system" title="Permanent link">&para;</a></h1>
 <p>In addition to file operations, you can carry out versioning operations in your Python code using file system <em>transactions</em>.</p>
-<p>A transaction is essentially a context manager that collects all file uploads, defers them, and executes the uploads on completion of the transaction.
-They are an "all or nothing" proposition: If an error occurs during the transaction, none of the queued files are uploaded.</p>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>The transactions in lakeFS-spec are different from the transactions in the <a href="https://docs.lakefs.io/integrations/python.html#transactions">high-level lakeFS SDK</a>, which were added in v0.2.0.</p>
-<p><em>High-level lakeFS SDK</em> transactions create an ephemeral branch, perform the operations in the context block on that ephemeral branch, and merge it back into the source branch upon exiting the context manager.</p>
-<p><em>lakeFS-spec</em> transactions collect the versioning operations and perform them one by one directly on the source branch once the context manager is exited.
-This allows for a more fine-grained control over the applied versioning operations. For example, multiple commits can be created in a single lakeFS-spec transaction.</p>
-</div>
+<p>Transactions in lakeFS-spec behave similarly to the transactions in the <a href="https://docs.lakefs.io/integrations/python.html#transactions">high-level lakeFS SDK</a>:
+Both approaches create an ephemeral branch for a transaction, perform the operations in the context block on that ephemeral branch, and optionally merge it back into the source branch upon exiting the context manager.</p>
+<p>They are an "all or nothing" proposition: If an error occurs during the transaction, the base branch is left unchanged.</p>
 <p>The lakeFS-spec transaction inherits from fsspec transactions. For more information on fsspec transactions, see the <a href="https://filesystem-spec.readthedocs.io/en/latest/features.html#transactions">official documentation</a>.</p>
-<p>The main features of the lakeFS file system transaction are:</p>
-<h2 id="atomicity">Atomicity<a class="headerlink" href="#atomicity" title="Permanent link">&para;</a></h2>
-<p>If an exception occurs anywhere during the transaction, all queued file uploads and versioning operations are discarded:</p>
+<h2 id="versioning-operations">Versioning operations<a class="headerlink" href="#versioning-operations" title="Permanent link">&para;</a></h2>
+<p>The lakeFS file system's transaction is the intended place for conducting versioning operations between file transfers.
+The following is an example of file uploads with commit creations, with a tag being applied at the end.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;repo/main/my-file.txt&quot;</span><span class="p">)</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add my-file.txt&quot;</span><span class="p">)</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;oops!&quot;</span><span class="p">)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;main&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;train-data.txt&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;repo/</span><span class="si">{</span><span class="n">tx</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/train-data.txt&quot;</span><span class="p">)</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add training data&quot;</span><span class="p">)</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;test-data.txt&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;repo/</span><span class="si">{</span><span class="n">tx</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/test-data.txt&quot;</span><span class="p">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add test data&quot;</span><span class="p">)</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="n">sha</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;My train-test split&quot;</span><span class="p">)</span>
 </span></code></pre></div>
-<p>The above code will not produce a commit on <code>main</code>, since the <code>ValueError</code> prompts a discard of the full upload queue. </p>
-<h2 id="versioning-helpers">Versioning helpers<a class="headerlink" href="#versioning-helpers" title="Permanent link">&para;</a></h2>
-<p>The lakeFS file system's transaction is the intended place for conducting versioning operations between file transfers.
-The following is an example of file uploads with commit creations, with a tag being applied at the end.</p>
+<p>The full list of supported lakeFS versioning operations (by default, these operations target the transaction branch):</p>
+<ul>
+<li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.commit"><code>commit</code></a>, for creating a commit, optionally with attached metadata.</li>
+<li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.merge"><code>merge</code></a>, for merging a given branch.</li>
+<li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.revert"><code>revert</code></a>, for reverting a previous commit.</li>
+<li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.rev_parse"><code>rev_parse</code></a>, for parsing revisions like branch/tag names and SHA fragments into full commit SHAs.</li>
+<li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.tag"><code>tag</code></a>, for creating a tag pointing to a commit.</li>
+</ul>
+<h2 id="lifecycle-of-ephemeral-transaction-branches">Lifecycle of ephemeral transaction branches<a class="headerlink" href="#lifecycle-of-ephemeral-transaction-branches" title="Permanent link">&para;</a></h2>
+<p>You can control the lifecycle for a transaction branch with the <code>delete</code> argument:</p>
+<ul>
+<li>By default (<code>delete="onsuccess</code>), the branch is deleted after successful completion, and left over in case of failure for debugging purposes.</li>
+<li>If <code>delete="always"</code>, the branch is unconditionally deleted after the transaction regardless of its status.</li>
+<li>Similarly, if <code>delete="never"</code>, the branch is unconditionally left in place after the transaction.</li>
+</ul>
+<p>Additionally, the <code>automerge</code> keyword controls whether the transaction branch is merged after successful completion of the transaction. 
+It has no effect if an error occurs over the course of the transaction.</p>
+<h2 id="error-handling">Error handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
+<p>Since all files are uploaded to a short-lived transaction branch, no commit on the target branch happens in case of an exception:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">lakefs_spec</span> <span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;train-data.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;repo/main/train-data.txt&quot;</span><span class="p">)</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add training data&quot;</span><span class="p">)</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;test-data.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;repo/main/test-data.txt&quot;</span><span class="p">)</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add test data&quot;</span><span class="p">)</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="n">sha</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;My train-test split&quot;</span><span class="p">)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="s2">&quot;onsuccess&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;repo/</span><span class="si">{</span><span class="n">tx</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/my-file.txt&quot;</span><span class="p">)</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add my-file.txt&quot;</span><span class="p">)</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;oops!&quot;</span><span class="p">)</span>
 </span></code></pre></div>
-<p>The full list of supported lakeFS versioning operations:</p>
-<ul>
-<li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.commit"><code>commit</code></a>, for creating commits on a branch, optionally with attached metadata.</li>
-<li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.create_branch"><code>create_branch</code></a>, for creating a new branch.</li>
-<li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.merge"><code>merge</code></a>, for merging a given branch into another branch.</li>
-<li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.revert"><code>revert</code></a>, for reverting a previous commit on a branch.</li>
-<li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.rev_parse"><code>rev_parse</code></a>, for parsing revisions like branch/tag names and SHA fragments into full commit SHAs.</li>
-<li><a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.LakeFSTransaction.tag"><code>tag</code></a>, for creating a tag pointing to a commit.</li>
-</ul>
-<h3 id="reusing-resources-created-in-transactions">Reusing resources created in transactions<a class="headerlink" href="#reusing-resources-created-in-transactions" title="Permanent link">&para;</a></h3>
-<p>Some transaction versioning helpers create new objects in the lakeFS instance that are not known before said helpers are actually executed.
-An example of this is a commit SHA, which is only available once created by the lakeFS server.
-In the above example, a commit is created directly after a file upload, but its actual SHA identifier will not be available until the transaction is complete.
-After the transaction is completed, you can reuse the computed value (a <a href="../../reference/lakefs_spec/transaction/#lakefs_spec.transaction.Placeholder"><code>Placeholder</code></a> object) in your code like you would any other lakeFS server result:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">fs</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="s2">&quot;my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;repo/branch/my-file.txt&quot;</span><span class="p">)</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">sha</span> <span class="o">=</span> <span class="n">tx</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;branch&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Add my-file.txt&quot;</span><span class="p">)</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># after transaction completion, just use the SHA value as normal.</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">fs</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;repo/</span><span class="si">{</span><span class="n">sha</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">/my-file.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;my-new-file.txt&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-<h2 id="thread-safety">Thread safety<a class="headerlink" href="#thread-safety" title="Permanent link">&para;</a></h2>
-<p>Through its use of <code>collections.deque</code> as a store for uploads, upload queueing and file transfers are thread-safe.</p>
+<p>The above code will not modify the <code>main</code> branch, since the <code>ValueError</code> prevents the merge of the transaction branch.
+Note that you can examine the contents of the transaction branch due to <code>delete="onsuccess"</code> (the default behavior), which prevents deletion of the branch in case of failure for debugging purposes.</p>
 
 
 
@@ -979,7 +937,7 @@ After the transaction is completed, you can reuse the computed value (a <a href=
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-01-18</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-02-02</span>
   </span>
 
     
