@@ -107,10 +107,7 @@ class LakeFSTransaction(Transaction):
         self.automerge = automerge
         self.delete = delete
 
-        if branch_name is None:
-            ephem_name = "transaction-" + "".join(random.choices(string.digits, k=6))  # nosec: B311
-        else:
-            ephem_name = branch_name
+        ephem_name = branch_name or "transaction-" + "".join(random.choices(string.digits, k=6))  # nosec: B311
         self._ephemeral_branch = Branch(self.repository, ephem_name, client=self.fs.client)
         return self
 

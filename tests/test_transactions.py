@@ -1,5 +1,6 @@
 from typing import Any
 
+import pytest
 from lakefs.branch import Branch
 from lakefs.repository import Repository
 
@@ -139,3 +140,9 @@ def test_transaction_no_automerge(
         assert transaction_branch.id in [b.id for b in repository.branches()]
     finally:
         transaction_branch.delete()
+
+
+def test_transaction_bad_repo(fs: LakeFSFileSystem) -> None:
+    with pytest.raises(ValueError, match="repository .* does not exist"):
+        with fs.transaction(repository="REEEE"):
+            pass
