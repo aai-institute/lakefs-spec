@@ -28,7 +28,7 @@ from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
 from lakefs_spec.util import md5_checksum, parse
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("lakefs-spec")
 
 
 class LakeFSFileSystem(AbstractFileSystem):

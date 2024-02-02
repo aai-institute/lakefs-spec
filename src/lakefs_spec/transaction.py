@@ -14,6 +14,7 @@ import lakefs
 from fsspec.transaction import Transaction
 from lakefs.branch import Branch, Reference
 from lakefs.client import Client
+from lakefs.exceptions import ServerException
 from lakefs.object import ObjectWriter
 from lakefs.reference import Commit, ReferenceType
 from lakefs.repository import Repository
@@ -21,8 +22,7 @@ from lakefs.tag import Tag
 
 T = TypeVar("T")
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logging.getLogger("lakefs-spec")
 
 if TYPE_CHECKING:  # pragma: no cover
     from lakefs_spec import LakeFSFileSystem
@@ -94,6 +94,12 @@ class LakeFSTransaction(Transaction):
         else:
             self.repository = repository.id
 
+        repo = lakefs.Repository(self.repository, client=self.fs.client)
+        try:
+            _ = repo.metadata
+        except ServerException:
+            raise ValueError(f"repository {self.repository!r} does not exist") from None
+
         # base branch needs to be a lakefs.Branch, since it is being diffed
         # with the ephemeral branch in __exit__.
         self.base_branch = _ensurebranch(base_branch, self.repository, self.fs.client)
@@ -109,6 +115,10 @@ class LakeFSTransaction(Transaction):
         return self
 
     def __enter__(self):
+        logger.debug(
+            f"Creating ephemeral branch {self._ephemeral_branch.id!r} "
+            f"from branch {self.base_branch.id!r}."
+        )
         self._ephemeral_branch.create(self.base_branch, exist_ok=False)
         self.fs._intrans = True
         return self
