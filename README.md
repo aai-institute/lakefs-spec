@@ -59,14 +59,14 @@ local_path.write_text("Hello, lakeFS!")
 
 # Upload to lakeFS and create a commit
 fs = LakeFSFileSystem()  # will auto-discover config from ~/.lakectl.yaml
-repo_path = f"{REPO}/{BRANCH}/{local_path.name}"
 
-with fs.transaction as tx:
-    fs.put(str(local_path), repo_path)
-    tx.commit(REPO, BRANCH, "Add demo data")
+# Upload a file on a temporary transaction branch
+with fs.transaction(repository=REPO, base_branch=BRANCH) as tx:
+    fs.put(local_path, f"{REPO}/{tx.branch.id}/{local_path.name}")
+    tx.commit(message="Add demo data")
 
 # Read back committed file
-f = fs.open(repo_path, "rt")
+f = fs.open(f"{REPO}/{BRANCH}/demo.txt", "rt")
 print(f.readline())  # "Hello, lakeFS!"
 ```
 
