@@ -5,17 +5,16 @@ Functionality for extended lakeFS transactions to conduct versioning operations 
 from __future__ import annotations
 
 import logging
+import random
+import string
 from collections import deque
-from dataclasses import dataclass
-from functools import partial
-from typing import TYPE_CHECKING, Callable, Generic, TypeVar
+from typing import TYPE_CHECKING, Literal, TypeVar
 
 import lakefs
-import wrapt
-from fsspec.spec import AbstractBufferedFile
 from fsspec.transaction import Transaction
 from lakefs.branch import Branch, Reference
 from lakefs.client import Client
+from lakefs.exceptions import ServerException
 from lakefs.object import ObjectWriter
 from lakefs.reference import Commit, ReferenceType
 from lakefs.repository import Repository
@@ -23,37 +22,16 @@ from lakefs.tag import Tag
 
 T = TypeVar("T")
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger = logging.getLogger("lakefs-spec")
 
 if TYPE_CHECKING:  # pragma: no cover
     from lakefs_spec import LakeFSFileSystem
 
-    VersioningOpTuple = tuple[Callable[[Client], None], str | "Placeholder" | None]
 
-
-@dataclass
-class Placeholder(Generic[T], wrapt.ObjectProxy):
-    """A generic placeholder for a value computed by the lakeFS server in a versioning operation during a transaction."""
-
-    def __init__(self, wrapped: T | None = None):
-        super().__init__(wrapped)
-
-    @property
-    def available(self) -> bool:
-        """Whether the wrapped value is available, i.e. already computed."""
-        return self.__wrapped__ is not None
-
-    @property
-    def value(self):
-        if self.__wrapped__ is None:
-            raise RuntimeError("placeholder unfilled")
-        return self.__wrapped__
-
-    @value.setter
-    def value(self, val: T) -> None:
-        """Fill in the placeholder. Not meant to be called directly except in the completion of the transaction."""
-        self.__wrapped__ = val
+def _ensurebranch(b: str | Branch, repository: str, client: Client) -> Branch:
+    if isinstance(b, str):
+        return Branch(repository, b, client=client)
+    return b
 
 
 class LakeFSTransaction(Transaction):
@@ -66,263 +44,219 @@ class LakeFSTransaction(Transaction):
         The lakeFS file system associated with the transaction.
     """
 
-    def __init__(self, fs: "LakeFSFileSystem"):
+    def __init__(
+        self,
+        fs: "LakeFSFileSystem",
+    ):
         super().__init__(fs=fs)
         self.fs: "LakeFSFileSystem"
-        self.files: deque[AbstractBufferedFile | VersioningOpTuple] = deque(self.files)
+        self.files: deque[ObjectWriter] = deque(self.files)
+
+        self.repository: str | None = None
+        self.base_branch: Branch | None = None
+        self.automerge: bool = False
+        self.delete: Literal["onsuccess", "always", "never"] = "onsuccess"
+        self._ephemeral_branch: Branch | None = None
+
+    def __call__(
+        self,
+        repository: str | Repository,
+        base_branch: str | Branch = "main",
+        branch_name: str | None = None,
+        automerge: bool = True,
+        delete: Literal["onsuccess", "always", "never"] = "onsuccess",
+    ) -> "LakeFSTransaction":
+        """
+        Creates an ephemeral branch, conducts all uploads and operations on that branch,
+        and optionally merges it back into the source branch.
+
+        repository: str | Repository
+            The repository in which to conduct the transaction.
+        base_branch: str | Branch
+            The branch on which the transaction operations should be based.
+        automerge: bool
+            Automatically merge the ephemeral branch into the base branch after successful
+            transaction completion.
+        delete: Literal["onsuccess", "always", "never"]
+            Cleanup policy / deletion handling for the ephemeral branch after the transaction.
+
+            If ``"onsuccess"``, the branch is deleted if the transaction succeeded,
+            or left over if an error occurred.
+
+            If ``"always"``, the ephemeral branch is always deleted after transaction regardless of success
+            or failure.
+
+            If ``"never"``, the transaction branch is always left in the repository.
+        """
+
+        if isinstance(repository, str):
+            self.repository = repository
+        else:
+            self.repository = repository.id
+
+        repo = lakefs.Repository(self.repository, client=self.fs.client)
+        try:
+            _ = repo.metadata
+        except ServerException:
+            raise ValueError(f"repository {self.repository!r} does not exist") from None
+
+        # base branch needs to be a lakefs.Branch, since it is being diffed
+        # with the ephemeral branch in __exit__.
+        self.base_branch = _ensurebranch(base_branch, self.repository, self.fs.client)
+
+        self.automerge = automerge
+        self.delete = delete
+
+        ephem_name = branch_name or "transaction-" + "".join(random.choices(string.digits, k=6))  # nosec: B311
+        self._ephemeral_branch = Branch(self.repository, ephem_name, client=self.fs.client)
+        return self
 
     def __enter__(self):
+        logger.debug(
+            f"Creating ephemeral branch {self._ephemeral_branch.id!r} "
+            f"from branch {self.base_branch.id!r}."
+        )
+        self._ephemeral_branch.create(self.base_branch, exist_ok=False)
         self.fs._intrans = True
         return self
 
-    def commit(
-        self,
-        repository: str | Repository,
-        branch: str | Branch,
-        message: str,
-        metadata: dict[str, str] | None = None,
-    ) -> Placeholder[Reference]:
-        """
-        Create a commit on a branch in a repository with a commit message and attached metadata.
-
-        Parameters
-        ----------
-        repository: str | Repository
-            The repository to create the commit in.
-        branch: str | Branch
-            The name of the branch to commit on.
-        message: str
-            The commit message to attach to the newly created commit.
-        metadata: dict[str, str] | None
-            Optional metadata to enrich the created commit with (author, e-mail, etc.).
-
-        Returns
-        -------
-        Placeholder[Reference]
-            A placeholder for the commit created by the dispatched ``commit`` API call.
-        """
-        # bind all arguments to the client helper function, and then add it to the file-/callstack.
-
-        def commit_op(
-            client: Client,
-            repo_: str | Repository,
-            ref_: str | Branch,
-            message_: str,
-            metadata_: dict[str, str] | None,
-        ) -> Reference:
-            repo_id = repo_.id if isinstance(repo_, Repository) else repo_
-            ref_id = ref_.id if isinstance(ref_, Branch) else ref_
-            b = lakefs.Branch(repo_id, ref_id, client=client)
-
-            diff = list(b.uncommitted())
-
-            if not diff:
-                logger.warning(f"No changes to commit on branch {branch!r}.")
-                return b.head
-            return b.commit(message_, metadata_)
-
-        op = partial(commit_op, repo_=repository, ref_=branch, message_=message, metadata_=metadata)
-        p: Placeholder[Reference] = Placeholder()
-        self.files.append((op, p))
-        # return a placeholder for the reference.
-        return p
-
-    def complete(self, commit: bool = True) -> None:
-        """
-        Finish the transaction by unwinding the file/versioning op stack via
-
-        1. Committing or discarding in case of a file, and
-        2. Conducting versioning operations using the file system's client.
-
-        No operations happen and all files are discarded if ``commit == False``,
-        which is the case, e.g., if an exception happens in the context manager.
-
-        Parameters
-        ----------
-        commit: bool
-            Whether to conduct operations queued in the transaction.
-        """
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        success = exc_type is None
         while self.files:
             # fsspec base class calls `append` on the file, which means we
             # have to pop from the left to preserve order.
             f = self.files.popleft()
-            if isinstance(f, ObjectWriter):
-                if not commit:
-                    f.discard()
-            else:
-                # client helper + return value case.
-                op, retval = f
-                if commit:
-                    result = op(self.fs.client)
-                    # if the transaction member returns a placeholder,
-                    # fill it with the result of the client helper.
-                    if isinstance(retval, Placeholder):
-                        retval.value = result
+            if not success:
+                f.discard()
 
-    def create_branch(
-        self, repository: str | Repository, name: str, source: str | Branch, exist_ok: bool = True
-    ) -> str:
+        self.fs._intrans = False
+        self.fs._transaction = None
+
+        if success and self.automerge:
+            if any(self.base_branch.diff(self._ephemeral_branch)):
+                self._ephemeral_branch.merge_into(self.base_branch)
+        if self.delete == "always" or (success and self.delete == "onsuccess"):
+            self._ephemeral_branch.delete()
+
+    @property
+    def branch(self):
+        return self._ephemeral_branch
+
+    def commit(self, message: str, metadata: dict[str, str] | None = None) -> Reference:
         """
-        Create a branch ``name`` in a repository, branching off ``source_branch``.
+        Create a commit on this transaction's ephemeral branch with a commit message
+        and attached metadata.
 
         Parameters
         ----------
-        repository: str | Repository
-            Repository name.
-        name: str
-            Name of the branch to be created.
-        source: str | Branch
-            Name of the branch (or branch object) that the new branch is created from.
-        exist_ok: bool
-            Ignore creation errors if the branch already exists.
+        message: str
+            The commit message to attach to the newly created commit.
+        metadata: dict[str, str] | None
+            Optional metadata to enrich the created commit with (author, e-mail, ...).
 
         Returns
         -------
-        str
-            The requested branch name.
+        Reference
+            The created commit.
         """
 
-        def create_branch_op(
-            client: Client,
-            repo_: str | Repository,
-            branch_: str,
-            source_: str | Branch,
-            exist_ok_: bool,
-        ) -> Branch:
-            repo_id = repo_.id if isinstance(repo_, Repository) else repo_
-            return lakefs.Branch(repo_id, branch_, client=client).create(
-                source_, exist_ok=exist_ok_
-            )
+        diff = list(self.branch.uncommitted())
 
-        op = partial(
-            create_branch_op,
-            repo_=repository,
-            branch_=name,
-            source_=source,
-            exist_ok_=exist_ok,
-        )
-        self.files.append((op, name))
-        return name
+        if not diff:
+            logger.warning(f"No changes to commit on branch {self.branch.id!r}.")
+            return self.branch.head
 
-    def merge(
-        self, repository: str | Repository, source_ref: str | Branch, into: str | Branch
-    ) -> None:
+        return self.branch.commit(message, metadata=metadata)
+
+    def merge(self, source_ref: str | Branch, into: str | Branch) -> Commit:
         """
         Merge a branch into another branch in a repository.
 
+        In case the branch contains no changes relevant to the target branch,
+        no merge happens, and the tip of the target branch is returned instead.
+
         Parameters
         ----------
-        repository: str | Repository
-            Name of the repository.
         source_ref: str | Branch
-            Source reference containing the changes to merge. Can be a branch name or partial commit SHA.
+            Source reference containing the changes to merge.
+            Can be a branch name or partial commit SHA.
         into: str | Branch
             Target branch into which the changes will be merged.
+
+        Returns
+        -------
+        Commit
+            Either the created merge commit, or the head commit of the target branch.
         """
+        source = _ensurebranch(source_ref, self.repository, self.fs.client)
+        dest = _ensurebranch(into, self.repository, self.fs.client)
 
-        def merge_op(
-            client: Client, repo_: str | Branch, ref_: str | Branch, into_: str | Branch
-        ) -> None:
-            repo_id = repo_.id if isinstance(repo_, Repository) else repo_
-            ref_id = ref_.id if isinstance(ref_, Branch) else ref_
-            lakefs.Branch(repo_id, ref_id, client=client).merge_into(into_)
+        if any(dest.diff(source)):
+            source.merge_into(dest)
+        return dest.head.get_commit()
 
-        op = partial(merge_op, repo_=repository, ref_=source_ref, into_=into)
-        self.files.append((op, None))
-        return None
-
-    def revert(
-        self, repository: str | Repository, branch: str | Branch, parent_number: int = 1
-    ) -> None:
+    def revert(self, branch: str | Branch, ref: ReferenceType, parent_number: int = 1) -> Commit:
         """
         Revert a previous commit on a branch.
 
         Parameters
         ----------
-        repository: str | Repository
-            Name of the repository.
         branch: str | Branch
             Branch on which the commit should be reverted.
-        parent_number: int
-            If there are multiple parents to a commit, specify to which parent the commit should be reverted.
-            ``parent_number = 1`` (the default)  refers to the first parent commit of the current ``branch`` tip.
-        """
-
-        def revert_op(
-            client: Client, repo_: str | Repository, branch_: str | Branch, parent_: int
-        ) -> None:
-            repo_id = repo_.id if isinstance(repo_, Repository) else repo_
-            branch_id = branch_.id if isinstance(branch_, Branch) else branch_
-            lakefs.Branch(repo_id, branch_id, client=client).revert(branch_id, parent_)
-
-        op = partial(revert_op, repo_=repository, branch_=branch, parent_=parent_number)
-        self.files.append((op, None))
-        return None
-
-    def rev_parse(
-        self, repository: str | Repository, ref: ReferenceType, parent: int = 0
-    ) -> Placeholder[Commit]:
-        """
-        Parse a given reference or any of its parents in a repository.
-
-        Parameters
-        ----------
-        repository: str | Repository
-            Name of the repository.
         ref: ReferenceType
-            Reference object to resolve, can be a branch, commit SHA, or tag.
-        parent: int
-            Optionally parse a parent of ``ref`` instead of ``ref`` itself as indicated by the number.
-            Must be non-negative. ``parent = 0`` (the default)  refers to ``ref`` itself.
+            The reference to revert.
+        parent_number: int
+            If there are multiple parents to a commit, specify to which parent
+            the commit should be reverted. ``parent_number = 1`` (the default)
+            refers to the first parent commit of the current ``branch`` tip.
 
         Returns
         -------
-        Placeholder[Commit]
-            A placeholder for the commit created by the dispatched ``rev_parse`` operation.
+        Commit
+            The created revert commit.
         """
 
-        def rev_parse_op(
-            client: Client, repo_: str | Repository, ref_: ReferenceType, parent_: int
-        ) -> Commit:
-            repo_id = repo_.id if isinstance(repo_, Repository) else repo_
-            ref_id = ref_.id if isinstance(ref_, Reference) else ref_
+        b = _ensurebranch(branch, self.repository, self.fs.client)
 
-            commits = list(lakefs.Reference(repo_id, ref_id, client=client).log(parent_ + 1))
-            if len(commits) <= parent:
-                raise ValueError(
-                    f"unable to fetch revision {ref_id}~{parent_}: "
-                    f"ref {ref_id!r} only has {len(commits)} parents"
-                )
-            return commits[parent_]
+        ref_id = ref if isinstance(ref, str) else ref.id
+        b.revert(ref_id, parent_number=parent_number)
+        return b.head.get_commit()
 
-        p: Placeholder[Commit] = Placeholder()
-        op = partial(rev_parse_op, repo_=repository, ref_=ref, parent_=parent)
-        self.files.append((op, p))
-        return p
+    def rev_parse(self, ref: ReferenceType) -> Commit:
+        """
+        Parse a given lakeFS reference expression and obtain its corresponding commit.
 
-    def tag(self, repository: str | Repository, ref: ReferenceType, tag: str) -> str:
+        Parameters
+        ----------
+        ref: ReferenceType
+            Reference object to resolve, can be a branch, commit SHA, or tag.
+
+        Returns
+        -------
+        Commit
+            The commit referenced by the expression ``ref``.
+        """
+
+        ref_id = ref.id if isinstance(ref, Reference) else ref
+        reference = lakefs.Reference(self.repository, ref_id, client=self.fs.client)
+        return reference.get_commit()
+
+    def tag(self, ref: ReferenceType, name: str) -> Tag:
         """
         Create a tag referencing a commit in a repository.
 
         Parameters
         ----------
-        repository: str | Repository
-            Name of the repository.
         ref: ReferenceType
-            Commit SHA or placeholder for a reference or commit object to which the new tag will point.
-        tag: str
+            Commit SHA or placeholder for a reference or commit object
+            to which the new tag will point.
+        name: str
             Name of the tag to be created.
 
         Returns
         -------
-        str
-            The name of the requested tag.
+        Tag
+            The requested tag.
         """
 
-        def tag_op(client: Client, repo_: str | Repository, ref_: ReferenceType, tag_: str) -> Tag:
-            repo_id = repo_.id if isinstance(repo_, Repository) else repo_
-            ref_id = ref_.id if isinstance(ref_, Commit) else ref_
-            return lakefs.Tag(repo_id, tag_, client=client).create(ref_id)
-
-        self.files.append((partial(tag_op, repo_=repository, ref_=ref, tag_=tag), tag))
-        return tag
+        return lakefs.Tag(self.repository, name, client=self.fs.client).create(ref)

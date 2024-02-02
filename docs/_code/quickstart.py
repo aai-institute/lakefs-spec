@@ -12,9 +12,9 @@ local_path.write_text("Hello, lakeFS!")
 fs = LakeFSFileSystem()  # will auto-discover credentials from ~/.lakectl.yaml
 repo_path = f"{REPO}/{BRANCH}/{local_path.name}"
 
-with fs.transaction as tx:
-    fs.put(str(local_path), repo_path)
-    tx.commit(REPO, BRANCH, "Add demo data")
+with fs.transaction(REPO, BRANCH) as tx:
+    fs.put(str(local_path), f"{REPO}/{tx.branch.id}/{local_path.name}")
+    tx.commit(message="Add demo data")
 
 # Read back the file contents
 f = fs.open(repo_path, "rt")
@@ -30,7 +30,8 @@ print(
 print(fs.ls(f"{REPO}/{BRANCH}/"))
 
 # Delete uploaded file from the repository (and commit)
-with fs.transaction as tx:
-    fs.rm(repo_path)
-    tx.commit(REPO, BRANCH, "Delete demo data")
+with fs.transaction(REPO, BRANCH) as tx:
+    fs.rm(f"{REPO}/{tx.branch.id}/{local_path.name}")
+    tx.commit(message="Delete demo data")
+
 local_path.unlink()

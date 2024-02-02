@@ -34,7 +34,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 
-dependencies = ["fsspec>=2023.6.0", "lakefs>=0.2.0", "wrapt"]
+dependencies = ["fsspec>=2023.6.0", "lakefs>=0.2.0"]
 
 dynamic = ["version"]
 
@@ -133,4 +133,7 @@ style = 'numpy'
 exclude = '\.git|venv'
 
 [tool.coverage.report]
-exclude_also = ["@overload"]
+exclude_also = [
+    "@overload",
+    "raise NotImplementedError"
+]

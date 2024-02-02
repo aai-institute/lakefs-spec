@@ -1,14 +1,11 @@
-from pathlib import Path
 from typing import Any
 
 import pytest
 from lakefs.branch import Branch
-from lakefs.reference import Commit, Reference
 from lakefs.repository import Repository
 
 from lakefs_spec import LakeFSFileSystem
-from lakefs_spec.transaction import Placeholder
-from tests.util import RandomFileFactory, put_random_file_on_branch, with_counter
+from tests.util import RandomFileFactory
 
 
 def test_transaction_commit(
@@ -24,38 +21,32 @@ def test_transaction_commit(
 
     message = f"Add file {random_file.name}"
 
-    with fs.transaction as tx:
-        fs.put_file(lpath, rpath)
+    with fs.transaction(repository, temp_branch) as tx:
+        fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
         assert len(tx.files) == 1
         # sha is a placeholder for the actual SHA created on transaction completion.
-        sha = tx.commit(repository, temp_branch, message=message)
-        # stack contains the file to upload, and the commit op.
-        assert len(tx.files) == 2
-        assert not sha.available
+        sha = tx.commit(message=message)
 
-    assert sha.available
-
-    commits = list(temp_branch.log())
-    latest_commit = commits[0]
-    assert latest_commit.message == message
-    assert latest_commit.id == sha.id
+    # HEAD should be the merge commit.
+    head_tilde = list(temp_branch.log(max_amount=2))[-1]
+    assert head_tilde.message == message
+    assert head_tilde.id == sha.id
 
 
 def test_transaction_tag(fs: LakeFSFileSystem, repository: Repository) -> None:
     try:
         # tag gets created on exit of the context.
-        with fs.transaction as tx:
-            sha = tx.rev_parse(repository, "main")
-            tag = tx.tag(repository, ref=sha, tag="v2")
-
-        assert sha.available
+        # in this test, initialize with the repo name.
+        with fs.transaction(repository.id) as tx:
+            sha = tx.rev_parse("main")
+            tag = tx.tag(sha, "v2")
 
         tags = list(repository.tags())
         assert len(tags) > 0
-        assert tags[0].id == tag
+        assert tags[0].id == tag.id
         assert tags[0].get_commit().id == sha.id
     finally:
-        repository.tag(tag).delete()
+        tag.delete()
 
 
 def test_transaction_merge(
@@ -68,24 +59,23 @@ def test_transaction_merge(
     random_file = random_file_factory.make()
 
     with temporary_branch_context("transaction-merge-test") as new_branch:
-        resource = f"{repository.id}/{new_branch.id}/{random_file.name}"
         message = "Commit new file"
 
-        with fs.transaction as tx:
-            # stage a file on new_branch...
-            fs.put_file(str(random_file), resource)
+        with fs.transaction(repository, new_branch) as tx:
+            tbname = tx.branch.id
+            lpath = str(random_file)
+            # stage a file on the transaction branch...
+            fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
             # ... commit it with the above message
-            tx.commit(repository, new_branch, message)
+            tx.commit(message=message)
             # ... and merge it into temp_branch.
-            tx.merge(repository, new_branch, into=temp_branch)
+            tx.merge(tx.branch, into=temp_branch)
 
-        # at last, verify temp_branch@HEAD is the merge commit.
-        commits = list(temp_branch.log())
-        assert len(commits) > 2
-        latest_commit = commits[0]
-        assert latest_commit.message == f"Merge {new_branch.id!r} into {temp_branch.id!r}"
-        second_latest_commit = commits[1]
-        assert second_latest_commit.message == message
+        head, head_tilde = list(temp_branch.log(max_amount=2))
+        # HEAD should be the merge commit of the transaction branch.
+        assert head.message.startswith(f"Merge {tbname!r}")
+        # HEAD~ should be the commit message.
+        assert head_tilde.message == message
 
 
 def test_transaction_revert(
@@ -97,37 +87,16 @@ def test_transaction_revert(
     random_file = random_file_factory.make()
 
     lpath = str(random_file)
-    rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"
-
     message = f"Add file {random_file.name}"
 
-    with fs.transaction as tx:
-        fs.put_file(lpath, rpath, autocommit=False)
-        tx.commit(repository, temp_branch, message=message)
-        tx.revert(repository, temp_branch)
+    with fs.transaction(repository, temp_branch, automerge=True) as tx:
+        fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+        tx.commit(message=message)
+        revert_commit = tx.revert(temp_branch, temp_branch.head)
 
-    commits = list(temp_branch.log())
-    assert len(commits) > 1
-    latest_commit = commits[0]
-    assert latest_commit.message == f"Revert {temp_branch.id}"
-
-
-def test_transaction_branch(fs: LakeFSFileSystem, repository: Repository) -> None:
-    branch = "new-hello"
-
-    try:
-        with fs.transaction as tx:
-            tx.create_branch(repository, branch, source="main")
-
-        assert branch in [b.id for b in list(repository.branches())]
-    finally:
-        repository.branch(branch).delete()
-
-
-def test_transaction_entry(fs: LakeFSFileSystem) -> None:
-    fs.start_transaction()
-    assert fs._intrans
-    assert fs._transaction is not None
+    # first commit should be the merge commit
+    assert temp_branch.head.get_commit().message.startswith("Merge")
+    assert revert_commit.message.startswith("Revert")
 
 
 def test_transaction_failure(
@@ -140,42 +109,40 @@ def test_transaction_failure(
 
     lpath = str(random_file)
     rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"
-
     message = f"Add file {random_file.name}"
 
-    fs.client, counter = with_counter(fs.client)
     try:
-        with fs.transaction as tx:
-            fs.put_file(lpath, rpath)
-            tx.commit(repository, temp_branch, message=message)
+        with fs.transaction(repository, temp_branch) as tx:
+            fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+            tx.commit(message=message)
             raise RuntimeError("something went wrong")
     except RuntimeError:
         pass
 
     # assert that no commit happens because of the exception.
-    assert counter.count("commits_api.commit") == 0
+    assert not fs.exists(rpath)
 
 
-def test_placeholder_representations(
-    random_file_factory: RandomFileFactory,
+def test_transaction_no_automerge(
     fs: LakeFSFileSystem,
     repository: Repository,
     temp_branch: Branch,
 ) -> None:
-    with fs.transaction as tx:
-        rpath = put_random_file_on_branch(random_file_factory, fs, repository, temp_branch)
-        message = f"Add file {Path(rpath).name}"
-        sha = tx.commit(repository, temp_branch, message=message)
+    currhead = temp_branch.head.get_commit()
 
-    assert isinstance(sha, Reference)
-    commits = list(temp_branch.log())
-    latest_commit = commits[0]
-    assert sha.id == latest_commit.id
-    assert repr(sha.id) == repr(latest_commit.id)
+    with fs.transaction(repository, temp_branch, automerge=False, delete="never") as tx:
+        transaction_branch = tx.branch
+
+    try:
+        # assert no merge commit is created on temp_branch.
+        assert currhead == next(temp_branch.log())
+        # assert the transaction branch still exists.
+        assert transaction_branch.id in [b.id for b in repository.branches()]
+    finally:
+        transaction_branch.delete()
 
 
-def test_unfilled_placeholder_error() -> None:
-    p: Placeholder[Commit] = Placeholder()
-
-    with pytest.raises(RuntimeError):
-        _ = p.value
+def test_transaction_bad_repo(fs: LakeFSFileSystem) -> None:
+    with pytest.raises(ValueError, match="repository .* does not exist"):
+        with fs.transaction(repository="REEEE"):
+            pass

@@ -28,7 +28,7 @@ from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
 from lakefs_spec.util import md5_checksum, parse
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("lakefs-spec")
 
 
 class LakeFSFileSystem(AbstractFileSystem):
@@ -137,7 +137,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         return spath
 
     @property
-    def transaction(self):
+    def transaction(self) -> LakeFSTransaction:
         """
         A context manager within which file uploads and versioning operations are deferred to a
         queue, and carried out during when exiting the context.
@@ -150,12 +150,10 @@ class LakeFSFileSystem(AbstractFileSystem):
         return self._transaction
 
     def start_transaction(self):
-        """
-        Prepare a lakeFS file system transaction without entering the transaction context yet.
-        """
-        self._intrans = True
-        self._transaction = LakeFSTransaction(self)
-        return self.transaction
+        raise NotImplementedError(
+            "lakeFS transactions should only be used as a context manager via"
+            " `with LakeFSFileSystem.transaction as tx:`"
+        )
 
     @contextmanager
     def wrapped_api_call(
@@ -647,7 +645,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         ac = kwargs.pop("autocommit", not self._intrans)
         if not ac and "r" not in mode:
-            self.transaction.files.append(handler)
+            self._transaction.files.append(handler)
 
         return handler
 

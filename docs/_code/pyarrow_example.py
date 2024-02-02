@@ -6,17 +6,15 @@ from lakefs_spec import LakeFSFileSystem
 
 fs = LakeFSFileSystem()
 
-with fs.transaction as tx:
-    tx.create_branch("quickstart", "partitioned-data", "main")
-
-    lakes_table = pq.read_table("quickstart/main/lakes.parquet", filesystem=fs)
+with fs.transaction("quickstart", "main") as tx:
+    lakes_table = pq.read_table(f"quickstart/{tx.branch.id}/lakes.parquet", filesystem=fs)
 
     ds.write_dataset(
         lakes_table,
-        "quickstart/partitioned-data/lakes",
+        f"quickstart/{tx.branch.id}/lakes",
         filesystem=fs,
         format="csv",
         partitioning=ds.partitioning(pa.schema([lakes_table.schema.field("Country")])),
     )
 
-    tx.commit("quickstart", "partitioned-data", "Add partitioned lakes data set")
+    tx.commit("Add partitioned lakes data set")

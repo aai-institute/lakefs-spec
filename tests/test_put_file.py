@@ -18,24 +18,24 @@ def test_no_change_postcommit(
     random_file = random_file_factory.make()
 
     lpath = str(random_file)
-    rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"
+    message = f"Add file {random_file.name}"
 
-    with fs.transaction as tx:
-        fs.put(lpath, rpath, precheck=False, autocommit=False)
-        tx.commit(repository, temp_branch, message=f"Add file {random_file.name}")
+    with fs.transaction(repository, temp_branch) as tx:
+        fs.put(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+        tx.commit(message=message)
 
-    commits = list(temp_branch.log())
-    latest_commit = commits[0]  # commit log is ordered branch-tip-first
-    assert latest_commit.message == f"Add file {random_file.name}"
+    commits = list(temp_branch.log(max_amount=2))
+    current_head = temp_branch.head.get_commit()
+    assert commits[0].message.startswith("Merge")
+    assert commits[1].message == message
 
     # put the same file again, this time the diff is empty
-    with fs.transaction as tx:
-        fs.put(lpath, rpath, precheck=False, autocommit=False)
-        tx.commit(repository, temp_branch, message=f"Add file {random_file.name}")
+    with fs.transaction(repository, temp_branch) as tx:
+        fs.put(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}", precheck=False)
+        tx.commit(message=f"Add file {random_file.name}")
 
     # check that no other commit has happened.
-    commits = list(temp_branch.log())
-    assert commits[0] == latest_commit
+    assert temp_branch.head.get_commit() == current_head
 
 
 def test_implicit_branch_creation(
