@@ -19,12 +19,10 @@ import lakefs
 from fsspec.callbacks import _DEFAULT_CALLBACK
 from fsspec.spec import AbstractFileSystem
 from fsspec.utils import stringify_path
-from lakefs.branch import Branch
 from lakefs.client import Client
 from lakefs.exceptions import NotFoundException, ServerException
 from lakefs.models import CommonPrefix, ObjectInfo
 from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
-from lakefs.repository import Repository
 
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
@@ -138,13 +136,8 @@ class LakeFSFileSystem(AbstractFileSystem):
             return spath + "/"
         return spath
 
-    def transaction(
-        self,
-        repository: str | Repository,
-        base_branch: str | Branch = "main",
-        automerge: bool = True,
-        delete: Literal["onsuccess", "always", "never"] = "onsuccess",
-    ) -> LakeFSTransaction:
+    @property
+    def transaction(self) -> LakeFSTransaction:
         """
         A context manager within which file uploads and versioning operations are deferred to a
         queue, and carried out during when exiting the context.
@@ -153,18 +146,13 @@ class LakeFSFileSystem(AbstractFileSystem):
         """
         self._transaction: LakeFSTransaction | None
         if self._transaction is None:
-            self._transaction = LakeFSTransaction(
-                self,
-                repository=repository,
-                base_branch=base_branch,
-                automerge=automerge,
-                delete=delete,
-            )
+            self._transaction = LakeFSTransaction(self)
         return self._transaction
 
     def start_transaction(self):
         raise NotImplementedError(
-            "lakeFS transactions should only be started via `LakeFSFileSystem.transaction()`"
+            "lakeFS transactions should only be used as a context manager via"
+            " `with LakeFSFileSystem.transaction as tx:`"
         )
 
     @contextmanager

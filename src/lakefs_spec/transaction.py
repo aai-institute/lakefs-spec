@@ -38,43 +38,56 @@ class LakeFSTransaction(Transaction):
     """
     A lakeFS transaction model capable of versioning operations in between file uploads.
 
-    Creates an ephemeral branch, conducts all uploads and operations on that branch,
-    and optionally merges it back into the source branch.
-
     Parameters
     ----------
     fs: LakeFSFileSystem
         The lakeFS file system associated with the transaction.
-    repository: str | Repository
-        The repository in which to conduct the transaction.
-    base_branch: str | Branch
-        The branch on which the transaction operations should be based.
-    automerge: bool
-        Automatically merge the ephemeral branch into the base branch after successful
-        transaction completion.
-    delete: Literal["onsuccess", "always", "never"]
-        Cleanup policy / deletion handling for the ephemeral branch after the transaction.
-
-        If ``"onsuccess"``, the branch is deleted if the transaction succeeded,
-        or left over if an error occurred.
-
-        If ``"always"``, the ephemeral branch is always deleted after transaction regardless of success
-        or failure.
-
-        If ``"never"``, the transaction branch is always left in the repository.
     """
 
     def __init__(
         self,
         fs: "LakeFSFileSystem",
-        repository: str | Repository,
-        base_branch: str | Branch = "main",
-        automerge: bool = True,
-        delete: Literal["onsuccess", "always", "never"] = "onsuccess",
     ):
         super().__init__(fs=fs)
         self.fs: "LakeFSFileSystem"
         self.files: deque[ObjectWriter] = deque(self.files)
+
+        self.repository: str | None = None
+        self.base_branch: Branch | None = None
+        self.automerge: bool = False
+        self.delete: Literal["onsuccess", "always", "never"] = "onsuccess"
+        self._ephemeral_branch: Branch | None = None
+
+    def __call__(
+        self,
+        repository: str | Repository,
+        base_branch: str | Branch = "main",
+        branch_name: str | None = None,
+        automerge: bool = True,
+        delete: Literal["onsuccess", "always", "never"] = "onsuccess",
+    ) -> "LakeFSTransaction":
+        """
+        Creates an ephemeral branch, conducts all uploads and operations on that branch,
+        and optionally merges it back into the source branch.
+
+        repository: str | Repository
+            The repository in which to conduct the transaction.
+        base_branch: str | Branch
+            The branch on which the transaction operations should be based.
+        automerge: bool
+            Automatically merge the ephemeral branch into the base branch after successful
+            transaction completion.
+        delete: Literal["onsuccess", "always", "never"]
+            Cleanup policy / deletion handling for the ephemeral branch after the transaction.
+
+            If ``"onsuccess"``, the branch is deleted if the transaction succeeded,
+            or left over if an error occurred.
+
+            If ``"always"``, the ephemeral branch is always deleted after transaction regardless of success
+            or failure.
+
+            If ``"never"``, the transaction branch is always left in the repository.
+        """
 
         if isinstance(repository, str):
             self.repository = repository
@@ -88,8 +101,12 @@ class LakeFSTransaction(Transaction):
         self.automerge = automerge
         self.delete = delete
 
-        ephem_name = "transaction-" + "".join(random.choices(string.digits, k=6))  # nosec: B311
+        if branch_name is None:
+            ephem_name = "transaction-" + "".join(random.choices(string.digits, k=6))  # nosec: B311
+        else:
+            ephem_name = branch_name
         self._ephemeral_branch = Branch(self.repository, ephem_name, client=self.fs.client)
+        return self
 
     def __enter__(self):
         self._ephemeral_branch.create(self.base_branch, exist_ok=False)
