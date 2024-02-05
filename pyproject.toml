@@ -105,6 +105,8 @@ ignore_missing_imports = true
 # explicitly set src folder for isort to understand first-party imports correctly.
 src = ["src"]
 line-length = 100
+
+[tool.ruff.lint]
 # Enable pycodestyle errors & warnings (`E`, `W`), Pyflakes (`F`), and isort (`I`) by default.
 select = ["E", "F", "I", "W"]
 ignore = [
@@ -114,7 +116,7 @@ ignore = [
     "F841",
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 # Ignore unused imports in all `__init__.py` files
 "__init__.py" = ["F401"]
 "docs/tutorials/*.py" = [
