@@ -39,6 +39,46 @@ def test_ls_caching(fs: LakeFSFileSystem, repository: Repository) -> None:
     assert counter.count("objects_api.list_objects") == 1
 
 
+def test_ls_with_one_dir(
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: Branch,
+) -> None:
+    """
+    Check that ls calls are properly cached.
+    """
+    root = f"lakefs://{repository.id}/{temp_branch.id}"
+
+    fs.mkdir(f"{root}/test")
+    fs.cp(f"{root}/lakes.parquet", f"{root}/test/lakes.parquet")
+    fs.cp(f"{root}/lakes.parquet", f"{root}/test/lakes2.parquet")
+    fs.rm(f"{root}/README.md")
+    fs.rm(f"{root}/data/", recursive=True)
+    fs.rm(f"{root}/images/", recursive=True)
+    fs.rm(f"{root}/lakes.parquet")
+
+    # Check root
+    root_resource = f"{root}/"
+    list_of_files = fs.ls(root_resource)
+    assert [fs.unstrip_protocol(x["name"]) for x in list_of_files] == [f"{root_resource}test/"]
+    assert len(fs.dircache) == 1
+    assert {fs.unstrip_protocol(x) for x in fs.dircache.keys()} == {root_resource.removesuffix("/")}
+
+    # Check testdir
+    testdir = "test"
+    resource = f"{root}/{testdir}"
+    list_of_files = fs.ls(resource)
+    assert [fs.unstrip_protocol(x["name"]) for x in list_of_files] == [
+        f"{resource}/lakes.parquet",
+        f"{resource}/lakes2.parquet",
+    ]
+    assert len(fs.dircache) == 2
+    assert {fs.unstrip_protocol(x) for x in fs.dircache.keys()} == {
+        resource.removesuffix("/"),
+        root_resource.removesuffix("/"),
+    }
+
+
 def test_ls_cache_refresh(fs: LakeFSFileSystem, repository: Repository) -> None:
     """
     Check that ls calls bypass the dircache if requested through ``refresh=False``

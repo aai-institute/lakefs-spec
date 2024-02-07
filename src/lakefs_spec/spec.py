@@ -379,7 +379,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     def _update_dircache(self, info: list) -> None:
         """Update logic for dircache (optionally recursive) based on lakeFS API response"""
-        parents = {self._parent(i["name"]) for i in info}
+        parents = {self._parent(i["name"].rstrip("/")) for i in info}
         for pp in parents:
             # subset of info entries which are direct descendants of `parent`
             dir_info = [i for i in info if self._parent(i["name"].rstrip("/")) == pp]
@@ -485,7 +485,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         list[str] | list[dict[str, Any]]
             A list of all objects' metadata under the given remote path if ``detail=True``, or alternatively only their names if ``detail=False``.
         """
-        path = stringify_path(path)
+        path = self._strip_protocol(path)
         repository, ref, prefix = parse(path)
 
         recursive = kwargs.pop("recursive", False)
@@ -540,7 +540,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         # Retry the API call with appended slash if the current result
         # is just a single directory entry only (not its contents).
         # This is useful to allow `ls("repo/branch/dir")` calls without a trailing slash.
-        if len(info) == 1 and info[0]["type"] == "directory":
+        if len(info) == 1 and info[0]["type"] == "directory" and info[0]["name"] == path + "/":
             return self.ls(
                 path + "/",
                 detail=detail,
