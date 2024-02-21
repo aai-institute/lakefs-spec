@@ -146,3 +146,33 @@ def test_transaction_bad_repo(fs: LakeFSFileSystem) -> None:
     with pytest.raises(ValueError, match="repository .* does not exist"):
         with fs.transaction(repository="REEEE"):
             pass
+
+
+def test_warn_uncommitted_changes(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: Branch,
+) -> None:
+    random_file = random_file_factory.make()
+
+    lpath = str(random_file)
+
+    with pytest.warns(match="uncommitted changes.*lost"):
+        with fs.transaction(repository, temp_branch) as tx:
+            fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+
+
+def test_warn_uncommitted_changes_on_persisted_branch(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: Branch,
+) -> None:
+    random_file = random_file_factory.make()
+
+    lpath = str(random_file)
+
+    with pytest.warns(match="uncommitted changes(?:(?!lost).)*$"):
+        with fs.transaction(repository, temp_branch, delete="never") as tx:
+            fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
