@@ -7,6 +7,7 @@ from __future__ import annotations
 import logging
 import random
 import string
+import warnings
 from collections import deque
 from typing import TYPE_CHECKING, Literal, TypeVar
 
@@ -131,6 +132,12 @@ class LakeFSTransaction(Transaction):
 
         self.fs._intrans = False
         self.fs._transaction = None
+
+        if any(self._ephemeral_branch.uncommitted()):
+            msg = f"Finished transaction on branch {self._ephemeral_branch.id!r} with uncommitted changes."
+            if self.delete != "never":
+                msg += " Objects added but not committed are lost."
+            warnings.warn(msg)
 
         if success and self.automerge:
             if any(self.base_branch.diff(self._ephemeral_branch)):
