@@ -112,21 +112,55 @@ released. For the most accurate information, please <strong><a href="../../..">a
       </div>
     
     
-      
+      <!--
+  Copyright (c) 2016-2024 Martin Donath <martin.donath@squidfunk.com>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+-->
+
+<!-- Determine classes -->
+
 
   
 
+
+<!-- Header -->
 <header class="md-header md-header--shadow" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
+  <nav
+    class="md-header__inner md-grid"
+    aria-label="Header"
+  >
+
+    <!-- Link to home -->
     <a href="https://lakefs-spec.org" title="lakeFS-spec" class="md-header__button md-logo" aria-label="lakeFS-spec" data-md-component="logo">
       
   <img src="../../_images/aai-logo-cropped.png" alt="logo">
 
     </a>
+
+    <!-- Button to open drawer -->
     <label class="md-header__button md-icon" for="__drawer">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
     </label>
+
+    <!-- Header title -->
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
@@ -137,12 +171,14 @@ released. For the most accurate information, please <strong><a href="../../..">a
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Data Science with lakeFS-spec
+              lakeFS-spec &mdash; <strong>Data Science with lakeFS-spec</strong>
             
           </span>
         </div>
       </div>
     </div>
+
+    <!-- Color palette toggle -->
     
       
         <form class="md-header__option" data-md-component="palette">
@@ -170,15 +206,23 @@ released. For the most accurate information, please <strong><a href="../../..">a
 </form>
       
     
+
+    <!-- User preference: color palette -->
     
       <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
+
+    <!-- Site language selector -->
     
+
+    <!-- Button to open search modal -->
     
       <label class="md-header__button md-icon" for="__search">
         
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
       </label>
+
+      <!-- Search interface -->
       <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
@@ -212,6 +256,8 @@ released. For the most accurate information, please <strong><a href="../../..">a
   </div>
 </div>
     
+
+    <!-- Repository information -->
     
       <div class="md-header__source">
         <a href="https://github.com/aai-institute/lakefs-spec" title="Go to repository" class="md-source" data-md-component="source">
@@ -226,6 +272,8 @@ released. For the most accurate information, please <strong><a href="../../..">a
       </div>
     
   </nav>
+
+  <!-- Navigation tabs (sticky) -->
   
 </header>
     
@@ -1064,16 +1112,7 @@ We will use versioned weather data to train a decision tree classifier to predic
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
 <code>Collecting numpy
-</code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>  Downloading numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
-     <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">0.0/61.0 kB</span> <span class="ansi-red-fg">?</span> eta <span class="ansi-cyan-fg">-:--:--</span>
-     <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">61.0/61.0 kB</span> <span class="ansi-red-fg">3.6 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+  Using cached numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
 </code>
 </pre>
 </div>
@@ -1082,7 +1121,14 @@ We will use versioned weather data to train a decision tree classifier to predic
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
 <code>Collecting pandas
-  Downloading pandas-2.2.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (19 kB)
+</code>
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+<code>  Downloading pandas-2.2.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (19 kB)
 </code>
 </pre>
 </div>
@@ -1091,7 +1137,7 @@ We will use versioned weather data to train a decision tree classifier to predic
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
 <code>Collecting scikit-learn
-  Downloading scikit_learn-1.4.1.post1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+  Using cached scikit_learn-1.4.1.post1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
 </code>
 </pre>
 </div>
@@ -1102,7 +1148,7 @@ We will use versioned weather data to train a decision tree classifier to predic
 <code>Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages (from pandas) (2.8.2)
 Requirement already satisfied: pytz&gt;=2020.1 in /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages (from pandas) (2024.1)
 Collecting tzdata&gt;=2022.7 (from pandas)
-  Downloading tzdata-2024.1-py2.py3-none-any.whl.metadata (1.4 kB)
+  Using cached tzdata-2024.1-py2.py3-none-any.whl.metadata (1.4 kB)
 </code>
 </pre>
 </div>
@@ -1111,9 +1157,8 @@ Collecting tzdata&gt;=2022.7 (from pandas)
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
 <code>Collecting scipy&gt;=1.6.0 (from scikit-learn)
-  Downloading scipy-1.12.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (60 kB)
-     <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">0.0/60.4 kB</span> <span class="ansi-red-fg">?</span> eta <span class="ansi-cyan-fg">-:--:--</span>
-     <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">60.4/60.4 kB</span> <span class="ansi-red-fg">17.5 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+  Using cached scipy-1.12.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (60 kB)
+Collecting joblib&gt;=1.2.0 (from scikit-learn)
 </code>
 </pre>
 </div>
@@ -1121,17 +1166,9 @@ Collecting tzdata&gt;=2022.7 (from pandas)
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Collecting joblib&gt;=1.2.0 (from scikit-learn)
-  Downloading joblib-1.3.2-py3-none-any.whl.metadata (5.4 kB)
-</code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>Collecting threadpoolctl&gt;=2.0.0 (from scikit-learn)
-  Downloading threadpoolctl-3.3.0-py3-none-any.whl.metadata (13 kB)
+<code>  Using cached joblib-1.3.2-py3-none-any.whl.metadata (5.4 kB)
+Collecting threadpoolctl&gt;=2.0.0 (from scikit-learn)
+  Using cached threadpoolctl-3.3.0-py3-none-any.whl.metadata (13 kB)
 Requirement already satisfied: six&gt;=1.5 in /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
 </code>
 </pre>
@@ -1140,43 +1177,8 @@ Requirement already satisfied: six&gt;=1.5 in /opt/hostedtoolcache/Python/3.11.8
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Downloading numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.3 MB)
-   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">0.0/18.3 MB</span> <span class="ansi-red-fg">?</span> eta <span class="ansi-cyan-fg">-:--:--</span></code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>
-   <span class="ansi-red-intense-fg">━━━━</span><span class="ansi-red-intense-fg">╸</span><span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">2.2/18.3 MB</span> <span class="ansi-red-fg">65.1 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━</span><span class="ansi-black-intense-fg">╺</span><span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">7.4/18.3 MB</span> <span class="ansi-red-fg">107.5 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span><span class="ansi-black-intense-fg">━━━━━━━━━━━━</span> <span class="ansi-green-fg">12.6/18.3 MB</span> <span class="ansi-red-fg">152.4 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span> <span class="ansi-green-fg">18.2/18.3 MB</span> <span class="ansi-red-fg">163.2 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span> <span class="ansi-green-fg">18.2/18.3 MB</span> <span class="ansi-red-fg">163.2 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span>
-   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">18.3/18.3 MB</span> <span class="ansi-red-fg">94.2 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
-</code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>Downloading pandas-2.2.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (13.0 MB)
+<code>Using cached numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.3 MB)
+Downloading pandas-2.2.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (13.0 MB)
    <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">0.0/13.0 MB</span> <span class="ansi-red-fg">?</span> eta <span class="ansi-cyan-fg">-:--:--</span></code>
 </pre>
 </div>
@@ -1185,8 +1187,7 @@ Requirement already satisfied: six&gt;=1.5 in /opt/hostedtoolcache/Python/3.11.8
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
 <code>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span><span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">5.1/13.0 MB</span> <span class="ansi-red-fg">153.9 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span><span class="ansi-black-intense-fg">━━━━━━━━</span> <span class="ansi-green-fg">10.4/13.0 MB</span> <span class="ansi-red-fg">153.4 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
+   <span class="ansi-red-intense-fg">━━━━</span><span class="ansi-red-intense-fg">╸</span><span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">1.6/13.0 MB</span> <span class="ansi-red-fg">76.4 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
 </pre>
 </div>
 </div>
@@ -1194,8 +1195,18 @@ Requirement already satisfied: six&gt;=1.5 in /opt/hostedtoolcache/Python/3.11.8
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
 <code>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span> <span class="ansi-green-fg">13.0/13.0 MB</span> <span class="ansi-red-fg">154.8 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span>
-   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">13.0/13.0 MB</span> <span class="ansi-red-fg">102.0 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━</span><span class="ansi-black-intense-fg">╺</span><span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">6.2/13.0 MB</span> <span class="ansi-red-fg">90.8 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span>
+   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-black-intense-fg">╺</span><span class="ansi-black-intense-fg">━━━</span> <span class="ansi-green-fg">11.8/13.0 MB</span> <span class="ansi-red-fg">123.4 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+<code>
+   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span> <span class="ansi-green-fg">13.0/13.0 MB</span> <span class="ansi-red-fg">164.6 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span>
+   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">13.0/13.0 MB</span> <span class="ansi-red-fg">107.9 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+Using cached scikit_learn-1.4.1.post1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.1 MB)
 </code>
 </pre>
 </div>
@@ -1203,91 +1214,8 @@ Requirement already satisfied: six&gt;=1.5 in /opt/hostedtoolcache/Python/3.11.8
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Downloading scikit_learn-1.4.1.post1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (12.1 MB)
-   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">0.0/12.1 MB</span> <span class="ansi-red-fg">?</span> eta <span class="ansi-cyan-fg">-:--:--</span>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━</span><span class="ansi-black-intense-fg">╺</span><span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">5.5/12.1 MB</span> <span class="ansi-red-fg">166.6 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-black-intense-fg">╺</span><span class="ansi-black-intense-fg">━━━━━</span> <span class="ansi-green-fg">10.3/12.1 MB</span> <span class="ansi-red-fg">151.7 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span> <span class="ansi-green-fg">12.1/12.1 MB</span> <span class="ansi-red-fg">151.0 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span>
-   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">12.1/12.1 MB</span> <span class="ansi-red-fg">103.2 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
-Downloading joblib-1.3.2-py3-none-any.whl (302 kB)
-   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">0.0/302.2 kB</span> <span class="ansi-red-fg">?</span> eta <span class="ansi-cyan-fg">-:--:--</span>
-   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">302.2/302.2 kB</span> <span class="ansi-red-fg">59.9 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
-Downloading scipy-1.12.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (38.4 MB)
-   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">0.0/38.4 MB</span> <span class="ansi-red-fg">?</span> eta <span class="ansi-cyan-fg">-:--:--</span></code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>
-   <span class="ansi-red-intense-fg">━━━━━</span><span class="ansi-red-intense-fg">╸</span><span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">5.4/38.4 MB</span> <span class="ansi-red-fg">162.5 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━</span><span class="ansi-black-intense-fg">╺</span><span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">10.6/38.4 MB</span> <span class="ansi-red-fg">156.3 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span><span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">16.1/38.4 MB</span> <span class="ansi-red-fg">156.9 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-black-intense-fg">╺</span><span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">21.4/38.4 MB</span> <span class="ansi-red-fg">158.4 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span><span class="ansi-black-intense-fg">━━━━━━━━━━━━</span> <span class="ansi-green-fg">26.7/38.4 MB</span> <span class="ansi-red-fg">155.5 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span><span class="ansi-black-intense-fg">━━━━━━</span> <span class="ansi-green-fg">32.2/38.4 MB</span> <span class="ansi-red-fg">157.9 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span> <span class="ansi-green-fg">38.2/38.4 MB</span> <span class="ansi-red-fg">169.0 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span> <span class="ansi-green-fg">38.4/38.4 MB</span> <span class="ansi-red-fg">165.0 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span></code>
-</pre>
-</div>
-</div>
-<div class="output_area">
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>
-<code>
-   <span class="ansi-red-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span class="ansi-red-intense-fg">╸</span> <span class="ansi-green-fg">38.4/38.4 MB</span> <span class="ansi-red-fg">165.0 MB/s</span> eta <span class="ansi-cyan-fg">0:00:01</span>
-   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">38.4/38.4 MB</span> <span class="ansi-red-fg">66.1 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
-Downloading threadpoolctl-3.3.0-py3-none-any.whl (17 kB)
+<code>Using cached joblib-1.3.2-py3-none-any.whl (302 kB)
+Using cached scipy-1.12.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (38.4 MB)
 </code>
 </pre>
 </div>
@@ -1295,9 +1223,8 @@ Downloading threadpoolctl-3.3.0-py3-none-any.whl (17 kB)
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Downloading tzdata-2024.1-py2.py3-none-any.whl (345 kB)
-   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">0.0/345.4 kB</span> <span class="ansi-red-fg">?</span> eta <span class="ansi-cyan-fg">-:--:--</span>
-   <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">345.4/345.4 kB</span> <span class="ansi-red-fg">64.5 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+<code>Using cached threadpoolctl-3.3.0-py3-none-any.whl (17 kB)
+Using cached tzdata-2024.1-py2.py3-none-any.whl (345 kB)
 </code>
 </pre>
 </div>
@@ -1313,7 +1240,7 @@ Downloading threadpoolctl-3.3.0-py3-none-any.whl (17 kB)
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Successfully installed joblib-1.3.2 numpy-1.26.4 pandas-2.2.0 scikit-learn-1.4.1.post1 scipy-1.12.0 threadpoolctl-3.3.0 tzdata-2024.1
+<code>Successfully installed joblib-1.3.2 numpy-1.26.4 pandas-2.2.1 scikit-learn-1.4.1.post1 scipy-1.12.0 threadpoolctl-3.3.0 tzdata-2024.1
 </code>
 </pre>
 </div>
@@ -1370,7 +1297,7 @@ By executing the cell below, you will download a YAML file containing the defaul
 <div class="output_area">
 <div class="output_text output_subarea output_execute_result">
 <pre>
-<code>('/home/runner/.lakectl.yaml', &lt;http.client.HTTPMessage at 0x7fd726d97590&gt;)</code>
+<code>('/home/runner/.lakectl.yaml', &lt;http.client.HTTPMessage at 0x7f781c8cc090&gt;)</code>
 </pre>
 </div>
 </div>
@@ -1534,21 +1461,6 @@ We put the transformation into a function to be able to reuse it later.</p>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="output_area">
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>
-<code>/tmp/ipykernel_2291/2823322696.py:3: DeprecationWarning: 
-Pyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),
-(to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)
-but was not found to be installed on your system.
-If this would cause problems for you,
-please provide us feedback at https://github.com/pandas-dev/pandas/issues/54466
-
-  import pandas as pd
-</code>
-</pre>
-</div>
-</div>
 <div class="output_area">
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -1956,7 +1868,7 @@ There, we take the parent of the previous commit, titled <code>Add train-test sp
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>240be1477daa4fd3df6b6621be4398d480424683a09e65a8e0664c0a9e79f496
+<code>698964fd36f1fa620e92c786e62fc0d59c2f62b8c82eb721cc1233f95520702d
 </code>
 </pre>
 </div>
@@ -2093,7 +2005,7 @@ Both the <code>fixed_commit_id</code> and <code>tag</code> reference the same ve
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
-<code>Is the data tagged Tag(repository="weather", id="train-test-split-2010") equal to the data in commit 240be147? True
+<code>Is the data tagged Tag(repository="weather", id="train-test-split-2010") equal to the data in commit 698964fd? True
 </code>
 </pre>
 </div>
@@ -2122,7 +2034,7 @@ Both the <code>fixed_commit_id</code> and <code>tag</code> reference the same ve
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-02-21</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-02-28</span>
   </span>
 
     
