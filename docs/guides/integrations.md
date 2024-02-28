@@ -62,6 +62,6 @@ PyArrow `read_*` and `write_*` functions take an explicit `filesystem` parameter
 
 The following example code illustrates the use of lakeFS-spec with PyArrow, reading a Parquet file and writing it back to a lakeFS repository as a partitioned CSV dataset in the context of a [transaction](transactions.md):
 
-```python hl_lines="12 17"
+```python hl_lines="10 15"
 --8<-- "docs/_code/pyarrow_example.py"
 ```
