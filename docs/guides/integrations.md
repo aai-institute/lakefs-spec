@@ -32,7 +32,7 @@ This allows DuckDB to transparently query and store data located in lakeFS repos
 
 Similar to the example above, the following code snippet illustrates how to read and write data from/to a lakeFS repository in the context of a [transaction](transactions.md) through the [DuckDB Python API](https://duckdb.org/docs/api/python/overview.html){: target="_blank" rel="noopener"}:
 
-```python hl_lines="6 11 13"
+```python hl_lines="6 9 11"
 --8<-- "docs/_code/duckdb_example.py"
 ```
 
