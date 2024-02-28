@@ -21,7 +21,7 @@ See the Pandas documentation on [reading/writing remote files](https://pandas.py
 
 The following code snippet illustrates how to read and write Pandas data frames in various formats from/to a lakeFS repository in the context of a [transaction](transactions.md):
 
-```python hl_lines="10 12"
+```python hl_lines="8 10"
 --8<-- "docs/_code/pandas_example.py"
 ```
 
