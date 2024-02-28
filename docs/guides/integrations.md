@@ -21,7 +21,7 @@ See the Pandas documentation on [reading/writing remote files](https://pandas.py
 
 The following code snippet illustrates how to read and write Pandas data frames in various formats from/to a lakeFS repository in the context of a [transaction](transactions.md):
 
-```python hl_lines="10 12"
+```python hl_lines="8 10"
 --8<-- "docs/_code/pandas_example.py"
 ```
 
@@ -32,7 +32,7 @@ This allows DuckDB to transparently query and store data located in lakeFS repos
 
 Similar to the example above, the following code snippet illustrates how to read and write data from/to a lakeFS repository in the context of a [transaction](transactions.md) through the [DuckDB Python API](https://duckdb.org/docs/api/python/overview.html){: target="_blank" rel="noopener"}:
 
-```python hl_lines="6 11 13"
+```python hl_lines="6 9 11"
 --8<-- "docs/_code/duckdb_example.py"
 ```
 
@@ -48,8 +48,7 @@ The Python API wrapper for the Rust-based [Polars](https://pola-rs.github.io/pol
 
 Again, the following code example demonstrates how to read a Parquet file and save a modified version back in CSV format to a lakeFS repository from Polars in the context of a  [transaction](transactions.md):
 
-
-```python hl_lines="10 13-14"
+```python hl_lines="8 11-12"
 --8<-- "docs/_code/polars_example.py"
 ```
 
@@ -63,6 +62,6 @@ PyArrow `read_*` and `write_*` functions take an explicit `filesystem` parameter
 
 The following example code illustrates the use of lakeFS-spec with PyArrow, reading a Parquet file and writing it back to a lakeFS repository as a partitioned CSV dataset in the context of a [transaction](transactions.md):
 
-```python hl_lines="12 17"
+```python hl_lines="10 15"
 --8<-- "docs/_code/pyarrow_example.py"
 ```
