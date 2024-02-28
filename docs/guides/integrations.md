@@ -48,8 +48,7 @@ The Python API wrapper for the Rust-based [Polars](https://pola-rs.github.io/pol
 
 Again, the following code example demonstrates how to read a Parquet file and save a modified version back in CSV format to a lakeFS repository from Polars in the context of a  [transaction](transactions.md):
 
-
-```python hl_lines="10 13-14"
+```python hl_lines="8 11-12"
 --8<-- "docs/_code/polars_example.py"
 ```
 
