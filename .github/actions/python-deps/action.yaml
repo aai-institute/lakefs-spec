@@ -2,7 +2,7 @@ name: Install Python dependencies
 description: Install all core and optional Python dependencies
 inputs:
   pythonVersion:
-    description: Python version to set up (see actions/setup-python@v4)
+    description: Python version to set up (see actions/setup-python@v5)
     required: true
 runs:
   using: "composite"
@@ -11,7 +11,7 @@ runs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.pythonVersion }}
-        cache: 'pip'
+        cache: "pip"
         cache-dependency-path: |
           requirements-dev.txt
           requirements-docs.txt
