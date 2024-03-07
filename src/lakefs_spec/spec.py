@@ -118,13 +118,11 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     @classmethod
     @overload
-    def _strip_protocol(cls, path: str | os.PathLike[str] | Path) -> str:
-        ...
+    def _strip_protocol(cls, path: str | os.PathLike[str] | Path) -> str: ...
 
     @classmethod
     @overload
-    def _strip_protocol(cls, path: list[str | os.PathLike[str] | Path]) -> list[str]:
-        ...
+    def _strip_protocol(cls, path: list[str | os.PathLike[str] | Path]) -> list[str]: ...
 
     @classmethod
     def _strip_protocol(cls, path):
@@ -436,8 +434,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         path: str | os.PathLike[str],
         detail: Literal[True] = ...,
         **kwargs: Any,
-    ) -> list[dict[str, Any]]:
-        ...
+    ) -> list[dict[str, Any]]: ...
 
     @overload
     def ls(
@@ -445,8 +442,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         path: str | os.PathLike[str],
         detail: Literal[False],
         **kwargs: Any,
-    ) -> list[str]:
-        ...
+    ) -> list[str]: ...
 
     @overload
     def ls(
@@ -454,8 +450,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         path: str | os.PathLike[str],
         detail: bool = True,
         **kwargs: Any,
-    ) -> list[str] | list[dict[str, Any]]:
-        ...
+    ) -> list[str] | list[dict[str, Any]]: ...
 
     def ls(
         self,
