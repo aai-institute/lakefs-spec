@@ -39,7 +39,7 @@ $ poetry add lakefs-spec
 
 The following usage examples showcase two major ways of using lakeFS-spec: as a low-level filesystem abstraction, and through third-party (data science) libraries.
 
-For a more thorough overview of the features and use cases for lakeFS-spec, see the [user guide](https://lakefs-spec.org/latest/guides/overview/) and [tutorials](https://lakefs-spec.org/latest/guides/tutorials/) sections in the documentation.
+For a more thorough overview of the features and use cases for lakeFS-spec, see the [user guide](https://lakefs-spec.org/latest/guides/) and [tutorials](https://lakefs-spec.org/latest/tutorials/) sections in the documentation.
 
 ### Low-level: As a fsspec filesystem 
 
