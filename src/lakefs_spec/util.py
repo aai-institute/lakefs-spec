@@ -1,6 +1,7 @@
 """
 Useful utilities for handling lakeFS URIs and results of lakeFS API calls.
 """
+
 from __future__ import annotations
 
 import hashlib
