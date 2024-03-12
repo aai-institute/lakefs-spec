@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://lakefs-spec.org/latest/sitemap.xml
