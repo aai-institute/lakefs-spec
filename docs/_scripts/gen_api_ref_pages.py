@@ -31,10 +31,22 @@ for path in sorted(Path("src").rglob("*.py")):
 
         if identifier == "lakefs_spec":
             print("\nSee also:\n", file=fd)
-            print("- [errors](errors.md): Module for error handling and custom exceptions.", file=fd)
-            print("- [spec](spec.md): Main module defining the lakeFS filesystem specification.", file=fd)
-            print("- [transaction](transaction.md): Module for handling transactions in the lakeFS filesystem.", file=fd)
-            print("- [util](util.md): Utility functions and helper classes for the lakeFS filesystem.", file=fd)
+            print(
+                "- [errors](errors.md): Module for error handling and custom exceptions.",
+                file=fd,
+            )
+            print(
+                "- [spec](spec.md): Main module defining the lakeFS filesystem specification.",
+                file=fd,
+            )
+            print(
+                "- [transaction](transaction.md): Module for handling transactions in the lakeFS filesystem.",
+                file=fd,
+            )
+            print(
+                "- [util](util.md): Utility functions and helper classes for the lakeFS filesystem.",
+                file=fd,
+            )
 
 
     mkdocs_gen_files.set_edit_path(full_doc_path, path)
