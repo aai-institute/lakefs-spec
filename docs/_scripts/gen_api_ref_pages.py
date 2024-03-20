@@ -1,6 +1,8 @@
 """Automatically generate API reference pages from source files.
 
 Source: https://mkdocstrings.github.io/recipes/#automatic-code-reference-pages
+
+Note: this script assumes a source layout with a `src/` folder.
 """
 
 import ast
@@ -44,11 +46,18 @@ with mkdocs_gen_files.open(f"reference/{root_page.filename}", "a") as f:
         f.write(f"### [{ch.title}](../{ch.filename})\n")
 
         try:
-            with open(f"src/{Path(ch.filename).with_suffix('.py')}", "r") as module_file:
-                tree = ast.parse(module_file.read())
+            source_file = Path("src", ch.filename).with_suffix(".py")
+
+            # Index page for submodules maps to __init__.py of the module
+            if source_file.stem == "index":
+                source_file = source_file.with_stem("__init__")
+
+            tree = ast.parse(source_file.read_text())
             docstring = ast.get_docstring(tree, clean=False)
             doc = docstring_parser.parse(docstring)
-            f.write(f"{doc.short_description}\n\n")
+
+            if doc.short_description:
+                f.write(f"{doc.short_description}\n\n")
         except Exception as e:
             logging.warning(f"Could not parse module docstring: {ch.filename}", exc_info=True)
 

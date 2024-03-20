@@ -1,6 +1,7 @@
 """
-Core interface definitions for file system interaction with lakeFS from Python,
-namely the ``LakeFSFileSystem`` and ``LakeFSFile`` classes.
+Core interface definitions for file system interaction with lakeFS from Python.
+
+In particular, the core ``LakeFSFileSystem`` and ``LakeFSFile`` classes.
 """
 
 from __future__ import annotations
