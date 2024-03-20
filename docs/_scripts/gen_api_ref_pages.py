@@ -3,8 +3,11 @@
 Source: https://mkdocstrings.github.io/recipes/#automatic-code-reference-pages
 """
 
+import ast
+import logging
 from pathlib import Path
 
+import docstring_parser
 import mkdocs_gen_files
 
 nav = mkdocs_gen_files.Nav()
@@ -30,6 +33,24 @@ for path in sorted(Path("src").rglob("*.py")):
         print("::: " + identifier, file=fd)
 
     mkdocs_gen_files.set_edit_path(full_doc_path, path)
+
+# Add links for top-level modules to root page
+root_page = next(it for it in nav.items() if it.level == 0)
+children = [it for it in nav.items() if it.level == 1]
+
+with mkdocs_gen_files.open(f"reference/{root_page.filename}", "a") as f:
+    f.write("## Modules\n")
+    for ch in children:
+        f.write(f"### [{ch.title}](../{ch.filename})\n")
+
+        try:
+            with open(f"src/{Path(ch.filename).with_suffix('.py')}", "r") as module_file:
+                tree = ast.parse(module_file.read())
+            docstring = ast.get_docstring(tree, clean=False)
+            doc = docstring_parser.parse(docstring)
+            f.write(f"{doc.short_description}\n\n")
+        except Exception as e:
+            logging.warning(f"Could not parse module docstring: {ch.filename}", exc_info=True)
 
 with mkdocs_gen_files.open("reference/SUMMARY.md", "w") as nav_file:
     nav_file.writelines(nav.build_literate_nav())
