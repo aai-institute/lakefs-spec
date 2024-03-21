@@ -74,6 +74,7 @@ docs = [
     "black",                                     # formatting of signatures in docs
     "mike",
     "appnope",                                   # required only on Darwin, but need to include in lockfile
+    "docstring-parser",
 ]
 
 [tool.setuptools]
@@ -135,7 +136,4 @@ style = 'numpy'
 exclude = '\.git|venv'
 
 [tool.coverage.report]
-exclude_also = [
-    "@overload",
-    "raise NotImplementedError"
-]
+exclude_also = ["@overload", "raise NotImplementedError"]
