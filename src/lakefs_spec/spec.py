@@ -236,7 +236,13 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, ref, resource = parse(path)
         try:
             reference = lakefs.Reference(repository, ref, client=self.client)
-            return reference.object(resource).exists()
+            if reference.object(resource).exists():
+                return True
+            # if it isn't an object, it might be a common prefix (i.e. "directory").
+            children = reference.objects(
+                max_amount=1, prefix=resource.rstrip("/") + "/", delimiter="/"
+            )
+            return len(list(children)) > 0
         except ServerException as e:
             # in case of an error other than "not found", existence cannot be
             # decided, so raise the translated error.
