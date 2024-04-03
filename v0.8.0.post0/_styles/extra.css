@@ -1,0 +1,46 @@
+/*Remove leading `!` from code cells, which use the cell magic for shell commands*/
+code>.err:first-of-type {
+    display: none;
+}
+
+/* Hide empty root heading (-> `#`) */
+h1#_1 {
+    display: none;
+}
+
+.logo {
+    /* No wider than the screen on smaller screens */
+    max-width: min(100%, 100vw) !important;
+    max-height: 196px;
+
+    /* Horizontally centered */
+    display: block;
+    margin: 0 auto;
+}
+
+table {
+    display: block;
+    max-width: -moz-fit-content;
+    max-width: fit-content;
+    margin: 0 auto;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.nt-card .landing-page-icon {
+    color: #b7c6cf;
+}
+
+.nt-card:hover .landing-page-icon {
+    color: var(--md-accent-fg-color);
+}
+
+.celltag_Remove_all_output .output_wrapper,
+.celltag_Remove_single_output .output_wrapper {
+    display: none !important
+}
+
+
+.celltag_Remove_input .input_wrapper {
+    display: none !important
+}
