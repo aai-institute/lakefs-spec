@@ -15,7 +15,7 @@ async-lru==2.0.4
 attrs==23.2.0
 babel==2.14.0
 beautifulsoup4==4.12.3
-black==24.1.1
+black==24.3.0
 bleach==6.1.0
 certifi==2024.2.2
 cffi==1.16.0
