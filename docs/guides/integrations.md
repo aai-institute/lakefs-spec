@@ -38,6 +38,18 @@ Similar to the example above, the following code snippet illustrates how to read
 
 1. Makes the lakeFS-spec file system known to DuckDB (`duckdb.register_filesystem(fsspec.filesystem("lakefs"))` can also be used to avoid the direct import of `LakeFSFileSystem`)
 
+## Hugging Face Datasets
+
+[Hugging Face :hugging_face: Datasets](https://huggingface.co/docs/datasets/index){: target="_blank" rel="noopener"} is a library for easily accessing and sharing datasets for Audio, Computer Vision, and Natural Language Processing (NLP) tasks
+It uses [fsspec internally](https://huggingface.co/docs/datasets/filesystems){: target="_blank" rel="noopener"} to retrieve and store datasets located outside the Hugging Face Hub.
+
+Reading a dataset from a lakeFS repository is as simple as passing the `data_files` argument to the `load_dataset` function with a generic dataset script (e.g., `csv` or `parquet` - see the [docs](https://huggingface.co/docs/datasets/en/loading#local-and-remote-files){: target="_blank" rel="noopener"} for a list of available types).
+Datasets can be saved to a lakeFS repository by passing the repository URL to the `save_to_disk()` method of the dataset.
+
+```python hl_lines="8 10"
+--8<-- "docs/_code/hf_datasets_example.py"
+```
+
 ## Polars
 
 !!! warning
