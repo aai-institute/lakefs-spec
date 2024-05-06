@@ -78,6 +78,8 @@ plugins:
   - search:
   - git-revision-date-localized:
       type: iso_date
+      strict: false
+      fallback_to_build_date: true
   - include_dir_to_nav:
       file_pattern: '.*\.(md|ipynb)$'
 
