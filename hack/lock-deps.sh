@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 INFILE=pyproject.toml
-COMMON_OPTIONS=(--no-annotate)
+COMMON_OPTIONS=(--no-annotate --no-strip-extras)
 
 # Treat positional arguments as packages to be upgraded
 while [[ $# -gt 0 ]]; do
@@ -10,5 +10,5 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Lock (and, if specified, upgrade) packages
-pip-compile "${COMMON_OPTIONS[@]}" --extra=dev --output-file=requirements-dev.txt "$INFILE"
-pip-compile "${COMMON_OPTIONS[@]}" --extra=docs --output-file=requirements-docs.txt "$INFILE"
+uv pip compile "${COMMON_OPTIONS[@]}" --extra=dev --output-file=requirements-dev.txt "$INFILE"
+uv pip compile "${COMMON_OPTIONS[@]}" --extra=docs --output-file=requirements-docs.txt "$INFILE"
