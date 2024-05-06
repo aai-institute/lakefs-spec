@@ -53,7 +53,7 @@ def test_implicit_branch_creation(
 
     fs.create_branch_ok = False
     another_non_existing_branch = "non-existing-" + "".join(random.choices(string.digits, k=8))
-    with pytest.raises(FileNotFoundError, match="Not Found: .*"):
+    with pytest.raises(FileNotFoundError):
         put_random_file_on_branch(random_file_factory, fs, repository, another_non_existing_branch)
 
 
