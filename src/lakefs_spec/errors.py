@@ -56,11 +56,11 @@ def translate_lakefs_error(
 
     if hasattr(error, "body"):
         # error has a JSON response body attached
-        reason = error.body["message"]
+        reason = error.body.get("message", "")
     else:
         reason = error.reason
 
-    emsg = f"{status} {reason}"
+    emsg = f"{status} {reason}".rstrip()
     if rpath:
         emsg += f": {rpath!r}"
 
