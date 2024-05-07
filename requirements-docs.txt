@@ -64,7 +64,7 @@ jupyterlab-server==2.27.1
 jupyterlab-widgets==3.0.10
 jupytext==1.16.2
 lakefs==0.6.0
-lakefs-sdk==1.20.0
+lakefs-sdk==1.21.0
 markdown==3.6
 markdown-it-py==3.0.0
 markupsafe==2.1.5
@@ -129,7 +129,7 @@ requests==2.31.0
 rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
 rich==13.7.1
-rpds-py==0.18.0
+rpds-py==0.18.1
 send2trash==1.8.3
 setuptools==68.2.2
 six==1.16.0
