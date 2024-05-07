@@ -55,7 +55,7 @@ dev = [
     # for integration tests.
     "pandas[parquet]",
     "polars",
-    "duckdb",
+    "duckdb<=0.10.0",  # due to https://github.com/duckdb/duckdb/issues/11875
 ]
 docs = [
     "mkdocs",

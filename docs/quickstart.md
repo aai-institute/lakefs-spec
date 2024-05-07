@@ -2,10 +2,10 @@
 
 Welcome! This quickstart guide will get you up and running with lakeFS-spec by showing you how to
 
-1. [install the `lakefs-spec` package](#installing),
+1. [install the `lakefs-spec` package](#installing-lakefs-spec),
 1. [spin up a local lakeFS server](#spinning-up-a-local-lakefs-instance),
 1. [create a lakeFS repository for experimentation](#create-a-lakefs-repository), and
-1. [perform basic file system operations](#using-the-lakefs-fsspec-file-system)
+1. [perform basic file system operations](#using-the-lakefs-file-system)
 in a lakeFS repository using lakeFS-spec.
 
 ??? info "Prerequisites"
