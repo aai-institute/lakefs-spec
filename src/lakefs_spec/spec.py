@@ -69,6 +69,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     """
 
     protocol = "lakefs"
+    transaction_type = LakeFSTransaction
 
     def __init__(
         self,
@@ -134,25 +135,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         if stringify_path(path).endswith("/"):
             return spath + "/"
         return spath
-
-    @property
-    def transaction(self) -> LakeFSTransaction:
-        """
-        A context manager within which file uploads and versioning operations are deferred to a
-        queue, and carried out during when exiting the context.
-
-        Requires the file class to implement ``.commit()`` and ``.discard()`` for the normal and exception cases.
-        """
-        self._transaction: LakeFSTransaction | None
-        if self._transaction is None:
-            self._transaction = LakeFSTransaction(self)
-        return self._transaction
-
-    def start_transaction(self):
-        raise NotImplementedError(
-            "lakeFS transactions should only be used as a context manager via"
-            " `with LakeFSFileSystem.transaction as tx:`"
-        )
 
     @contextmanager
     def wrapped_api_call(
