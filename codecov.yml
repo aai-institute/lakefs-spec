@@ -1,0 +1,6 @@
+coverage:
+  status:
+    project:
+      default:
+        # Allow slight decreases in coverage for PRs
+        threshold: "1%"
