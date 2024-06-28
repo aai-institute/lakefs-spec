@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../_images/lakefs-spec-favicon.png">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.21">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.27">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.66ac8b77.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6543a935.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
@@ -244,7 +244,7 @@ released. For the most accurate information, please <strong><a href="../../../..
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -1138,12 +1138,12 @@ released. For the most accurate information, please <strong><a href="../../../..
 
 
 <a id="lakefs_spec.spec"></a>
-  <div class="doc doc-contents first">
-  
+    <div class="doc doc-contents first">
+
       <p>Core interface definitions for file system interaction with lakeFS from Python.</p>
 <p>In particular, the core <code>LakeFSFileSystem</code> and <code>LakeFSFile</code> classes.</p>
 
-  
+
 
   <div class="doc doc-children">
 
@@ -1159,253 +1159,252 @@ released. For the most accurate information, please <strong><a href="../../../..
 
 
 <h2 id="lakefs_spec.spec.LakeFSFileSystem" class="doc doc-heading">
-          <span class="doc doc-object-name doc-class-name">LakeFSFileSystem</span>
+            <span class="doc doc-object-name doc-class-name">LakeFSFileSystem</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
-  <div class="doc doc-contents ">
-          <p class="doc doc-class-bases">
-            Bases: <code><span title="fsspec.spec.AbstractFileSystem">AbstractFileSystem</span></code></p>
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="fsspec.spec.AbstractFileSystem">AbstractFileSystem</span></code></p>
 
-  
+
       <p>lakeFS file system implementation.</p>
 <p>Instances of this class are cached based on their constructor arguments.</p>
 <p>For more information, see the fsspec documentation <a href="https://filesystem-spec.readthedocs.io/en/latest/features.html#instance-caching">https://filesystem-spec.readthedocs.io/en/latest/features.html#instance-caching</a>.</p>
 
 
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>host</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The address of your lakeFS instance.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>username</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The access key name to use in case of access key authentication.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>password</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The access key secret to use in case of access key authentication.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>api_key</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The API key to use in case of authentication with an API key.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>api_key_prefix</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>A string prefix to use for the API key in authentication.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>access_token</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>An access token to use in case of access token authentication.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>verify_ssl</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Whether to verify SSL certificates in API interactions. Do not disable in production.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>bool</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>True</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>ssl_ca_cert</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>A custom certificate PEM file to use to verify the peer in SSL connections.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>proxy</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Proxy address to use when connecting to a lakeFS server.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>create_branch_ok</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Whether to create branches implicitly when not-existing branches are referenced on file uploads.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>bool</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>True</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>source_branch</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Source branch set as origin when a new branch is implicitly created.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>&#39;main&#39;</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>**storage_options</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Configuration options to pass to the file system's directory cache.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Any">Any</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>{}</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>host</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The address of your lakeFS instance.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>username</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The access key name to use in case of access key authentication.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>password</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The access key secret to use in case of access key authentication.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>api_key</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The API key to use in case of authentication with an API key.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>api_key_prefix</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>A string prefix to use for the API key in authentication.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>access_token</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>An access token to use in case of access token authentication.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>verify_ssl</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Whether to verify SSL certificates in API interactions. Do not disable in production.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>bool</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>True</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>ssl_ca_cert</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>A custom certificate PEM file to use to verify the peer in SSL connections.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>proxy</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Proxy address to use when connecting to a lakeFS server.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>create_branch_ok</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Whether to create branches implicitly when not-existing branches are referenced on file uploads.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>bool</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>True</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>source_branch</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Source branch set as origin when a new branch is implicitly created.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>&#39;main&#39;</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>**storage_options</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Configuration options to pass to the file system's directory cache.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Any">Any</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>{}</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-            <details class="quote">
-              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-35"> 35</a></span>
+              <details class="quote">
+                <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-35"> 35</a></span>
 <span class="normal"><a href="#__codelineno-0-36"> 36</a></span>
 <span class="normal"><a href="#__codelineno-0-37"> 37</a></span>
 <span class="normal"><a href="#__codelineno-0-38"> 38</a></span>
@@ -2887,12 +2886,11 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-774"><a id="__codelineno-0-774" name="__codelineno-0-774"></a>            <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="n">size</span><span class="p">,</span> <span class="o">-</span><span class="n">f</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">size_bytes</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
 </span><span id="__span-0-775"><a id="__codelineno-0-775" name="__codelineno-0-775"></a>            <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 </span></code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -2905,9 +2903,8 @@ released. For the most accurate information, please <strong><a href="../../../..
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.wrapped_api_call" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">wrapped_api_call</span>
+            <span class="doc doc-object-name doc-function-name">wrapped_api_call</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.wrapped_api_call" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -2916,131 +2913,128 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Generator">Generator</span></span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>A context manager to wrap lakeFS API calls, translating any API errors to Python-native OS errors.</p>
 <p>Meant for internal use.</p>
 
 
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>rpath</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The remote path involved in the requested API call.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>message</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>A custom error message to emit instead of parsing the API error response.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>set_cause</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Whether to include the original lakeFS API error in the resulting traceback.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>bool</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>True</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>rpath</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The remote path involved in the requested API call.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">YIELDS</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-yields-annotation">
                     <code>None</code>
                 </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>message</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>A custom error message to emit instead of parsing the API error response.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>set_cause</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Whether to include the original lakeFS API error in the resulting traceback.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>bool</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>True</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+            </td>
+            <td class="doc-yields-details">
+              <div class="doc-md-description">
+                <p>An empty generator, to be used as a context manager.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">YIELDS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-yields-annotation">
-                  <code>None</code>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RAISES</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+              <span class="doc-raises-annotation">
+                  <code>OSError</code>
               </span>
-          </td>
-          <td class="doc-yields-details">
-            <div class="doc-md-description">
-              <p>An empty generator, to be used as a context manager.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+            </td>
+            <td class="doc-raises-details">
+              <div class="doc-md-description">
+                <p>Translated error from the lakeFS API call, if any.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RAISES</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-            <span class="doc-raises-annotation">
-                <code>OSError</code>
-            </span>
-          </td>
-          <td class="doc-raises-details">
-            <div class="doc-md-description">
-              <p>Translated error from the lakeFS API call, if any.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-139">139</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-139">139</a></span>
 <span class="normal"><a href="#__codelineno-0-140">140</a></span>
 <span class="normal"><a href="#__codelineno-0-141">141</a></span>
 <span class="normal"><a href="#__codelineno-0-142">142</a></span>
@@ -3104,84 +3098,80 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-169"><a id="__codelineno-0-169" name="__codelineno-0-169"></a>    <span class="k">except</span> <span class="n">ServerException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
 </span><span id="__span-0-170"><a id="__codelineno-0-170" name="__codelineno-0-170"></a>        <span class="k">raise</span> <span class="n">translate_lakefs_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">rpath</span><span class="o">=</span><span class="n">rpath</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">set_cause</span><span class="o">=</span><span class="n">set_cause</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.checksum" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">checksum</span>
+            <span class="doc doc-object-name doc-function-name">checksum</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.checksum" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">checksum</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="os.PathLike">PathLike</span></span><span class="p">[</span><span class="n">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">str</span> <span class="o">|</span> <span class="kc">None</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Get a remote lakeFS file object's checksum.</p>
 <p>This is usually its MD5 hash, unless another hash function was used on upload.</p>
 
 
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>path</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The remote path to look up the lakeFS checksum for. Must point to a single file object.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>path</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The remote path to look up the lakeFS checksum for. Must point to a single file object.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code>str | None</code>
                 </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>The remote file's checksum, or <code>None</code> if <code>path</code> points to a directory or does not exist.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code>str | None</code>
-              </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>The remote file's checksum, or <code>None</code> if <code>path</code> points to a directory or does not exist.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-172">172</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-172">172</a></span>
 <span class="normal"><a href="#__codelineno-0-173">173</a></span>
 <span class="normal"><a href="#__codelineno-0-174">174</a></span>
 <span class="normal"><a href="#__codelineno-0-175">175</a></span>
@@ -3223,127 +3213,122 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-191"><a id="__codelineno-0-191" name="__codelineno-0-191"></a>    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
 </span><span id="__span-0-192"><a id="__codelineno-0-192" name="__codelineno-0-192"></a>        <span class="k">return</span> <span class="kc">None</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.exists" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">exists</span>
+            <span class="doc doc-object-name doc-function-name">exists</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.exists" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">exists</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="os.PathLike">PathLike</span></span><span class="p">[</span><span class="n">str</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">bool</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Check existence of a remote path in a lakeFS repository.</p>
 <p>Input paths can either be files or directories.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>path</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The remote path whose existence to check. Must be a fully qualified lakeFS URI.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>**kwargs</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Additional keyword arguments for fsspec compatibility, unused.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Any">Any</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>{}</code>
-                </span>
-            </p>
-          </td>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>path</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The remote path whose existence to check. Must be a fully qualified lakeFS URI.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>**kwargs</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Additional keyword arguments for fsspec compatibility, unused.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Any">Any</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>{}</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code>bool</code>
+                </span>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p><code>True</code> if the requested path exists, <code>False</code> if it does not.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code>bool</code>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RAISES</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+              <span class="doc-raises-annotation">
+                  <code>PermissionError</code>
               </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p><code>True</code> if the requested path exists, <code>False</code> if it does not.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+            </td>
+            <td class="doc-raises-details">
+              <div class="doc-md-description">
+                <p>If the user does not have sufficient permissions to query object existence.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RAISES</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-            <span class="doc-raises-annotation">
-                <code>PermissionError</code>
-            </span>
-          </td>
-          <td class="doc-raises-details">
-            <div class="doc-md-description">
-              <p>If the user does not have sufficient permissions to query object existence.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-194">194</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-194">194</a></span>
 <span class="normal"><a href="#__codelineno-0-195">195</a></span>
 <span class="normal"><a href="#__codelineno-0-196">196</a></span>
 <span class="normal"><a href="#__codelineno-0-197">197</a></span>
@@ -3419,115 +3404,111 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-230"><a id="__codelineno-0-230" name="__codelineno-0-230"></a>        <span class="c1"># decided, so raise the translated error.</span>
 </span><span id="__span-0-231"><a id="__codelineno-0-231" name="__codelineno-0-231"></a>        <span class="k">raise</span> <span class="n">translate_lakefs_error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.cp_file" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">cp_file</span>
+            <span class="doc doc-object-name doc-function-name">cp_file</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.cp_file" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">cp_file</span><span class="p">(</span><span class="n">path1</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="os.PathLike">PathLike</span></span><span class="p">[</span><span class="n">str</span><span class="p">],</span> <span class="n">path2</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="os.PathLike">PathLike</span></span><span class="p">[</span><span class="n">str</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Copy a single file from one remote location to another in lakeFS.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>path1</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The remote file location to be copied.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>path2</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The (remote) target location to which to copy the file.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>path1</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The remote file location to be copied.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>path2</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The (remote) target location to which to copy the file.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>**kwargs</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Additional keyword arguments for fsspec compatibility, unused.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Any">Any</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>{}</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RAISES</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>**kwargs</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Additional keyword arguments for fsspec compatibility, unused.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Any">Any</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>{}</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+              <span class="doc-raises-annotation">
+                  <code>ValueError</code>
+              </span>
+            </td>
+            <td class="doc-raises-details">
+              <div class="doc-md-description">
+                <p>When attempting to copy objects between repositories.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RAISES</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-            <span class="doc-raises-annotation">
-                <code>ValueError</code>
-            </span>
-          </td>
-          <td class="doc-raises-details">
-            <div class="doc-md-description">
-              <p>When attempting to copy objects between repositories.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-233">233</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-233">233</a></span>
 <span class="normal"><a href="#__codelineno-0-234">234</a></span>
 <span class="normal"><a href="#__codelineno-0-235">235</a></span>
 <span class="normal"><a href="#__codelineno-0-236">236</a></span>
@@ -3601,18 +3582,16 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-268"><a id="__codelineno-0-268" name="__codelineno-0-268"></a>        <span class="n">reference</span> <span class="o">=</span> <span class="n">lakefs</span><span class="o">.</span><span class="n">Reference</span><span class="p">(</span><span class="n">orig_repo</span><span class="p">,</span> <span class="n">orig_ref</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">)</span>
 </span><span id="__span-0-269"><a id="__codelineno-0-269" name="__codelineno-0-269"></a>        <span class="n">reference</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="n">orig_path</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dest_ref</span><span class="p">,</span> <span class="n">dest_path</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.get_file" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">get_file</span>
+            <span class="doc doc-object-name doc-function-name">get_file</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.get_file" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -3626,126 +3605,125 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Download a single file from a remote lakeFS server to local storage.</p>
 
 
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>rpath</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The remote path to download to local storage. Must be a fully qualified lakeFS URI, and point to a single file.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>lpath</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The local path on disk to save the downloaded file to.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>callback</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>An fsspec callback to use during the operation. Can be used to report download progress.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="fsspec.callbacks.Callback">Callback</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code><span title="fsspec.callbacks._DEFAULT_CALLBACK">_DEFAULT_CALLBACK</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>outfile</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>A file-like object to save the downloaded content to. Can be used in place of <code>lpath</code>.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Any">Any</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>precheck</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Check if <code>lpath</code> already exists and compare its checksum with that of <code>rpath</code>, skipping the download if they match.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>bool</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>True</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>**kwargs</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Additional keyword arguments passed to <code>AbstractFileSystem.open()</code>.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Any">Any</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>{}</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>rpath</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The remote path to download to local storage. Must be a fully qualified lakeFS URI, and point to a single file.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>lpath</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The local path on disk to save the downloaded file to.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>callback</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>An fsspec callback to use during the operation. Can be used to report download progress.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="fsspec.callbacks.Callback">Callback</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code><span title="fsspec.callbacks._DEFAULT_CALLBACK">_DEFAULT_CALLBACK</span></code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>outfile</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>A file-like object to save the downloaded content to. Can be used in place of <code>lpath</code>.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Any">Any</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>precheck</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Check if <code>lpath</code> already exists and compare its checksum with that of <code>rpath</code>, skipping the download if they match.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>bool</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>True</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>**kwargs</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Additional keyword arguments passed to <code>AbstractFileSystem.open()</code>.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Any">Any</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>{}</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-271">271</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-271">271</a></span>
 <span class="normal"><a href="#__codelineno-0-272">272</a></span>
 <span class="normal"><a href="#__codelineno-0-273">273</a></span>
 <span class="normal"><a href="#__codelineno-0-274">274</a></span>
@@ -3829,126 +3807,121 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-311"><a id="__codelineno-0-311" name="__codelineno-0-311"></a>    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapped_api_call</span><span class="p">(</span><span class="n">rpath</span><span class="o">=</span><span class="n">rpath</span><span class="p">):</span>
 </span><span id="__span-0-312"><a id="__codelineno-0-312" name="__codelineno-0-312"></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="n">rpath</span><span class="p">,</span> <span class="n">lpath</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="n">outfile</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.info" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">info</span>
+            <span class="doc doc-object-name doc-function-name">info</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.info" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">info</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="os.PathLike">PathLike</span></span><span class="p">[</span><span class="n">str</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Query a remote lakeFS object's metadata.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>path</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The object for which to obtain metadata. Must be a fully qualified lakeFS URI, can either point to a file or a directory.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>**kwargs</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Additional keyword arguments to pass to <code>LakeFSFileSystem.ls()</code> if <code>path</code> points to a directory.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Any">Any</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>{}</code>
-                </span>
-            </p>
-          </td>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>path</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The object for which to obtain metadata. Must be a fully qualified lakeFS URI, can either point to a file or a directory.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>**kwargs</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Additional keyword arguments to pass to <code>LakeFSFileSystem.ls()</code> if <code>path</code> points to a directory.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Any">Any</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>{}</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code>dict[str, <span title="typing.Any">Any</span>]</code>
+                </span>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>A dictionary containing metadata on the object, including its full remote path and object type (file or directory).</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code>dict[str, <span title="typing.Any">Any</span>]</code>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RAISES</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+              <span class="doc-raises-annotation">
+                  <code>FileNotFoundError</code>
               </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>A dictionary containing metadata on the object, including its full remote path and object type (file or directory).</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+            </td>
+            <td class="doc-raises-details">
+              <div class="doc-md-description">
+                <p>If the <code>path</code> refers to a non-file path that does not exist in the repository.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RAISES</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-            <span class="doc-raises-annotation">
-                <code>FileNotFoundError</code>
-            </span>
-          </td>
-          <td class="doc-raises-details">
-            <div class="doc-md-description">
-              <p>If the <code>path</code> refers to a non-file path that does not exist in the repository.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-314">314</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-314">314</a></span>
 <span class="normal"><a href="#__codelineno-0-315">315</a></span>
 <span class="normal"><a href="#__codelineno-0-316">316</a></span>
 <span class="normal"><a href="#__codelineno-0-317">317</a></span>
@@ -4052,18 +4025,16 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-364"><a id="__codelineno-0-364" name="__codelineno-0-364"></a>        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;directory&quot;</span><span class="p">,</span>
 </span><span id="__span-0-365"><a id="__codelineno-0-365" name="__codelineno-0-365"></a>    <span class="p">}</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.ls" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">ls</span>
+            <span class="doc doc-object-name doc-function-name">ls</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.ls" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -4072,105 +4043,103 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">list</span><span class="p">[</span><span class="n">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">list</span><span class="p">[</span><span class="n">dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]]</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>List all available objects under a given path in lakeFS.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>path</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The path under which to list objects. Must be a fully qualified lakeFS URI.
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>path</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The path under which to list objects. Must be a fully qualified lakeFS URI.
 Can also point to a file, in which case the file's metadata will be returned.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>detail</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Whether to obtain all metadata on the requested objects or just their names.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>bool</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>True</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>**kwargs</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Additional keyword arguments for fsspec compatibility.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>detail</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Whether to obtain all metadata on the requested objects or just their names.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>bool</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>True</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>**kwargs</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Additional keyword arguments for fsspec compatibility.</p>
 <p>In particular:
     <code>refresh: bool</code>: whether to skip the directory listing cache,
     <code>recursive: bool</code>: whether to list subdirectory contents recursively</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Any">Any</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>{}</code>
-                </span>
-            </p>
-          </td>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Any">Any</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>{}</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code>list[str] | list[dict[str, <span title="typing.Any">Any</span>]]</code>
+                </span>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>A list of all objects' metadata under the given remote path if <code>detail=True</code>, or alternatively only their names if <code>detail=False</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code>list[str] | list[dict[str, <span title="typing.Any">Any</span>]]</code>
-              </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>A list of all objects' metadata under the given remote path if <code>detail=True</code>, or alternatively only their names if <code>detail=False</code>.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-444">444</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-444">444</a></span>
 <span class="normal"><a href="#__codelineno-0-445">445</a></span>
 <span class="normal"><a href="#__codelineno-0-446">446</a></span>
 <span class="normal"><a href="#__codelineno-0-447">447</a></span>
@@ -4394,18 +4363,16 @@ Can also point to a file, in which case the file's metadata will be returned.</p
 </span><span id="__span-0-554"><a id="__codelineno-0-554" name="__codelineno-0-554"></a>
 </span><span id="__span-0-555"><a id="__codelineno-0-555" name="__codelineno-0-555"></a>    <span class="k">return</span> <span class="n">info</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.open" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">open</span>
+            <span class="doc doc-object-name doc-function-name">open</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.open" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -4420,198 +4387,195 @@ Can also point to a file, in which case the file's metadata will be returned.</p
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="lakefs.object.LakeFSIOBase">LakeFSIOBase</span></span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Dispatch a lakeFS file-like object (local buffer on disk) for the given remote path for up- or downloads depending on <code>mode</code>.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>path</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The remote path for which to open a local <code>LakeFSFile</code>. Must be a fully qualified lakeFS URI.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>mode</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The file mode indicating its purpose. Use <code>r/rb</code> for downloads from lakeFS, <code>w/wb/x/xb</code> for uploads to lakeFS.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Literal">Literal</span>[&#39;r&#39;, &#39;rb&#39;, &#39;rt&#39;, &#39;w&#39;, &#39;wb&#39;, &#39;wt&#39;, &#39;x&#39;, &#39;xb&#39;, &#39;xt&#39;]</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>&#39;rb&#39;</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>pre_sign</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Whether to use a pre-signed URL for the file up-/download.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>bool</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>False</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>content_type</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Content type to use for the file, relevant for uploads only.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>metadata</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Additional metadata to attach to the file, relevant for uploads only.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>dict[str, str] | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>autocommit</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Whether to process the file immediately instead of queueing it for transaction while in a transaction context.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>bool</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>True</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>**kwargs</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Additional keyword arguments for fsspec compatibility, unused.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Any">Any</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>{}</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>path</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The remote path for which to open a local <code>LakeFSFile</code>. Must be a fully qualified lakeFS URI.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>mode</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The file mode indicating its purpose. Use <code>r/rb</code> for downloads from lakeFS, <code>w/wb/x/xb</code> for uploads to lakeFS.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Literal">Literal</span>[&#39;r&#39;, &#39;rb&#39;, &#39;rt&#39;, &#39;w&#39;, &#39;wb&#39;, &#39;wt&#39;, &#39;x&#39;, &#39;xb&#39;, &#39;xt&#39;]</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>&#39;rb&#39;</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>pre_sign</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Whether to use a pre-signed URL for the file up-/download.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>bool</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>False</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>content_type</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Content type to use for the file, relevant for uploads only.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>metadata</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Additional metadata to attach to the file, relevant for uploads only.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>dict[str, str] | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>autocommit</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Whether to process the file immediately instead of queueing it for transaction while in a transaction context.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>bool</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>True</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>**kwargs</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Additional keyword arguments for fsspec compatibility, unused.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Any">Any</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>{}</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code><span title="lakefs.object.LakeFSIOBase">LakeFSIOBase</span></code>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code><span title="lakefs.object.LakeFSIOBase">LakeFSIOBase</span></code>
+                </span>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>A local file-like object ready to hold data to be received from / sent to a lakeFS server.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RAISES</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+              <span class="doc-raises-annotation">
+                  <code>NotImplementedError</code>
               </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>A local file-like object ready to hold data to be received from / sent to a lakeFS server.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+            </td>
+            <td class="doc-raises-details">
+              <div class="doc-md-description">
+                <p>If <code>mode</code> is not supported.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RAISES</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-            <span class="doc-raises-annotation">
-                <code>NotImplementedError</code>
-            </span>
-          </td>
-          <td class="doc-raises-details">
-            <div class="doc-md-description">
-              <p>If <code>mode</code> is not supported.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-557">557</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-557">557</a></span>
 <span class="normal"><a href="#__codelineno-0-558">558</a></span>
 <span class="normal"><a href="#__codelineno-0-559">559</a></span>
 <span class="normal"><a href="#__codelineno-0-560">560</a></span>
@@ -4767,18 +4731,16 @@ Can also point to a file, in which case the file's metadata will be returned.</p
 </span><span id="__span-0-633"><a id="__codelineno-0-633" name="__codelineno-0-633"></a>
 </span><span id="__span-0-634"><a id="__codelineno-0-634" name="__codelineno-0-634"></a>    <span class="k">return</span> <span class="n">handler</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.put_file" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">put_file</span>
+            <span class="doc doc-object-name doc-function-name">put_file</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.put_file" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -4791,109 +4753,108 @@ Can also point to a file, in which case the file's metadata will be returned.</p
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Upload a local file to a remote location on a lakeFS server.</p>
 <p>Note that depending on the block store type, additional configuration like credentials may need to be configured when <code>use_blockstore=True</code> and <code>presign=False</code>.</p>
 
 
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>lpath</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The local path on disk to upload to the lakeFS server.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>rpath</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The remote target path to upload the local file to. Must be a fully qualified lakeFS URI.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>callback</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>An fsspec callback to use during the operation. Can be used to report download progress.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="fsspec.callbacks.Callback">Callback</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code><span title="fsspec.callbacks._DEFAULT_CALLBACK">_DEFAULT_CALLBACK</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>precheck</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Check if <code>lpath</code> already exists and compare its checksum with that of <code>rpath</code>, skipping the download if they match.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>bool</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>True</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>**kwargs</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Additional keyword arguments to pass to <code>LakeFSFileSystem.open()</code>.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Any">Any</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>{}</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>lpath</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The local path on disk to upload to the lakeFS server.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>rpath</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The remote target path to upload the local file to. Must be a fully qualified lakeFS URI.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>callback</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>An fsspec callback to use during the operation. Can be used to report download progress.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="fsspec.callbacks.Callback">Callback</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code><span title="fsspec.callbacks._DEFAULT_CALLBACK">_DEFAULT_CALLBACK</span></code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>precheck</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Check if <code>lpath</code> already exists and compare its checksum with that of <code>rpath</code>, skipping the download if they match.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>bool</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>True</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>**kwargs</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Additional keyword arguments to pass to <code>LakeFSFileSystem.open()</code>.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Any">Any</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>{}</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-636">636</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-636">636</a></span>
 <span class="normal"><a href="#__codelineno-0-637">637</a></span>
 <span class="normal"><a href="#__codelineno-0-638">638</a></span>
 <span class="normal"><a href="#__codelineno-0-639">639</a></span>
@@ -4975,59 +4936,56 @@ Can also point to a file, in which case the file's metadata will be returned.</p
 </span><span id="__span-0-675"><a id="__codelineno-0-675" name="__codelineno-0-675"></a>    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapped_api_call</span><span class="p">(</span><span class="n">rpath</span><span class="o">=</span><span class="n">rpath</span><span class="p">):</span>
 </span><span id="__span-0-676"><a id="__codelineno-0-676" name="__codelineno-0-676"></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">put_file</span><span class="p">(</span><span class="n">lpath</span><span class="p">,</span> <span class="n">rpath</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.rm_file" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">rm_file</span>
+            <span class="doc doc-object-name doc-function-name">rm_file</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.rm_file" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">rm_file</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="os.PathLike">PathLike</span></span><span class="p">[</span><span class="n">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Stage a remote file for removal on a lakeFS server.</p>
 <p>The file will not actually be removed from the requested branch until a commit is created.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>path</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The remote file to delete. Must be a fully qualified lakeFS URI.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>path</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The remote file to delete. Must be a fully qualified lakeFS URI.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-678">678</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-678">678</a></span>
 <span class="normal"><a href="#__codelineno-0-679">679</a></span>
 <span class="normal"><a href="#__codelineno-0-680">680</a></span>
 <span class="normal"><a href="#__codelineno-0-681">681</a></span>
@@ -5051,97 +5009,94 @@ Can also point to a file, in which case the file's metadata will be returned.</p
 </span><span id="__span-0-688"><a id="__codelineno-0-688" name="__codelineno-0-688"></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="__span-0-689"><a id="__codelineno-0-689" name="__codelineno-0-689"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">rm</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.rm" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">rm</span>
+            <span class="doc doc-object-name doc-function-name">rm</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.rm" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">rm</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="os.PathLike">PathLike</span></span><span class="p">[</span><span class="n">str</span><span class="p">],</span> <span class="n">recursive</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">maxdepth</span><span class="p">:</span> <span class="n">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Stage multiple remote files for removal on a lakeFS server.</p>
 <p>The files will not actually be removed from the requested branch until a commit is created.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>path</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>File(s) to delete.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>recursive</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>If file(s) include nested directories, recursively delete their contents.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>bool</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>False</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>maxdepth</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Depth to pass to walk for finding files to delete, if recursive.
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>path</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>File(s) to delete.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>recursive</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>If file(s) include nested directories, recursively delete their contents.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>bool</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>False</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>maxdepth</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Depth to pass to walk for finding files to delete, if recursive.
 If None, there will be no limit and infinite recursion may be
 possible.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>int | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>int | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-691">691</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-691">691</a></span>
 <span class="normal"><a href="#__codelineno-0-692">692</a></span>
 <span class="normal"><a href="#__codelineno-0-693">693</a></span>
 <span class="normal"><a href="#__codelineno-0-694">694</a></span>
@@ -5209,119 +5164,115 @@ possible.</p>
 </span><span id="__span-0-723"><a id="__codelineno-0-723" name="__codelineno-0-723"></a>        <span class="c1"># Directory listing cache for the containing folder must be invalidated</span>
 </span><span id="__span-0-724"><a id="__codelineno-0-724" name="__codelineno-0-724"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">dircache</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.touch" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">touch</span>
+            <span class="doc doc-object-name doc-function-name">touch</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.touch" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">touch</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="os.PathLike">PathLike</span></span><span class="p">[</span><span class="n">str</span><span class="p">],</span> <span class="n">truncate</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Create an empty file or update an existing file on a lakeFS server.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>path</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The file path to create or update. Must be a fully qualified lakeFS URI.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>truncate</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Whether to set the file size to 0 (zero) bytes, even if the path already exists.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>bool</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>True</code>
-                </span>
-            </p>
-          </td>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>path</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The file path to create or update. Must be a fully qualified lakeFS URI.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>truncate</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Whether to set the file size to 0 (zero) bytes, even if the path already exists.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>bool</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>True</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>**kwargs</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Additional keyword arguments to pass to <code>LakeFSFileSystem.open()</code>.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Any">Any</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>{}</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RAISES</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>**kwargs</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Additional keyword arguments to pass to <code>LakeFSFileSystem.open()</code>.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Any">Any</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>{}</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+              <span class="doc-raises-annotation">
+                  <code>NotImplementedError</code>
+              </span>
+            </td>
+            <td class="doc-raises-details">
+              <div class="doc-md-description">
+                <p>If the targeted lakeFS server version does not support <code>touch()</code> operations.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RAISES</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-            <span class="doc-raises-annotation">
-                <code>NotImplementedError</code>
-            </span>
-          </td>
-          <td class="doc-raises-details">
-            <div class="doc-md-description">
-              <p>If the targeted lakeFS server version does not support <code>touch()</code> operations.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-726">726</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-726">726</a></span>
 <span class="normal"><a href="#__codelineno-0-727">727</a></span>
 <span class="normal"><a href="#__codelineno-0-728">728</a></span>
 <span class="normal"><a href="#__codelineno-0-729">729</a></span>
@@ -5379,101 +5330,97 @@ possible.</p>
 </span><span id="__span-0-753"><a id="__codelineno-0-753" name="__codelineno-0-753"></a>
 </span><span id="__span-0-754"><a id="__codelineno-0-754" name="__codelineno-0-754"></a>    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">touch</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="n">truncate</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.spec.LakeFSFileSystem.tail" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">tail</span>
+            <span class="doc doc-object-name doc-function-name">tail</span>
 
 
 <a href="#lakefs_spec.spec.LakeFSFileSystem.tail" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">tail</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="os.PathLike">PathLike</span></span><span class="p">[</span><span class="n">str</span><span class="p">],</span> <span class="n">size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">bytes</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Get the last <code>size</code> bytes from a remote file.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>path</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The file path to read. Must be a fully qualified lakeFS URI.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>size</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The amount of bytes to get.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>int</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>1024</code>
-                </span>
-            </p>
-          </td>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>path</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The file path to read. Must be a fully qualified lakeFS URI.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>size</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The amount of bytes to get.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>int</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>1024</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code>bytes</code>
+                </span>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>The bytes at the end of the requested file.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code>bytes</code>
-              </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>The bytes at the end of the requested file.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-756">756</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/spec.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-756">756</a></span>
 <span class="normal"><a href="#__codelineno-0-757">757</a></span>
 <span class="normal"><a href="#__codelineno-0-758">758</a></span>
 <span class="normal"><a href="#__codelineno-0-759">759</a></span>
@@ -5513,8 +5460,8 @@ possible.</p>
 </span><span id="__span-0-774"><a id="__codelineno-0-774" name="__codelineno-0-774"></a>        <span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="n">size</span><span class="p">,</span> <span class="o">-</span><span class="n">f</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">size_bytes</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
 </span><span id="__span-0-775"><a id="__codelineno-0-775" name="__codelineno-0-775"></a>        <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -5522,8 +5469,7 @@ possible.</p>
 
   </div>
 
-  </div>
-
+    </div>
 
 </div>
 
@@ -5532,7 +5478,7 @@ possible.</p>
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 
@@ -5555,7 +5501,7 @@ possible.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-05-07</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-06-28</span>
   </span>
 
     
@@ -5651,7 +5597,7 @@ possible.</p>
     <script id="__config" type="application/json">{"base": "../../..", "features": ["content.tabs.link", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.a7c05c9e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.ad660dcc.min.js"></script>
       
     
   </body>

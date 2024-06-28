@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../_images/lakefs-spec-favicon.png">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.21">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.27">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.66ac8b77.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6543a935.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
@@ -244,7 +244,7 @@ released. For the most accurate information, please <strong><a href="../../../..
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -994,11 +994,11 @@ released. For the most accurate information, please <strong><a href="../../../..
 
 
 <a id="lakefs_spec.transaction"></a>
-  <div class="doc doc-contents first">
-  
+    <div class="doc doc-contents first">
+
       <p>Functionality for extended lakeFS transactions to conduct versioning operations between file uploads.</p>
 
-  
+
 
   <div class="doc doc-children">
 
@@ -1014,49 +1014,48 @@ released. For the most accurate information, please <strong><a href="../../../..
 
 
 <h2 id="lakefs_spec.transaction.LakeFSTransaction" class="doc doc-heading">
-          <span class="doc doc-object-name doc-class-name">LakeFSTransaction</span>
+            <span class="doc doc-object-name doc-class-name">LakeFSTransaction</span>
 
 
 <a href="#lakefs_spec.transaction.LakeFSTransaction" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
-  <div class="doc doc-contents ">
-          <p class="doc doc-class-bases">
-            Bases: <code><span title="fsspec.transaction.Transaction">Transaction</span></code></p>
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="fsspec.transaction.Transaction">Transaction</span></code></p>
 
-  
+
       <p>A lakeFS transaction model capable of versioning operations in between file uploads.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>fs</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The lakeFS file system associated with the transaction.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>&#39;LakeFSFileSystem&#39;</code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>fs</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The lakeFS file system associated with the transaction.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>&#39;LakeFSFileSystem&#39;</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-            <details class="quote">
-              <summary>Source code in <code>src/lakefs_spec/transaction.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-38"> 38</a></span>
+              <details class="quote">
+                <summary>Source code in <code>src/lakefs_spec/transaction.py</code></summary>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-38"> 38</a></span>
 <span class="normal"><a href="#__codelineno-0-39"> 39</a></span>
 <span class="normal"><a href="#__codelineno-0-40"> 40</a></span>
 <span class="normal"><a href="#__codelineno-0-41"> 41</a></span>
@@ -1514,12 +1513,11 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-265"><a id="__codelineno-0-265" name="__codelineno-0-265"></a>
 </span><span id="__span-0-266"><a id="__codelineno-0-266" name="__codelineno-0-266"></a>        <span class="k">return</span> <span class="n">lakefs</span><span class="o">.</span><span class="n">Tag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-            </details>
+              </details>
 
-  
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -1532,93 +1530,90 @@ released. For the most accurate information, please <strong><a href="../../../..
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.transaction.LakeFSTransaction.commit" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">commit</span>
+            <span class="doc doc-object-name doc-function-name">commit</span>
 
 
 <a href="#lakefs_spec.transaction.LakeFSTransaction.commit" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">commit</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="n">str</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="lakefs.branch.Reference">Reference</span></span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Create a commit on this transaction's ephemeral branch with a commit message
 and attached metadata.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>message</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The commit message to attach to the newly created commit.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str</code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>metadata</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Optional metadata to enrich the created commit with (author, e-mail, ...).</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>dict[str, str] | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>message</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The commit message to attach to the newly created commit.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>metadata</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Optional metadata to enrich the created commit with (author, e-mail, ...).</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>dict[str, str] | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code><span title="lakefs.branch.Reference">Reference</span></code>
+                </span>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>The created commit.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code><span title="lakefs.branch.Reference">Reference</span></code>
-              </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>The created commit.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/transaction.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-149">149</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/transaction.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-149">149</a></span>
 <span class="normal"><a href="#__codelineno-0-150">150</a></span>
 <span class="normal"><a href="#__codelineno-0-151">151</a></span>
 <span class="normal"><a href="#__codelineno-0-152">152</a></span>
@@ -1668,100 +1663,96 @@ and attached metadata.</p>
 </span><span id="__span-0-172"><a id="__codelineno-0-172" name="__codelineno-0-172"></a>
 </span><span id="__span-0-173"><a id="__codelineno-0-173" name="__codelineno-0-173"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">branch</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.transaction.LakeFSTransaction.merge" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">merge</span>
+            <span class="doc doc-object-name doc-function-name">merge</span>
 
 
 <a href="#lakefs_spec.transaction.LakeFSTransaction.merge" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">merge</span><span class="p">(</span><span class="n">source_ref</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="lakefs.branch.Branch">Branch</span></span><span class="p">,</span> <span class="n">into</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="lakefs.branch.Branch">Branch</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="lakefs.reference.Commit">Commit</span></span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Merge a branch into another branch in a repository.</p>
 <p>In case the branch contains no changes relevant to the target branch,
 no merge happens, and the tip of the target branch is returned instead.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>source_ref</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Source reference containing the changes to merge.
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>source_ref</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Source reference containing the changes to merge.
 Can be a branch name or partial commit SHA.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="lakefs.branch.Branch">Branch</span></code>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="lakefs.branch.Branch">Branch</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>into</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Target branch into which the changes will be merged.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="lakefs.branch.Branch">Branch</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code><span title="lakefs.reference.Commit">Commit</span></code>
                 </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>into</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Target branch into which the changes will be merged.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="lakefs.branch.Branch">Branch</span></code>
-                </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>Either the created merge commit, or the head commit of the target branch.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code><span title="lakefs.reference.Commit">Commit</span></code>
-              </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>Either the created merge commit, or the head commit of the target branch.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/transaction.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-175">175</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/transaction.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-175">175</a></span>
 <span class="normal"><a href="#__codelineno-0-176">176</a></span>
 <span class="normal"><a href="#__codelineno-0-177">177</a></span>
 <span class="normal"><a href="#__codelineno-0-178">178</a></span>
@@ -1813,117 +1804,113 @@ Can be a branch name or partial commit SHA.</p>
 </span><span id="__span-0-199"><a id="__codelineno-0-199" name="__codelineno-0-199"></a>        <span class="n">source</span><span class="o">.</span><span class="n">merge_into</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span>
 </span><span id="__span-0-200"><a id="__codelineno-0-200" name="__codelineno-0-200"></a>    <span class="k">return</span> <span class="n">dest</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">get_commit</span><span class="p">()</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.transaction.LakeFSTransaction.revert" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">revert</span>
+            <span class="doc doc-object-name doc-function-name">revert</span>
 
 
 <a href="#lakefs_spec.transaction.LakeFSTransaction.revert" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">revert</span><span class="p">(</span><span class="n">branch</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="lakefs.branch.Branch">Branch</span></span><span class="p">,</span> <span class="n">ref</span><span class="p">:</span> <span class="n"><span title="lakefs.reference.ReferenceType">ReferenceType</span></span><span class="p">,</span> <span class="n">parent_number</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="lakefs.reference.Commit">Commit</span></span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Revert a previous commit on a branch.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>branch</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Branch on which the commit should be reverted.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="lakefs.branch.Branch">Branch</span></code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>ref</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The reference to revert.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="lakefs.reference.ReferenceType">ReferenceType</span></code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>parent_number</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>If there are multiple parents to a commit, specify to which parent
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>branch</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Branch on which the commit should be reverted.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="lakefs.branch.Branch">Branch</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>ref</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The reference to revert.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="lakefs.reference.ReferenceType">ReferenceType</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>parent_number</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>If there are multiple parents to a commit, specify to which parent
 the commit should be reverted. <code>parent_number = 1</code> (the default)
 refers to the first parent commit of the current <code>branch</code> tip.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>int</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>1</code>
-                </span>
-            </p>
-          </td>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>int</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>1</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code><span title="lakefs.reference.Commit">Commit</span></code>
+                </span>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>The created revert commit.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code><span title="lakefs.reference.Commit">Commit</span></code>
-              </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>The created revert commit.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/transaction.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-202">202</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/transaction.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-202">202</a></span>
 <span class="normal"><a href="#__codelineno-0-203">203</a></span>
 <span class="normal"><a href="#__codelineno-0-204">204</a></span>
 <span class="normal"><a href="#__codelineno-0-205">205</a></span>
@@ -1975,83 +1962,79 @@ refers to the first parent commit of the current <code>branch</code> tip.</p>
 </span><span id="__span-0-226"><a id="__codelineno-0-226" name="__codelineno-0-226"></a>    <span class="n">b</span><span class="o">.</span><span class="n">revert</span><span class="p">(</span><span class="n">ref_id</span><span class="p">,</span> <span class="n">parent_number</span><span class="o">=</span><span class="n">parent_number</span><span class="p">)</span>
 </span><span id="__span-0-227"><a id="__codelineno-0-227" name="__codelineno-0-227"></a>    <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">get_commit</span><span class="p">()</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.transaction.LakeFSTransaction.rev_parse" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">rev_parse</span>
+            <span class="doc doc-object-name doc-function-name">rev_parse</span>
 
 
 <a href="#lakefs_spec.transaction.LakeFSTransaction.rev_parse" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">rev_parse</span><span class="p">(</span><span class="n">ref</span><span class="p">:</span> <span class="n"><span title="lakefs.reference.ReferenceType">ReferenceType</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="lakefs.reference.Commit">Commit</span></span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Parse a given lakeFS reference expression and obtain its corresponding commit.</p>
 
 
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>ref</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Reference object to resolve, can be a branch, commit SHA, or tag.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="lakefs.reference.ReferenceType">ReferenceType</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>ref</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Reference object to resolve, can be a branch, commit SHA, or tag.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="lakefs.reference.ReferenceType">ReferenceType</span></code>
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code><span title="lakefs.reference.Commit">Commit</span></code>
                 </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>The commit referenced by the expression <code>ref</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code><span title="lakefs.reference.Commit">Commit</span></code>
-              </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>The commit referenced by the expression <code>ref</code>.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/transaction.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-229">229</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/transaction.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-229">229</a></span>
 <span class="normal"><a href="#__codelineno-0-230">230</a></span>
 <span class="normal"><a href="#__codelineno-0-231">231</a></span>
 <span class="normal"><a href="#__codelineno-0-232">232</a></span>
@@ -2087,98 +2070,94 @@ refers to the first parent commit of the current <code>branch</code> tip.</p>
 </span><span id="__span-0-245"><a id="__codelineno-0-245" name="__codelineno-0-245"></a>    <span class="n">reference</span> <span class="o">=</span> <span class="n">lakefs</span><span class="o">.</span><span class="n">Reference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="p">,</span> <span class="n">ref_id</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">client</span><span class="p">)</span>
 </span><span id="__span-0-246"><a id="__codelineno-0-246" name="__codelineno-0-246"></a>    <span class="k">return</span> <span class="n">reference</span><span class="o">.</span><span class="n">get_commit</span><span class="p">()</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h3 id="lakefs_spec.transaction.LakeFSTransaction.tag" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">tag</span>
+            <span class="doc doc-object-name doc-function-name">tag</span>
 
 
 <a href="#lakefs_spec.transaction.LakeFSTransaction.tag" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">tag</span><span class="p">(</span><span class="n">ref</span><span class="p">:</span> <span class="n"><span title="lakefs.reference.ReferenceType">ReferenceType</span></span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="lakefs.tag.Tag">Tag</span></span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Create a tag referencing a commit in a repository.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>ref</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Commit SHA or placeholder for a reference or commit object
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>ref</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Commit SHA or placeholder for a reference or commit object
 to which the new tag will point.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="lakefs.reference.ReferenceType">ReferenceType</span></code>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="lakefs.reference.ReferenceType">ReferenceType</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>name</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Name of the tag to be created.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code><span title="lakefs.tag.Tag">Tag</span></code>
                 </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>name</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Name of the tag to be created.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>The requested tag.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code><span title="lakefs.tag.Tag">Tag</span></code>
-              </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>The requested tag.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/transaction.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-248">248</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/transaction.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-248">248</a></span>
 <span class="normal"><a href="#__codelineno-0-249">249</a></span>
 <span class="normal"><a href="#__codelineno-0-250">250</a></span>
 <span class="normal"><a href="#__codelineno-0-251">251</a></span>
@@ -2216,8 +2195,8 @@ to which the new tag will point.</p>
 </span><span id="__span-0-265"><a id="__codelineno-0-265" name="__codelineno-0-265"></a>
 </span><span id="__span-0-266"><a id="__codelineno-0-266" name="__codelineno-0-266"></a>    <span class="k">return</span> <span class="n">lakefs</span><span class="o">.</span><span class="n">Tag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repository</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">client</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -2225,8 +2204,7 @@ to which the new tag will point.</p>
 
   </div>
 
-  </div>
-
+    </div>
 
 </div>
 
@@ -2235,7 +2213,7 @@ to which the new tag will point.</p>
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 
@@ -2258,7 +2236,7 @@ to which the new tag will point.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-05-07</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-06-28</span>
   </span>
 
     
@@ -2354,7 +2332,7 @@ to which the new tag will point.</p>
     <script id="__config" type="application/json">{"base": "../../..", "features": ["content.tabs.link", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.a7c05c9e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.ad660dcc.min.js"></script>
       
     
   </body>

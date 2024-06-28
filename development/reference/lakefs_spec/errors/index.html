@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../_images/lakefs-spec-favicon.png">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.21">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.27">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.66ac8b77.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6543a935.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
@@ -244,7 +244,7 @@ released. For the most accurate information, please <strong><a href="../../../..
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -892,16 +892,15 @@ released. For the most accurate information, please <strong><a href="../../../..
 
 
 <a id="lakefs_spec.errors"></a>
-  <div class="doc doc-contents first">
-  
+    <div class="doc doc-contents first">
+
       <p>Error translation facilities to map lakeFS API errors to Python-native OS errors in the lakeFS file system.</p>
 <p>This is important to honor the fsspec API contract, where users only need to expect builtin Python exceptions to
 avoid complicated error handling setups.</p>
 
-  
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -914,9 +913,8 @@ avoid complicated error handling setups.</p>
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="lakefs_spec.errors.translate_lakefs_error" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">translate_lakefs_error</span>
+            <span class="doc doc-object-name doc-function-name">translate_lakefs_error</span>
 
 
 <a href="#lakefs_spec.errors.translate_lakefs_error" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -928,122 +926,120 @@ avoid complicated error handling setups.</p>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OSError</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Convert a lakeFS server exception to a Python builtin exception.</p>
 <p>For some subclasses of <code>lakefs.exceptions.ServerException</code>, a direct Python builtin equivalent exists.
 In these cases, the suitable equivalent is returned. All other classes are converted to a standard <code>IOError</code>.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>error</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The exception returned by the lakeFS SDK wrapper.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="lakefs.exceptions.ServerException">ServerException</span></code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>rpath</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The remote resource path involved in the error.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>message</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>An error message to use for the returned exception.
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>error</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The exception returned by the lakeFS SDK wrapper.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="lakefs.exceptions.ServerException">ServerException</span></code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>rpath</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The remote resource path involved in the error.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>message</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>An error message to use for the returned exception.
  If not given, the error message returned by the lakeFS server is used instead.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | None</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>None</code>
-                </span>
-            </p>
-          </td>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | None</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>None</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>set_cause</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Whether to set the <code>__cause__</code> attribute to the previous exception if the exception is translated.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>bool</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>True</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>set_cause</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Whether to set the <code>__cause__</code> attribute to the previous exception if the exception is translated.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>bool</code>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code>OSError</code>
                 </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>True</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>A builtin Python exception ready to be thrown.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code>OSError</code>
-              </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>A builtin Python exception ready to be thrown.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/errors.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-26">26</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/errors.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-26">26</a></span>
 <span class="normal"><a href="#__codelineno-0-27">27</a></span>
 <span class="normal"><a href="#__codelineno-0-28">28</a></span>
 <span class="normal"><a href="#__codelineno-0-29">29</a></span>
@@ -1137,8 +1133,8 @@ In these cases, the suitable equivalent is returned. All other classes are conve
 </span><span id="__span-0-71"><a id="__codelineno-0-71" name="__codelineno-0-71"></a>        <span class="n">custom_exc</span><span class="o">.</span><span class="n">__cause__</span> <span class="o">=</span> <span class="n">error</span>
 </span><span id="__span-0-72"><a id="__codelineno-0-72" name="__codelineno-0-72"></a>    <span class="k">return</span> <span class="n">custom_exc</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -1146,7 +1142,7 @@ In these cases, the suitable equivalent is returned. All other classes are conve
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 
@@ -1169,7 +1165,7 @@ In these cases, the suitable equivalent is returned. All other classes are conve
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-05-07</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-06-28</span>
   </span>
 
     
@@ -1265,7 +1261,7 @@ In these cases, the suitable equivalent is returned. All other classes are conve
     <script id="__config" type="application/json">{"base": "../../..", "features": ["content.tabs.link", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.a7c05c9e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.ad660dcc.min.js"></script>
       
     
   </body>

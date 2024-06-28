@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../_images/lakefs-spec-favicon.png">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.21">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.27">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.66ac8b77.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6543a935.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
@@ -244,7 +244,7 @@ released. For the most accurate information, please <strong><a href="../../../..
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -928,14 +928,13 @@ released. For the most accurate information, please <strong><a href="../../../..
 
 
 <a id="lakefs_spec.util"></a>
-  <div class="doc doc-contents first">
-  
+    <div class="doc doc-contents first">
+
       <p>Useful utilities for handling lakeFS URIs and results of lakeFS API calls.</p>
 
-  
+
 
   <div class="doc doc-children">
-
 
 
 
@@ -948,9 +947,8 @@ released. For the most accurate information, please <strong><a href="../../../..
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="lakefs_spec.util.depaginate" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">depaginate</span>
+            <span class="doc doc-object-name doc-function-name">depaginate</span>
 
 
 <a href="#lakefs_spec.util.depaginate" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -959,101 +957,99 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Generator">Generator</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Unwrap the responses from a paginated lakeFS API method into a generator.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>api</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The lakeFS client API to call. Must return a paginated response with the <code>pagination</code> and <code>results</code> fields set.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Callable">Callable</span>[..., <span title="lakefs_spec.util.PaginatedApiResponse">PaginatedApiResponse</span>]</code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>*args</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Positional arguments to pass to the API call.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>api</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The lakeFS client API to call. Must return a paginated response with the <code>pagination</code> and <code>results</code> fields set.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Callable">Callable</span>[..., <span title="lakefs_spec.util.PaginatedApiResponse">PaginatedApiResponse</span>]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>*args</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Positional arguments to pass to the API call.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Any">Any</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>()</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>**kwargs</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Keyword arguments to pass to the API call.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code><span title="typing.Any">Any</span></code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>{}</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">YIELDS</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-yields-annotation">
                     <code><span title="typing.Any">Any</span></code>
                 </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>()</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-        <tr class="doc-section-item">
-          <td><code>**kwargs</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Keyword arguments to pass to the API call.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code><span title="typing.Any">Any</span></code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>{}</code>
-                </span>
-            </p>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+            </td>
+            <td class="doc-yields-details">
+              <div class="doc-md-description">
+                <p>The obtained API result objects.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">YIELDS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-yields-annotation">
-                  <code><span title="typing.Any">Any</span></code>
-              </span>
-          </td>
-          <td class="doc-yields-details">
-            <div class="doc-md-description">
-              <p>The obtained API result objects.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/util.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-24">24</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/util.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-24">24</a></span>
 <span class="normal"><a href="#__codelineno-0-25">25</a></span>
 <span class="normal"><a href="#__codelineno-0-26">26</a></span>
 <span class="normal"><a href="#__codelineno-0-27">27</a></span>
@@ -1105,101 +1101,97 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48"></a>            <span class="k">break</span>
 </span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49"></a>        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;after&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">pagination</span><span class="o">.</span><span class="n">next_offset</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="lakefs_spec.util.md5_checksum" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">md5_checksum</span>
+            <span class="doc doc-object-name doc-function-name">md5_checksum</span>
 
 
 <a href="#lakefs_spec.util.md5_checksum" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">md5_checksum</span><span class="p">(</span><span class="n">lpath</span><span class="p">:</span> <span class="n">str</span> <span class="o">|</span> <span class="n"><span title="os.PathLike">PathLike</span></span><span class="p">[</span><span class="n">str</span><span class="p">],</span> <span class="n">blocksize</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">22</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">str</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Calculate a local file's MD5 hash.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>lpath</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>The local path whose MD5 hash to calculate. Must be a file.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
-                </span>
-            </p>
-          </td>
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-        <tr class="doc-section-item">
-          <td><code>blocksize</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>Block size (in bytes) to use while reading in the file.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>int</code>
-                </span>
-                <span class="doc-param-default">
-                  <b>DEFAULT:</b> 
-                    <code>2 ** 22</code>
-                </span>
-            </p>
-          </td>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>lpath</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>The local path whose MD5 hash to calculate. Must be a file.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str | <span title="os.PathLike">PathLike</span>[str]</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code>blocksize</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>Block size (in bytes) to use while reading in the file.</p>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>int</code>
+                  </span>
+                  <span class="doc-param-default">
+                    <b>DEFAULT:</b>
+                      <code>2 ** 22</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code>str</code>
+                </span>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>The file's MD5 hash value, as a string.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code>str</code>
-              </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>The file's MD5 hash value, as a string.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/util.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-52">52</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/util.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-52">52</a></span>
 <span class="normal"><a href="#__codelineno-0-53">53</a></span>
 <span class="normal"><a href="#__codelineno-0-54">54</a></span>
 <span class="normal"><a href="#__codelineno-0-55">55</a></span>
@@ -1245,109 +1237,104 @@ released. For the most accurate information, please <strong><a href="../../../..
 </span><span id="__span-0-73"><a id="__codelineno-0-73" name="__codelineno-0-73"></a>            <span class="n">chunk</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">blocksize</span><span class="p">)</span>
 </span><span id="__span-0-74"><a id="__codelineno-0-74" name="__codelineno-0-74"></a>    <span class="k">return</span> <span class="n">file_hash</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
-
 
 <div class="doc doc-object doc-function">
 
 
-
 <h2 id="lakefs_spec.util.parse" class="doc doc-heading">
-          <span class="doc doc-object-name doc-function-name">parse</span>
+            <span class="doc doc-object-name doc-function-name">parse</span>
 
 
 <a href="#lakefs_spec.util.parse" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">parse</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tuple</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">]</span>
 </span></code></pre></div>
 
-  <div class="doc doc-contents ">
-  
+    <div class="doc doc-contents ">
+
       <p>Parses a lakeFS URI in the form <code>lakefs://&lt;repo&gt;/&lt;ref&gt;/&lt;resource&gt;</code>.</p>
 
 
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">PARAMETER</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td><code>path</code></td>
-          <td class="doc-param-details">
-            <div class="doc-md-description">
-              <p>String path, needs to conform to the lakeFS URI format described above.
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">PARAMETER</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td><code>path</code></td>
+            <td class="doc-param-details">
+              <div class="doc-md-description">
+                <p>String path, needs to conform to the lakeFS URI format described above.
 The <code>&lt;resource&gt;</code> part can be the empty string; the leading <code>lakefs://</code> scheme may be omitted.</p>
-            </div>
-            <p>
-                <span class="doc-param-annotation">
-                  <b>TYPE:</b>
-                    <code>str</code>
+              </div>
+              <p>
+                  <span class="doc-param-annotation">
+                    <b>TYPE:</b>
+                      <code>str</code>
+                  </span>
+              </p>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RETURNS</span></th>
+          <th><span>DESCRIPTION</span></th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <span class="doc-returns-annotation">
+                    <code>tuple[str, str, str]</code>
                 </span>
-            </p>
-          </td>
+            </td>
+            <td class="doc-returns-details">
+              <div class="doc-md-description">
+                <p>A 3-tuple of repository name, reference, and resource name.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<table>
+      <thead>
+        <tr>
+          <th><span class="doc-section-title">RAISES</span></th>
+          <th><span>DESCRIPTION</span></th>
         </tr>
-    </tbody>
-  </table>
-
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RETURNS</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-              <span class="doc-returns-annotation">
-                  <code>tuple[str, str, str]</code>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+              <span class="doc-raises-annotation">
+                  <code>ValueError</code>
               </span>
-          </td>
-          <td class="doc-returns-details">
-            <div class="doc-md-description">
-              <p>A 3-tuple of repository name, reference, and resource name.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
+            </td>
+            <td class="doc-raises-details">
+              <div class="doc-md-description">
+                <p>If the path does not conform to the lakeFS URI format.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
-
-
-  <table>
-    <thead>
-      <tr>
-        <th><span class="doc-section-title">RAISES</span></th>
-        <th><span>DESCRIPTION</span></th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr class="doc-section-item">
-          <td>
-            <span class="doc-raises-annotation">
-                <code>ValueError</code>
-            </span>
-          </td>
-          <td class="doc-raises-details">
-            <div class="doc-md-description">
-              <p>If the path does not conform to the lakeFS URI format.</p>
-            </div>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-          <details class="quote">
-            <summary>Source code in <code>src/lakefs_spec/util.py</code></summary>
-            <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-77"> 77</a></span>
+            <details class="quote">
+              <summary>Source code in <code>src/lakefs_spec/util.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-77"> 77</a></span>
 <span class="normal"><a href="#__codelineno-0-78"> 78</a></span>
 <span class="normal"><a href="#__codelineno-0-79"> 79</a></span>
 <span class="normal"><a href="#__codelineno-0-80"> 80</a></span>
@@ -1415,8 +1402,8 @@ The <code>&lt;resource&gt;</code> part can be the empty string; the leading <cod
 </span><span id="__span-0-109"><a id="__codelineno-0-109" name="__codelineno-0-109"></a>    <span class="n">repo</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">resource</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
 </span><span id="__span-0-110"><a id="__codelineno-0-110" name="__codelineno-0-110"></a>    <span class="k">return</span> <span class="n">repo</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">resource</span>
 </span></code></pre></div></td></tr></table></div>
-          </details>
-  </div>
+            </details>
+    </div>
 
 </div>
 
@@ -1424,7 +1411,7 @@ The <code>&lt;resource&gt;</code> part can be the empty string; the leading <cod
 
   </div>
 
-  </div>
+    </div>
 
 </div>
 
@@ -1447,7 +1434,7 @@ The <code>&lt;resource&gt;</code> part can be the empty string; the leading <cod
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-05-07</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-06-28</span>
   </span>
 
     
@@ -1543,7 +1530,7 @@ The <code>&lt;resource&gt;</code> part can be the empty string; the leading <cod
     <script id="__config" type="application/json">{"base": "../../..", "features": ["content.tabs.link", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.a7c05c9e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.ad660dcc.min.js"></script>
       
     
   </body>
