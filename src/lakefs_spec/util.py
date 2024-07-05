@@ -4,13 +4,16 @@ Useful utilities for handling lakeFS URIs and results of lakeFS API calls.
 
 from __future__ import annotations
 
+import asyncio
+import functools
 import hashlib
 import os
 import re
-from typing import Any, Callable, Generator, Protocol
+from typing import Any, Callable, Coroutine, Generator, Protocol, TypeVar
 
 from lakefs_sdk import Pagination
 from lakefs_sdk import __version__ as __lakefs_sdk_version__
+from typing_extensions import ParamSpec
 
 lakefs_sdk_version = tuple(int(v) for v in __lakefs_sdk_version__.split("."))
 del __lakefs_sdk_version__
@@ -108,3 +111,18 @@ def parse(path: str) -> tuple[str, str, str]:
 
     repo, ref, resource = results.groups()
     return repo, ref, resource
+
+
+P = ParamSpec("P")
+T = TypeVar("T")
+
+
+def async_wrapper(fn: Callable[P, T]) -> Callable[P, Coroutine[None, None, T]]:
+    """Wrap a synchronous function in an asyncio coroutine."""
+
+    @functools.wraps(fn)
+    async def _wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(None, lambda: fn(*args, **kwargs))
+
+    return _wrapper
