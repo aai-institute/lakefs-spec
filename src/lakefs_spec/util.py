@@ -5,9 +5,11 @@ Useful utilities for handling lakeFS URIs and results of lakeFS API calls.
 from __future__ import annotations
 
 import hashlib
+import itertools
 import os
 import re
-from typing import Any, Callable, Generator, Protocol
+import sys
+from typing import Any, Callable, Generator, Iterable, Protocol
 
 from lakefs_sdk import Pagination
 from lakefs_sdk import __version__ as __lakefs_sdk_version__
@@ -47,6 +49,22 @@ def depaginate(
         if not resp.pagination.has_more:
             break
         kwargs["after"] = resp.pagination.next_offset
+
+
+def batched(iterable: Iterable, n: int) -> Iterable[tuple]:
+    pyversion = tuple(sys.version_info[:3])
+    # itertools.batched was added in Python 3.12.
+    if pyversion >= (3, 12):
+        # TODO(nicholasjng): Remove once target Python version is 3.12
+        return itertools.batched(iterable, n)  # type: ignore
+    else:
+        # "roughly equivalent" block from
+        # https://docs.python.org/3/library/itertools.html#itertools.batched
+        if n < 1:
+            raise ValueError("n must be at least one")
+        iterator = iter(iterable)
+        while batch := tuple(itertools.islice(iterator, n)):
+            yield batch
 
 
 def md5_checksum(lpath: str | os.PathLike[str], blocksize: int = 2**22) -> str:

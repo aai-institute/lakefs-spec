@@ -27,9 +27,11 @@ from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
 
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
-from lakefs_spec.util import md5_checksum, parse
+from lakefs_spec.util import batched, md5_checksum, parse
 
 logger = logging.getLogger("lakefs-spec")
+
+MAX_DELETE_OBJS = 1000
 
 
 class LakeFSFileSystem(AbstractFileSystem):
@@ -713,12 +715,18 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         with self.wrapped_api_call(rpath=path):
             branch = lakefs.Branch(repository, ref, client=self.client)
-            objgen = branch.objects(prefix=prefix, delimiter="" if recursive else "/")
+            objgen_batched = batched(
+                branch.objects(prefix=prefix, delimiter="" if recursive else "/"), n=MAX_DELETE_OBJS
+            )
             if maxdepth is None:
-                branch.delete_objects(obj.path for obj in objgen)
+                for objgen in objgen_batched:
+                    branch.delete_objects(obj.path for obj in objgen)
             else:
-                # nesting level is just the amount of "/"s in the path, no leading "/".
-                branch.delete_objects(obj.path for obj in objgen if obj.path.count("/") <= maxdepth)
+                for objgen in objgen_batched:
+                    # nesting level is just the amount of "/"s in the path, no leading "/".
+                    branch.delete_objects(
+                        obj.path for obj in objgen if obj.path.count("/") <= maxdepth
+                    )
 
             # Directory listing cache for the containing folder must be invalidated
             self.dircache.pop(self._parent(path), None)
