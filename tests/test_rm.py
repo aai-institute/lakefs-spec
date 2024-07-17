@@ -2,6 +2,7 @@ from lakefs.branch import Branch
 from lakefs.repository import Repository
 
 from lakefs_spec import LakeFSFileSystem
+from tests.util import RandomFileFactory
 
 
 def test_rm(
@@ -66,3 +67,27 @@ def test_rm_recursive_with_maxdepth(
     fs.rm(f"{prefix}/dir1", recursive=True, maxdepth=1)
     # maxdepth is 1-indexed, level 1 being the directory to be removed.
     assert fs.exists(f"{prefix}/dir1/dir2/c.txt")
+
+
+def test_rm_with_1k_objects_or_more(
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: Branch,
+    random_file_factory: RandomFileFactory,
+) -> None:
+    """
+    Confirm that lakeFS does not error when attempting to delete more than 1k objects.
+    """
+    testdir = f"{repository.id}/{temp_branch.id}/subfolder"
+
+    # create and put 1001 objects into the above lakeFS directory.
+    for i in range(1002):
+        f = random_file_factory.make()
+        lpath = str(f)
+        rpath = testdir + f"/test_{i}.txt"
+        fs.put_file(lpath, rpath)
+
+    assert len(fs.ls(testdir, detail=False)) > 1000
+
+    # should not error, because we chunk the file deletion requests to size 1000.
+    fs.rm(testdir, recursive=True, maxdepth=1)
