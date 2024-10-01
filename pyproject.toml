@@ -1,12 +1,12 @@
 [build-system]
-requires = ["setuptools>=45", "setuptools-scm[toml]>=7.1", "wheel"]
+requires = ["setuptools>=45", "setuptools-scm[toml]>=7.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "lakefs-spec"
 description = "An fsspec implementation for lakeFS."
 keywords = ["lakeFS", "fsspec"]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [
@@ -108,8 +108,9 @@ src = ["src"]
 line-length = 100
 
 [tool.ruff.lint]
-# Enable pycodestyle errors & warnings (`E`, `W`), Pyflakes (`F`), and isort (`I`) by default.
-select = ["E", "F", "I", "W"]
+# Enable pycodestyle errors & warnings (`E`, `W`), Pyflakes (`F`), isort (`I`),
+#  and pyupgrade (`UP`) by default.
+select = ["E", "F", "I", "W", "UP"]
 ignore = [
     # Line too long
     "E501",
