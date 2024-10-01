@@ -193,7 +193,7 @@ def transform_json_weather_data(filepath):
     if hasattr(filepath, "close") and hasattr(filepath, "tell"):
         data = json.load(filepath)
     else:
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             data = json.load(f)
 
     df = pd.DataFrame.from_dict(data["hourly"])

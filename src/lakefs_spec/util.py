@@ -2,14 +2,13 @@
 Useful utilities for handling lakeFS URIs and results of lakeFS API calls.
 """
 
-from __future__ import annotations
-
 import hashlib
 import itertools
 import os
 import re
 import sys
-from typing import Any, Callable, Generator, Iterable, Protocol
+from collections.abc import Callable, Generator, Iterable
+from typing import Any, Protocol
 
 from lakefs_sdk import Pagination
 from lakefs_sdk import __version__ as __lakefs_sdk_version__

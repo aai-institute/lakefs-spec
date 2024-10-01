@@ -3,8 +3,9 @@ import logging
 import random
 import string
 import sys
+from collections.abc import Generator
 from pathlib import Path
-from typing import Any, Generator, TypeVar
+from typing import Any, TypeVar
 from unittest.mock import MagicMock
 
 import lakefs
