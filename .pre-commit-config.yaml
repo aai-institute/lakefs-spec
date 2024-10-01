@@ -30,6 +30,9 @@ repos:
       - id: bandit
         args: [-c, pyproject.toml]
         additional_dependencies: ["bandit[toml]"]
+#   Disabled due to incompatibility with our exception translator facility.
+#   See https://github.com/jsh9/pydoclint/issues/174
+#   TODO(nicholasjng): Re-enable once fixed or an ignore facility is available.
 #  - repo: https://github.com/jsh9/pydoclint
 #    rev: 0.5.9
 #    hooks:
