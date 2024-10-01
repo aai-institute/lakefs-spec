@@ -8,7 +8,7 @@ click==8.1.7
 coverage[toml]==7.6.1
 distlib==0.3.8
 docstring-parser-fork==0.0.9
-duckdb==0.10.0
+duckdb==1.1.1
 exceptiongroup==1.2.2
 filelock==3.16.1
 fsspec==2024.9.0
