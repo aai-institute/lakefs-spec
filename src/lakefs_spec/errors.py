@@ -5,8 +5,6 @@ This is important to honor the fsspec API contract, where users only need to exp
 avoid complicated error handling setups.
 """
 
-from __future__ import annotations
-
 import errno
 from functools import partial
 
