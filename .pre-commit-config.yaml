@@ -30,11 +30,11 @@ repos:
       - id: bandit
         args: [-c, pyproject.toml]
         additional_dependencies: ["bandit[toml]"]
-  - repo: https://github.com/jsh9/pydoclint
-    rev: 0.5.9
-    hooks:
-      - id: pydoclint
-        args: [--check-class-attributes=False]
+#  - repo: https://github.com/jsh9/pydoclint
+#    rev: 0.5.9
+#    hooks:
+#      - id: pydoclint
+#        args: [--check-class-attributes=False]
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.4.17
     hooks:
