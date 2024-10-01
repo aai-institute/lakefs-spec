@@ -46,7 +46,7 @@ repos:
         args:
           - --no-annotate
           - --no-strip-extras
-          - --python-version=3.9
+          - --python-version=3.10
           - --extra=dev
           - --output-file=requirements-dev.txt
           - pyproject.toml
@@ -56,7 +56,7 @@ repos:
         args:
           - --no-annotate
           - --no-strip-extras
-          - --python-version=3.9
+          - --python-version=3.10
           - --extra=docs
           - --output-file=requirements-docs.txt
           - pyproject.toml
