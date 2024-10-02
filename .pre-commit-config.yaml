@@ -41,23 +41,5 @@ repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.4.17
     hooks:
-      - id: pip-compile
-        name: pip-compile requirements-dev.txt
-        args:
-          - --no-annotate
-          - --no-strip-extras
-          - --python-version=3.10
-          - --extra=dev
-          - --output-file=requirements-dev.txt
-          - pyproject.toml
-        files: ^(pyproject\.toml|requirements-dev\.txt)$
-      - id: pip-compile
-        name: pip-compile requirements-docs.txt
-        args:
-          - --no-annotate
-          - --no-strip-extras
-          - --python-version=3.10
-          - --extra=docs
-          - --output-file=requirements-docs.txt
-          - pyproject.toml
-        files: ^(pyproject\.toml|requirements-docs\.txt)$
+      - id: uv-lock
+        name: Lock project dependencies
