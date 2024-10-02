@@ -7,7 +7,7 @@ as well as any project-related communication through [GitHub Discussions](https:
 
 ## Getting Started
 
-To get started with development, you can follow these steps:
+To get started with development, you can follow these steps (requires an installation of `uv`):
 
 1. Clone this repository:
 
@@ -19,27 +19,24 @@ To get started with development, you can follow these steps:
 
     ```shell
     cd lakefs-spec
-    python3 -m venv venv --system-site-packages
-    source venv/bin/activate
-    python -m pip install -r requirements-dev.txt
-    python -m pip install -e . --no-deps
+    uv sync --all-extras
     ```
 
 3. After making your changes, verify they adhere to our Python code style by running `pre-commit`:
     
     ```shell
-    pre-commit run --all-files
+    uv run pre-commit run --all-files
     ```
 
     You can also set up Git hooks through `pre-commit` to perform these checks automatically:
     
     ```shell
-    pre-commit install
+    uv run pre-commit install
     ```
 
 4. To run the tests against an ephemeral lakeFS instance, you just run `pytest`:
     ```shell
-    pytest
+    uv run pytest
     ```
 
     To spin up a local lakeFS instance quickly for testing, you can use the Docker Compose file bundled with this repository:
@@ -57,24 +54,11 @@ If you have to update a dependency during development, you should do the followi
 2. In case of a development dependency, add it to the `dev` section of the `project.optional-dependencies` table instead.
 3. Dependencies needed for documentation generation are found in the `docs` sections of `project.optional-dependencies`.
 
-After adding the dependency in either of these sections, run the helper script `hack/lock-deps.sh` (which in turn uses `pip-compile`) to pin all dependencies again:
+After adding the dependency in either of these sections, lock all dependencies again:
 
 ```shell
-python -m pip install --upgrade pip-tools
-hack/lock-deps.sh
+uv lock
 ```
-
-In addition to these manual steps, we also provide `pre-commit` hooks that automatically lock the dependencies whenever `pyproject.toml` is changed.
-
-Selective package upgrade for existing dependencies are also handled by the helper script above.
-If you want to update the `lakefs-sdk` dependency, for example, simply run:
-
-```shell
-hack/lock-deps.sh lakefs-sdk
-```
-
-> [!IMPORTANT]
-> Since the official development version is Python 3.11, please run the above commands in a virtual environment with Python 3.11.
 
 ## Working on Documentation
 
@@ -82,9 +66,8 @@ Improvements or additions to the project's documentation are highly appreciated.
 
 The documentation is based on the [MkDocs](http://mkdocs.org) and [Material for MkDocs (`mkdocs-material`)](https://squidfunk.github.io/mkdocs-material/) projects, see their homepages for in-depth guides on their features and usage. We use the [Numpy documentation style](https://numpydoc.readthedocs.io/en/latest/format.html) for Python docstrings.
 
-To build the documentation locally, you need to first install the optional `docs` dependencies from `requirements-docs.txt`,
-e.g., with `pip install -r requirements-docs.txt`. You can then start a local documentation server with `mkdocs serve`, or
-build the documentation into its output folder in `public/`.
+To build the documentation locally, you need to first install the optional `docs` dependencies from `pyproject.toml`, e.g., with `uv sync --extra docs`.
+You can then start a local documentation server with `uv run mkdocs serve`, or build the documentation into its output folder in `public/`.
 
 In order to maintain documentation for multiple versions of this library, we use the [mike](https://github.com/jimporter/mike) tool, which automatically maintains individual documentation builds per version and publishes them to the `gh-pages` branch.
 
