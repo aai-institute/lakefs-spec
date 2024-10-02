@@ -1,4 +1,4 @@
-from typing import ContextManager
+from contextlib import AbstractContextManager
 
 import pytest
 
@@ -40,6 +40,6 @@ def test_path_parsing_success(path: str, repo: str, ref: str, resource: str) -> 
         ("repo/my-ref$$$/resource.txt", pytest.raises(ValueError, match="expected path .*")),
     ],
 )
-def test_path_parsing_failure(path: str, expected_exception: ContextManager) -> None:
+def test_path_parsing_failure(path: str, expected_exception: AbstractContextManager) -> None:
     with expected_exception:
         parse(path)

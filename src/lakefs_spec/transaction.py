@@ -2,8 +2,6 @@
 Functionality for extended lakeFS transactions to conduct versioning operations between file uploads.
 """
 
-from __future__ import annotations
-
 import logging
 import random
 import string
@@ -47,7 +45,7 @@ class LakeFSTransaction(Transaction):
 
     def __init__(self, fs: "LakeFSFileSystem"):
         super().__init__(fs=fs)
-        self.fs: "LakeFSFileSystem"
+        self.fs: LakeFSFileSystem
         self.files: deque[ObjectWriter] = deque(self.files)
 
         self.repository: str | None = None

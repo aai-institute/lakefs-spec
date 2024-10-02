@@ -4,16 +4,15 @@ Core interface definitions for file system interaction with lakeFS from Python.
 In particular, the core ``LakeFSFileSystem`` and ``LakeFSFile`` classes.
 """
 
-from __future__ import annotations
-
 import errno
 import logging
 import operator
 import os
+from collections.abc import Generator
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Generator, Literal, overload
+from typing import Any, Literal, overload
 
 import fsspec.callbacks
 import lakefs

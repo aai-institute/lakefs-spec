@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 INFILE=pyproject.toml
-COMMON_OPTIONS=(--no-annotate --no-strip-extras --python-version="3.9")
+COMMON_OPTIONS=(--no-annotate --no-strip-extras --python-version="3.10")
 
 # Treat positional arguments as packages to be upgraded
 while [[ $# -gt 0 ]]; do

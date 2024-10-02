@@ -14,7 +14,7 @@ in a lakeFS repository using lakeFS-spec.
 
     - lakeFS-spec supports Windows, macOS, or Linux
     - [Docker](https://www.docker.com/get-started/), with Docker Compose
-    - [Python 3.9](https://python.org) or later
+    - [Python 3.10](https://python.org) or later
     - optionally, [`lakectl`](https://docs.lakefs.io/reference/cli.html), the lakeFS command line tool
 
     Please take a moment to make sure you have these tools available before proceeding with the next steps.
