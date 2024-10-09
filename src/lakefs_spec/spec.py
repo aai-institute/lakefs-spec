@@ -198,6 +198,9 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         Input paths can either be files or directories.
 
+        If the path refers to the root of the repository, this method will return
+        ``True`` if the reference or branch exists.
+
         Parameters
         ----------
         path: str | os.PathLike[str]
@@ -219,6 +222,11 @@ class LakeFSFileSystem(AbstractFileSystem):
         repository, ref, resource = parse(path)
         try:
             reference = lakefs.Reference(repository, ref, client=self.client)
+
+            # Repo root (i.e., empty resource) boils down to checking if the ref exists
+            if resource == "":
+                return reference.get_commit() is not None
+
             if reference.object(resource).exists():
                 return True
             # if it isn't an object, it might be a common prefix (i.e. "directory").
@@ -226,6 +234,8 @@ class LakeFSFileSystem(AbstractFileSystem):
                 max_amount=1, prefix=resource.rstrip("/") + "/", delimiter="/"
             )
             return len(list(children)) > 0
+        except NotFoundException:
+            return False
         except ServerException as e:
             # in case of an error other than "not found", existence cannot be
             # decided, so raise the translated error.
