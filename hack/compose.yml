@@ -1,10 +1,7 @@
 # This docker-compose file provides an ephemeral lakeFS quickstart instance for local development.
 
-version: "3"
-
 services:
   lakefs:
-    image: treeverse/lakefs:1.7.0
     ports:
       - 8000:8000
     environment:

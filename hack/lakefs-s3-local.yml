@@ -1,7 +1,4 @@
 # This docker-compose file provides an ephemeral lakeFS quickstart instance for local development.
-
-version: "3"
-
 services:
   seaweedfs:
     container_name: sandbox-s3

@@ -2,7 +2,7 @@
 
 This document contains information on the resources in this directory, and how they can be used in development and testing.
 
-## `docker-compose.yml` - local lakeFS quickstart instance
+## `compose.yml` - local lakeFS quickstart instance
 
 This Docker Compose file bootstraps a local [lakeFS quickstart instance](https://docs.lakefs.io/quickstart/launch.html).
 It does not come with an associated volume, so you can spin it up and down without creating dangling resources.
@@ -13,7 +13,7 @@ Requirements:
 To bootstrap, run the following command:
 
 ```shell
-docker compose -f hack/docker-compose.yml up
+docker compose -f hack/compose.yml up
 ```
 
 To stop the container again, exit with `Ctrl-c`.
