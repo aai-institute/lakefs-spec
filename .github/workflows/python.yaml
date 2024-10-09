@@ -1,4 +1,4 @@
-name: lakefs-spec CI
+name: Python
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
           # Latest versions
           - lakefs: "lakefs>0"
             fsspec: "fsspec>0"
-    name: Run tests on Python ${{ matrix.python-version }} on ${{ matrix.os }} with lakefs ${{ matrix.deps.lakefs }} and fsspec ${{ matrix.deps.fsspec }}
+    name: "Tests: Python ${{ matrix.python-version }}, ${{ matrix.deps.lakefs }}, ${{ matrix.deps.fsspec }} (on ${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     services:
       lakefs:
