@@ -1,4 +1,4 @@
-name: lakefs-spec CI
+name: Python
 
 on:
   push:
@@ -31,7 +31,14 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version: ["3.10", "3.11", "3.12"]
-    name: Run tests on Python ${{ matrix.python-version }} on ${{ matrix.os }}
+        deps:
+          # Oldest supported versions
+          - lakefs: "lakefs==0.2.0"
+            fsspec: "fsspec==2023.12.0"
+          # Latest versions
+          - lakefs: "lakefs>0"
+            fsspec: "fsspec>0"
+    name: "Tests: Python ${{ matrix.python-version }}, ${{ matrix.deps.lakefs }}, ${{ matrix.deps.fsspec }} (on ${{ matrix.os }})"
     runs-on: ${{ matrix.os }}
     services:
       lakefs:
@@ -51,6 +58,10 @@ jobs:
         uses: astral-sh/setup-uv@v3
       - name: Install Python ${{ matrix.python-version }}
         run: uv python install ${{ matrix.python-version }}
+      - name: "Install deps: ${{ matrix.deps.lakefs }}, ${{ matrix.deps.fsspec }}"
+        run: |
+          uv lock -P ${{ matrix.deps.lakefs }}
+          uv lock -P ${{ matrix.deps.fsspec }}
       - name: Install the project
         run: uv sync --extra dev
       - name: Execute python tests
