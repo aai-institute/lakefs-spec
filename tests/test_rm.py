@@ -1,3 +1,6 @@
+import asyncio
+
+import pytest
 from lakefs.branch import Branch
 from lakefs.repository import Repository
 
@@ -69,7 +72,8 @@ def test_rm_recursive_with_maxdepth(
     assert fs.exists(f"{prefix}/dir1/dir2/c.txt")
 
 
-def test_rm_with_1k_objects_or_more(
+@pytest.mark.asyncio
+async def test_rm_with_1k_objects_or_more(
     fs: LakeFSFileSystem,
     repository: Repository,
     temp_branch: Branch,
@@ -80,12 +84,17 @@ def test_rm_with_1k_objects_or_more(
     """
     testdir = f"{repository.id}/{temp_branch.id}/subfolder"
 
-    # create and put 1001 objects into the above lakeFS directory.
+    # Create and put 1001 objects into the above lakeFS directory (to exceed the 1k API batch limit)
+    # Doing this async since we are I/O bound and get a significant speedup.
+    # Unfortunately, we cannot use a TaskGroup, since it was only introduced in Python 3.11.
+    tasks = []
     for i in range(1002):
         f = random_file_factory.make()
         lpath = str(f)
         rpath = testdir + f"/test_{i}.txt"
-        fs.put_file(lpath, rpath)
+        task = asyncio.create_task(asyncio.to_thread(fs.put_file, lpath, rpath))
+        tasks.append(task)
+    await asyncio.gather(*tasks)
 
     assert len(fs.ls(testdir, detail=False)) > 1000
 
