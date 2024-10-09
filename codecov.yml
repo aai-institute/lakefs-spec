@@ -4,3 +4,6 @@ coverage:
       default:
         # Allow slight decreases in coverage for PRs
         threshold: "1%"
+flag_management:
+  default_rules:
+    carryforward: true
