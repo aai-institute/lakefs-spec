@@ -1,7 +1,4 @@
 # This docker-compose file provides an ephemeral lakeFS quickstart instance for local development.
-
-version: "3"
-
 services:
   seaweedfs:
     container_name: sandbox-s3
@@ -13,7 +10,7 @@ services:
       - ./config/s3.json:/etc/seaweedfs/s3.json
 
   lakefs:
-    image: treeverse/lakefs:1.7.0
+    image: treeverse/lakefs:1.37.0
     network_mode: host
     depends_on:
       - seaweedfs

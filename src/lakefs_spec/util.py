@@ -7,7 +7,7 @@ import itertools
 import os
 import re
 import sys
-from collections.abc import Callable, Generator, Iterable
+from collections.abc import Callable, Generator, Iterable, Iterator
 from typing import Any, Protocol
 
 from lakefs_sdk import Pagination
@@ -50,20 +50,23 @@ def depaginate(
         kwargs["after"] = resp.pagination.next_offset
 
 
-def batched(iterable: Iterable, n: int) -> Iterable[tuple]:
-    pyversion = tuple(sys.version_info[:3])
+def _batched(iterable: Iterable, n: int) -> Iterator[tuple]:
+    # "roughly equivalent" block from
+    # https://docs.python.org/3/library/itertools.html#itertools.batched
+    if n < 1:
+        raise ValueError("n must be at least one")
+    iterator = iter(iterable)
+    while batch := tuple(itertools.islice(iterator, n)):
+        yield batch
+
+
+def batched(iterable: Iterable, n: int) -> Iterator[tuple]:
     # itertools.batched was added in Python 3.12.
-    if pyversion >= (3, 12):
+    if sys.version_info >= (3, 12):
         # TODO(nicholasjng): Remove once target Python version is 3.12
-        return itertools.batched(iterable, n)  # type: ignore
+        yield from itertools.batched(iterable, n)
     else:
-        # "roughly equivalent" block from
-        # https://docs.python.org/3/library/itertools.html#itertools.batched
-        if n < 1:
-            raise ValueError("n must be at least one")
-        iterator = iter(iterable)
-        while batch := tuple(itertools.islice(iterator, n)):
-            yield batch
+        yield from _batched(iterable, n)
 
 
 def md5_checksum(lpath: str | os.PathLike[str], blocksize: int = 2**22) -> str:

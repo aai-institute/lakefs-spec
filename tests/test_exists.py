@@ -38,3 +38,23 @@ def test_exists_on_staged_file(
     # upload, verify existence.
     fs.put(lpath, rpath)
     assert fs.exists(rpath)
+
+
+def test_exists_repo_root(
+    fs: LakeFSFileSystem,
+    repository: Repository,
+) -> None:
+    """Test `fs.exists` on the repository root."""
+
+    # Existing repo and branch should return true
+    assert fs.exists(f"lakefs://{repository.id}/main/")
+
+    # Existing repo and commit should return true
+    head_ref = lakefs.Branch(repository.id, "main", client=fs.client).head
+    assert fs.exists(f"lakefs://{repository.id}/{head_ref.id}/")
+
+    # Nonexistent branch should return false
+    assert not fs.exists(f"lakefs://{repository.id}/nonexistent/")
+
+    # Nonexistent repo should return false
+    assert not fs.exists("lakefs://nonexistent/main/")
