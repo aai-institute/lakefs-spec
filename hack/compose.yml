@@ -2,6 +2,7 @@
 
 services:
   lakefs:
+    image: treeverse/lakefs:1.37.0
     ports:
       - 8000:8000
     environment:
