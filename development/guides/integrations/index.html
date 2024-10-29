@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../_images/lakefs-spec-favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.39">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.42">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.8c3ca2c6.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.0253249f.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -993,7 +993,7 @@ This allows DuckDB to transparently query and store data located in lakeFS repos
 <li>Makes the lakeFS-spec file system known to DuckDB (<code>duckdb.register_filesystem(fsspec.filesystem("lakefs"))</code> can also be used to avoid the direct import of <code>LakeFSFileSystem</code>)</li>
 </ol>
 <h2 id="hugging-face-datasets">Hugging Face Datasets<a class="headerlink" href="#hugging-face-datasets" title="Permanent link">&para;</a></h2>
-<p><a href="https://huggingface.co/docs/datasets/index" rel="noopener" target="_blank">Hugging Face <img alt="🤗" class="twemoji" src="../../assets/external/cdn.jsdelivr.net/gh/jdecked/twemoji@15.0.3/assets/svg/1f917.svg" title=":hugging_face:"> Datasets</a> is a library for easily accessing and sharing datasets for Audio, Computer Vision, and Natural Language Processing (NLP) tasks.
+<p><a href="https://huggingface.co/docs/datasets/index" rel="noopener" target="_blank">Hugging Face <img alt="🤗" class="twemoji" src="../../assets/external/cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/svg/1f917.svg" title=":hugging_face:"> Datasets</a> is a library for easily accessing and sharing datasets for Audio, Computer Vision, and Natural Language Processing (NLP) tasks.
 It uses <a href="https://huggingface.co/docs/datasets/filesystems" rel="noopener" target="_blank">fsspec internally</a> to retrieve and store datasets located outside the Hugging Face Hub.</p>
 <p>Reading a dataset from a lakeFS repository is as simple as passing the <code>data_files</code> argument to the <code>load_dataset</code> function with a generic dataset script (e.g., <code>csv</code> or <code>parquet</code> - see the <a href="https://huggingface.co/docs/datasets/en/loading#local-and-remote-files" rel="noopener" target="_blank">docs</a> for a list of available types).
 Datasets can be saved to a lakeFS repository by passing the repository URL to the <code>save_to_disk()</code> method of the dataset.</p>
@@ -1177,7 +1177,7 @@ Please refer to the discussion on the relevant <a href="https://github.com/pola-
     <script id="__config" type="application/json">{"base": "../..", "features": ["content.tabs.link", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.525ec568.min.js"></script>
+      <script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
       
     
   </body>
