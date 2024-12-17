@@ -521,12 +521,14 @@ class LakeFSFileSystem(AbstractFileSystem):
                         }
                     )
                 elif isinstance(obj, ObjectInfo):
-                    # Skip over prefix-only matches, e.g.:
-                    # - foo/bar
-                    # -
-                    # - foo/bar_test.txt
-
-                    # `ls("foo/bar")` should not include `bar_test.txt`
+                    # Skip over prefix-only matches, e.g., given:
+                    #
+                    # foo/
+                    # ├── bar/
+                    # │   └── ...
+                    # └── bar__baz.txt
+                    #
+                    # `ls("foo/bar")` should not include `bar__baz.txt`
                     if not (prefix == "" or prefix.endswith("/")) and obj.path != prefix:
                         continue
 
