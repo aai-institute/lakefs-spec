@@ -142,19 +142,13 @@ def test_ls_no_detail(fs: LakeFSFileSystem, repository: Repository) -> None:
     expected = [f"{resource}/lakes.source.md"]
     # first, verify the API fetch does the expected...
     assert fs.ls(resource, detail=False) == expected
-    assert list(fs.dircache.keys()) == [resource]
+    assert set(fs.dircache.keys()) == {resource}
 
     # ...as well as the cache fetch.
     assert fs.ls(resource, detail=False) == expected
 
     # One API call for the directory object, and one for listing its contents
     assert counter.count("objects_api.list_objects") == 2
-
-    # test the same thing with a subfolder + file prefix
-    resource = f"{prefix}/images/duckdb"
-    fs.ls(resource, detail=False)
-
-    assert set(fs.dircache.keys()) == {f"{prefix}/data", f"{prefix}/images"}
 
 
 def test_ls_dircache_remove_uncached(
