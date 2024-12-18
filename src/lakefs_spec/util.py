@@ -121,7 +121,7 @@ def parse(path: str) -> tuple[str, str, str]:
     uri_parts = {
         "protocol": r"^(?:lakefs://)?",  # leading lakefs:// protocol (optional)
         "repository": r"(?P<repository>[a-z0-9][a-z0-9\-]{2,62})/",
-        "ref expression": r"(?P<ref>\w[\w\-]*)/",
+        "ref expression": r"(?P<ref>\w[\w\-.^~]*)/",
         "resource": r"(?P<resource>.*)",
     }
 
