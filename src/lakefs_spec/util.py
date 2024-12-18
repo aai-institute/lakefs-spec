@@ -119,7 +119,7 @@ def parse(path: str) -> tuple[str, str, str]:
     # only lowercase letters, digits and dash, no leading dash, minimum 3, maximum 63 characters
     # https://docs.lakefs.io/understand/model.html#repository
     # Second regex is the branch: Only letters, digits, underscores and dash, no leading dash.
-    path_regex = re.compile(r"(?:lakefs://)?([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-]*)/(.*)")
+    path_regex = re.compile(r"(?:lakefs://)?([a-z0-9][a-z0-9\-]{2,62})/(\w[\w\-.^~]*)/(.*)")
     results = path_regex.fullmatch(path)
     if results is None:
         raise ValueError(
