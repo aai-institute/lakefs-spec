@@ -19,7 +19,7 @@ To get started with development, you can follow these steps (requires an install
 
     ```shell
     cd lakefs-spec
-    uv sync --all-extras
+    uv sync --all-groups
     ```
 
 3. After making your changes, verify they adhere to our Python code style by running `pre-commit`:
