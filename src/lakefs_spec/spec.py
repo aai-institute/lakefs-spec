@@ -365,7 +365,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             except ServerException as e:
                 raise translate_lakefs_error(e, rpath=path)
 
-        out = self.ls(path, detail=True, recursive=True, **kwargs)
+        out = self.ls(path, detail=True, recursive=False, **kwargs)
         if not out:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
@@ -504,8 +504,8 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         kwargs["prefix"] = prefix
 
-        info = []
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
+        info = []
         delimiter = "" if recursive else "/"
         reference = lakefs.Reference(repository, ref, client=self.client)
 
@@ -521,6 +521,17 @@ class LakeFSFileSystem(AbstractFileSystem):
                         }
                     )
                 elif isinstance(obj, ObjectInfo):
+                    # Skip over prefix-only matches, e.g., given:
+                    #
+                    # foo/
+                    # ├── bar/
+                    # │   └── ...
+                    # └── bar__baz.txt
+                    #
+                    # `ls("foo/bar")` should not include `bar__baz.txt`
+                    if not (prefix == "" or prefix.endswith("/")) and obj.path != prefix:
+                        continue
+
                     info.append(
                         {
                             "checksum": obj.checksum,
