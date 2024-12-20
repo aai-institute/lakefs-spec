@@ -32,7 +32,7 @@ jobs:
         with:
           pythonVersion: 3.11
       - name: Build and check
-        run: uv run -m build
+        run: uv run --no-sync -m build
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
