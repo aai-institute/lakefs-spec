@@ -13,5 +13,5 @@ runs:
       run: uv python install ${{ inputs.pythonVersion }}
       shell: bash
     - name: Install the project
-      run: uv sync --all-extras --dev
+      run: uv sync --frozen --all-extras --dev
       shell: bash
