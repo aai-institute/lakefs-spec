@@ -31,8 +31,8 @@ lakeFS-spec is published on PyPI, you can simply install it using your favorite 
 
 ```shell
 $ pip install lakefs-spec
-  # or
-$ poetry add lakefs-spec
+  # or, for example with uv:
+$ uv add lakefs-spec
 ```
 
 ## Usage
