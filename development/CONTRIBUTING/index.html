@@ -942,9 +942,9 @@ as well as any project-related communication through <a href="https://github.com
 <p>Dependencies should stay locked for as long as possible, ideally for a whole release.
 If you have to update a dependency during development, you should do the following:</p>
 <ol>
-<li>If it is a core dependency needed for the package, add it to the <code>dependencies</code> section in the <code>pyproject.toml</code>.</li>
-<li>In case of a development dependency, add it to the <code>dev</code> section of the <code>project.optional-dependencies</code> table instead.</li>
-<li>Dependencies needed for documentation generation are found in the <code>docs</code> sections of <code>project.optional-dependencies</code>.</li>
+<li>If it is a core dependency needed for the package, add it to the <code>dependencies</code> section in the <code>pyproject.toml</code> via <code>uv add &lt;dep&gt;</code>.</li>
+<li>In case of a development dependency, add it to the <code>dev</code> section of the <code>project.dependency-groups</code> table instead (<code>uv add --group dev &lt;dep&gt;</code>).</li>
+<li>Dependencies needed for documentation generation are found in the <code>docs</code> sections of <code>project.dependency-groups</code> (<code>uv add --group docs &lt;dep&gt;</code>).</li>
 </ol>
 <p>After adding the dependency in either of these sections, lock all dependencies again:</p>
 <div class="language-shell highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>uv<span class="w"> </span>lock
@@ -952,7 +952,7 @@ If you have to update a dependency during development, you should do the followi
 <h2 id="working-on-documentation">Working on Documentation<a class="headerlink" href="#working-on-documentation" title="Permanent link">&para;</a></h2>
 <p>Improvements or additions to the project's documentation are highly appreciated.</p>
 <p>The documentation is based on the <a href="http://mkdocs.org">MkDocs</a> and <a href="https://squidfunk.github.io/mkdocs-material/">Material for MkDocs (<code>mkdocs-material</code>)</a> projects, see their homepages for in-depth guides on their features and usage. We use the <a href="https://numpydoc.readthedocs.io/en/latest/format.html">Numpy documentation style</a> for Python docstrings.</p>
-<p>To build the documentation locally, you need to first install the optional <code>docs</code> dependencies from <code>pyproject.toml</code>, e.g., with <code>uv sync --extra docs</code>.
+<p>To build the documentation locally, you need to first install the optional <code>docs</code> dependencies from <code>pyproject.toml</code>, e.g., with <code>uv sync --group docs</code>.
 You can then start a local documentation server with <code>uv run mkdocs serve</code>, or build the documentation into its output folder in <code>public/</code>.</p>
 <p>In order to maintain documentation for multiple versions of this library, we use the <a href="https://github.com/jimporter/mike">mike</a> tool, which automatically maintains individual documentation builds per version and publishes them to the <code>gh-pages</code> branch.</p>
 <p>The GitHub CI pipeline automatically invokes <code>mike</code> as part of the release process with the correct version and updates the GitHub pages branch for the project.</p>
