@@ -8,10 +8,10 @@ runs:
   using: "composite"
   steps:
     - name: Install uv
-      uses: astral-sh/setup-uv@v3
+      uses: astral-sh/setup-uv@v4
     - name: Install Python interpreter
       run: uv python install ${{ inputs.pythonVersion }}
       shell: bash
     - name: Install the project
-      run: uv sync --frozen --all-extras --dev
+      run: uv sync --frozen --all-groups
       shell: bash

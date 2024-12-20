@@ -48,7 +48,7 @@ Issues = "https://github.com/aai-institute/lakefs-spec/issues"
 Discussions = "https://github.com/aai-institute/lakefs-spec/discussions"
 Documentation = "https://lakefs-spec.org/latest"
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "build>=0.10.0",
     "pre-commit>=3.3.3",

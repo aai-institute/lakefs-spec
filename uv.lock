@@ -361,7 +361,7 @@ name = "click"
 version = "8.1.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "platform_system == 'Windows'" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/96/d3/f04c7bfcf5c1862a2a5b845c6b2b360488cf47af55dfa79c98f6a6bf98b5/click-8.1.7.tar.gz", hash = "sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de", size = 336121 }
 wheels = [
@@ -778,7 +778,7 @@ name = "ipykernel"
 version = "6.29.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "appnope", marker = "platform_system == 'Darwin'" },
+    { name = "appnope", marker = "sys_platform == 'darwin'" },
     { name = "comm" },
     { name = "debugpy" },
     { name = "ipython" },
@@ -1184,14 +1184,14 @@ wheels = [
 
 [[package]]
 name = "lakefs-spec"
-version = "0.11.1.dev4+gfabbb78.d20241029"
+version = "0.11.2.dev1+g2023a6e.d20241220"
 source = { editable = "." }
 dependencies = [
     { name = "fsspec" },
     { name = "lakefs" },
 ]
 
-[package.optional-dependencies]
+[package.dev-dependencies]
 dev = [
     { name = "build" },
     { name = "duckdb" },
@@ -1226,35 +1226,41 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "black", marker = "extra == 'docs'" },
-    { name = "build", marker = "extra == 'dev'", specifier = ">=0.10.0" },
-    { name = "docstring-parser", marker = "extra == 'docs'" },
-    { name = "duckdb", marker = "extra == 'dev'" },
     { name = "fsspec", specifier = ">=2023.12.0" },
-    { name = "jupyter", marker = "extra == 'docs'" },
-    { name = "jupytext", marker = "extra == 'docs'" },
     { name = "lakefs", specifier = ">=0.2.0" },
-    { name = "mike", marker = "extra == 'docs'" },
-    { name = "mkdocs", marker = "extra == 'docs'" },
-    { name = "mkdocs-callouts", marker = "extra == 'docs'" },
-    { name = "mkdocs-gen-files", marker = "extra == 'docs'" },
-    { name = "mkdocs-git-revision-date-localized-plugin", marker = "extra == 'docs'" },
-    { name = "mkdocs-include-dir-to-nav", marker = "extra == 'docs'" },
-    { name = "mkdocs-literate-nav", marker = "extra == 'docs'" },
-    { name = "mkdocs-material", marker = "extra == 'docs'" },
-    { name = "mkdocs-section-index", marker = "extra == 'docs'" },
-    { name = "mkdocstrings", extras = ["python"], marker = "extra == 'docs'" },
-    { name = "mknotebooks", marker = "extra == 'docs'" },
-    { name = "neoteroi-mkdocs", marker = "extra == 'docs'" },
-    { name = "pandas", marker = "extra == 'docs'" },
-    { name = "pandas", extras = ["parquet"], marker = "extra == 'dev'" },
-    { name = "polars", marker = "extra == 'dev'" },
-    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.3.3" },
-    { name = "pydoclint", marker = "extra == 'dev'" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.4.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24.0" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.1.0" },
-    { name = "scikit-learn", marker = "extra == 'docs'" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "build", specifier = ">=0.10.0" },
+    { name = "duckdb" },
+    { name = "pandas", extras = ["parquet"] },
+    { name = "polars" },
+    { name = "pre-commit", specifier = ">=3.3.3" },
+    { name = "pydoclint" },
+    { name = "pytest", specifier = ">=7.4.0" },
+    { name = "pytest-asyncio", specifier = ">=0.24.0" },
+    { name = "pytest-cov", specifier = ">=4.1.0" },
+]
+docs = [
+    { name = "black" },
+    { name = "docstring-parser" },
+    { name = "jupyter" },
+    { name = "jupytext" },
+    { name = "mike" },
+    { name = "mkdocs" },
+    { name = "mkdocs-callouts" },
+    { name = "mkdocs-gen-files" },
+    { name = "mkdocs-git-revision-date-localized-plugin" },
+    { name = "mkdocs-include-dir-to-nav" },
+    { name = "mkdocs-literate-nav" },
+    { name = "mkdocs-material" },
+    { name = "mkdocs-section-index" },
+    { name = "mkdocstrings", extras = ["python"] },
+    { name = "mknotebooks" },
+    { name = "neoteroi-mkdocs" },
+    { name = "pandas" },
+    { name = "scikit-learn" },
 ]
 
 [[package]]
@@ -1412,7 +1418,7 @@ version = "1.6.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
-    { name = "colorama", marker = "platform_system == 'Windows'" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
     { name = "ghp-import" },
     { name = "jinja2" },
     { name = "markdown" },
