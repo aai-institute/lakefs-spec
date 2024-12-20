@@ -118,7 +118,7 @@ def parse(path: str) -> tuple[str, str, str]:
         If the path does not conform to the lakeFS URI format.
     """
 
-    regexes = {
+    uri_parts = {
         "protocol": r"^(?:lakefs://)?",  # leading lakefs:// protocol (optional)
         "repository": r"(?P<repository>[a-z0-9][a-z0-9\-]{2,62})/",
         "ref expression": r"(?P<ref>\w[\w\-]*)/",
@@ -127,7 +127,10 @@ def parse(path: str) -> tuple[str, str, str]:
 
     groups: dict[str, str] = {}
     start = 0
-    for group, regex in regexes.items():
+    for group, regex in uri_parts.items():
+        # we parse iteratively to improve the error message for the user if an invalid URI is given.
+        # by going front to back and parsing each part successively, we obtain the current path segment,
+        # and print it out to the user if it does not conform to our assumption of the lakeFS URI spec.
         match = re.match(regex, path[start:])
         # the next part of the URI is marked by a slash, or the end if we're parsing the resource.
         segment = path[start : path.find("/", start)]
