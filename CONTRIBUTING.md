@@ -50,9 +50,9 @@ To get started with development, you can follow these steps (requires an install
 Dependencies should stay locked for as long as possible, ideally for a whole release.
 If you have to update a dependency during development, you should do the following:
 
-1. If it is a core dependency needed for the package, add it to the `dependencies` section in the `pyproject.toml`.
-2. In case of a development dependency, add it to the `dev` section of the `project.optional-dependencies` table instead.
-3. Dependencies needed for documentation generation are found in the `docs` sections of `project.optional-dependencies`.
+1. If it is a core dependency needed for the package, add it to the `dependencies` section in the `pyproject.toml` via `uv add <dep>`.
+2. In case of a development dependency, add it to the `dev` section of the `project.dependency-groups` table instead (`uv add --group dev <dep>`).
+3. Dependencies needed for documentation generation are found in the `docs` sections of `project.dependency-groups` (`uv add --group docs <dep>`).
 
 After adding the dependency in either of these sections, lock all dependencies again:
 
@@ -66,7 +66,7 @@ Improvements or additions to the project's documentation are highly appreciated.
 
 The documentation is based on the [MkDocs](http://mkdocs.org) and [Material for MkDocs (`mkdocs-material`)](https://squidfunk.github.io/mkdocs-material/) projects, see their homepages for in-depth guides on their features and usage. We use the [Numpy documentation style](https://numpydoc.readthedocs.io/en/latest/format.html) for Python docstrings.
 
-To build the documentation locally, you need to first install the optional `docs` dependencies from `pyproject.toml`, e.g., with `uv sync --extra docs`.
+To build the documentation locally, you need to first install the optional `docs` dependencies from `pyproject.toml`, e.g., with `uv sync --group docs`.
 You can then start a local documentation server with `uv run mkdocs serve`, or build the documentation into its output folder in `public/`.
 
 In order to maintain documentation for multiple versions of this library, we use the [mike](https://github.com/jimporter/mike) tool, which automatically maintains individual documentation builds per version and publishes them to the `gh-pages` branch.
