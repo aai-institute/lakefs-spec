@@ -18,6 +18,12 @@ from lakefs_spec.spec import parse
         ("my-repo/a/resource.txt", "my-repo", "a", "resource.txt"),
         # case 5: well-formed path with leading lakefs:// scheme
         ("lakefs://my-repo/my-ref/resource.txt", "my-repo", "my-ref", "resource.txt"),
+        # case 6: ref is a tag with a dot, like e.g. in semver.
+        ("lakefs://my-repo/v2.0/resource.txt", "my-repo", "v2.0", "resource.txt"),
+        # case 7: ref is a relative ancestor to an existing branch, like e.g. HEAD~ in git.
+        ("lakefs://my-repo/main~/resource.txt", "my-repo", "main~", "resource.txt"),
+        # case 8: same as case 7, but with first-parent ancestors only.
+        ("lakefs://my-repo/main^^/resource.txt", "my-repo", "main^^", "resource.txt"),
     ],
 )
 def test_path_parsing_success(path: str, repo: str, ref: str, resource: str) -> None:
