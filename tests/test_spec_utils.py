@@ -31,13 +31,13 @@ def test_path_parsing_success(path: str, repo: str, ref: str, resource: str) -> 
     "path,expected_exception",
     [
         # repo name illegally begins with hyphen
-        ("-repo/my-ref/resource.txt", pytest.raises(ValueError, match="expected path .*")),
+        ("-repo/my-ref/resource.txt", pytest.raises(ValueError, match="invalid repository")),
         # repo name contains an illegal uppercase letter
-        ("Repo/my-ref/resource.txt", pytest.raises(ValueError, match="expected path .*")),
+        ("Repo/my-ref/resource.txt", pytest.raises(ValueError, match="invalid repository")),
         # missing repo name
-        ("my-ref/resource.txt", pytest.raises(ValueError, match="expected path .*")),
+        ("my-ref/resource.txt", pytest.raises(ValueError, match="invalid ref expression")),
         # illegal branch name
-        ("repo/my-ref$$$/resource.txt", pytest.raises(ValueError, match="expected path .*")),
+        ("repo/my-ref$$$/resource.txt", pytest.raises(ValueError, match="invalid ref expression")),
     ],
 )
 def test_path_parsing_failure(path: str, expected_exception: AbstractContextManager) -> None:
