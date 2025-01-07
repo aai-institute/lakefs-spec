@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # for documentation builds
-          persist-credentials: false
+          persist-credentials: true
       - name: Set up Python and dependencies
         uses: ./.github/actions/python-deps
         with:
