@@ -114,9 +114,9 @@ line-length = 100
 target-version = "py310"
 
 [tool.ruff.lint]
-# Enable pycodestyle errors & warnings (`E`, `W`), Pyflakes (`F`), isort (`I`),
-#  and pyupgrade (`UP`) by default.
-select = ["E", "F", "I", "W", "UP"]
+# Enable pycodestyle errors & warnings (`E`, `W`), bandit (`S`), Pyflakes (`F`),
+# isort (`I`), and pyupgrade (`UP`) by default.
+select = ["E", "F", "I", "S", "W", "UP"]
 ignore = [
     # Line too long
     "E501",
@@ -129,10 +129,10 @@ ignore = [
 "__init__.py" = ["F401"]
 "docs/tutorials/*.py" = [
     "E402",
+    "S",
 ] # Imports may appear anywhere in Jupytext notebooks
+"tests/**/*.py" = ["S"]  # Tests are not security-critical.
 
-[tool.bandit]
-exclude_dirs = ["tests", "docs/tutorials"]
 
 [tool.pytest.ini_options]
 log_cli = true
