@@ -26,10 +26,13 @@ runs:
     shell: bash
   - env:
       DOCS_PRERELEASE: ${{ inputs.pre_release }}
+      INPUTS_PUSH: ${{ inputs.push }}
+      INPUTS_VERSION: ${{ inputs.version }}
+      INPUTS_ALIAS: ${{ inputs.alias }}
     run: |
       MIKE_OPTIONS=( "--update-aliases" )
-      if [ "true" = "${{ inputs.push }}" ]; then
+      if [ "true" = "${INPUTS_PUSH}" ]; then
         MIKE_OPTIONS+=( "--push" )
       fi
-      uv run mike deploy ${{ inputs.version }} ${{ inputs.alias }} "${MIKE_OPTIONS[@]}"
+      uv run mike deploy "${INPUTS_VERSION}" ${INPUTS_ALIAS} "${MIKE_OPTIONS[@]}"
     shell: bash
