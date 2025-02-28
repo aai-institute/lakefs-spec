@@ -684,6 +684,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         lpath = stringify_path(lpath)
         rpath = stringify_path(rpath)
 
+        if self._intrans:
+            rpath = self.transaction.make_uri(rpath)
+
         if precheck and Path(lpath).is_file():
             remote_checksum = self.checksum(rpath)
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
