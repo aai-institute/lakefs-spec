@@ -28,7 +28,7 @@ def test_rm_with_transaction(
     message = "Remove file README.md"
 
     with fs.transaction(repository, temp_branch, automerge=True) as tx:
-        fs.rm(f"{repository.id}/{tx.branch.id}/README.md")
+        fs.rm("README.md")
         tx.commit(message=message)
 
     commits = list(temp_branch.log(max_amount=2))
