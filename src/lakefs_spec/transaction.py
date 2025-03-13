@@ -3,7 +3,6 @@ Functionality for extended lakeFS transactions to conduct versioning operations 
 """
 
 import logging
-import os
 import random
 import string
 import warnings
@@ -145,15 +144,6 @@ class LakeFSTransaction(Transaction):
                 self._ephemeral_branch.merge_into(self.base_branch, squash_merge=self.squash)
         if self.delete == "always" or (success and self.delete == "onsuccess"):
             self._ephemeral_branch.delete()
-
-    def make_uri(self, path: str | os.PathLike[str]) -> str:
-        spath = str(path)
-        # NB: this fails silently if the input path is already fully qualified.
-        # However, in general, it's impossible to distinguish between a
-        # fully qualified path and a normal nested path, so at most, we
-        # could split off the first segment of the input and check it against existing
-        # repositories.
-        return "/".join([self.repository, self.branch.id, spath])
 
     @property
     def branch(self):
