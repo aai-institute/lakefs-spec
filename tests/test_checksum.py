@@ -32,3 +32,14 @@ def test_checksum_matching(
 
     # we expect to get one `info` call per upload attempt, but only one actual upload.
     assert counter.count("objects_api.stat_object") == len(blocksizes) + 1
+
+
+def test_checksum_directory(
+    fs: LakeFSFileSystem,
+    repository: Repository,
+) -> None:
+    rpath = f"lakefs://{repository.id}/main/data/"
+    assert fs.isdir(rpath)
+    assert fs.checksum(f"lakefs://{repository.id}/data/") is None, (
+        "Checksum of a directory should be None"
+    )
