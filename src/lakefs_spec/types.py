@@ -1,22 +1,19 @@
 # Functional syntax to allow for the attribute name containing a dash
 from typing import Literal, TypedDict
 
-FileInfoData = TypedDict(
-    "FileInfoData",
+from typing_extensions import Required
+
+ObjectInfoData = TypedDict(
+    "ObjectInfoData",
     {
-        "type": Literal["file"],
-        "name": str,
+        "type": Required[Literal["file", "directory"]],
+        "name": Required[str],
         "size": int | None,
-        "checksum": str,
+        "checksum": str | None,
         # TODO: the dash was an unfortunate choice, but is kept for backwards compatibility.
         "content-type": str | None,
-        "mtime": int,
+        "mtime": int | None,
         "metadata": dict[str, str] | None,
     },
+    total=False,
 )
-
-
-class DirectoryInfoData(TypedDict):
-    type: Literal["directory"]
-    name: str
-    size: int

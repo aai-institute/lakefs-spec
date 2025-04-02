@@ -48,9 +48,14 @@ def test_info_on_commit(
     head = lakefs.Branch(repository.id, "main", client=fs.client).head
 
     binfo = fs.info(f"{prefix}/main/README.md")
+    assert binfo["type"] == "file"
+
     branch_metadata = (binfo["checksum"], binfo["mtime"], binfo["size"])
+
     # fetching directly from commit should yield the same result.
     cinfo = fs.info(f"{prefix}/{head.id}/README.md")
+    assert cinfo["type"] == "file"
+
     commit_metadata = (cinfo["checksum"], cinfo["mtime"], cinfo["size"])
 
     assert branch_metadata == commit_metadata

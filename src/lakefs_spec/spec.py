@@ -26,7 +26,7 @@ from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
 
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
-from lakefs_spec.types import DirectoryInfoData, FileInfoData
+from lakefs_spec.types import ObjectInfoData
 from lakefs_spec.util import batched, md5_checksum, parse
 
 logger = logging.getLogger("lakefs-spec")
@@ -328,7 +328,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call(rpath=rpath):
             super().get_file(rpath, lpath, callback=callback, outfile=outfile, **kwargs)
 
-    def info(self, path: str | os.PathLike[str], **kwargs: Any) -> DirectoryInfoData | FileInfoData:
+    def info(self, path: str | os.PathLike[str], **kwargs: Any) -> ObjectInfoData:
         """
         Query a remote lakeFS object's metadata.
 
@@ -341,7 +341,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         Returns
         -------
-        DirectoryInfoData | FileInfoData
+        ObjectInfoData
             A dictionary containing metadata on the object, including its full remote path and object type (file or directory).
 
         Raises
