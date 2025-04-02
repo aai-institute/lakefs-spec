@@ -26,6 +26,7 @@ from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
 
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
+from lakefs_spec.types import ObjectInfoData
 from lakefs_spec.util import batched, md5_checksum, parse
 
 logger = logging.getLogger("lakefs-spec")
@@ -188,7 +189,12 @@ class LakeFSFileSystem(AbstractFileSystem):
         """
         path = stringify_path(path)
         try:
-            return self.info(path).get("checksum")
+            info = self.info(path)
+            if info["type"] == "file":
+                return info["checksum"]
+            else:
+                # directories do not have a checksum
+                return None
         except FileNotFoundError:
             return None
 
@@ -322,7 +328,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call(rpath=rpath):
             super().get_file(rpath, lpath, callback=callback, outfile=outfile, **kwargs)
 
-    def info(self, path: str | os.PathLike[str], **kwargs: Any) -> dict[str, Any]:
+    def info(self, path: str | os.PathLike[str], **kwargs: Any) -> ObjectInfoData:
         """
         Query a remote lakeFS object's metadata.
 
@@ -335,7 +341,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         Returns
         -------
-        dict[str, Any]
+        ObjectInfoData
             A dictionary containing metadata on the object, including its full remote path and object type (file or directory).
 
         Raises
@@ -352,12 +358,13 @@ class LakeFSFileSystem(AbstractFileSystem):
                 reference = lakefs.Reference(repository, ref, client=self.client)
                 res = reference.object(resource).stat()
                 return {
+                    "type": "file",
                     "checksum": res.checksum,
                     "content-type": res.content_type,
                     "mtime": res.mtime,
                     "name": f"{repository}/{ref}/{res.path}",
                     "size": res.size_bytes,
-                    "type": "file",
+                    "metadata": res.metadata,
                 }
             except NotFoundException:
                 # fall through, retry with `ls` if it's a directory.
@@ -370,9 +377,9 @@ class LakeFSFileSystem(AbstractFileSystem):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
         return {
+            "type": "directory",
             "name": path.rstrip("/"),
             "size": sum(o.get("size") or 0 for o in out),
-            "type": "directory",
         }
 
     def _update_dircache(self, info: list) -> None:

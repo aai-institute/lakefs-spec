@@ -11,8 +11,8 @@ from collections import namedtuple
 from collections.abc import Callable, Generator, Iterable, Iterator
 from typing import Any, Protocol
 
-from lakefs_sdk import Pagination
 from lakefs_sdk import __version__ as __lakefs_sdk_version__
+from lakefs_sdk.models.pagination import Pagination
 
 lakefs_sdk_version = tuple(int(v) for v in __lakefs_sdk_version__.split("."))
 del __lakefs_sdk_version__
