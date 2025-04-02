@@ -40,6 +40,4 @@ def test_checksum_directory(
 ) -> None:
     rpath = f"lakefs://{repository.id}/main/data/"
     assert fs.isdir(rpath)
-    assert fs.checksum(f"lakefs://{repository.id}/data/") is None, (
-        "Checksum of a directory should be None"
-    )
+    assert fs.checksum(rpath) is None, "Checksum of a directory should be None"
