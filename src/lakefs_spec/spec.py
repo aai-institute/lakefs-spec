@@ -352,12 +352,13 @@ class LakeFSFileSystem(AbstractFileSystem):
                 reference = lakefs.Reference(repository, ref, client=self.client)
                 res = reference.object(resource).stat()
                 return {
+                    "type": "file",
                     "checksum": res.checksum,
                     "content-type": res.content_type,
                     "mtime": res.mtime,
                     "name": f"{repository}/{ref}/{res.path}",
                     "size": res.size_bytes,
-                    "type": "file",
+                    "metadata": res.metadata,
                 }
             except NotFoundException:
                 # fall through, retry with `ls` if it's a directory.
@@ -370,9 +371,9 @@ class LakeFSFileSystem(AbstractFileSystem):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
         return {
+            "type": "directory",
             "name": path.rstrip("/"),
             "size": sum(o.get("size") or 0 for o in out),
-            "type": "directory",
         }
 
     def _update_dircache(self, info: list) -> None:
