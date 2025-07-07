@@ -546,7 +546,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                             "mtime": obj.mtime,
                             "name": f"{repository}/{ref}/{obj.path}",
                             "size": obj.size_bytes,
-                            "type": "object",
+                            "type": "file",
                         }
                     )
 
