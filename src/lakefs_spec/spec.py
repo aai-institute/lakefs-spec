@@ -439,7 +439,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     def ls(
         self,
         path: str | os.PathLike[str],
-        detail: Literal[True],
+        detail: Literal[True] = ...,
         **kwargs: Any,
     ) -> list[dict[str, Any]]: ...
 
