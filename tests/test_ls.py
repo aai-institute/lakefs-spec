@@ -7,6 +7,24 @@ from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory, with_counter
 
 
+def test_ls_basic(fs: LakeFSFileSystem, repository: Repository) -> None:
+    """
+    Check basic ``ls`` behavior and return types.
+    """
+    resource = f"{repository.id}/main/"
+    expected_files = ["README.md", "data", "images", "lakes.source.md"]
+
+    all_results = fs.ls(resource, detail=True)
+    assert len(all_results) == len(expected_files)
+    assert all([o["type"] in ["file", "directory"] for o in all_results])
+    assert all([o["name"].startswith(resource) for o in all_results])
+
+    all_results = fs.ls(resource, detail=False)
+    assert len(all_results) == len(expected_files)
+    assert all([o.startswith(resource) for o in all_results])
+    assert isinstance(all_results, list)
+
+
 @pytest.mark.parametrize("pagesize", [1, 2, 5, 10, 50])
 def test_paginated_ls(fs: LakeFSFileSystem, repository: Repository, pagesize: int) -> None:
     """

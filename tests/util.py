@@ -4,6 +4,7 @@ import string
 import uuid
 from inspect import ismethod
 from pathlib import Path
+from typing import cast
 
 from lakefs.branch import Branch
 from lakefs.client import Client
@@ -108,3 +109,16 @@ def put_random_file_on_branch(
 
 def list_branchnames(repository: Repository) -> list[str]:
     return [branch.id for branch in repository.branches()]
+
+
+def lakefs_server_version(repository: Repository) -> tuple[int, int, int]:
+    """
+    Returns the lakeFS server version for a given repository as (major, minor, patch).
+    """
+    version_cfg = repository._client.sdk_client.config_api.get_config().version_config
+    if not version_cfg:
+        raise ValueError("Could not determine lakeFS server version.")
+    version_parts = version_cfg.version.split(".")
+    if len(version_parts) < 3:
+        raise ValueError(f"Unexpected version format: {version_cfg.version}")
+    return cast(tuple[int, int, int], tuple(map(int, version_parts)))
