@@ -6,25 +6,33 @@ from lakefs.branch import Branch
 from lakefs.repository import Repository
 
 from lakefs_spec.spec import LakeFSFileSystem
-from tests.util import RandomFileFactory
+from tests.util import RandomFileFactory, lakefs_server_version
 
 
-def test_walk_single_dir(fs: LakeFSFileSystem, repository: Repository) -> None:
+@pytest.fixture
+def _quickstart_images_count(repository: Repository) -> int:
+    """Returns the number of images in the quickstart repository for smoke tests."""
+    if lakefs_server_version(repository) >= (1, 60, 0):
+        # Unused images were removed in 1.60.0, https://github.com/treeverse/lakeFS/pull/9156
+        return 29
+    return 37
+
+
+def test_walk_single_dir(
+    fs: LakeFSFileSystem, repository: Repository, _quickstart_images_count: int
+) -> None:
     """`walk` in a single directory should find all files contained therein"""
-    branch = "main"
-    resource = "images"
-    path = f"{repository.id}/{branch}/{resource}/"
+    path = f"{repository.id}/main/images/"
 
     dirname, dirs, files = next(fs.walk(path))
     assert dirname == path
     assert dirs == []
-    assert len(files) == 37  # NOTE: hardcoded for quickstart repo
+    assert len(files) == _quickstart_images_count
 
 
 def test_walk_repo_root(fs: LakeFSFileSystem, repository: Repository) -> None:
     """`walk` should be able to be called on the root directory of a repository"""
-    branch = "main"
-    path = f"{repository.id}/{branch}/"
+    path = f"{repository.id}/main/"
 
     dirname, dirs, files = next(fs.walk(path))
     assert dirname == path
@@ -32,10 +40,11 @@ def test_walk_repo_root(fs: LakeFSFileSystem, repository: Repository) -> None:
     assert len(files) == 2
 
 
-def test_find_in_folder(fs: LakeFSFileSystem, repository: Repository) -> None:
+def test_find_in_folder(
+    fs: LakeFSFileSystem, repository: Repository, _quickstart_images_count: int
+) -> None:
     path = f"{repository.id}/main/"
-    # Find the 37 elements in images directory in test repo
-    assert len(fs.find(path + "images")) == 37
+    assert len(fs.find(path + "images")) == _quickstart_images_count
 
 
 def test_touch(
