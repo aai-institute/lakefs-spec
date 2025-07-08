@@ -21,7 +21,7 @@ def test_no_change_postcommit(
     message = f"Add file {random_file.name}"
 
     with fs.transaction(repository, temp_branch) as tx:
-        fs.put(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+        fs.put(lpath, random_file.name)
         tx.commit(message=message)
 
     commits = list(temp_branch.log(max_amount=2))
@@ -31,8 +31,8 @@ def test_no_change_postcommit(
 
     # put the same file again, this time the diff is empty
     with fs.transaction(repository, temp_branch) as tx:
-        fs.put(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}", precheck=False)
-        tx.commit(message=f"Add file {random_file.name}")
+        fs.put(lpath, random_file.name, precheck=False)
+        tx.commit(message=message)
 
     # check that no other commit has happened.
     assert temp_branch.head.get_commit() == current_head

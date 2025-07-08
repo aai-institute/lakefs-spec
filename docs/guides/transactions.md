@@ -20,9 +20,9 @@ from lakefs_spec import LakeFSFileSystem
 fs = LakeFSFileSystem()
 
 with fs.transaction("repo", "main") as tx:
-    fs.put_file("train-data.txt", f"repo/{tx.branch.id}/train-data.txt")
+    fs.put_file("train-data.txt", "train-data.txt")
     tx.commit(message="Add training data")
-    fs.put_file("test-data.txt", f"repo/{tx.branch.id}/test-data.txt")
+    fs.put_file("test-data.txt", "test-data.txt")
     sha = tx.commit(message="Add test data")
     tx.tag(sha, name="My train-test split")
 ```
@@ -34,6 +34,13 @@ The full list of supported lakeFS versioning operations (by default, these opera
 * [`revert`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.LakeFSTransaction.revert), for reverting a previous commit.
 * [`rev_parse`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.LakeFSTransaction.rev_parse), for parsing revisions like branch/tag names and SHA fragments into full commit SHAs.
 * [`tag`](../reference/lakefs_spec/transaction.md#lakefs_spec.transaction.LakeFSTransaction.tag), for creating a tag pointing to a commit.
+
+## Limitations of transactions
+
+Transactions are scoped to a single repository and branch only, equal to those given to the `fs.transaction()` context manager.
+When uploading files in a transaction via `fs.put()` or `fs.put_file()`, you **must** give all remote paths as file names.
+If you use a fully qualified URI, leading repository and branch names will be interpreted as subdirectories, which will be created on upload.
+No warnings or errors will be thrown, so be sure to double-check your paths in all transaction scopes.
 
 ## Lifecycle of ephemeral transaction branches
 
@@ -56,7 +63,7 @@ from lakefs_spec import LakeFSFileSystem
 fs = LakeFSFileSystem()
 
 with fs.transaction("repo", "main", delete="onsuccess") as tx:
-    fs.put_file("my-file.txt", f"repo/{tx.branch.id}/my-file.txt")
+    fs.put_file("my-file.txt", "my-file.txt")
     tx.commit(message="Add my-file.txt")
     raise ValueError("oops!")
 ```
