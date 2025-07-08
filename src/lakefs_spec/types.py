@@ -3,10 +3,12 @@ from typing import Literal, TypedDict
 
 from typing_extensions import Required
 
+ObjectType = Literal["file", "directory"]
+
 ObjectInfoData = TypedDict(
     "ObjectInfoData",
     {
-        "type": Required[Literal["file", "directory"]],
+        "type": Required[ObjectType],
         "name": Required[str],
         "size": int | None,
         "checksum": str | None,

@@ -12,7 +12,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Literal, overload
+from typing import Any, Literal, cast, overload
 
 import fsspec.callbacks
 import lakefs
@@ -439,7 +439,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     def ls(
         self,
         path: str | os.PathLike[str],
-        detail: Literal[True] = ...,
+        detail: Literal[True],
         **kwargs: Any,
     ) -> list[dict[str, Any]]: ...
 
@@ -451,6 +451,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         **kwargs: Any,
     ) -> list[str]: ...
 
+    # Catch-all for non-literal `detail` argument
     @overload
     def ls(
         self,
@@ -512,7 +513,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         kwargs["prefix"] = prefix
 
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
-        info = []
+        info: list[ObjectInfoData] = []
         delimiter = "" if recursive else "/"
         reference = lakefs.Reference(repository, ref, client=self.client)
 
@@ -546,7 +547,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                             "mtime": obj.mtime,
                             "name": f"{repository}/{ref}/{obj.path}",
                             "size": obj.size_bytes,
-                            "type": "object",
+                            "type": "file",
                         }
                     )
 
@@ -579,9 +580,9 @@ class LakeFSFileSystem(AbstractFileSystem):
             self._update_dircache(info[:])
 
         if not detail:
-            info = [o["name"] for o in info]  # type: ignore
-
-        return info
+            return [o["name"] for o in info]
+        else:
+            return [cast(dict, o) for o in info]
 
     def open(
         self,
