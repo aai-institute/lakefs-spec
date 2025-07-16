@@ -70,3 +70,21 @@ def test_lakefs_file_unknown_mode(fs: LakeFSFileSystem) -> None:
 
     with pytest.raises(NotImplementedError, match="unsupported mode .*"):
         fs.open("hello.py", mode="ab")  # type: ignore
+
+
+def test_lakefs_file_open_pre_sign_none_uses_storage_config(
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: Branch,
+    random_file_factory: RandomFileFactory,
+) -> None:
+    """Test that pre_sign=None uses the storage configuration's pre_sign_support value."""
+    rpath = put_random_file_on_branch(random_file_factory, fs, repository, temp_branch)
+
+    # Open file with pre_sign=None
+    with fs.open(rpath, mode="rb", pre_sign=None) as fp:
+        # Get the expected pre_sign value from storage config
+        expected_pre_sign = fp._client.storage_config_by_id(fp._obj.storage_id()).pre_sign_support
+
+        # Verify that the file object's pre_sign property matches the storage config
+        assert fp.pre_sign == expected_pre_sign
