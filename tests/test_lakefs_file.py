@@ -84,7 +84,12 @@ def test_lakefs_file_open_pre_sign_none_uses_storage_config(
     # Open file with pre_sign=None
     with fs.open(rpath, mode="rb", pre_sign=None) as fp:
         # Get the expected pre_sign value from storage config
-        expected_pre_sign = fp._client.storage_config_by_id(fp._obj.storage_id()).pre_sign_support
+        client = fp._client
+        # Get the expected pre_sign value from storage config
+        if hasattr(client, "storage_config_by_id"):
+            expected_pre_sign = client.storage_config_by_id(fp._obj.storage_id()).pre_sign_support
+        else:
+            expected_pre_sign = client.storage_config.pre_sign_support
 
         # Verify that the file object's pre_sign property matches the storage config
         assert fp.pre_sign == expected_pre_sign
