@@ -10,6 +10,7 @@ import operator
 import os
 from collections.abc import Generator
 from contextlib import contextmanager
+from datetime import datetime
 from functools import cached_property
 from pathlib import Path
 from typing import Any, Literal, cast, overload
@@ -809,3 +810,42 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.open(path, "rb") as f:
             f.seek(max(-size, -f._obj.stat().size_bytes), 2)
             return f.read()
+
+    def created(self, path: str | os.PathLike[str]) -> datetime:
+        """
+        Get the creation timestamp of a remote file.
+
+        Parameters
+        ----------
+        path: str | os.PathLike[str]
+            The file path to query. Must be a fully qualified lakeFS URI.
+
+        Returns
+        -------
+        datetime.datetime
+            The creation timestamp of the remote file.
+        """
+        return self.modified(path=path)
+
+    def modified(self, path: str | os.PathLike[str]) -> datetime:
+        """
+        Get the modification timestamp of a remote file.
+        Due to limitations in lakeFS, this timestamp is always identical
+        to the creation timestamp returned by ``LakeFSFilesystem.created()``.
+
+        Parameters
+        ----------
+        path: str | os.PathLike[str]
+            The file path to query. Must be a fully qualified lakeFS URI.
+
+        Returns
+        -------
+        datetime.datetime
+            The modification timestamp of the remote file.
+        """
+        path = stringify_path(path)
+        repository, ref, resource = parse(path)
+        with self.wrapped_api_call(rpath=path):
+            reference = lakefs.Reference(repository, ref, client=self.client)
+            obj = reference.object(resource)
+            return datetime.fromtimestamp(obj.stat().mtime)
