@@ -1,4 +1,5 @@
 import filecmp
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -241,3 +242,24 @@ def test_get_file(
     lpath2 = str(tmp_path / random_file.name)
     fs.get(rpath=rpath, lpath=lpath2)
     assert filecmp.cmp(lpath1, lpath2)
+
+
+def test_file_created(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: Branch,
+    tmp_path: Path,
+) -> None:
+    random_file = random_file_factory.make()
+    lpath = str(random_file)
+    rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"
+    fs.put(lpath=lpath, rpath=rpath)
+
+    mtime = fs.created(rpath)
+    ctime = fs.modified(rpath)
+    assert isinstance(mtime, datetime)
+    assert mtime == ctime  # lakeFS server limitation, update assumption when this changes.
+
+    with pytest.raises(FileNotFoundError):
+        fs.modified(f"{repository.id}/{temp_branch.id}/helloooo.json")
