@@ -31,7 +31,7 @@ The arguably most important feature of the file system is file transfers.
 
 #### File uploads
 
-To upload a file, you can use the `fs.put()` and `fs.put_file()` methods. 
+To upload a file, you can use the `fs.put()` and `fs.put_file()` methods.
 While `fs.put_file()` operates on single files only, the `fs.put()` API can be used for directory uploads.
 
 ```python
@@ -63,7 +63,7 @@ fs.put("dir", "my-repo/my-ref/dir", recursive=True)
 
     ```python
     fs = LakeFSFileSystem()
-    
+
     fs.put_file("my-repo/my-ref/file.txt", "file.txt", use_blockstore=True)
     ```
 
@@ -114,7 +114,7 @@ my_file_exists = fs.exists("my-repo/my-ref/my-file.txt")
 This function returns `True` if the file exists on that revision, and `False` if it does not. Errors (e.g. permission errors) will be raised, since in that case, object existence cannot be decided.
 
 !!! Warning
-    
+
     `fs.exists()` only works on file objects, and will return `False` if called on directories.
 
 ### Obtaining info on stored objects
@@ -193,3 +193,31 @@ fs.copy("my-repo/branch-a/my-dir/", "my-repo/branch-b/my-dir/", recursive=True)
     Files and directories can only be copied between branches in the same repository, not between different repositories.
 
     Trying to copy to a non-existent branch will not create the branch.
+
+## Controlling file system usage at the API request level
+
+In some cases, it may be necessary to take more control of file operations by customizing API requests.
+Most file operations in lakefs-spec involve communication with the configured lakeFS server, using the lakeFS Python API client to make requests.
+
+You can control API request parameters by passing a `RequestConfig` object to the lakeFS file system upon construction:
+
+```python
+from lakefs_spec import LakeFSFileSystem
+
+class RequestConfig(TypedDict, total=False):
+    """A custom dict type for keyword arguments configuring OpenAPI requests
+    made with the lakeFS SDK."""
+
+    headers: dict[str, Any]
+    content_type: str
+    request_auth: str
+    request_timeout: int | tuple[int, int]
+    preload_content: bool
+    return_http_data_only: bool
+
+
+request_config = {"request_timeout": 2, "content_type": "application/json"}
+fs = LakeFSFileSystem(request_config=request_config)
+```
+
+For example, you can configure the HTTP request headers with the `headers` key, override authentication with the `request_auth` key, and set a timeout for the API request with the `request_timeout` configuration key.
