@@ -104,7 +104,9 @@ If you have already created one in the UI, make sure to set the `REPO_NAME` vari
 # %%
 import lakefs
 
-repo = lakefs.Repository(REPO_NAME, fs.client).create(storage_namespace=f"local://{REPO_NAME}")
+repo = lakefs.Repository(REPO_NAME, fs.client).create(
+    storage_namespace=f"local://{REPO_NAME}", exist_ok=True
+)
 
 # %% [markdown]
 """
