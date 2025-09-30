@@ -199,7 +199,7 @@ fs.copy("my-repo/branch-a/my-dir/", "my-repo/branch-b/my-dir/", recursive=True)
 In some cases, it may be necessary to take more control of file operations by customizing API requests.
 Most file operations in lakefs-spec involve communication with the configured lakeFS server, using the lakeFS Python API client to make requests.
 
-You can control API request parameters by passing a `RequestConfig` object to the lakeFS file system upon construction. This type is defined in `lakefs_spec.types` and has the following structure:
+You can control API request parameters by passing a [`RequestConfig`](../reference/lakefs_spec/types.md#RequestConfig) object to the lakeFS file system upon construction. This type has the following structure:
 
 ```python
 class RequestConfig(TypedDict, total=False):
