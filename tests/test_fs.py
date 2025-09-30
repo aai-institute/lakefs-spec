@@ -8,6 +8,7 @@ from packaging.version import Version
 from pytest import MonkeyPatch
 
 from lakefs_spec import LakeFSFileSystem
+from lakefs_spec.types import RequestConfig
 
 lakefs_version = Version(version("lakefs"))
 
@@ -74,17 +75,20 @@ def test_initialization(monkeypatch: MonkeyPatch, temporary_lakectl_config: str)
 
 
 @pytest.mark.skipif(lakefs_version < Version("0.14"), reason="requires lakefs>=0.14.0")
-def test_request_config(
-    fs: LakeFSFileSystem, repository: Repository, monkeypatch: MonkeyPatch
-) -> None:
+def test_request_config(repository: Repository, monkeypatch: MonkeyPatch) -> None:
     # Mock `get_object` to intercept the API call made on read() below,
     # and assert it contains the custom timeout.
     mock = MagicMock()
     monkeypatch.setattr(objects_api.ObjectsApi, "get_object", mock)
 
     # set a shorter timeout value for the filesystem (= lakeFS client)
-    request_config = {"_request_timeout": 2}
-    fs._request_config = request_config
+    request_config: RequestConfig = {"request_timeout": 2}
+    fs = LakeFSFileSystem(
+        host="localhost:8000",
+        username="AKIAIOSFOLQUICKSTART",
+        password="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+        request_config=request_config,
+    )
 
     with fs.open(f"lakefs://{repository.id}/main/lakes.parquet") as fp:
         fp.read(1)

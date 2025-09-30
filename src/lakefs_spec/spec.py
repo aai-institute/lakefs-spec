@@ -13,7 +13,7 @@ from contextlib import contextmanager
 from datetime import datetime
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Literal, TypedDict, cast, overload
+from typing import Any, Literal, cast, overload
 
 import fsspec.callbacks
 import lakefs
@@ -27,24 +27,12 @@ from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
 
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
-from lakefs_spec.types import ObjectInfoData
+from lakefs_spec.types import ObjectInfoData, RequestConfig
 from lakefs_spec.util import batched, md5_checksum, parse
 
 logger = logging.getLogger("lakefs-spec")
 
 MAX_DELETE_OBJS = 1000
-
-
-class RequestConfig(TypedDict, total=False):
-    """A custom dict type for keyword arguments configuring OpenAPI requests
-    made with the lakeFS SDK."""
-
-    headers: dict[str, Any]
-    content_type: str
-    request_auth: str
-    request_timeout: int | tuple[int, int]
-    preload_content: bool
-    return_http_data_only: bool
 
 
 def prefix_with_underscore(d: RequestConfig) -> dict[str, Any]:

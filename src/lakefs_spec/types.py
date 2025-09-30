@@ -1,5 +1,5 @@
 # Functional syntax to allow for the attribute name containing a dash
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 
 from typing_extensions import Required
 
@@ -19,3 +19,15 @@ ObjectInfoData = TypedDict(
     },
     total=False,
 )
+
+
+class RequestConfig(TypedDict, total=False):
+    """A custom dict type for keyword arguments configuring OpenAPI requests
+    made with the lakeFS SDK."""
+
+    headers: dict[str, Any]
+    content_type: str
+    request_auth: str
+    request_timeout: int | tuple[int, int]
+    preload_content: bool
+    return_http_data_only: bool
