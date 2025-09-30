@@ -1,6 +1,16 @@
+from importlib.metadata import version
+from unittest.mock import MagicMock
+
+import lakefs_sdk.api.objects_api as objects_api
+import pytest
+from lakefs.repository import Repository
+from packaging.version import Version
 from pytest import MonkeyPatch
 
 from lakefs_spec import LakeFSFileSystem
+from lakefs_spec.types import RequestConfig
+
+lakefs_version = Version(version("lakefs"))
 
 
 def test_instance_caching(fs: LakeFSFileSystem) -> None:
@@ -62,3 +72,29 @@ def test_initialization(monkeypatch: MonkeyPatch, temporary_lakectl_config: str)
     assert config.host == "http://lakefs.hello/api/v1"
     assert config.username == "my-user"
     assert config.password == "my-password"
+
+
+@pytest.mark.skipif(lakefs_version < Version("0.14"), reason="requires lakefs>=0.14.0")
+def test_request_config(repository: Repository, monkeypatch: MonkeyPatch) -> None:
+    # Mock `get_object` to intercept the API call made on read() below,
+    # and assert it contains the custom timeout.
+    mock = MagicMock()
+    monkeypatch.setattr(objects_api.ObjectsApi, "get_object", mock)
+
+    # set a shorter timeout value for the filesystem (= lakeFS client)
+    request_config: RequestConfig = {"request_timeout": 2}
+    fs = LakeFSFileSystem(
+        host="localhost:8000",
+        username="AKIAIOSFOLQUICKSTART",
+        password="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+        request_config=request_config,
+    )
+
+    with fs.open(f"lakefs://{repository.id}/main/lakes.parquet") as fp:
+        fp.read(1)
+
+    # this timeout should now show up in the call kwargs.
+    assert mock.call_count == 1
+    call, *rest = mock.mock_calls
+    assert "_request_timeout" in call.kwargs
+    assert call.kwargs["_request_timeout"] == 2

@@ -27,12 +27,16 @@ from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
 
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
-from lakefs_spec.types import ObjectInfoData
+from lakefs_spec.types import ObjectInfoData, RequestConfig
 from lakefs_spec.util import batched, md5_checksum, parse
 
 logger = logging.getLogger("lakefs-spec")
 
 MAX_DELETE_OBJS = 1000
+
+
+def prefix_with_underscore(d: RequestConfig) -> dict[str, Any]:
+    return {k if k.startswith("_") else "_" + k: v for k, v in d.items()}
 
 
 class LakeFSFileSystem(AbstractFileSystem):
@@ -67,6 +71,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         Whether to create branches implicitly when not-existing branches are referenced on file uploads.
     source_branch: str
         Source branch set as origin when a new branch is implicitly created.
+    request_config: RequestConfig | None
+        A dictionary containing configuration to use in API requests made with the lakefs SDK.
     **storage_options: Any
         Configuration options to pass to the file system's directory cache.
     """
@@ -87,6 +93,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         proxy: str | None = None,
         create_branch_ok: bool = True,
         source_branch: str = "main",
+        request_config: RequestConfig | None = None,
         **storage_options: Any,
     ):
         super().__init__(**storage_options)
@@ -115,6 +122,9 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
+
+        # a persistent config for all API requests made with the lakefs SDK.
+        self._request_config = prefix_with_underscore(request_config or {})
 
     @cached_property
     def _lakefs_server_version(self):
@@ -234,11 +244,14 @@ class LakeFSFileSystem(AbstractFileSystem):
             if resource == "":
                 return reference.get_commit() is not None
 
-            if reference.object(resource).exists():
+            if reference.object(resource).exists(**self._request_config):
                 return True
             # if it isn't an object, it might be a common prefix (i.e. "directory").
             children = reference.objects(
-                max_amount=1, prefix=resource.rstrip("/") + "/", delimiter="/"
+                max_amount=1,
+                prefix=resource.rstrip("/") + "/",
+                delimiter="/",
+                **self._request_config,
             )
             return len(list(children)) > 0
         except NotFoundException:
@@ -284,7 +297,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         with self.wrapped_api_call():
             reference = lakefs.Reference(orig_repo, orig_ref, client=self.client)
-            reference.object(orig_path).copy(dest_ref, dest_path)
+            reference.object(orig_path).copy(dest_ref, dest_path, **self._request_config)
 
     def get_file(
         self,
@@ -357,7 +370,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         if resource and not resource.endswith("/"):
             try:
                 reference = lakefs.Reference(repository, ref, client=self.client)
-                res = reference.object(resource).stat()
+                res = reference.object(resource).stat(**self._request_config)
                 return {
                     "type": "file",
                     "checksum": res.checksum,
@@ -511,15 +524,15 @@ class LakeFSFileSystem(AbstractFileSystem):
                     return [e["name"] for e in cache_entry]
                 return cache_entry[:]
 
-        kwargs["prefix"] = prefix
-
         # stat infos are either the path only (`detail=False`) or a dict full of metadata
         info: list[ObjectInfoData] = []
         delimiter = "" if recursive else "/"
         reference = lakefs.Reference(repository, ref, client=self.client)
 
         with self.wrapped_api_call(rpath=path):
-            for obj in reference.objects(prefix=prefix, delimiter=delimiter):
+            for obj in reference.objects(
+                prefix=prefix, delimiter=delimiter, **self._request_config
+            ):
                 if isinstance(obj, CommonPrefix):
                     # prefixes are added below.
                     info.append(
@@ -559,7 +572,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             return self.ls(
                 path + "/",
                 detail=detail,
-                **kwargs | {"refresh": not use_dircache, "recursive": recursive},
+                **kwargs | {"prefix": prefix, "refresh": not use_dircache, "recursive": recursive},
             )
 
         if recursive:
@@ -641,12 +654,14 @@ class LakeFSFileSystem(AbstractFileSystem):
 
             if not obj.exists():
                 raise FileNotFoundError(path)
-            handler = ObjectReader(obj, mode=mode, pre_sign=pre_sign, client=self.client)
+            handler = ObjectReader(
+                obj, mode=mode, pre_sign=pre_sign, client=self.client, **self._request_config
+            )
         else:
             # for writing ops, ref must be a branch
             branch = lakefs.Branch(repo, ref, client=self.client)
             if self.create_branch_ok:
-                branch.create(self.source_branch, exist_ok=True)
+                branch.create(self.source_branch, exist_ok=True, **self._request_config)
 
             obj = branch.object(resource)
             handler = ObjectWriter(
@@ -656,6 +671,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 content_type=content_type,
                 metadata=metadata,
                 client=self.client,
+                **self._request_config,
             )
 
         ac = kwargs.pop("autocommit", not self._intrans)
@@ -745,7 +761,10 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call(rpath=path):
             branch = lakefs.Branch(repository, ref, client=self.client)
             objgen_batched = batched(
-                branch.objects(prefix=prefix, delimiter="" if recursive else "/"), n=MAX_DELETE_OBJS
+                branch.objects(
+                    prefix=prefix, delimiter="" if recursive else "/", **self._request_config
+                ),
+                n=MAX_DELETE_OBJS,
             )
             if maxdepth is None:
                 for objgen in objgen_batched:
@@ -848,4 +867,4 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call(rpath=path):
             reference = lakefs.Reference(repository, ref, client=self.client)
             obj = reference.object(resource)
-            return datetime.fromtimestamp(obj.stat().mtime)
+            return datetime.fromtimestamp(obj.stat(**self._request_config).mtime)
