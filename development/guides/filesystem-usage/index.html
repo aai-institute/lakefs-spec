@@ -554,6 +554,15 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#controlling-file-system-usage-at-the-api-request-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      Controlling file system usage at the API request level
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1062,6 +1071,15 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#controlling-file-system-usage-at-the-api-request-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      Controlling file system usage at the API request level
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1105,7 +1123,7 @@ This section concerns the explicitly implemented operations. In addition, there 
 <h3 id="uploading-and-downloading-files">Uploading and downloading files<a class="headerlink" href="#uploading-and-downloading-files" title="Permanent link">&para;</a></h3>
 <p>The arguably most important feature of the file system is file transfers.</p>
 <h4 id="file-uploads">File uploads<a class="headerlink" href="#file-uploads" title="Permanent link">&para;</a></h4>
-<p>To upload a file, you can use the <code>fs.put()</code> and <code>fs.put_file()</code> methods. 
+<p>To upload a file, you can use the <code>fs.put()</code> and <code>fs.put_file()</code> methods.
 While <code>fs.put_file()</code> operates on single files only, the <code>fs.put()</code> API can be used for directory uploads.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
@@ -1224,6 +1242,30 @@ The returned objects have the same fields set as those returned by a normal <cod
 <p>Files and directories can only be copied between branches in the same repository, not between different repositories.</p>
 <p>Trying to copy to a non-existent branch will not create the branch.</p>
 </div>
+<h2 id="controlling-file-system-usage-at-the-api-request-level">Controlling file system usage at the API request level<a class="headerlink" href="#controlling-file-system-usage-at-the-api-request-level" title="Permanent link">&para;</a></h2>
+<p>In some cases, it may be necessary to take more control of file operations by customizing API requests.
+Most file operations in lakefs-spec involve communication with the configured lakeFS server, using the lakeFS Python API client to make requests.</p>
+<p>You can control API request parameters by passing a <a href="../../reference/lakefs_spec/types/#RequestConfig"><code>RequestConfig</code></a> object to the lakeFS file system upon construction. This type has the following structure:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">RequestConfig</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A custom dict type for keyword arguments configuring OpenAPI requests</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="sd">    made with the lakeFS SDK.&quot;&quot;&quot;</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>    <span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>    <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>    <span class="n">request_auth</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="n">request_timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>    <span class="n">preload_content</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>    <span class="n">return_http_data_only</span><span class="p">:</span> <span class="nb">bool</span>
+</span></code></pre></div>
+<p>For example, you can configure the HTTP request headers with the <code>headers</code> key, override authentication with the <code>request_auth</code> key, and set a timeout for the API request with the <code>request_timeout</code> configuration key.</p>
+<p>To use it, simply pass a dictionary with the proper keys and value types to the lakeFS file system:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestConfig</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="n">request_config</span><span class="p">:</span> <span class="n">RequestConfig</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;request_timeout&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;content_type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">}</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">(</span><span class="n">request_config</span><span class="o">=</span><span class="n">request_config</span><span class="p">)</span>
+</span></code></pre></div>
 
 
 
@@ -1244,7 +1286,7 @@ The returned objects have the same fields set as those returned by a normal <cod
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 27, 2023 12:08:59 UTC">2023-11-27</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="September 30, 2025 10:21:36 UTC">2025-09-30</span>
   </span>
 
     
