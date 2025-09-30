@@ -199,11 +199,9 @@ fs.copy("my-repo/branch-a/my-dir/", "my-repo/branch-b/my-dir/", recursive=True)
 In some cases, it may be necessary to take more control of file operations by customizing API requests.
 Most file operations in lakefs-spec involve communication with the configured lakeFS server, using the lakeFS Python API client to make requests.
 
-You can control API request parameters by passing a `RequestConfig` object to the lakeFS file system upon construction:
+You can control API request parameters by passing a `RequestConfig` object to the lakeFS file system upon construction. This type is defined in `lakefs_spec.types` and has the following structure:
 
 ```python
-from lakefs_spec import LakeFSFileSystem
-
 class RequestConfig(TypedDict, total=False):
     """A custom dict type for keyword arguments configuring OpenAPI requests
     made with the lakeFS SDK."""
@@ -214,10 +212,17 @@ class RequestConfig(TypedDict, total=False):
     request_timeout: int | tuple[int, int]
     preload_content: bool
     return_http_data_only: bool
-
-
-request_config = {"request_timeout": 2, "content_type": "application/json"}
-fs = LakeFSFileSystem(request_config=request_config)
 ```
 
 For example, you can configure the HTTP request headers with the `headers` key, override authentication with the `request_auth` key, and set a timeout for the API request with the `request_timeout` configuration key.
+
+To use it, simply pass a dictionary with the proper keys and value types to the lakeFS file system:
+
+```python
+from lakefs_spec import LakeFSFileSystem
+from lakefs_spec.types import RequestConfig
+
+
+request_config: RequestConfig = {"request_timeout": 2, "content_type": "application/json"}
+fs = LakeFSFileSystem(request_config=request_config)
+```
