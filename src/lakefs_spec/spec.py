@@ -605,7 +605,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         pre_sign: bool | None = None,
         content_type: str | None = None,
         metadata: dict[str, str] | None = None,
-        autocommit: bool = True,
+        autocommit: bool = False,
         **kwargs: Any,
     ) -> LakeFSIOBase:
         """
@@ -674,8 +674,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 **self._request_config,
             )
 
-        ac = kwargs.pop("autocommit", not self._intrans)
-        if not ac and "r" not in mode:
+        if self._intrans and not autocommit and "r" not in mode:
             self._transaction.files.append(handler)
 
         return handler
