@@ -31,3 +31,17 @@ class RequestConfig(TypedDict, total=False):
     request_timeout: int | tuple[int, int]
     preload_content: bool
     return_http_data_only: bool
+
+
+class MergeKwargs(TypedDict, total=False):
+    """Options to control the merge of a transaction branch into the base branch.
+
+    This is essentially the `lakefs_sdk.Merge` model, without the optionals.
+    """
+
+    message: str
+    metadata: dict[str, str]
+    strategy: Literal["dest-wins", "source-wins"]
+    force: bool
+    allow_empty: bool
+    squash_merge: bool
