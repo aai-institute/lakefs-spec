@@ -43,7 +43,7 @@ You can control the lifecycle for a transaction branch with the `delete` argumen
 * If `delete="always"`, the branch is unconditionally deleted after the transaction regardless of its status.
 * Similarly, if `delete="never"`, the branch is unconditionally left in place after the transaction.
 
-Additionally, the `automerge` keyword controls whether the transaction branch is merged after successful completion of the transaction. 
+Additionally, the `automerge` keyword controls whether the transaction branch is merged after successful completion of the transaction.
 It has no effect if an error occurs over the course of the transaction.
 
 ## Error handling
@@ -63,3 +63,41 @@ with fs.transaction("repo", "main", delete="onsuccess") as tx:
 
 The above code will not modify the `main` branch, since the `ValueError` prevents the merge of the transaction branch.
 Note that you can examine the contents of the transaction branch due to `delete="onsuccess"` (the default behavior), which prevents deletion of the branch in case of failure for debugging purposes.
+
+## Customizing merge behavior in transactions
+
+As described before, transaction branches can be optionally merged into the base branch on exit if no errors occurred.
+You can control the behavior of this merge by passing a `MergeKwargs` object to the transaction on construction:
+
+```python
+class MergeKwargs(TypedDict, total=False):
+    """Options to control the merge of a transaction branch into the base branch.
+
+    This is essentially the `lakefs_sdk.Merge` model, without the optionals.
+    """
+
+    message: str
+    metadata: dict[str, str]
+    strategy: Literal["dest-wins", "source-wins"]
+    force: bool
+    allow_empty: bool
+    squash_merge: bool
+```
+
+In particular, the `message` and `metadata` fields control what message and metadata are attached to the merge commit, respectively, and `squash_merge` can be used to squash all changes in the transaction into a single commit.
+
+You can configure merge options in a transaction like so:
+
+```python
+from lakefs_spec import LakeFSFileSystem
+from lakefs_spec.types import MergeKwargs
+
+
+merge_kwargs: MergeKwargs = {"squash_merge": True, "message": "My merge commit message"}
+fs = LakeFSFileSystem()
+
+with fs.transaction("my-repo", "main", merge_kwargs=merge_kwargs) as tx:
+    ...
+```
+
+Here, the transaction branch will be squash-merged into `main` after transaction completion, and the merge commit message will be `"My merge commit message"`.
