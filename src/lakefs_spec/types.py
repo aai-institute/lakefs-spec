@@ -1,7 +1,12 @@
+import sys
+
 # Functional syntax to allow for the attribute name containing a dash
 from typing import Any, Literal, TypedDict
 
-from typing_extensions import Required
+if sys.version_info < (3, 11):
+    from typing_extensions import Required
+else:
+    from typing import Required
 
 ObjectType = Literal["file", "directory"]
 
