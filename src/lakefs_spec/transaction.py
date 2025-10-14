@@ -5,7 +5,6 @@ Functionality for extended lakeFS transactions to conduct versioning operations 
 import logging
 import random
 import string
-import sys
 import warnings
 from collections import deque
 from typing import TYPE_CHECKING, Literal, TypeVar
@@ -19,13 +18,9 @@ from lakefs.object import ObjectWriter
 from lakefs.reference import Commit, Reference, ReferenceType
 from lakefs.repository import Repository
 from lakefs.tag import Tag
+from typing_extensions import Unpack
 
 from lakefs_spec.types import MergeKwargs
-
-if sys.version_info < (3, 11):
-    from typing_extensions import Unpack
-else:
-    from typing import Unpack
 
 T = TypeVar("T")
 
