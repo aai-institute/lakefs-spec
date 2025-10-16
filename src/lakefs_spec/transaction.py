@@ -11,13 +11,16 @@ from typing import TYPE_CHECKING, Literal, TypeVar
 
 import lakefs
 from fsspec.transaction import Transaction
-from lakefs.branch import Branch, Reference
+from lakefs.branch import Branch
 from lakefs.client import Client
 from lakefs.exceptions import ServerException
 from lakefs.object import ObjectWriter
-from lakefs.reference import Commit, ReferenceType
+from lakefs.reference import Commit, Reference, ReferenceType
 from lakefs.repository import Repository
 from lakefs.tag import Tag
+from typing_extensions import Unpack
+
+from lakefs_spec.types import MergeKwargs
 
 T = TypeVar("T")
 
@@ -52,7 +55,7 @@ class LakeFSTransaction(Transaction):
         self.base_branch: Branch | None = None
         self.automerge: bool = False
         self.delete: Literal["onsuccess", "always", "never"] = "onsuccess"
-        self.squash: bool = False
+        self.merge_kwargs: MergeKwargs = {}
         self._ephemeral_branch: Branch | None = None
 
     def __call__(
@@ -62,7 +65,7 @@ class LakeFSTransaction(Transaction):
         branch_name: str | None = None,
         automerge: bool = True,
         delete: Literal["onsuccess", "always", "never"] = "onsuccess",
-        squash: bool = False,
+        merge_kwargs: MergeKwargs | None = None,
     ) -> "LakeFSTransaction":
         """
         Creates an ephemeral branch, conducts all uploads and operations on that branch,
@@ -85,8 +88,8 @@ class LakeFSTransaction(Transaction):
             or failure.
 
             If ``"never"``, the transaction branch is always left in the repository.
-        squash: bool
-            Optionally squash-merges the transaction branch into the base branch.
+        merge_kwargs: MergeKwargs
+            A dictionary containing options to customize the merge of the transaction branch into the base branch.
         """
 
         if isinstance(repository, str):
@@ -106,7 +109,7 @@ class LakeFSTransaction(Transaction):
 
         self.automerge = automerge
         self.delete = delete
-        self.squash = squash
+        self.merge_kwargs = merge_kwargs or {}
 
         ephem_name = branch_name or "transaction-" + "".join(random.choices(string.digits, k=6))  # noqa: S311
         self._ephemeral_branch = Branch(self.repository, ephem_name, client=self.fs.client)
@@ -141,7 +144,7 @@ class LakeFSTransaction(Transaction):
 
         if success and self.automerge:
             if any(self.base_branch.diff(self._ephemeral_branch)):
-                self._ephemeral_branch.merge_into(self.base_branch, squash_merge=self.squash)
+                self._ephemeral_branch.merge_into(self.base_branch, **self.merge_kwargs)
         if self.delete == "always" or (success and self.delete == "onsuccess"):
             self._ephemeral_branch.delete()
 
@@ -175,7 +178,9 @@ class LakeFSTransaction(Transaction):
 
         return self.branch.commit(message, metadata=metadata)
 
-    def merge(self, source_ref: str | Branch, into: str | Branch, squash: bool = False) -> Commit:
+    def merge(
+        self, source_ref: str | Branch, into: str | Branch, **kwargs: Unpack[MergeKwargs]
+    ) -> Commit:
         """
         Merge a branch into another branch in a repository.
 
@@ -189,8 +194,8 @@ class LakeFSTransaction(Transaction):
             Can be a branch name or partial commit SHA.
         into: str | Branch
             Target branch into which the changes will be merged.
-        squash: bool
-            Optionally squash-merges the source reference into the target branch.
+        **kwargs: Unpack[MergeKwargs]
+            Options to control the merge behavior, including squashing and metadata additions.
 
         Returns
         -------
@@ -201,7 +206,7 @@ class LakeFSTransaction(Transaction):
         dest = _ensurebranch(into, self.repository, self.fs.client)
 
         if any(dest.diff(source)):
-            source.merge_into(dest, squash_merge=squash)
+            source.merge_into(dest, **kwargs)
         return dest.head.get_commit()
 
     def revert(self, branch: str | Branch, ref: ReferenceType, parent_number: int = 1) -> Commit:

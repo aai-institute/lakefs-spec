@@ -1332,6 +1332,7 @@ source = { editable = "." }
 dependencies = [
     { name = "fsspec" },
     { name = "lakefs" },
+    { name = "typing-extensions" },
 ]
 
 [package.dev-dependencies]
@@ -1371,6 +1372,7 @@ docs = [
 requires-dist = [
     { name = "fsspec", specifier = ">=2023.12.0" },
     { name = "lakefs", specifier = ">=0.2.0" },
+    { name = "typing-extensions" },
 ]
 
 [package.metadata.requires-dev]
