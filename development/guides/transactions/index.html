@@ -540,6 +540,15 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#customizing-merge-behavior-in-transactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Customizing merge behavior in transactions
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -942,6 +951,15 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#customizing-merge-behavior-in-transactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Customizing merge behavior in transactions
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1001,7 +1019,7 @@ The following is an example of file uploads with commit creations, with a tag be
 <li>If <code>delete="always"</code>, the branch is unconditionally deleted after the transaction regardless of its status.</li>
 <li>Similarly, if <code>delete="never"</code>, the branch is unconditionally left in place after the transaction.</li>
 </ul>
-<p>Additionally, the <code>automerge</code> keyword controls whether the transaction branch is merged after successful completion of the transaction. 
+<p>Additionally, the <code>automerge</code> keyword controls whether the transaction branch is merged after successful completion of the transaction.
 It has no effect if an error occurs over the course of the transaction.</p>
 <h2 id="error-handling">Error handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h2>
 <p>Since all files are uploaded to a short-lived transaction branch, no commit on the target branch happens in case of an exception:</p>
@@ -1016,6 +1034,35 @@ It has no effect if an error occurs over the course of the transaction.</p>
 </span></code></pre></div>
 <p>The above code will not modify the <code>main</code> branch, since the <code>ValueError</code> prevents the merge of the transaction branch.
 Note that you can examine the contents of the transaction branch due to <code>delete="onsuccess"</code> (the default behavior), which prevents deletion of the branch in case of failure for debugging purposes.</p>
+<h2 id="customizing-merge-behavior-in-transactions">Customizing merge behavior in transactions<a class="headerlink" href="#customizing-merge-behavior-in-transactions" title="Permanent link">&para;</a></h2>
+<p>As described before, transaction branches can be optionally merged into the base branch on exit if no errors occurred.
+You can control the behavior of this merge by passing a <code>MergeKwargs</code> object to the transaction on construction:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">MergeKwargs</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Options to control the merge of a transaction branch into the base branch.</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="sd">    This is essentially the `lakefs_sdk.Merge` model, without the optionals.</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">strategy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dest-wins&quot;</span><span class="p">,</span> <span class="s2">&quot;source-wins&quot;</span><span class="p">]</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">allow_empty</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="n">squash_merge</span><span class="p">:</span> <span class="nb">bool</span>
+</span></code></pre></div>
+<p>In particular, the <code>message</code> and <code>metadata</code> fields control what message and metadata are attached to the merge commit, respectively, and <code>squash_merge</code> can be used to squash all changes in the transaction into a single commit.</p>
+<p>You can configure merge options in a transaction like so:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MergeKwargs</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">merge_kwargs</span><span class="p">:</span> <span class="n">MergeKwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;squash_merge&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;My merge commit message&quot;</span><span class="p">}</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="s2">&quot;my-repo&quot;</span><span class="p">,</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="n">merge_kwargs</span><span class="o">=</span><span class="n">merge_kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">tx</span><span class="p">:</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="o">...</span>
+</span></code></pre></div>
+<p>Here, the transaction branch will be squash-merged into <code>main</code> after transaction completion, and the merge commit message will be <code>"My merge commit message"</code>.</p>
 
 
 
@@ -1036,7 +1083,7 @@ Note that you can examine the contents of the transaction branch due to <code>de
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="February 2, 2024 10:53:46 UTC">2024-02-02</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="October 16, 2025 07:45:32 UTC">2025-10-16</span>
   </span>
 
     
