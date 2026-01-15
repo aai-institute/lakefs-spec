@@ -1,7 +1,6 @@
 from importlib.metadata import version
-from unittest.mock import MagicMock
+from unittest.mock import patch
 
-import lakefs_sdk.api.objects_api as objects_api
 import pytest
 from lakefs.repository import Repository
 from packaging.version import Version
@@ -75,13 +74,8 @@ def test_initialization(monkeypatch: MonkeyPatch, temporary_lakectl_config: str)
 
 
 @pytest.mark.skipif(lakefs_version < Version("0.14"), reason="requires lakefs>=0.14.0")
-def test_request_config(repository: Repository, monkeypatch: MonkeyPatch) -> None:
-    # Mock `get_object` to intercept the API call made on read() below,
-    # and assert it contains the custom timeout.
-    mock = MagicMock()
-    monkeypatch.setattr(objects_api.ObjectsApi, "get_object", mock)
-
-    # set a shorter timeout value for the filesystem (= lakeFS client)
+def test_request_config(repository: Repository) -> None:
+    # Set a shorter timeout value for the filesystem (= lakeFS client)
     request_config: RequestConfig = {"request_timeout": 2}
     fs = LakeFSFileSystem(
         host="localhost:8000",
@@ -90,11 +84,19 @@ def test_request_config(repository: Repository, monkeypatch: MonkeyPatch) -> Non
         request_config=request_config,
     )
 
-    with fs.open(f"lakefs://{repository.id}/main/lakes.parquet") as fp:
-        fp.read(1)
+    # Mock `get_object_with_http_info` to intercept the API call made on read() below,
+    # and assert it contains the custom timeout.
+    api = fs.client.sdk_client.objects_api  # pyright: ignore[reportOptionalMemberAccess]
+    with patch.object(
+        api,
+        "get_object_with_http_info",
+        wraps=api.get_object_with_http_info,
+    ) as get_object:
+        with fs.open(f"lakefs://{repository.id}/main/lakes.parquet") as fp:
+            fp.read(1)
 
-    # this timeout should now show up in the call kwargs.
-    assert mock.call_count == 1
-    call, *rest = mock.mock_calls
-    assert "_request_timeout" in call.kwargs
-    assert call.kwargs["_request_timeout"] == 2
+    # Timeout should show up in the API call kwargs
+    assert get_object.call_count == 1
+    _, kwargs = get_object.call_args
+    for k, v in request_config.items():
+        assert kwargs.get(f"_{k}") == v, f"{k} request kwarg not passed correctly"
