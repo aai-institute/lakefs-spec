@@ -12,6 +12,7 @@ resolution-markers = [
 name = "aenum"
 version = "3.1.16"
 source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/09/7a/61ed58e8be9e30c3fe518899cc78c284896d246d51381bab59b5db11e1f3/aenum-3.1.16.tar.gz", hash = "sha256:bfaf9589bdb418ee3a986d85750c7318d9d2839c1b1a1d6fe8fc53ec201cf140", size = 137693, upload-time = "2026-01-12T22:34:38.819Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e3/52/6ad8f63ec8da1bf40f96996d25d5b650fdd38f5975f8c813732c47388f18/aenum-3.1.16-py3-none-any.whl", hash = "sha256:9035092855a98e41b66e3d0998bd7b96280e85ceb3a04cc035636138a1943eaf", size = 165627, upload-time = "2025-04-25T03:17:58.89Z" },
 ]
@@ -1300,15 +1301,15 @@ wheels = [
 
 [[package]]
 name = "lakefs"
-version = "0.14.0"
+version = "0.15.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "lakefs-sdk" },
     { name = "pyyaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/84/ca/0abd0ffecd88cece8253b59ab2d23ff29b98029014ddaa85b4334087903e/lakefs-0.14.0.tar.gz", hash = "sha256:9786930f61f0ccef8def17014e1eef49620b630ad07cc7c49c3be9fce60d1701", size = 52220, upload-time = "2025-09-25T18:13:37.958Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0e/15/20979a8cdb889011197c206046ea6263ac33558b4e9bbf8f220fb719ec3b/lakefs-0.15.0.tar.gz", hash = "sha256:3ad6721d1176442d5b16eeca650a2617b42dbe160ad4cd3e6120ff9b0bb35894", size = 33410, upload-time = "2026-01-14T16:24:37.343Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/74/e9/8a93d34b04612fe65955e13b4d826ef430f6812f02c8224559df05926f64/lakefs-0.14.0-py3-none-any.whl", hash = "sha256:dd65e4fedaeef5ea26d767ea42f47b49e4395c5c0cba5831943973b67fda0941", size = 63868, upload-time = "2025-09-25T18:13:35.983Z" },
+    { url = "https://files.pythonhosted.org/packages/cb/1d/2635d0af294cf399ad5acdfc29f4f0bf6ac73aa287c18183583e7f9c8c7a/lakefs-0.15.0-py3-none-any.whl", hash = "sha256:25675ab4760600cc8d8e6b90f2664a071bc2fe52ee2e300298b468406eaf035f", size = 38554, upload-time = "2026-01-14T16:24:36.46Z" },
 ]
 
 [[package]]
