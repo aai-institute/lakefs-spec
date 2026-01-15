@@ -15,7 +15,7 @@ jobs:
     name: Run code checks and formatting hooks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
       - name: Set up Python 3.10 and dependencies
@@ -54,11 +54,11 @@ jobs:
           LAKEFS_AUTH_ENCRYPT_SECRET_KEY: "THIS_MUST_BE_CHANGED_IN_PRODUCTION"
           LAKEFS_BLOCKSTORE_TYPE: "local"
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b # v7.2.0
         with:
           python-version: ${{ matrix.python-version }}
           activate-environment: true
@@ -71,7 +71,7 @@ jobs:
       - name: Execute python tests
         run: uv run pytest -s --cov=src --cov=fsspec --cov-branch --cov-report=xml
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
@@ -94,7 +94,7 @@ jobs:
           LAKEFS_AUTH_ENCRYPT_SECRET_KEY: "THIS_MUST_BE_CHANGED_IN_PRODUCTION"
           LAKEFS_BLOCKSTORE_TYPE: "local"
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
           persist-credentials: true

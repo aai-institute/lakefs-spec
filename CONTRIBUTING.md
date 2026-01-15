@@ -11,39 +11,40 @@ To get started with development, you can follow these steps (requires an install
 
 1. Clone this repository:
 
-    ```shell
-    git clone https://github.com/aai-institute/lakefs-spec.git
-    ```
+   ```shell
+   git clone https://github.com/aai-institute/lakefs-spec.git
+   ```
 
 2. Navigate to the directory and install the development dependencies into a virtual environment:
 
-    ```shell
-    cd lakefs-spec
-    uv sync --all-groups
-    ```
+   ```shell
+   cd lakefs-spec
+   uv sync --all-groups
+   ```
 
 3. After making your changes, verify they adhere to our Python code style by running `pre-commit`:
-    
-    ```shell
-    uv run pre-commit run --all-files
-    ```
 
-    You can also set up Git hooks through `pre-commit` to perform these checks automatically:
-    
-    ```shell
-    uv run pre-commit install
-    ```
+   ```shell
+   uv run pre-commit run --all-files
+   ```
+
+   You can also set up Git hooks through `pre-commit` to perform these checks automatically:
+
+   ```shell
+   uv run pre-commit install
+   ```
 
 4. To run the tests against an ephemeral lakeFS instance, you just run `pytest`:
-    ```shell
-    uv run pytest
-    ```
 
-    To spin up a local lakeFS instance quickly for testing, you can use the Docker Compose file bundled with this repository:
+   ```shell
+   uv run pytest
+   ```
 
-    ```shell
-    docker-compose -f hack/compose.yml up
-    ```
+   To spin up a local lakeFS instance quickly for testing, you can use the Docker Compose file bundled with this repository:
+
+   ```shell
+   docker compose -f hack/compose.yml up
+   ```
 
 ## Updating dependencies
 
@@ -64,11 +65,34 @@ uv lock
 
 Improvements or additions to the project's documentation are highly appreciated.
 
-The documentation is based on the [MkDocs](http://mkdocs.org) and [Material for MkDocs (`mkdocs-material`)](https://squidfunk.github.io/mkdocs-material/) projects, see their homepages for in-depth guides on their features and usage. We use the [Numpy documentation style](https://numpydoc.readthedocs.io/en/latest/format.html) for Python docstrings.
+The documentation is based on the [MkDocs](http://mkdocs.org) and [Material for MkDocs (`mkdocs-material`)](https://squidfunk.github.io/mkdocs-material/) projects - see their homepages for in-depth guides on their features and usage.
+We use the [Numpy documentation style](https://numpydoc.readthedocs.io/en/latest/format.html) for Python docstrings.
 
 To build the documentation locally, you need to first install the optional `docs` dependencies from `pyproject.toml`, e.g., with `uv sync --group docs`.
-You can then start a local documentation server with `uv run mkdocs serve`, or build the documentation into its output folder in `public/`.
+You can then start a local preview documentation server with `uv run mkdocs serve`, or build the documentation into its output folder in `public/` using `uv run mkdocs build`.
 
 In order to maintain documentation for multiple versions of this library, we use the [mike](https://github.com/jimporter/mike) tool, which automatically maintains individual documentation builds per version and publishes them to the `gh-pages` branch.
 
 The GitHub CI pipeline automatically invokes `mike` as part of the release process with the correct version and updates the GitHub pages branch for the project.
+
+## GitHub Actions
+
+We use [zizmor](https://docs.zizmor.sh/) to audit our GitHub Actions workflows for security issues.
+When adding or modifying GitHub Actions workflows, ensure that:
+
+1. All action references use pinned commit SHAs instead of tags:
+
+   ```yaml
+   # Good
+   uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+   # Bad
+   uses: actions/checkout@v6
+   ```
+
+   If you need to update an action to a newer version, you can use [`pinact run -u`](https://github.com/suzuki-shunsuke/pinact/).
+
+2. Run zizmor locally to check for issues before submitting (`zizmor` is also part of the pre-commit hooks):
+   ```shell
+   uv run zizmor .github
+   ```
