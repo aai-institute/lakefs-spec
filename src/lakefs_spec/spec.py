@@ -182,6 +182,20 @@ class LakeFSFileSystem(AbstractFileSystem):
         except ServerException as e:
             raise translate_lakefs_error(e, rpath=rpath, message=message, set_cause=set_cause)
 
+    def make_uri(self, path: str | os.PathLike[str]) -> str:
+        spath = stringify_path(path)
+        # NB: this fails silently if the input path is already fully qualified.
+        # However, in general, it's impossible to distinguish between a
+        # fully qualified path and a normal nested path, so at most, we
+        # could split off the first segment of the input and check it against existing
+        # repositories.
+        if self._intrans:
+            prefix = "/".join([self.transaction.repository, self.transaction.branch.id])
+            if spath.startswith(prefix):
+                return spath
+            return prefix + "/" + spath
+        return spath
+
     def checksum(self, path: str | os.PathLike[str]) -> str | None:
         """
         Get a remote lakeFS file object's checksum.
@@ -198,7 +212,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         str | None
             The remote file's checksum, or ``None`` if ``path`` points to a directory or does not exist.
         """
-        path = stringify_path(path)
+        path = self.make_uri(path)
         try:
             info = self.info(path)
             if info["type"] == "file":
@@ -235,7 +249,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         PermissionError
             If the user does not have sufficient permissions to query object existence.
         """
-        path = stringify_path(path)
+        path = self.make_uri(path)
         repository, ref, resource = parse(path)
         try:
             reference = lakefs.Reference(repository, ref, client=self.client)
@@ -281,8 +295,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         ValueError
             When attempting to copy objects between repositories.
         """
-        path1 = stringify_path(path1)
-        path2 = stringify_path(path2)
+        path1 = self.make_uri(path1)
+        path2 = self.make_uri(path2)
         if path1 == path2:
             return
 
@@ -326,7 +340,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         **kwargs: Any
             Additional keyword arguments passed to ``AbstractFileSystem.open()``.
         """
-        rpath = stringify_path(rpath)
+        rpath = self.make_uri(rpath)
         lpath = stringify_path(lpath)
 
         if precheck and Path(lpath).is_file():
@@ -363,7 +377,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         FileNotFoundError
             If the ``path`` refers to a non-file path that does not exist in the repository.
         """
-        path = stringify_path(path)
+        path = self.make_uri(path)
         repository, ref, resource = parse(path)
         # first, try with `stat_object` in case of a file.
         # the condition below checks edge cases of resources that cannot be files.
@@ -503,6 +517,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             A list of all objects' metadata under the given remote path if ``detail=True``, or alternatively only their names if ``detail=False``.
         """
         path = self._strip_protocol(path)
+        path = self.make_uri(path)
         repository, ref, prefix = parse(path)
 
         recursive = kwargs.pop("recursive", False)
@@ -579,6 +594,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             # To make recursive ls behave identical to the non-recursive case,
             # add back virtual `directory` entries, which are only returned by
             # the lakeFS API when querying non-recursively.
+            # TODO: Fix this up for intrans
             here = self._strip_protocol(path).rstrip("/")
             subdirs = {parent for o in info if (parent := self._parent(o["name"])) != here}
             for subdir in subdirs:
@@ -645,7 +661,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         if mode not in {"r", "rb", "w", "wb", "x", "xb"}:
             raise NotImplementedError(f"unsupported mode {mode!r}")
 
-        path = stringify_path(path)
+        path = self.make_uri(path)
         repo, ref, resource = parse(path)
 
         if mode.startswith("r"):
@@ -706,7 +722,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             Additional keyword arguments to pass to ``LakeFSFileSystem.open()``.
         """
         lpath = stringify_path(lpath)
-        rpath = stringify_path(rpath)
+        rpath = self.make_uri(rpath)
 
         if precheck and Path(lpath).is_file():
             remote_checksum = self.checksum(rpath)
@@ -754,7 +770,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             possible.
         """
 
-        path = stringify_path(path)
+        path = self.make_uri(path)
         repository, ref, prefix = parse(path)
 
         with self.wrapped_api_call(rpath=path):
