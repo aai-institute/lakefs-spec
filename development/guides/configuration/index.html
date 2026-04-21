@@ -995,27 +995,52 @@ If you set all values correctly, you can instantiate the lakeFS file system with
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># zero config necessary.</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
 </span></code></pre></div>
-<p>If you cannot use the default location (<code>$HOME/.lakectl.yaml</code>), you can read a file from any other location by passing the <code>configfile</code> argument:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">(</span><span class="n">configfile</span><span class="o">=</span><span class="s2">&quot;/path/to/my/configfile.yaml&quot;</span><span class="p">)</span>
+<p>If you cannot use the default location (<code>$HOME/.lakectl.yaml</code>), set the <code>LAKECTL_CONFIG_FILE</code> environment variable to the desired path before instantiating the file system:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKECTL_CONFIG_FILE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;/path/to/my/configfile.yaml&quot;</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
 </span></code></pre></div>
 <h2 id="setting-environment-variables">Setting environment variables<a class="headerlink" href="#setting-environment-variables" title="Permanent link">&para;</a></h2>
-<p>It is also possible to specify certain configuration values used for authentication with the lakeFS server with environment variables.
-For these values, the variable name is exactly the constructor argument name prefaced with <code>LAKEFS_</code>, e.g. the <code>host</code> argument can be set via the <code>LAKEFS_HOST</code> environment variable.</p>
+<p>It is also possible to specify configuration values used for authentication with the lakeFS server with environment variables.
+These follow the same naming scheme as the <code>lakectl</code> CLI and override the corresponding values from a <code>.lakectl.yaml</code> config file:</p>
+<table>
+<thead>
+<tr>
+<th>Environment variable</th>
+<th>Config file field</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LAKECTL_SERVER_ENDPOINT_URL</code></td>
+<td><code>server.endpoint_url</code></td>
+</tr>
+<tr>
+<td><code>LAKECTL_CREDENTIALS_ACCESS_KEY_ID</code></td>
+<td><code>credentials.access_key_id</code></td>
+</tr>
+<tr>
+<td><code>LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY</code></td>
+<td><code>credentials.secret_access_key</code></td>
+</tr>
+</tbody>
+</table>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKEFS_HOST&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;http://my-lakefs.host&quot;</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKEFS_USERNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;my-username&quot;</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKEFS_PASSWORD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;my-password&quot;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKECTL_SERVER_ENDPOINT_URL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;http://my-lakefs.host&quot;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKECTL_CREDENTIALS_ACCESS_KEY_ID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;my-access-key-id&quot;</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;my-secret-access-key&quot;</span>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># also zero-config.</span>
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
 </span></code></pre></div>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>Not all initialization values can be set via environment variables - the <code>proxy</code>, <code>create_branch_ok</code>, and <code>source_branch</code> arguments can only be supplied in Python.</p>
+<p>Environment variable discovery is handled by the underlying <code>lakefs</code> Python client. The <code>proxy</code>, <code>create_branch_ok</code>, and <code>source_branch</code> arguments of <code>LakeFSFileSystem</code> have no environment variable counterpart and can only be supplied in Python.</p>
 </div>
 <h2 id="appendix-mixing-zero-config-methods">Appendix: Mixing zero-config methods<a class="headerlink" href="#appendix-mixing-zero-config-methods" title="Permanent link">&para;</a></h2>
 <p>Two of the introduced methods allow for "zero-config" (i.e. no arguments given to the constructor) initialization of the file system.
@@ -1035,9 +1060,9 @@ While this allows for efficient reuse of file systems e.g. by third-party librar
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># first file system, initialized from the config file</span>
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">config_fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
 </span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKEFS_HOST&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;http://my-other-lakefs.host&quot;</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKEFS_USERNAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;my-username&quot;</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKEFS_PASSWORD&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;my-password&quot;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKECTL_SERVER_ENDPOINT_URL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;http://my-other-lakefs.host&quot;</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKECTL_CREDENTIALS_ACCESS_KEY_ID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;my-access-key-id&quot;</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;my-secret-access-key&quot;</span>
 </span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
 </span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="n">envvar_fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
 </span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
@@ -1069,7 +1094,7 @@ To clear the file system instance cache, you can run the following:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="November 27, 2023 12:08:59 UTC">2023-11-27</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 21, 2026 06:48:18 UTC">2026-04-21</span>
   </span>
 
     
