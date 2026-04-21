@@ -39,26 +39,35 @@ from lakefs_spec import LakeFSFileSystem
 fs = LakeFSFileSystem()
 ```
 
-If you cannot use the default location (`$HOME/.lakectl.yaml`), you can read a file from any other location by passing the `configfile` argument:
-
-```python
-from lakefs_spec import LakeFSFileSystem
-
-fs = LakeFSFileSystem(configfile="/path/to/my/configfile.yaml")
-```
-
-## Setting environment variables
-
-It is also possible to specify certain configuration values used for authentication with the lakeFS server with environment variables.
-For these values, the variable name is exactly the constructor argument name prefaced with `LAKEFS_`, e.g. the `host` argument can be set via the `LAKEFS_HOST` environment variable.
+If you cannot use the default location (`$HOME/.lakectl.yaml`), set the `LAKECTL_CONFIG_FILE` environment variable to the desired path before instantiating the file system:
 
 ```python
 import os
 from lakefs_spec import LakeFSFileSystem
 
-os.environ["LAKEFS_HOST"] = "http://my-lakefs.host"
-os.environ["LAKEFS_USERNAME"] = "my-username"
-os.environ["LAKEFS_PASSWORD"] = "my-password"
+os.environ["LAKECTL_CONFIG_FILE"] = "/path/to/my/configfile.yaml"
+
+fs = LakeFSFileSystem()
+```
+
+## Setting environment variables
+
+It is also possible to specify configuration values used for authentication with the lakeFS server with environment variables.
+These follow the same naming scheme as the `lakectl` CLI and override the corresponding values from a `.lakectl.yaml` config file:
+
+| Environment variable | Config file field |
+| --- | --- |
+| `LAKECTL_SERVER_ENDPOINT_URL` | `server.endpoint_url` |
+| `LAKECTL_CREDENTIALS_ACCESS_KEY_ID` | `credentials.access_key_id` |
+| `LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY` | `credentials.secret_access_key` |
+
+```python
+import os
+from lakefs_spec import LakeFSFileSystem
+
+os.environ["LAKECTL_SERVER_ENDPOINT_URL"] = "http://my-lakefs.host"
+os.environ["LAKECTL_CREDENTIALS_ACCESS_KEY_ID"] = "my-access-key-id"
+os.environ["LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY"] = "my-secret-access-key"
 
 # also zero-config.
 fs = LakeFSFileSystem()
@@ -66,7 +75,7 @@ fs = LakeFSFileSystem()
 
 !!! Info
     
-    Not all initialization values can be set via environment variables - the `proxy`, `create_branch_ok`, and `source_branch` arguments can only be supplied in Python.
+    Environment variable discovery is handled by the underlying `lakefs` Python client. The `proxy`, `create_branch_ok`, and `source_branch` arguments of `LakeFSFileSystem` have no environment variable counterpart and can only be supplied in Python.
 
 ## Appendix: Mixing zero-config methods
 
@@ -93,9 +102,9 @@ from lakefs_spec import LakeFSFileSystem
 # first file system, initialized from the config file
 config_fs = LakeFSFileSystem()
 
-os.environ["LAKEFS_HOST"] = "http://my-other-lakefs.host"
-os.environ["LAKEFS_USERNAME"] = "my-username"
-os.environ["LAKEFS_PASSWORD"] = "my-password"
+os.environ["LAKECTL_SERVER_ENDPOINT_URL"] = "http://my-other-lakefs.host"
+os.environ["LAKECTL_CREDENTIALS_ACCESS_KEY_ID"] = "my-access-key-id"
+os.environ["LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY"] = "my-secret-access-key"
 
 envvar_fs = LakeFSFileSystem()
 
