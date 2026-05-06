@@ -146,3 +146,6 @@ exclude = '\.git|venv'
 
 [tool.coverage.report]
 exclude_also = ["@overload", "raise NotImplementedError"]
+
+[tool.uv]
+exclude-newer = "1 week"
