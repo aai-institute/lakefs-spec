@@ -53,9 +53,11 @@ def with_counter(client: Client) -> tuple[Client, APICounter]:
             continue
 
         for ep_name in filter(
-            lambda op: not op.startswith("_")
-            and not op.endswith("with_http_info")
-            and ismethod(getattr(api, op)),
+            lambda op: (
+                not op.startswith("_")
+                and not op.endswith("with_http_info")
+                and ismethod(getattr(api, op))
+            ),
             dir(api),
         ):
             endpoint = getattr(api, ep_name)
