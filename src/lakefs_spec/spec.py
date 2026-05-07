@@ -15,15 +15,14 @@ from functools import cached_property
 from pathlib import Path
 from typing import Any, Literal, cast, overload
 
-import fsspec.callbacks
 import lakefs
-from fsspec.callbacks import _DEFAULT_CALLBACK
+from fsspec.callbacks import DEFAULT_CALLBACK, Callback
 from fsspec.spec import AbstractFileSystem
 from fsspec.utils import stringify_path
 from lakefs.client import Client
 from lakefs.exceptions import NotFoundException, ServerException
 from lakefs.models import CommonPrefix, ObjectInfo
-from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
+from lakefs.object import ObjectReader, ObjectWriter
 
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
@@ -146,7 +145,6 @@ class LakeFSFileSystem(AbstractFileSystem):
             return [cls._strip_protocol(p) for p in path]
         spath = super()._strip_protocol(path)
         if stringify_path(path).endswith("/"):
-            # pyrefly: ignore [unsupported-operation]
             return spath + "/"
         return spath
 
@@ -183,7 +181,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         except ServerException as e:
             raise translate_lakefs_error(e, rpath=rpath, message=message, set_cause=set_cause)
 
-    # pyrefly: ignore [bad-override]
     def checksum(self, path: str | os.PathLike[str]) -> str | None:
         """
         Get a remote lakeFS file object's checksum.
@@ -305,7 +302,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self,
         rpath: str | os.PathLike[str],
         lpath: str | os.PathLike[str],
-        callback: fsspec.callbacks.Callback = _DEFAULT_CALLBACK,
+        callback: Callback = DEFAULT_CALLBACK,
         outfile: Any = None,
         precheck: bool = True,
         **kwargs: Any,
@@ -344,7 +341,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call(rpath=rpath):
             super().get_file(rpath, lpath, callback=callback, outfile=outfile, **kwargs)
 
-    # pyrefly: ignore [bad-override]
     def info(self, path: str | os.PathLike[str], **kwargs: Any) -> ObjectInfoData:
         """
         Query a remote lakeFS object's metadata.
@@ -601,7 +597,31 @@ class LakeFSFileSystem(AbstractFileSystem):
         else:
             return [cast(dict, o) for o in info]
 
+    @overload
     # pyrefly: ignore [bad-override]
+    def open(
+        self,
+        path: str | os.PathLike[str],
+        mode: Literal["r", "rb"],
+        pre_sign: bool | None = None,
+        content_type: str | None = None,
+        metadata: dict[str, str] | None = None,
+        autocommit: bool = False,
+        **kwargs: Any,
+    ) -> ObjectReader: ...
+
+    @overload
+    def open(
+        self,
+        path: str | os.PathLike[str],
+        mode: Literal["w", "wb", "x", "xb"],
+        pre_sign: bool | None = None,
+        content_type: str | None = None,
+        metadata: dict[str, str] | None = None,
+        autocommit: bool = False,
+        **kwargs: Any,
+    ) -> ObjectWriter: ...
+
     def open(
         self,
         path: str | os.PathLike[str],
@@ -611,7 +631,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         metadata: dict[str, str] | None = None,
         autocommit: bool = False,
         **kwargs: Any,
-    ) -> LakeFSIOBase:
+    ) -> ObjectReader | ObjectWriter:
         """
         Dispatch a lakeFS file-like object (local buffer on disk) for the given remote path for up- or downloads depending on ``mode``.
 
@@ -634,7 +654,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         Returns
         -------
-        LakeFSIOBase
+        ObjectReader | ObjectWriter
             A local file-like object ready to hold data to be received from / sent to a lakeFS server.
 
         Raises
@@ -691,7 +711,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self,
         lpath: str | os.PathLike[str],
         rpath: str | os.PathLike[str],
-        callback: fsspec.callbacks.Callback = _DEFAULT_CALLBACK,
+        callback: Callback = DEFAULT_CALLBACK,
         precheck: bool = True,
         **kwargs: Any,
     ) -> None:
@@ -729,7 +749,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call(rpath=rpath):
             super().put_file(lpath, rpath, callback=callback, **kwargs)
 
-    # pyrefly: ignore [bad-override]
     def rm_file(self, path: str | os.PathLike[str]) -> None:  # pragma: no cover
         """
         Stage a remote file for removal on a lakeFS server.
@@ -833,13 +852,13 @@ class LakeFSFileSystem(AbstractFileSystem):
         bytes
             The bytes at the end of the requested file.
         """
-        f: ObjectReader
-        # pyrefly: ignore [bad-assignment]
         with self.open(path, "rb") as f:
-            # pyrefly: ignore [unsupported-operation]
-            f.seek(max(-size, -f._obj.stat().size_bytes), 2)
-            # pyrefly: ignore [bad-return]
-            return f.read()
+            nbytes = f._obj.stat().size_bytes
+            if nbytes is None:
+                raise ValueError(f"could not determine size of file {path}")
+
+            f.seek(max(-size, -nbytes), 2)
+            return cast(bytes, f.read())
 
     def created(self, path: str | os.PathLike[str]) -> datetime:
         """

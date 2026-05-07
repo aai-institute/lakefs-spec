@@ -178,16 +178,12 @@ class LakeFSTransaction(Transaction):
             The created commit.
         """
 
-        # pyrefly: ignore [missing-attribute]
         diff = list(self.branch.uncommitted())
 
         if not diff:
-            # pyrefly: ignore [missing-attribute]
             logger.warning(f"No changes to commit on branch {self.branch.id!r}.")
-            # pyrefly: ignore [missing-attribute]
             return self.branch.head
 
-        # pyrefly: ignore [missing-attribute]
         return self.branch.commit(message, metadata=metadata)
 
     def merge(

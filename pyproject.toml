@@ -152,3 +152,4 @@ exclude-newer = "1 week"
 
 [tool.pyrefly]
 project-excludes = ["docs/**", "tests/**"]
+infer-return-types = "annotated"
