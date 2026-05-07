@@ -35,7 +35,7 @@ jobs:
         deps:
           # Oldest supported versions
           - lakefs: "lakefs==0.2.0"
-            fsspec: "fsspec==2023.12.0"
+            fsspec: "fsspec==2024.10.0"
           # Latest versions
           - lakefs: "lakefs>0"
             fsspec: "fsspec>0"
