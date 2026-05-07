@@ -117,9 +117,12 @@ class LakeFSTransaction(Transaction):
 
     def __enter__(self):
         logger.debug(
+            # pyrefly: ignore [missing-attribute]
             f"Creating ephemeral branch {self._ephemeral_branch.id!r} "
+            # pyrefly: ignore [missing-attribute]
             f"from branch {self.base_branch.id!r}."
         )
+        # pyrefly: ignore [missing-attribute]
         self._ephemeral_branch.create(self.base_branch, exist_ok=False)
         self.fs._intrans = True
         return self
@@ -136,16 +139,21 @@ class LakeFSTransaction(Transaction):
         self.fs._intrans = False
         self.fs._transaction = None
 
+        # pyrefly: ignore [missing-attribute]
         if any(self._ephemeral_branch.uncommitted()):
+            # pyrefly: ignore [missing-attribute]
             msg = f"Finished transaction on branch {self._ephemeral_branch.id!r} with uncommitted changes."
             if self.delete != "never":
                 msg += " Objects added but not committed are lost."
             warnings.warn(msg)
 
         if success and self.automerge:
+            # pyrefly: ignore [missing-attribute]
             if any(self.base_branch.diff(self._ephemeral_branch)):
+                # pyrefly: ignore [missing-attribute]
                 self._ephemeral_branch.merge_into(self.base_branch, **self.merge_kwargs)
         if self.delete == "always" or (success and self.delete == "onsuccess"):
+            # pyrefly: ignore [missing-attribute]
             self._ephemeral_branch.delete()
 
     @property
@@ -170,12 +178,16 @@ class LakeFSTransaction(Transaction):
             The created commit.
         """
 
+        # pyrefly: ignore [missing-attribute]
         diff = list(self.branch.uncommitted())
 
         if not diff:
+            # pyrefly: ignore [missing-attribute]
             logger.warning(f"No changes to commit on branch {self.branch.id!r}.")
+            # pyrefly: ignore [missing-attribute]
             return self.branch.head
 
+        # pyrefly: ignore [missing-attribute]
         return self.branch.commit(message, metadata=metadata)
 
     def merge(
@@ -202,7 +214,9 @@ class LakeFSTransaction(Transaction):
         Commit
             Either the created merge commit, or the head commit of the target branch.
         """
+        # pyrefly: ignore [bad-argument-type]
         source = _ensurebranch(source_ref, self.repository, self.fs.client)
+        # pyrefly: ignore [bad-argument-type]
         dest = _ensurebranch(into, self.repository, self.fs.client)
 
         if any(dest.diff(source)):
@@ -230,6 +244,7 @@ class LakeFSTransaction(Transaction):
             The created revert commit.
         """
 
+        # pyrefly: ignore [bad-argument-type]
         b = _ensurebranch(branch, self.repository, self.fs.client)
 
         ref_id = ref if isinstance(ref, str) else ref.id
@@ -252,6 +267,7 @@ class LakeFSTransaction(Transaction):
         """
 
         ref_id = ref.id if isinstance(ref, Reference) else ref
+        # pyrefly: ignore [bad-argument-type]
         reference = lakefs.Reference(self.repository, ref_id, client=self.fs.client)
         return reference.get_commit()
 
@@ -273,4 +289,5 @@ class LakeFSTransaction(Transaction):
             The requested tag.
         """
 
+        # pyrefly: ignore [bad-argument-type]
         return lakefs.Tag(self.repository, name, client=self.fs.client).create(ref)

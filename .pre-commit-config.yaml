@@ -9,13 +9,16 @@ repos:
         exclude: "mkdocs.yml"
       - id: end-of-file-fixer
       - id: mixed-line-ending
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.20.2
+  - repo: https://github.com/facebook/pyrefly-pre-commit
+    rev: 0.64.0
     hooks:
-      # See https://github.com/pre-commit/mirrors-mypy/blob/main/.pre-commit-hooks.yaml
-      - id: mypy
-        types_or: [python, pyi]
-        args: [--ignore-missing-imports, --scripts-are-modules]
+      - id: pyrefly-check
+        name: Pyrefly (type checking)
+        pass_filenames: false
+        additional_dependencies:
+          - "fsspec>=2024.10.0"
+          - "lakefs>=0.2.0"
+          - "typing_extensions"
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.15.12
     hooks:

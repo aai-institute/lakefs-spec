@@ -146,6 +146,7 @@ class LakeFSFileSystem(AbstractFileSystem):
             return [cls._strip_protocol(p) for p in path]
         spath = super()._strip_protocol(path)
         if stringify_path(path).endswith("/"):
+            # pyrefly: ignore [unsupported-operation]
             return spath + "/"
         return spath
 
@@ -182,6 +183,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         except ServerException as e:
             raise translate_lakefs_error(e, rpath=rpath, message=message, set_cause=set_cause)
 
+    # pyrefly: ignore [bad-override]
     def checksum(self, path: str | os.PathLike[str]) -> str | None:
         """
         Get a remote lakeFS file object's checksum.
@@ -342,6 +344,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call(rpath=rpath):
             super().get_file(rpath, lpath, callback=callback, outfile=outfile, **kwargs)
 
+    # pyrefly: ignore [bad-override]
     def info(self, path: str | os.PathLike[str], **kwargs: Any) -> ObjectInfoData:
         """
         Query a remote lakeFS object's metadata.
@@ -598,6 +601,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         else:
             return [cast(dict, o) for o in info]
 
+    # pyrefly: ignore [bad-override]
     def open(
         self,
         path: str | os.PathLike[str],
@@ -649,6 +653,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repo, ref, resource = parse(path)
 
         if mode.startswith("r"):
+            mode = cast(Literal["r", "rb"], mode)
             reference = lakefs.Reference(repo, ref, client=self.client)
             obj = reference.object(resource)
 
@@ -658,6 +663,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 obj, mode=mode, pre_sign=pre_sign, client=self.client, **self._request_config
             )
         else:
+            mode = cast(Literal["w", "wb", "x", "xb"], mode)
             # for writing ops, ref must be a branch
             branch = lakefs.Branch(repo, ref, client=self.client)
             if self.create_branch_ok:
@@ -675,10 +681,12 @@ class LakeFSFileSystem(AbstractFileSystem):
             )
 
         if self._intrans and not autocommit and "r" not in mode:
+            # pyrefly: ignore [missing-attribute]
             self._transaction.files.append(handler)
 
         return handler
 
+    # pyrefly: ignore [bad-override-param-name]
     def put_file(
         self,
         lpath: str | os.PathLike[str],
@@ -721,6 +729,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call(rpath=rpath):
             super().put_file(lpath, rpath, callback=callback, **kwargs)
 
+    # pyrefly: ignore [bad-override]
     def rm_file(self, path: str | os.PathLike[str]) -> None:  # pragma: no cover
         """
         Stage a remote file for removal on a lakeFS server.
@@ -825,8 +834,11 @@ class LakeFSFileSystem(AbstractFileSystem):
             The bytes at the end of the requested file.
         """
         f: ObjectReader
+        # pyrefly: ignore [bad-assignment]
         with self.open(path, "rb") as f:
+            # pyrefly: ignore [unsupported-operation]
             f.seek(max(-size, -f._obj.stat().size_bytes), 2)
+            # pyrefly: ignore [bad-return]
             return f.read()
 
     def created(self, path: str | os.PathLike[str]) -> datetime:

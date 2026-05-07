@@ -50,7 +50,7 @@ def translate_lakefs_error(
     OSError
         A builtin Python exception ready to be thrown.
     """
-    status = error.status_code
+    status = error.status_code or 0
 
     if hasattr(error, "body"):
         # error has a JSON response body attached
