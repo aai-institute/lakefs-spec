@@ -35,7 +35,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "fsspec>=2023.12.0",
+    "fsspec>=2024.10.0",
     "lakefs>=0.2.0",
     "typing_extensions",
 ]
@@ -146,3 +146,6 @@ exclude = '\.git|venv'
 
 [tool.coverage.report]
 exclude_also = ["@overload", "raise NotImplementedError"]
+
+[tool.uv]
+exclude-newer = "1 week"
