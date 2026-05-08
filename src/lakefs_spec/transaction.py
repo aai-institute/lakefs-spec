@@ -7,7 +7,7 @@ import random
 import string
 import warnings
 from collections import deque
-from typing import TYPE_CHECKING, Literal, TypeVar
+from typing import TYPE_CHECKING, Any, Literal, TypeVar
 
 import lakefs
 from fsspec.transaction import Transaction
@@ -46,17 +46,19 @@ class LakeFSTransaction(Transaction):
         The lakeFS file system associated with the transaction.
     """
 
+    # set in __call__
+    repository: str
+    base_branch: Branch
+    _ephemeral_branch: Branch
+
     def __init__(self, fs: "LakeFSFileSystem"):
         super().__init__(fs=fs)
         self.fs: LakeFSFileSystem
         self.files: deque[ObjectWriter] = deque(self.files)
 
-        self.repository: str | None = None
-        self.base_branch: Branch | None = None
         self.automerge: bool = False
         self.delete: Literal["onsuccess", "always", "never"] = "onsuccess"
-        self.merge_kwargs: MergeKwargs = {}
-        self._ephemeral_branch: Branch | None = None
+        self.merge_kwargs: dict[str, Any] = {}
 
     def __call__(
         self,
@@ -109,7 +111,7 @@ class LakeFSTransaction(Transaction):
 
         self.automerge = automerge
         self.delete = delete
-        self.merge_kwargs = merge_kwargs or {}
+        self.merge_kwargs = dict(merge_kwargs) if merge_kwargs else {}
 
         ephem_name = branch_name or "transaction-" + "".join(random.choices(string.digits, k=6))  # noqa: S311
         self._ephemeral_branch = Branch(self.repository, ephem_name, client=self.fs.client)
@@ -117,12 +119,9 @@ class LakeFSTransaction(Transaction):
 
     def __enter__(self):
         logger.debug(
-            # pyrefly: ignore [missing-attribute]
             f"Creating ephemeral branch {self._ephemeral_branch.id!r} "
-            # pyrefly: ignore [missing-attribute]
             f"from branch {self.base_branch.id!r}."
         )
-        # pyrefly: ignore [missing-attribute]
         self._ephemeral_branch.create(self.base_branch, exist_ok=False)
         self.fs._intrans = True
         return self
@@ -139,25 +138,20 @@ class LakeFSTransaction(Transaction):
         self.fs._intrans = False
         self.fs._transaction = None
 
-        # pyrefly: ignore [missing-attribute]
         if any(self._ephemeral_branch.uncommitted()):
-            # pyrefly: ignore [missing-attribute]
             msg = f"Finished transaction on branch {self._ephemeral_branch.id!r} with uncommitted changes."
             if self.delete != "never":
                 msg += " Objects added but not committed are lost."
             warnings.warn(msg)
 
         if success and self.automerge:
-            # pyrefly: ignore [missing-attribute]
             if any(self.base_branch.diff(self._ephemeral_branch)):
-                # pyrefly: ignore [missing-attribute]
                 self._ephemeral_branch.merge_into(self.base_branch, **self.merge_kwargs)
         if self.delete == "always" or (success and self.delete == "onsuccess"):
-            # pyrefly: ignore [missing-attribute]
             self._ephemeral_branch.delete()
 
     @property
-    def branch(self):
+    def branch(self) -> Branch:
         return self._ephemeral_branch
 
     def commit(self, message: str, metadata: dict[str, str] | None = None) -> Reference:
@@ -210,9 +204,7 @@ class LakeFSTransaction(Transaction):
         Commit
             Either the created merge commit, or the head commit of the target branch.
         """
-        # pyrefly: ignore [bad-argument-type]
         source = _ensurebranch(source_ref, self.repository, self.fs.client)
-        # pyrefly: ignore [bad-argument-type]
         dest = _ensurebranch(into, self.repository, self.fs.client)
 
         if any(dest.diff(source)):
@@ -240,7 +232,6 @@ class LakeFSTransaction(Transaction):
             The created revert commit.
         """
 
-        # pyrefly: ignore [bad-argument-type]
         b = _ensurebranch(branch, self.repository, self.fs.client)
 
         ref_id = ref if isinstance(ref, str) else ref.id
@@ -262,8 +253,7 @@ class LakeFSTransaction(Transaction):
             The commit referenced by the expression ``ref``.
         """
 
-        ref_id = ref.id if isinstance(ref, Reference) else ref
-        # pyrefly: ignore [bad-argument-type]
+        ref_id = ref.id if isinstance(ref, Commit | Reference) else ref
         reference = lakefs.Reference(self.repository, ref_id, client=self.fs.client)
         return reference.get_commit()
 
@@ -285,5 +275,4 @@ class LakeFSTransaction(Transaction):
             The requested tag.
         """
 
-        # pyrefly: ignore [bad-argument-type]
         return lakefs.Tag(self.repository, name, client=self.fs.client).create(ref)

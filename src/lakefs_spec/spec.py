@@ -34,7 +34,7 @@ logger = logging.getLogger("lakefs-spec")
 MAX_DELETE_OBJS = 1000
 
 
-def prefix_with_underscore(d: RequestConfig) -> dict[str, Any]:
+def prefix_with_underscore(d: dict[str, Any]) -> dict[str, Any]:
     return {k if k.startswith("_") else "_" + k: v for k, v in d.items()}
 
 
@@ -78,6 +78,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     protocol = "lakefs"
     transaction_type = LakeFSTransaction
+    _transaction: LakeFSTransaction | None
 
     def __init__(
         self,
@@ -123,7 +124,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.source_branch = source_branch
 
         # a persistent config for all API requests made with the lakefs SDK.
-        self._request_config = prefix_with_underscore(request_config or {})
+        self._request_config: dict[str, Any] = prefix_with_underscore(
+            dict(request_config) if request_config else {}
+        )
 
     @cached_property
     def _lakefs_server_version(self):
@@ -699,10 +702,8 @@ class LakeFSFileSystem(AbstractFileSystem):
                 client=self.client,
                 **self._request_config,
             )
-
-        if self._intrans and not autocommit and "r" not in mode:
-            # pyrefly: ignore [missing-attribute]
-            self._transaction.files.append(handler)
+            if self._intrans and self._transaction is not None and not autocommit:
+                self._transaction.files.append(handler)
 
         return handler
 
