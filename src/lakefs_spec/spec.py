@@ -854,9 +854,9 @@ class LakeFSFileSystem(AbstractFileSystem):
             The bytes at the end of the requested file.
         """
         with self.open(path, "rb") as f:
-            nbytes = f._obj.stat().size_bytes
-            if nbytes is None:
-                raise ValueError(f"could not determine size of file {path}")
+            # size_bytes is typed int | None, but the None case is impossible
+            # for an existing file - it's optional only client-side (i.e. on uploads).
+            nbytes: int = f._obj.stat().size_bytes  # pyrefly: ignore
 
             f.seek(max(-size, -nbytes), 2)
             return cast(bytes, f.read())
