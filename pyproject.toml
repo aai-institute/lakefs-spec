@@ -149,3 +149,7 @@ exclude_also = ["@overload", "raise NotImplementedError"]
 
 [tool.uv]
 exclude-newer = "1 week"
+
+[tool.pyrefly]
+project-excludes = ["docs/**", "tests/**"]
+infer-return-types = "annotated"

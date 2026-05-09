@@ -7,7 +7,7 @@ import random
 import string
 import warnings
 from collections import deque
-from typing import TYPE_CHECKING, Literal, TypeVar
+from typing import TYPE_CHECKING, Any, Literal, TypeVar
 
 import lakefs
 from fsspec.transaction import Transaction
@@ -46,17 +46,19 @@ class LakeFSTransaction(Transaction):
         The lakeFS file system associated with the transaction.
     """
 
+    # set in __call__
+    repository: str
+    base_branch: Branch
+    _ephemeral_branch: Branch
+
     def __init__(self, fs: "LakeFSFileSystem"):
         super().__init__(fs=fs)
         self.fs: LakeFSFileSystem
         self.files: deque[ObjectWriter] = deque(self.files)
 
-        self.repository: str | None = None
-        self.base_branch: Branch | None = None
         self.automerge: bool = False
         self.delete: Literal["onsuccess", "always", "never"] = "onsuccess"
-        self.merge_kwargs: MergeKwargs = {}
-        self._ephemeral_branch: Branch | None = None
+        self.merge_kwargs: dict[str, Any] = {}
 
     def __call__(
         self,
@@ -109,7 +111,7 @@ class LakeFSTransaction(Transaction):
 
         self.automerge = automerge
         self.delete = delete
-        self.merge_kwargs = merge_kwargs or {}
+        self.merge_kwargs = dict(merge_kwargs) if merge_kwargs else {}
 
         ephem_name = branch_name or "transaction-" + "".join(random.choices(string.digits, k=6))  # noqa: S311
         self._ephemeral_branch = Branch(self.repository, ephem_name, client=self.fs.client)
@@ -149,7 +151,7 @@ class LakeFSTransaction(Transaction):
             self._ephemeral_branch.delete()
 
     @property
-    def branch(self):
+    def branch(self) -> Branch:
         return self._ephemeral_branch
 
     def commit(self, message: str, metadata: dict[str, str] | None = None) -> Reference:
@@ -251,7 +253,7 @@ class LakeFSTransaction(Transaction):
             The commit referenced by the expression ``ref``.
         """
 
-        ref_id = ref.id if isinstance(ref, Reference) else ref
+        ref_id = ref.id if isinstance(ref, Commit | Reference) else ref
         reference = lakefs.Reference(self.repository, ref_id, client=self.fs.client)
         return reference.get_commit()
 

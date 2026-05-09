@@ -15,15 +15,14 @@ from functools import cached_property
 from pathlib import Path
 from typing import Any, Literal, cast, overload
 
-import fsspec.callbacks
 import lakefs
-from fsspec.callbacks import _DEFAULT_CALLBACK
+from fsspec.callbacks import DEFAULT_CALLBACK, Callback
 from fsspec.spec import AbstractFileSystem
 from fsspec.utils import stringify_path
 from lakefs.client import Client
 from lakefs.exceptions import NotFoundException, ServerException
 from lakefs.models import CommonPrefix, ObjectInfo
-from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
+from lakefs.object import ObjectReader, ObjectWriter
 
 from lakefs_spec.errors import translate_lakefs_error
 from lakefs_spec.transaction import LakeFSTransaction
@@ -35,7 +34,7 @@ logger = logging.getLogger("lakefs-spec")
 MAX_DELETE_OBJS = 1000
 
 
-def prefix_with_underscore(d: RequestConfig) -> dict[str, Any]:
+def prefix_with_underscore(d: dict[str, Any]) -> dict[str, Any]:
     return {k if k.startswith("_") else "_" + k: v for k, v in d.items()}
 
 
@@ -79,6 +78,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
     protocol = "lakefs"
     transaction_type = LakeFSTransaction
+    _transaction: LakeFSTransaction | None
 
     def __init__(
         self,
@@ -124,7 +124,9 @@ class LakeFSFileSystem(AbstractFileSystem):
         self.source_branch = source_branch
 
         # a persistent config for all API requests made with the lakefs SDK.
-        self._request_config = prefix_with_underscore(request_config or {})
+        self._request_config: dict[str, Any] = prefix_with_underscore(
+            dict(request_config) if request_config else {}
+        )
 
     @cached_property
     def _lakefs_server_version(self):
@@ -303,7 +305,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         self,
         rpath: str | os.PathLike[str],
         lpath: str | os.PathLike[str],
-        callback: fsspec.callbacks.Callback = _DEFAULT_CALLBACK,
+        callback: Callback = DEFAULT_CALLBACK,
         outfile: Any = None,
         precheck: bool = True,
         **kwargs: Any,
@@ -598,6 +600,31 @@ class LakeFSFileSystem(AbstractFileSystem):
         else:
             return [cast(dict, o) for o in info]
 
+    @overload
+    # pyrefly: ignore [bad-override]
+    def open(
+        self,
+        path: str | os.PathLike[str],
+        mode: Literal["r", "rb"],
+        pre_sign: bool | None = None,
+        content_type: str | None = None,
+        metadata: dict[str, str] | None = None,
+        autocommit: bool = False,
+        **kwargs: Any,
+    ) -> ObjectReader: ...
+
+    @overload
+    def open(
+        self,
+        path: str | os.PathLike[str],
+        mode: Literal["w", "wb", "x", "xb"],
+        pre_sign: bool | None = None,
+        content_type: str | None = None,
+        metadata: dict[str, str] | None = None,
+        autocommit: bool = False,
+        **kwargs: Any,
+    ) -> ObjectWriter: ...
+
     def open(
         self,
         path: str | os.PathLike[str],
@@ -607,7 +634,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         metadata: dict[str, str] | None = None,
         autocommit: bool = False,
         **kwargs: Any,
-    ) -> LakeFSIOBase:
+    ) -> ObjectReader | ObjectWriter:
         """
         Dispatch a lakeFS file-like object (local buffer on disk) for the given remote path for up- or downloads depending on ``mode``.
 
@@ -630,7 +657,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         Returns
         -------
-        LakeFSIOBase
+        ObjectReader | ObjectWriter
             A local file-like object ready to hold data to be received from / sent to a lakeFS server.
 
         Raises
@@ -649,6 +676,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         repo, ref, resource = parse(path)
 
         if mode.startswith("r"):
+            mode = cast(Literal["r", "rb"], mode)
             reference = lakefs.Reference(repo, ref, client=self.client)
             obj = reference.object(resource)
 
@@ -658,6 +686,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 obj, mode=mode, pre_sign=pre_sign, client=self.client, **self._request_config
             )
         else:
+            mode = cast(Literal["w", "wb", "x", "xb"], mode)
             # for writing ops, ref must be a branch
             branch = lakefs.Branch(repo, ref, client=self.client)
             if self.create_branch_ok:
@@ -673,17 +702,17 @@ class LakeFSFileSystem(AbstractFileSystem):
                 client=self.client,
                 **self._request_config,
             )
-
-        if self._intrans and not autocommit and "r" not in mode:
-            self._transaction.files.append(handler)
+            if self._intrans and self._transaction is not None and not autocommit:
+                self._transaction.files.append(handler)
 
         return handler
 
+    # pyrefly: ignore [bad-override-param-name]
     def put_file(
         self,
         lpath: str | os.PathLike[str],
         rpath: str | os.PathLike[str],
-        callback: fsspec.callbacks.Callback = _DEFAULT_CALLBACK,
+        callback: Callback = DEFAULT_CALLBACK,
         precheck: bool = True,
         **kwargs: Any,
     ) -> None:
@@ -824,10 +853,13 @@ class LakeFSFileSystem(AbstractFileSystem):
         bytes
             The bytes at the end of the requested file.
         """
-        f: ObjectReader
         with self.open(path, "rb") as f:
-            f.seek(max(-size, -f._obj.stat().size_bytes), 2)
-            return f.read()
+            # size_bytes is typed int | None, but the None case is impossible
+            # for an existing file - it's optional only client-side (i.e. on uploads).
+            nbytes: int = f._obj.stat().size_bytes  # pyrefly: ignore
+
+            f.seek(max(-size, -nbytes), 2)
+            return cast(bytes, f.read())
 
     def created(self, path: str | os.PathLike[str]) -> datetime:
         """
