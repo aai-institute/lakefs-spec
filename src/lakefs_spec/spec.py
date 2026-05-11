@@ -605,7 +605,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     def open(
         self,
         path: str | os.PathLike[str],
-        mode: Literal["r", "rb"],
+        mode: Literal["r", "rb", "rt"],
         pre_sign: bool | None = None,
         content_type: str | None = None,
         metadata: dict[str, str] | None = None,
@@ -617,7 +617,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     def open(
         self,
         path: str | os.PathLike[str],
-        mode: Literal["w", "wb", "x", "xb"],
+        mode: Literal["w", "wb", "wt", "x", "xb", "xt"],
         pre_sign: bool | None = None,
         content_type: str | None = None,
         metadata: dict[str, str] | None = None,
@@ -643,7 +643,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         path: str | os.PathLike[str]
             The remote path for which to open a local ``LakeFSFile``. Must be a fully qualified lakeFS URI.
         mode: Literal["r", "rb", "rt", "w", "wb", "wt", "x", "xb", "xt"]
-            The file mode indicating its purpose. Use ``r/rb`` for downloads from lakeFS, ``w/wb/x/xb`` for uploads to lakeFS.
+            The file mode indicating its purpose. Use ``r/rb/rt`` for downloads from lakeFS, ``w/wb/wt/x/xb/xt`` for uploads to lakeFS.
         pre_sign: bool | None
             Whether to use a pre-signed URL for the file up-/download. If ``None``, the value from the storage configuration is used.
         content_type: str | None
