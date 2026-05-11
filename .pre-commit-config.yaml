@@ -15,10 +15,7 @@ repos:
       - id: pyrefly-check
         name: Pyrefly (type checking)
         pass_filenames: false
-        additional_dependencies:
-          - "fsspec>=2024.10.0"
-          - "lakefs>=0.2.0"
-          - "typing_extensions"
+        language: system
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.15.12
     hooks:
