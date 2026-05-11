@@ -151,5 +151,6 @@ exclude_also = ["@overload", "raise NotImplementedError"]
 exclude-newer = "1 week"
 
 [tool.pyrefly]
-project-excludes = ["docs/**", "tests/**"]
+project-excludes = ["tests/**", "docs/_scripts/**"]
+ignore-missing-imports = ["sklearn.*", "duckdb", "pandas", "pyarrow.*", "polars", "datasets"]
 infer-return-types = "annotated"

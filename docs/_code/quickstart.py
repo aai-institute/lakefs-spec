@@ -17,7 +17,7 @@ with fs.transaction(REPO, BRANCH) as tx:
     tx.commit(message="Add demo data")
 
 # Read back the file contents
-f = fs.open(repo_path, "rt")
+f = fs.open(repo_path, "r")
 print(f.readline())  # prints "Hello, lakeFS!"
 
 # Compare the sizes of local file and repo

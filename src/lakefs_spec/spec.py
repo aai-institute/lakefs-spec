@@ -856,7 +856,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.open(path, "rb") as f:
             # size_bytes is typed int | None, but the None case is impossible
             # for an existing file - it's optional only client-side (i.e. on uploads).
-            nbytes: int = f._obj.stat().size_bytes  # pyrefly: ignore
+            nbytes: int = f._obj.stat().size_bytes  # pyrefly: ignore[bad-assignment]
 
             f.seek(max(-size, -nbytes), 2)
             return cast(bytes, f.read())
