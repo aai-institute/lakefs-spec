@@ -22,14 +22,6 @@ repos:
       - id: ruff-check
         args: [--fix, --exit-non-zero-on-fix]
       - id: ruff-format
-  #   Disabled due to incompatibility with our exception translator facility.
-  #   See https://github.com/jsh9/pydoclint/issues/174
-  #   TODO(nicholasjng): Re-enable once fixed or an ignore facility is available.
-  #  - repo: https://github.com/jsh9/pydoclint
-  #    rev: 0.5.9
-  #    hooks:
-  #      - id: pydoclint
-  #        args: [--check-class-attributes=False]
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.11.11
     hooks:
