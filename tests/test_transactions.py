@@ -17,12 +17,11 @@ def test_transaction_commit(
     random_file = random_file_factory.make()
 
     lpath = str(random_file)
-    rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"
 
     message = f"Add file {random_file.name}"
 
     with fs.transaction(repository, temp_branch) as tx:
-        fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+        fs.put_file(lpath, random_file.name)
         assert len(tx.files) == 1
         # sha is a placeholder for the actual SHA created on transaction completion.
         sha = tx.commit(message=message)
@@ -65,7 +64,7 @@ def test_transaction_merge(
             tbname = tx.branch.id
             lpath = str(random_file)
             # stage a file on the transaction branch...
-            fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+            fs.put_file(lpath, random_file.name)
             # ... commit it with the above message
             tx.commit(message=message)
             # ... and merge it into temp_branch.
@@ -90,7 +89,7 @@ def test_transaction_revert(
     message = f"Add file {random_file.name}"
 
     with fs.transaction(repository, temp_branch, automerge=True) as tx:
-        fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+        fs.put_file(lpath, random_file.name)
         tx.commit(message=message)
         revert_commit = tx.revert(temp_branch, temp_branch.head)
 
@@ -113,7 +112,7 @@ def test_transaction_failure(
 
     try:
         with fs.transaction(repository, temp_branch) as tx:
-            fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+            fs.put_file(lpath, random_file.name)
             tx.commit(message=message)
             raise RuntimeError("something went wrong")
     except RuntimeError:
@@ -159,8 +158,8 @@ def test_warn_uncommitted_changes(
     lpath = str(random_file)
 
     with pytest.warns(match="uncommitted changes.*lost"):
-        with fs.transaction(repository, temp_branch) as tx:
-            fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+        with fs.transaction(repository, temp_branch):
+            fs.put_file(lpath, random_file.name)
 
 
 def test_warn_uncommitted_changes_on_persisted_branch(
@@ -175,4 +174,4 @@ def test_warn_uncommitted_changes_on_persisted_branch(
 
     with pytest.warns(match="uncommitted changes(?:(?!lost).)*$"):
         with fs.transaction(repository, temp_branch, delete="never") as tx:
-            fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+            fs.put_file(lpath, random_file.name)
