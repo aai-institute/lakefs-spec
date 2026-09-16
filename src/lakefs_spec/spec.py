@@ -712,6 +712,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         lpath: str | os.PathLike[str],
         rpath: str | os.PathLike[str],
         callback: Callback = DEFAULT_CALLBACK,
+        mode: Literal["overwrite", "create"] = "overwrite",
+        *,
         precheck: bool = True,
         **kwargs: Any,
     ) -> None:
@@ -728,15 +730,26 @@ class LakeFSFileSystem(AbstractFileSystem):
             The remote target path to upload the local file to. Must be a fully qualified lakeFS URI.
         callback: fsspec.callbacks.Callback
             An fsspec callback to use during the operation. Can be used to report download progress.
+        mode: Literal["overwrite", "create"]
+            Write mode. ``"overwrite"`` replaces an existing remote file, ``"create"`` raises a ``FileExistsError`` if ``rpath`` already exists.
         precheck: bool
-            Check if ``lpath`` already exists and compare its checksum with that of ``rpath``, skipping the download if they match.
+            Check if ``rpath`` already exists and compare its checksum with that of ``lpath``, skipping the upload if they match.
+            Only applies when ``mode="overwrite"``.
         **kwargs: Any
             Additional keyword arguments to pass to ``LakeFSFileSystem.open()``.
+
+        Raises
+        ------
+        FileExistsError
+            If ``mode="create"`` and ``rpath`` already exists.
         """
         lpath = stringify_path(lpath)
         rpath = stringify_path(rpath)
 
-        if precheck and Path(lpath).is_file():
+        if mode == "create" and self.exists(rpath):
+            raise FileExistsError(rpath)
+
+        if mode == "overwrite" and precheck and Path(lpath).is_file():
             remote_checksum = self.checksum(rpath)
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             if local_checksum == remote_checksum:
@@ -747,7 +760,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 return
 
         with self.wrapped_api_call(rpath=rpath):
-            super().put_file(lpath, rpath, callback=callback, **kwargs)
+            super().put_file(lpath, rpath, callback=callback, mode=mode, **kwargs)
 
     def rm_file(self, path: str | os.PathLike[str]) -> None:  # pragma: no cover
         """
