@@ -38,7 +38,7 @@ jobs:
         with:
           pythonVersion: 3.11
       - name: Build and check
-        run: uv run --no-sync -m build
+        run: uv build
       - name: Upload build artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
