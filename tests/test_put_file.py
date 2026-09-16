@@ -66,7 +66,7 @@ def test_put_client_caching(
     """
     Tests that ``precheck=True`` prevents a second upload of an identical file by matching checksums.
     """
-    fs.client, counter = with_counter(fs.client)
+    fs.client, _ = with_counter(fs.client)
 
     rpath = put_random_file_on_branch(random_file_factory, fs, repository, temp_branch)
     assert fs.exists(rpath)

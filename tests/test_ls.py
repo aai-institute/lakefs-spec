@@ -16,12 +16,12 @@ def test_ls_basic(fs: LakeFSFileSystem, repository: Repository) -> None:
 
     all_results = fs.ls(resource, detail=True)
     assert len(all_results) == len(expected_files)
-    assert all([o["type"] in ["file", "directory"] for o in all_results])
-    assert all([o["name"].startswith(resource) for o in all_results])
+    assert all(o["type"] in ["file", "directory"] for o in all_results)
+    assert all(o["name"].startswith(resource) for o in all_results)
 
     all_results = fs.ls(resource, detail=False)
     assert len(all_results) == len(expected_files)
-    assert all([o.startswith(resource) for o in all_results])
+    assert all(o.startswith(resource) for o in all_results)
     assert isinstance(all_results, list)
 
 
@@ -80,7 +80,7 @@ def test_ls_with_one_dir(
     list_of_files = fs.ls(root_resource)
     assert [fs.unstrip_protocol(x["name"]) for x in list_of_files] == [f"{root_resource}test/"]
     assert len(fs.dircache) == 1
-    assert {fs.unstrip_protocol(x) for x in fs.dircache.keys()} == {root_resource.removesuffix("/")}
+    assert {fs.unstrip_protocol(x) for x in fs.dircache} == {root_resource.removesuffix("/")}
 
     # Check testdir
     testdir = "test"
@@ -91,7 +91,7 @@ def test_ls_with_one_dir(
         f"{resource}/lakes2.parquet",
     ]
     assert len(fs.dircache) == 2
-    assert {fs.unstrip_protocol(x) for x in fs.dircache.keys()} == {
+    assert {fs.unstrip_protocol(x) for x in fs.dircache} == {
         resource.removesuffix("/"),
         root_resource.removesuffix("/"),
     }
@@ -214,7 +214,7 @@ def test_ls_dircache_recursive(
 
     # Dircache invariant: all files in an entry must be direct descendants of its parent
     for cache_dir, files in fs.dircache.items():
-        assert all([fs._parent(v["name"].rstrip("/")) == cache_dir for v in files])
+        assert all(fs._parent(v["name"].rstrip("/")) == cache_dir for v in files)
 
     # (2) Dircache correctness, recursive
     cached_listing_recursive = fs.ls(prefix + "/", recursive=True)
@@ -225,19 +225,19 @@ def test_ls_dircache_recursive(
     cached_listing_nonrecursive = fs.ls(prefix + "/", recursive=False)
     # Non-recursive listing from cache must only contain direct descendants of the listed directory
     # (and the subfolders directly contained therein)
-    assert all([fs._parent(o["name"].rstrip("/")) == prefix for o in cached_listing_nonrecursive])
+    assert all(fs._parent(o["name"].rstrip("/")) == prefix for o in cached_listing_nonrecursive)
 
     # (4) Adding a file should only modify a single dircache entry
     directory = "data"
     filename = "new-file.txt"
     rpath = f"{prefix}/{directory}/{filename}"
 
-    old_cache_len = len(fs.dircache.get(f"{prefix}/{directory}"))
+    old_cache_len = len(fs.dircache[f"{prefix}/{directory}"])
 
     fs.pipe(rpath, b"data")
     _ = fs.ls(prefix + "/", refresh=True, recursive=True)
 
-    cache_entry = fs.dircache.get(f"{prefix}/{directory}")
+    cache_entry = fs.dircache[f"{prefix}/{directory}"]
 
     # Added file appears in the cache entry for its parent dir
     assert len(cache_entry) == old_cache_len + 1
@@ -245,7 +245,7 @@ def test_ls_dircache_recursive(
 
     # Dircache invariant is maintained
     for cache_dir, files in fs.dircache.items():
-        assert all([fs._parent(v["name"].rstrip("/")) == cache_dir for v in files])
+        assert all(fs._parent(v["name"].rstrip("/")) == cache_dir for v in files)
 
 
 def test_ls_directories(

@@ -113,7 +113,7 @@ class LakeFSTransaction(Transaction):
         self.delete = delete
         self.merge_kwargs = dict(merge_kwargs) if merge_kwargs else {}
 
-        ephem_name = branch_name or "transaction-" + "".join(random.choices(string.digits, k=6))  # noqa: S311
+        ephem_name = branch_name or "transaction-" + "".join(random.choices(string.digits, k=6))
         self._ephemeral_branch = Branch(self.repository, ephem_name, client=self.fs.client)
         return self
 
@@ -144,9 +144,8 @@ class LakeFSTransaction(Transaction):
                 msg += " Objects added but not committed are lost."
             warnings.warn(msg)
 
-        if success and self.automerge:
-            if any(self.base_branch.diff(self._ephemeral_branch)):
-                self._ephemeral_branch.merge_into(self.base_branch, **self.merge_kwargs)
+        if success and self.automerge and any(self.base_branch.diff(self._ephemeral_branch)):
+            self._ephemeral_branch.merge_into(self.base_branch, **self.merge_kwargs)
         if self.delete == "always" or (success and self.delete == "onsuccess"):
             self._ephemeral_branch.delete()
 

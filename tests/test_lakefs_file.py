@@ -81,8 +81,10 @@ def test_lakefs_file_open_pre_sign_none_uses_storage_config(
     """Test that pre_sign=None uses the storage configuration's pre_sign_support value."""
     rpath = put_random_file_on_branch(random_file_factory, fs, repository, temp_branch)
 
-    # Open file with pre_sign=None
-    with fs.open(rpath, mode="rb", pre_sign=None) as fp:
+    # Open file with pre_sign=None.
+    # NB: bind before the `with` block, since lakefs types `__enter__` as `LakeFSIOBase`.
+    fp = fs.open(rpath, mode="rb", pre_sign=None)
+    with fp:
         # Get the expected pre_sign value from storage config
         client = fp._client
         # Get the expected pre_sign value from storage config

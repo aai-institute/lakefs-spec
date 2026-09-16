@@ -87,13 +87,15 @@ def test_request_config(repository: Repository) -> None:
     # Mock `get_object_with_http_info` to intercept the API call made on read() below,
     # and assert it contains the custom timeout.
     api = fs.client.sdk_client.objects_api  # pyright: ignore[reportOptionalMemberAccess]
-    with patch.object(
-        api,
-        "get_object_with_http_info",
-        wraps=api.get_object_with_http_info,
-    ) as get_object:
-        with fs.open(f"lakefs://{repository.id}/main/lakes.parquet") as fp:
-            fp.read(1)
+    with (
+        patch.object(
+            api,
+            "get_object_with_http_info",
+            wraps=api.get_object_with_http_info,
+        ) as get_object,
+        fs.open(f"lakefs://{repository.id}/main/lakes.parquet") as fp,
+    ):
+        fp.read(1)
 
     # Timeout should show up in the API call kwargs
     assert get_object.call_count == 1

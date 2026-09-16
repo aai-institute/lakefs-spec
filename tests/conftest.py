@@ -11,6 +11,7 @@ from unittest.mock import MagicMock
 import lakefs
 import pytest
 import yaml
+from lakefs.branch import Branch
 from lakefs.client import Client
 from lakefs.repository import Repository
 
@@ -74,7 +75,7 @@ def repository(_client: Client) -> Repository:
 @pytest.fixture
 def temporary_branch_context(repository: Repository) -> Any:
     @contextlib.contextmanager
-    def _wrapper(name: str) -> YieldFixture[str]:
+    def _wrapper(name: str) -> YieldFixture[Branch]:
         branch = repository.branch(name)
         try:
             yield branch.create("main", exist_ok=False)
@@ -85,7 +86,7 @@ def temporary_branch_context(repository: Repository) -> Any:
 
 
 @pytest.fixture
-def temp_branch(repository: str, temporary_branch_context: Any) -> YieldFixture[str]:
+def temp_branch(repository: Repository, temporary_branch_context: Any) -> YieldFixture[Branch]:
     """Create a temporary branch for a test."""
     name = "test-" + "".join(random.choices(string.digits, k=8))
     with temporary_branch_context(name) as tb:
