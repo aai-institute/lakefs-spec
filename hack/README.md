@@ -38,7 +38,11 @@ you can remove the container and attached volume like so:
 docker compose -f hack/lakefs-s3-local.yml rm -v
 ```
 
-In order to write to the local S3 blockstore using `LakeFSFileSystem.put_file_to_blockstore`, you can use the following
+The `sandbox` bucket used as the lakeFS storage namespace is created automatically on startup.
+Pre-signed uploads and downloads (`pre_sign=True`) work from the host, since the S3 endpoint is reachable under the
+same address (`http://127.0.0.1:9001`) from both lakeFS and the host.
+
+In order to access the local S3 blockstore directly, e.g. with the AWS CLI or `boto3`, you can use the following
 environment variables and values:
 
 ```shell
