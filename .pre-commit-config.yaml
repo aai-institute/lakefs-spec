@@ -9,26 +9,31 @@ repos:
         exclude: "mkdocs.yml"
       - id: end-of-file-fixer
       - id: mixed-line-ending
-  - repo: https://github.com/facebook/pyrefly-pre-commit
-    rev: 0.64.1
-    hooks:
-      - id: pyrefly-check
-        name: Pyrefly (type checking)
-        pass_filenames: false
-        language: system
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.12
+  - repo: local
     hooks:
       - id: ruff-check
-        args: [--fix, --exit-non-zero-on-fix]
+        name: ruff check
+        entry: uv run ruff check --fix --exit-non-zero-on-fix
+        language: system
+        types_or: [python, pyi]
       - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types_or: [python, pyi]
+      - id: ty-check
+        name: ty check
+        entry: uv run ty check
+        language: system
+        types_or: [python, pyi]
+        pass_filenames: false
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.11.13
+    rev: 0.12.15
     hooks:
       - id: uv-lock
         name: Lock project dependencies
   - repo: https://github.com/woodruffw/zizmor-pre-commit
-    rev: v1.24.1
+    rev: v1.30.1
     hooks:
       - id: zizmor
         args: [--min-severity=medium]
