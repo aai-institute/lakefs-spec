@@ -1,19 +1,38 @@
-# This docker-compose file provides an ephemeral lakeFS quickstart instance for local development.
+# Provides a lakeFS instance with a local, SeaweedFS-backed S3 blockstore for local development.
+
 services:
   seaweedfs:
     container_name: sandbox-s3
-    image: chrislusf/seaweedfs:3.61
-    network_mode: host
+    image: chrislusf/seaweedfs:4.47
+    ports:
+      - 8000:8000
+      - 9001:9001
     command: server -ip.bind 0.0.0.0 -master.volumeSizeLimitMB=1024 -volume.port=9000 -filer.collection=sandbox -s3 -s3.port 9001 -s3.config=/etc/seaweedfs/s3.json -s3.allowEmptyFolder=true -s3.allowDeleteBucketNotEmpty=true
     volumes:
       - seaweedfs-data:/data
       - ./config/s3.json:/etc/seaweedfs/s3.json
 
-  lakefs:
-    image: treeverse/lakefs:1.37.0
-    network_mode: host
+  create-bucket:
+    image: chrislusf/seaweedfs:4.47
+    network_mode: "service:seaweedfs"
     depends_on:
       - seaweedfs
+    restart: "no"
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        until echo "s3.bucket.create -name sandbox" | weed shell -master 127.0.0.1:9333 -filer 127.0.0.1:8888; do
+          echo "waiting for SeaweedFS..."; sleep 1
+        done
+
+  lakefs:
+    image: treeverse/lakefs:1.86.0
+    network_mode: "service:seaweedfs"
+    depends_on:
+      seaweedfs:
+        condition: service_started
+      create-bucket:
+        condition: service_completed_successfully
     environment:
       LAKEFS_INSTALLATION_USER_NAME: "quickstart"
       LAKEFS_INSTALLATION_ACCESS_KEY_ID: "AKIAIOSFOLQUICKSTART"
