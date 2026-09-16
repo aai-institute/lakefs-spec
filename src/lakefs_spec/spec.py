@@ -720,8 +720,6 @@ class LakeFSFileSystem(AbstractFileSystem):
         """
         Upload a local file to a remote location on a lakeFS server.
 
-        Note that depending on the block store type, additional configuration like credentials may need to be configured when ``use_blockstore=True`` and ``presign=False``.
-
         Parameters
         ----------
         lpath: str | os.PathLike[str]
