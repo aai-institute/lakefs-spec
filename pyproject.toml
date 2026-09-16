@@ -35,7 +35,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "fsspec>=2024.10.0",
+    "fsspec>=2024.12.0",
     "lakefs>=0.2.0",
     "typing_extensions",
 ]
