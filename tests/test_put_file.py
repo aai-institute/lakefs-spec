@@ -70,3 +70,25 @@ def test_put_client_caching(
 
     rpath = put_random_file_on_branch(random_file_factory, fs, repository, temp_branch)
     assert fs.exists(rpath)
+
+
+def test_put_file_create_mode(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: Branch,
+) -> None:
+    random_file = random_file_factory.make()
+    lpath = str(random_file)
+    rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"
+
+    # First upload succeeds, since the remote file does not exist yet.
+    fs.put_file(lpath, rpath, mode="create")
+    assert fs.exists(rpath)
+
+    # Second upload in "create" mode fails, even if the checksums would match.
+    with pytest.raises(FileExistsError):
+        fs.put_file(lpath, rpath, mode="create")
+
+    # Overwrite mode still works.
+    fs.put_file(lpath, rpath, mode="overwrite", precheck=False)
