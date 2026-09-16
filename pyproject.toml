@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=45", "setuptools-scm[toml]>=7.1"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
 [project]
 name = "lakefs-spec"
@@ -51,7 +51,6 @@ Documentation = "https://lakefs-spec.org/latest"
 
 [dependency-groups]
 dev = [
-    "build>=0.10.0",
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",
     "pytest-asyncio>=0.24.0",
@@ -83,17 +82,16 @@ docs = [
     "pandas",
 ]
 
-[tool.setuptools]
-package-dir = { "" = "src" }
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-data]
-lakefs_spec = ["py.typed"]
-
 # Automatically determine version number from Git tags
-[tool.setuptools_scm]
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lakefs_spec"]
+
+[tool.hatch.build.targets.sdist]
+# pyproject.toml, README.md and LICENSE are always included.
+only-include = ["src", "tests", "assets"]
 
 [tool.uv]
 default-groups = ["dev", "docs"]
