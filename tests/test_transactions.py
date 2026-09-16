@@ -143,9 +143,11 @@ def test_transaction_no_automerge(
 
 
 def test_transaction_bad_repo(fs: LakeFSFileSystem) -> None:
-    with pytest.raises(ValueError, match="repository .* does not exist"):
-        with fs.transaction(repository="REEEE"):
-            pass
+    with (
+        pytest.raises(ValueError, match="repository .* does not exist"),
+        fs.transaction(repository="REEEE"),
+    ):
+        pass
 
 
 def test_warn_uncommitted_changes(
@@ -158,9 +160,11 @@ def test_warn_uncommitted_changes(
 
     lpath = str(random_file)
 
-    with pytest.warns(match="uncommitted changes.*lost"):
-        with fs.transaction(repository, temp_branch) as tx:
-            fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+    with (
+        pytest.warns(match="uncommitted changes.*lost"),
+        fs.transaction(repository, temp_branch) as tx,
+    ):
+        fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
 
 
 def test_warn_uncommitted_changes_on_persisted_branch(
@@ -173,6 +177,8 @@ def test_warn_uncommitted_changes_on_persisted_branch(
 
     lpath = str(random_file)
 
-    with pytest.warns(match="uncommitted changes(?:(?!lost).)*$"):
-        with fs.transaction(repository, temp_branch, delete="never") as tx:
-            fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
+    with (
+        pytest.warns(match="uncommitted changes(?:(?!lost).)*$"),
+        fs.transaction(repository, temp_branch, delete="never") as tx,
+    ):
+        fs.put_file(lpath, f"{repository.id}/{tx.branch.id}/{random_file.name}")
