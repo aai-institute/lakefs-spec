@@ -22,16 +22,16 @@ To get started with development, you can follow these steps (requires an install
    uv sync --all-groups
    ```
 
-3. After making your changes, verify they adhere to our Python code style by running `pre-commit`:
+3. After making your changes, verify they adhere to our Python code style by running the pre-commit hooks with [`prek`](https://prek.j178.dev/):
 
    ```shell
-   uv run pre-commit run --all-files
+   uvx prek run --all-files
    ```
 
-   You can also set up Git hooks through `pre-commit` to perform these checks automatically:
+   You can also set up Git hooks through `prek` to perform these checks automatically:
 
    ```shell
-   uv run pre-commit install
+   uvx prek install
    ```
 
 4. To run the tests against an ephemeral lakeFS instance, you just run `pytest`:
@@ -94,5 +94,5 @@ When adding or modifying GitHub Actions workflows, ensure that:
 
 2. Run zizmor locally to check for issues before submitting (`zizmor` is also part of the pre-commit hooks):
    ```shell
-   uv run zizmor .github
+   uvx zizmor .github
    ```

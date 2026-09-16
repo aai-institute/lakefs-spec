@@ -52,8 +52,6 @@ Documentation = "https://lakefs-spec.org/latest"
 [dependency-groups]
 dev = [
     "build>=0.10.0",
-    "pre-commit>=3.3.3",
-    "pyrefly>=0.63.1",
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",
     "pytest-asyncio>=0.24.0",
@@ -61,6 +59,8 @@ dev = [
     "pandas[parquet]",
     "polars",
     "duckdb",
+    "ty>=0.0.79",
+    "ruff>=0.16.6",
 ]
 docs = [
     "mkdocs",
@@ -95,17 +95,19 @@ lakefs_spec = ["py.typed"]
 # Automatically determine version number from Git tags
 [tool.setuptools_scm]
 
+[tool.uv]
+default-groups = ["dev", "docs"]
+exclude-newer = "1 week"
+exclude-newer-package = { ruff = false, ty = false }
+
 [tool.ruff]
-# explicitly set src folder for isort to understand first-party imports correctly.
-src = ["src"]
 line-length = 100
 target-version = "py310"
 
 [tool.ruff.lint]
-# Enable pycodestyle errors & warnings (`E`, `W`), bandit (`S`), Pyflakes (`F`),
-# isort (`I`), and pyupgrade (`UP`) by default.
-select = ["E", "F", "I", "S", "W", "UP"]
 ignore = [
+    # Allow dict literals
+    "C408",
     # Line too long
     "E501",
     # Allow capitalized variable names
@@ -126,13 +128,12 @@ log_cli = true
 log_cli_level = "WARNING"
 asyncio_default_fixture_loop_scope = "function"
 
+[[tool.ty.overrides]]
+# The HF datasets example is not runnable in the dev environment, ignore the missing import.
+include = ["docs/_code/hf_datasets_example.py"]
+
+[tool.ty.overrides.rules]
+unresolved-import = "ignore"
+
 [tool.coverage.report]
 exclude_also = ["@overload", "raise NotImplementedError"]
-
-[tool.uv]
-exclude-newer = "1 week"
-
-[tool.pyrefly]
-project-excludes = ["tests/**", "docs/_scripts/**"]
-ignore-missing-imports = ["datasets", "sklearn.*"]
-infer-return-types = "annotated"

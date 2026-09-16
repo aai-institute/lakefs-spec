@@ -1,6 +1,6 @@
 rules:
   unpinned-images: # ignore lakefs:latest tags in CI
     ignore:
-      - python.yaml:46
-      - python.yaml:86
+      - python.yaml:49
+      - python.yaml:89
       - release.yaml:20
