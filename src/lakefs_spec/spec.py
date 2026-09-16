@@ -307,6 +307,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         lpath: str | os.PathLike[str],
         callback: Callback = DEFAULT_CALLBACK,
         outfile: Any = None,
+        *,
         precheck: bool = True,
         **kwargs: Any,
     ) -> None:
@@ -601,11 +602,10 @@ class LakeFSFileSystem(AbstractFileSystem):
             return [cast(dict, o) for o in info]
 
     @overload
-    # pyrefly: ignore [bad-override]
     def open(
         self,
         path: str | os.PathLike[str],
-        mode: Literal["r", "rb", "rt"],
+        mode: Literal["r", "rb", "rt"] = "rb",
         pre_sign: bool | None = None,
         content_type: str | None = None,
         metadata: dict[str, str] | None = None,
@@ -625,7 +625,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         **kwargs: Any,
     ) -> ObjectWriter: ...
 
-    def open(
+    def open(  # ty: ignore[invalid-method-override]
         self,
         path: str | os.PathLike[str],
         mode: Literal["r", "rb", "rt", "w", "wb", "wt", "x", "xb", "xt"] = "rb",
@@ -667,7 +667,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         """
         if mode.endswith("t"):
             # text modes {r,w,x}t are equivalent to {r,w,x} here respectively.
-            mode = mode[:-1]  # type: ignore
+            mode = cast(Literal["r", "w", "x"], mode.removesuffix("t"))
 
         if mode not in {"r", "rb", "w", "wb", "x", "xb"}:
             raise NotImplementedError(f"unsupported mode {mode!r}")
@@ -707,7 +707,6 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         return handler
 
-    # pyrefly: ignore [bad-override-param-name]
     def put_file(
         self,
         lpath: str | os.PathLike[str],
