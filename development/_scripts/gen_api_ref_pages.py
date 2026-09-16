@@ -12,6 +12,8 @@ from pathlib import Path
 import docstring_parser
 import mkdocs_gen_files
 
+log = logging.getLogger(f"mkdocs.plugins.{__name__}")
+
 nav = mkdocs_gen_files.Nav()
 
 for path in sorted(Path("src").rglob("*.py")):
@@ -28,7 +30,7 @@ for path in sorted(Path("src").rglob("*.py")):
     elif parts[-1] == "__main__":
         continue
 
-    nav[parts] = doc_path.as_posix()
+    nav[tuple(parts)] = doc_path.as_posix()
 
     with mkdocs_gen_files.open(full_doc_path, "w") as fd:
         identifier = ".".join(parts)
@@ -43,6 +45,8 @@ children = [it for it in nav.items() if it.level == 1]
 with mkdocs_gen_files.open(f"reference/{root_page.filename}", "a") as f:
     f.write("## Modules\n")
     for ch in children:
+        if ch.filename is None:
+            continue
         f.write(f"### [{ch.title}](../{ch.filename})\n")
 
         try:
@@ -59,7 +63,7 @@ with mkdocs_gen_files.open(f"reference/{root_page.filename}", "a") as f:
             if doc.short_description:
                 f.write(f"{doc.short_description}\n\n")
         except Exception as e:
-            logging.warning(f"Could not parse module docstring: {ch.filename}", exc_info=True)
+            log.warning(f"Could not parse module docstring: {ch.filename}", exc_info=True)
 
 with mkdocs_gen_files.open("reference/SUMMARY.md", "w") as nav_file:
     nav_file.writelines(nav.build_literate_nav())

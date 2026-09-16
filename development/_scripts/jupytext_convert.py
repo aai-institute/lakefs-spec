@@ -6,9 +6,11 @@ from pathlib import Path
 import jupytext
 import mkdocs_gen_files
 
+log = logging.getLogger(f"mkdocs.plugins.{__name__}")
+
 for path in sorted(Path("docs/tutorials").rglob("*.py")):
     ipynb_path = path.relative_to(Path("docs")).with_suffix(".ipynb")
-    logging.debug(f"Converting {path} -> {ipynb_path}")
+    log.debug(f"Converting {path} -> {ipynb_path}")
 
     jupytext_file = path.read_text(encoding="utf-8")
     jupytext_nb = jupytext.reads(jupytext_file, fmt="py:percent")
