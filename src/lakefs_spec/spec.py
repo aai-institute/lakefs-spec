@@ -10,7 +10,7 @@ import operator
 import os
 from collections.abc import Generator
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import cached_property
 from pathlib import Path
 from typing import Any, Literal, cast, overload
@@ -856,7 +856,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.open(path, "rb") as f:
             # size_bytes is typed int | None, but the None case is impossible
             # for an existing file - it's optional only client-side (i.e. on uploads).
-            nbytes: int = f._obj.stat().size_bytes  # pyrefly: ignore[bad-assignment]
+            nbytes: int = f._obj.stat().size_bytes  # ty: ignore[invalid-assignment]
 
             f.seek(max(-size, -nbytes), 2)
             return cast(bytes, f.read())
@@ -873,7 +873,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         Returns
         -------
         datetime.datetime
-            The creation timestamp of the remote file.
+            The creation timestamp of the remote file, as a timezone-aware datetime in UTC.
         """
         return self.modified(path=path)
 
@@ -891,11 +891,11 @@ class LakeFSFileSystem(AbstractFileSystem):
         Returns
         -------
         datetime.datetime
-            The modification timestamp of the remote file.
+            The modification timestamp of the remote file, as a timezone-aware datetime in UTC.
         """
         path = stringify_path(path)
         repository, ref, resource = parse(path)
         with self.wrapped_api_call(rpath=path):
             reference = lakefs.Reference(repository, ref, client=self.client)
             obj = reference.object(resource)
-            return datetime.fromtimestamp(obj.stat(**self._request_config).mtime)
+            return datetime.fromtimestamp(obj.stat(**self._request_config).mtime, tz=timezone.utc)
