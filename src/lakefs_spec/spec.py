@@ -310,7 +310,7 @@ class LakeFSFileSystem(AbstractFileSystem):
     def get_file(
         self,
         rpath: str | os.PathLike[str],
-        lpath: str | os.PathLike[str],
+        lpath: str | os.PathLike[str] | None = None,
         callback: Callback = DEFAULT_CALLBACK,
         outfile: Any = None,
         *,
@@ -324,21 +324,24 @@ class LakeFSFileSystem(AbstractFileSystem):
         ----------
         rpath: str | os.PathLike[str]
             The remote path to download to local storage. Must be a fully qualified lakeFS URI, and point to a single file.
-        lpath: str | os.PathLike[str]
-            The local path on disk to save the downloaded file to.
+        lpath: str | os.PathLike[str] | None
+            The local path on disk to save the downloaded file to. Can be omitted if ``outfile`` is given (requires ``fsspec>=2026.9.0``).
         callback: fsspec.callbacks.Callback
             An fsspec callback to use during the operation. Can be used to report download progress.
         outfile: Any
-            A file-like object to save the downloaded content to. Can be used in place of ``lpath``.
+            A file-like object to save the downloaded content to. Takes precedence over ``lpath``.
         precheck: bool
             Check if ``lpath`` already exists and compare its checksum with that of ``rpath``, skipping the download if they match.
+            Has no effect if ``outfile`` is given.
         **kwargs: Any
             Additional keyword arguments passed to ``AbstractFileSystem.open()``.
         """
         rpath = stringify_path(rpath)
-        lpath = stringify_path(lpath)
+        if lpath is not None:
+            lpath = stringify_path(lpath)
 
-        if precheck and Path(lpath).is_file():
+        # Content written to an outfile never lands in lpath, so a matching lpath is no reason to skip.
+        if precheck and outfile is None and lpath is not None and Path(lpath).is_file():
             local_checksum = md5_checksum(lpath, blocksize=self.blocksize)
             remote_checksum = self.info(rpath).get("checksum")
             if local_checksum == remote_checksum:

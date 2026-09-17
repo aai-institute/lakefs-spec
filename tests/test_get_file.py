@@ -1,11 +1,16 @@
+import io
+from importlib.metadata import version
 from pathlib import Path
 
 import pytest
 from lakefs.branch import Branch
 from lakefs.repository import Repository
+from packaging.version import Version
 
 from lakefs_spec import LakeFSFileSystem
 from tests.util import RandomFileFactory, put_random_file_on_branch, with_counter
+
+fsspec_version = Version(version("fsspec"))
 
 
 def test_get_nonexistent_file(fs: LakeFSFileSystem, repository: Repository) -> None:
@@ -67,3 +72,44 @@ def test_get_client_caching(
     lpath = str(random_file_factory.path / Path(rpath).name)
     fs.get(rpath, lpath)
     assert counter.count("objects_api.get_object") == 0
+
+
+@pytest.mark.skipif(
+    fsspec_version < Version("2026.9.0"), reason="`lpath` is optional from fsspec 2026.9.0"
+)
+def test_get_file_to_outfile(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: Branch,
+) -> None:
+    """Tests that a file can be downloaded into a file-like object without an `lpath`."""
+    rpath = put_random_file_on_branch(
+        random_file_factory, fs, repository, temp_branch, commit=False
+    )
+
+    outfile = io.BytesIO()
+    fs.get_file(rpath, outfile=outfile)
+    assert outfile.getvalue() == (random_file_factory.path / Path(rpath).name).read_bytes()
+
+
+def test_get_file_precheck_with_outfile(
+    random_file_factory: RandomFileFactory,
+    fs: LakeFSFileSystem,
+    repository: Repository,
+    temp_branch: Branch,
+) -> None:
+    """
+    Tests that `precheck=True` does not skip the download into an `outfile`
+    when `lpath` matches the remote file.
+    """
+    rpath = put_random_file_on_branch(
+        random_file_factory, fs, repository, temp_branch, commit=False
+    )
+    lpath = random_file_factory.path / Path(rpath).name
+    outpath = random_file_factory.path / "out.bin"
+
+    # A file handle and not a BytesIO, since fsspec<2026.9.0 closes the outfile.
+    with open(outpath, "wb") as outfile:
+        fs.get_file(rpath, lpath, outfile=outfile)
+    assert outpath.read_bytes() == lpath.read_bytes()
