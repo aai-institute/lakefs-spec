@@ -5,8 +5,9 @@ These are thin subclasses of the lakeFS SDK's ``ObjectReader`` and ``ObjectWrite
 which translate lakeFS API errors into Python builtin exceptions.
 """
 
-from collections.abc import Generator
+from collections.abc import Generator, Iterator
 from contextlib import contextmanager
+from typing import AnyStr, Generic, cast
 
 from lakefs.exceptions import ServerException, api_exception_handler
 from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
@@ -36,20 +37,28 @@ class _ErrorTranslationMixin(LakeFSIOBase):
         return self
 
 
-class LakeFSObjectReader(_ErrorTranslationMixin, ObjectReader):
+class LakeFSObjectReader(_ErrorTranslationMixin, ObjectReader, Generic[AnyStr]):
     """
-    A file-like object for reading from lakeFS, raising Python builtin exceptions on lakeFS API errors.
+    A file-like object for reading from lakeFS, raising Python builtin exceptions
+    on lakeFS API errors.
 
     Returned by ``LakeFSFileSystem.open()`` in read mode.
+    The type parameter is ``bytes`` for binary modes and ``str`` for text modes.
     """
 
-    def read(self, n: int | None = None) -> str | bytes:
+    def read(self, n: int | None = None) -> AnyStr:
         with self._translate_errors():
-            return super().read(n)
+            return cast(AnyStr, super().read(n))
 
-    def readline(self, limit: int = -1) -> str | bytes:
+    def readline(self, limit: int = -1) -> AnyStr:
         with self._translate_errors():
-            return super().readline(limit)
+            return cast(AnyStr, super().readline(limit))
+
+    def __iter__(self) -> Iterator[AnyStr]:
+        return self
+
+    def __next__(self) -> AnyStr:
+        return cast(AnyStr, super().__next__())
 
     def seek(self, offset: int, whence: int = 0) -> int:
         # Seeking from the end requires a stat call to the lakeFS server.
@@ -57,13 +66,21 @@ class LakeFSObjectReader(_ErrorTranslationMixin, ObjectReader):
             return super().seek(offset, whence)
 
 
-class LakeFSObjectWriter(_ErrorTranslationMixin, ObjectWriter):
+class LakeFSObjectWriter(_ErrorTranslationMixin, ObjectWriter, Generic[AnyStr]):
     """
     A file-like object for writing to lakeFS, raising Python builtin exceptions on lakeFS API errors.
 
-    Returned by ``LakeFSFileSystem.open()`` in write mode.
+    Returned by ``LakeFSFileSystem.open()`` in write mode. The type parameter is ``bytes`` for binary modes
+    and ``str`` for text modes, mirroring ``typing.IO``.
     Data is buffered locally and only uploaded to the lakeFS server on ``close()``.
     """
+
+    # The lakeFS SDK declares `write` with a method-scoped `AnyStr`,
+    # i.e. every writer accepts both str and bytes.
+    # Narrowing to the class type parameter is intentional:
+    # writing str to a binary writer fails at upload time.
+    def write(self, s: AnyStr) -> int:  # ty: ignore[invalid-method-override]
+        return super().write(s)
 
     def close(self) -> None:
         with self._translate_errors():
