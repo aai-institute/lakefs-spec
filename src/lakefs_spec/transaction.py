@@ -7,7 +7,7 @@ import random
 import string
 import warnings
 from collections import deque
-from typing import TYPE_CHECKING, Any, Literal, TypeVar
+from typing import TYPE_CHECKING, Any, Literal, TypeVar, Unpack
 
 import lakefs
 from fsspec.transaction import Transaction
@@ -18,7 +18,6 @@ from lakefs.object import ObjectWriter
 from lakefs.reference import Commit, Reference, ReferenceType
 from lakefs.repository import Repository
 from lakefs.tag import Tag
-from typing_extensions import Unpack
 
 from lakefs_spec.types import MergeKwargs
 
