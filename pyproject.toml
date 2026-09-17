@@ -57,28 +57,32 @@ Documentation = "https://lakefs-spec.org/latest"
 dev = [
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",
-    # for integration tests.
-    "pandas[parquet]",
-    "polars",
-    "duckdb",
+    # Integration tests.
+    "pandas[parquet]>=2.3.0; python_version < '3.14'",
+    "pandas[parquet]>=2.3.3; python_version == '3.14'",
+    "pandas[parquet]>=3.0.6; python_version >= '3.15'",
+    "polars>=1.14.0",
+    "duckdb>=1.2.0; python_version < '3.14'",
+    "duckdb>=1.4.2; python_version == '3.14'",
+    "duckdb>=2.0.0; python_version >= '3.15'",
     "ty>=0.0.79",
     "ruff>=0.16.6",
 ]
 docs = [
-    "mkdocs",
-    "mkdocs-callouts",
-    "mkdocs-gen-files",
-    "mkdocs-literate-nav",
-    "mkdocs-section-index",
-    "mkdocs-material",
-    "mkdocstrings[python]",
-    "mkdocs-git-revision-date-localized-plugin",
-    "neoteroi-mkdocs",
-    "mkdocs-jupyter",                            # renders the Jupytext tutorial notebook
-    "ruff",                                      # formatting of signatures in docs
-    "mike",
-    "scikit-learn",                              # for the data science demo.
-    "pandas",
+    "mkdocs>=1.6.1",
+    "mkdocs-callouts>=1.17.1",
+    "mkdocs-gen-files>=0.6.1",
+    "mkdocs-literate-nav>=0.6.3",
+    "mkdocs-section-index>=0.3.12",
+    "mkdocs-material>=9.7.7",
+    "mkdocstrings[python]>=1.0.6",
+    "mkdocs-git-revision-date-localized-plugin>=1.6.0",
+    "neoteroi-mkdocs>=1.2.0",
+    "mkdocs-jupyter>=0.26.3",                            # renders the Jupytext tutorial notebook
+    "ruff>=0.16.6",                                      # formatting of signatures in docs
+    "mike>=2.2.0",
+    "scikit-learn>=1.9.1",                               # for the data science demo.
+    "pandas>=2.3.0",                                     # floors per Python are set in the dev group
 ]
 
 # Automatically determine version number from Git tags
@@ -115,7 +119,7 @@ ignore = ["C408"]
 include = ["docs/_code/hf_datasets_example.py"]
 
 [tool.ty.overrides.rules]
-unresolved-import = "ignore"
+import-not-found = "ignore"
 
 [tool.coverage.report]
 exclude_also = ["@overload", "raise NotImplementedError"]
