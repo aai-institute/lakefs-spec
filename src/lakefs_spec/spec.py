@@ -10,7 +10,7 @@ import operator
 import os
 from collections.abc import Generator
 from contextlib import contextmanager
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from functools import cached_property
 from pathlib import Path
 from typing import Any, Literal, cast, overload
@@ -934,4 +934,4 @@ class LakeFSFileSystem(AbstractFileSystem):
         with self.wrapped_api_call(rpath=path):
             reference = lakefs.Reference(repository, ref, client=self.client)
             obj = reference.object(resource)
-            return datetime.fromtimestamp(obj.stat(**self._request_config).mtime, tz=timezone.utc)
+            return datetime.fromtimestamp(obj.stat(**self._request_config).mtime, tz=UTC)

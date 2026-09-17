@@ -1,5 +1,5 @@
 import filecmp
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -259,7 +259,7 @@ def test_file_created(
     mtime = fs.created(rpath)
     ctime = fs.modified(rpath)
     assert isinstance(mtime, datetime)
-    assert mtime.tzinfo is timezone.utc
+    assert mtime.tzinfo is UTC
     assert mtime == ctime  # lakeFS server limitation, update assumption when this changes.
 
     with pytest.raises(FileNotFoundError):
