@@ -35,12 +35,19 @@ table {
     color: var(--md-accent-fg-color);
 }
 
-.celltag_Remove_all_output .output_wrapper,
-.celltag_Remove_single_output .output_wrapper {
-    display: none !important
+/* Rendered notebook (mkdocs-jupyter): do not show cell tags as labels above code cells.
+   The plugin inlines its own styles after this file, hence `!important`. */
+.jupyter-wrapper .celltoolbar {
+    display: none !important;
 }
 
+/* Rendered notebook: hide outputs/inputs of tagged cells. Tag-based output removal in nbconvert
+   happens before execution, so these have to be hidden after the fact. */
+.jupyter-wrapper .celltag_Remove_all_output .jp-Cell-outputWrapper,
+.jupyter-wrapper .celltag_Remove_single_output .jp-Cell-outputWrapper {
+    display: none !important;
+}
 
-.celltag_Remove_input .input_wrapper {
-    display: none !important
+.jupyter-wrapper .celltag_Remove_input .jp-Cell-inputWrapper {
+    display: none !important;
 }

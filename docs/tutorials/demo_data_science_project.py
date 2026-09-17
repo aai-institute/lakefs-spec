@@ -32,10 +32,11 @@ We will do the following:
 * Accessing data versions and reproducing experiments
 * Using tags for semantic versioning
 
-!!! tip "Local Execution"
-    If you want to execute the code in this tutorial as a Jupyter notebook yourself, download the `demo_data_science_project.py` file from the lakeFS-spec repository.
-
-    You can then convert the Python file to a notebook using [Jupytext](https://jupytext.readthedocs.io/en/latest/using-cli.html) using the following command: `jupytext --to notebook demo_data_science_project.py`.
+<div class="admonition tip">
+<p class="admonition-title">Local Execution</p>
+<p>If you want to execute the code in this tutorial as a Jupyter notebook yourself, download the <code>demo_data_science_project.py</code> file from the lakeFS-spec repository.</p>
+<p>You can then convert the Python file to a notebook using <a href="https://jupytext.readthedocs.io/en/latest/using-cli.html">Jupytext</a> using the following command: <code>jupytext --to notebook demo_data_science_project.py</code>.</p>
+</div>
 
 This tutorial assumes that you have installed lakeFS-spec in a virtual environment, and that you have followed the [quickstart guide](../quickstart.md) to set up a local lakeFS instance.
 
