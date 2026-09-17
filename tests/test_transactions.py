@@ -17,7 +17,6 @@ def test_transaction_commit(
     random_file = random_file_factory.make()
 
     lpath = str(random_file)
-    rpath = f"{repository.id}/{temp_branch.id}/{random_file.name}"
 
     message = f"Add file {random_file.name}"
 
