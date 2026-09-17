@@ -1,0 +1,36 @@
+[data-md-color-scheme="aai-light"] {
+    /* Primary color shades */
+    --md-primary-fg-color: #084059;
+    --md-primary-fg-color--light: #46add5;
+    --md-primary-fg-color--dark: #04212f;
+
+    --md-typeset-a-color: var(--md-primary-fg-color);
+
+    /* Accent color shades */
+    --md-accent-fg-color: var(--md-primary-fg-color--light);
+
+    --md-code-font-family: "Source Code Pro", monospace
+}
+
+[data-md-color-scheme="slate"] {
+    --md-primary-fg-color: #46add5;
+    --md-primary-fg-color--dark: #04212f;
+    --md-accent-fg-color: hsl(197, 63%, 75%);
+
+    --md-typeset-a-color: var(--md-primary-fg-color) !important;
+
+    --md-accent-fg-color: var(--md-primary-fg-color);
+
+    --md-code-font-family: "Source Code Pro", monospace
+}
+
+[data-md-color-scheme="aai-light"] img[src$="#only-dark"],
+[data-md-color-scheme="aai-light"] img[src$="#gh-dark-mode-only"] {
+    display: none;
+    /* Hide dark images in light mode */
+}
+
+.md-header {
+    background: rgb(24, 165, 167);
+    background: linear-gradient(30deg, rgb(24, 165, 167), 90%, rgb(191, 255, 199));
+}

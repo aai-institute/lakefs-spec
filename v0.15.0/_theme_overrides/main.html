@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block announce %}
+{%- if config.extra.pre_release -%}
+You are currently viewing <strong>pre-release</strong> documentation. This may contain features that have not yet been
+released. For the most accurate information, please <strong><a href="{{ '../' ~ base_url }}">access the latest
+    release</a></strong>.
+{%- endif -%}
+{% endblock %}
