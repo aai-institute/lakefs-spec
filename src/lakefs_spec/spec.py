@@ -605,25 +605,49 @@ class LakeFSFileSystem(AbstractFileSystem):
     def open(
         self,
         path: str | os.PathLike[str],
-        mode: Literal["r", "rb", "rt"] = "rb",
+        mode: Literal["rb"] = "rb",
         pre_sign: bool | None = None,
         content_type: str | None = None,
         metadata: dict[str, str] | None = None,
         autocommit: bool = False,
         **kwargs: Any,
-    ) -> LakeFSObjectReader: ...
+    ) -> LakeFSObjectReader[bytes]: ...
 
     @overload
     def open(
         self,
         path: str | os.PathLike[str],
-        mode: Literal["w", "wb", "wt", "x", "xb", "xt"],
+        mode: Literal["r", "rt"],
         pre_sign: bool | None = None,
         content_type: str | None = None,
         metadata: dict[str, str] | None = None,
         autocommit: bool = False,
         **kwargs: Any,
-    ) -> LakeFSObjectWriter: ...
+    ) -> LakeFSObjectReader[str]: ...
+
+    @overload
+    def open(
+        self,
+        path: str | os.PathLike[str],
+        mode: Literal["wb", "xb"],
+        pre_sign: bool | None = None,
+        content_type: str | None = None,
+        metadata: dict[str, str] | None = None,
+        autocommit: bool = False,
+        **kwargs: Any,
+    ) -> LakeFSObjectWriter[bytes]: ...
+
+    @overload
+    def open(
+        self,
+        path: str | os.PathLike[str],
+        mode: Literal["w", "wt", "x", "xt"],
+        pre_sign: bool | None = None,
+        content_type: str | None = None,
+        metadata: dict[str, str] | None = None,
+        autocommit: bool = False,
+        **kwargs: Any,
+    ) -> LakeFSObjectWriter[str]: ...
 
     def open(  # ty: ignore[invalid-method-override]
         self,
@@ -634,7 +658,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         metadata: dict[str, str] | None = None,
         autocommit: bool = False,
         **kwargs: Any,
-    ) -> LakeFSObjectReader | LakeFSObjectWriter:
+    ) -> LakeFSObjectReader[Any] | LakeFSObjectWriter[Any]:
         """
         Dispatch a lakeFS file-like object (local buffer on disk) for the given remote path for up- or downloads depending on ``mode``.
 
