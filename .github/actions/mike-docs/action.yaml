@@ -26,6 +26,7 @@ runs:
     shell: bash
   - env:
       DOCS_PRERELEASE: ${{ inputs.pre_release }}
+      DISABLE_MKDOCS_2_WARNING: "true"
       INPUTS_PUSH: ${{ inputs.push }}
       INPUTS_VERSION: ${{ inputs.version }}
       INPUTS_ALIAS: ${{ inputs.alias }}

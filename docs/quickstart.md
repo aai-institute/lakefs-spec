@@ -184,4 +184,4 @@ After this walkthrough of the installation and an introduction to basic file sys
 - [User Guide](guides/index.md), in particular
     - [How to use the lakeFS file system](guides/filesystem-usage.md)
     - [How to use lakeFS-spec with third-party data science libraries](guides/integrations.md)
-- [Tutorial: Using lakeFS-spec in a data science project](tutorials/demo_data_science_project.ipynb)
+- [Tutorial: Using lakeFS-spec in a data science project](tutorials/demo_data_science_project.py)

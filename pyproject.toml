@@ -70,9 +70,7 @@ docs = [
     "mkdocstrings[python]",
     "mkdocs-git-revision-date-localized-plugin",
     "neoteroi-mkdocs",
-    "mknotebooks",
-    "ipykernel",                                 # kernel for executing the tutorial notebook
-    "jupytext",                                  # conversion between Jupytext and ipynb notebooks
+    "mkdocs-jupyter",                            # renders the Jupytext tutorial notebook
     "ruff",                                      # formatting of signatures in docs
     "mike",
     "scikit-learn",                              # for the data science demo.
