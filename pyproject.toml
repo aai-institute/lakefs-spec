@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "lakefs-spec"
 description = "An fsspec implementation for lakeFS."
 keywords = ["lakeFS", "fsspec"]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [
@@ -24,6 +24,10 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Information Analysis",
@@ -37,7 +41,6 @@ classifiers = [
 dependencies = [
     "fsspec>=2024.12.0",
     "lakefs>=0.7.0",
-    "typing_extensions",
 ]
 
 dynamic = ["version"]
@@ -100,9 +103,10 @@ exclude-newer-package = { ruff = false, ty = false }
 [tool.ruff]
 exclude = ["*.md"]
 line-length = 100
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.lint]
+extend-select = ["UP"]
 ignore = ["C408"]
 
 [[tool.ty.overrides]]

@@ -1,7 +1,5 @@
 # Functional syntax to allow for the attribute name containing a dash
-from typing import Any, Literal, TypedDict
-
-from typing_extensions import Required
+from typing import Any, Literal, Required, TypedDict
 
 ObjectType = Literal["file", "directory"]
 
