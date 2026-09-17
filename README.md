@@ -21,10 +21,6 @@ Highlights:
 - Smart data transfers through client-side caching (up-/download)
 - Auto-discovery configuration
 
-> [!NOTE]
-> We are seeking early adopters who would like to actively participate in our feedback process and shape the future of the library.
-If you are interested in using the library and want to get in touch with us, please reach out via [Github Discussions](https://github.com/aai-institute/lakefs-spec/discussions).
-
 ## Installation
 
 lakeFS-spec is published on PyPI, you can simply install it using your favorite package manager:

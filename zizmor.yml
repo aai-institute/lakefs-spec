@@ -3,4 +3,4 @@ rules:
     ignore:
       - python.yaml:49
       - python.yaml:89
-      - release.yaml:20
+      - release.yaml:85
