@@ -22,9 +22,9 @@ from fsspec.utils import stringify_path
 from lakefs.client import Client
 from lakefs.exceptions import NotFoundException, ServerException
 from lakefs.models import CommonPrefix, ObjectInfo
-from lakefs.object import ObjectReader, ObjectWriter
 
 from lakefs_spec.errors import translate_lakefs_error
+from lakefs_spec.file import LakeFSObjectReader, LakeFSObjectWriter
 from lakefs_spec.transaction import LakeFSTransaction
 from lakefs_spec.types import ObjectInfoData, RequestConfig
 from lakefs_spec.util import batched, md5_checksum, parse
@@ -611,7 +611,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         metadata: dict[str, str] | None = None,
         autocommit: bool = False,
         **kwargs: Any,
-    ) -> ObjectReader: ...
+    ) -> LakeFSObjectReader: ...
 
     @overload
     def open(
@@ -623,7 +623,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         metadata: dict[str, str] | None = None,
         autocommit: bool = False,
         **kwargs: Any,
-    ) -> ObjectWriter: ...
+    ) -> LakeFSObjectWriter: ...
 
     def open(  # ty: ignore[invalid-method-override]
         self,
@@ -634,7 +634,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         metadata: dict[str, str] | None = None,
         autocommit: bool = False,
         **kwargs: Any,
-    ) -> ObjectReader | ObjectWriter:
+    ) -> LakeFSObjectReader | LakeFSObjectWriter:
         """
         Dispatch a lakeFS file-like object (local buffer on disk) for the given remote path for up- or downloads depending on ``mode``.
 
@@ -682,7 +682,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
             if not obj.exists():
                 raise FileNotFoundError(path)
-            handler = ObjectReader(
+            handler = LakeFSObjectReader(
                 obj, mode=mode, pre_sign=pre_sign, client=self.client, **self._request_config
             )
         else:
@@ -693,7 +693,7 @@ class LakeFSFileSystem(AbstractFileSystem):
                 branch.create(self.source_branch, exist_ok=True, **self._request_config)
 
             obj = branch.object(resource)
-            handler = ObjectWriter(
+            handler = LakeFSObjectWriter(
                 obj,
                 mode=mode,
                 pre_sign=pre_sign,
