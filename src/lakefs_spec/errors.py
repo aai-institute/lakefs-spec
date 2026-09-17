@@ -51,12 +51,8 @@ def translate_lakefs_error(
         A builtin Python exception ready to be thrown.
     """
     status = error.status_code or 0
-
-    if hasattr(error, "body"):
-        # error has a JSON response body attached
-        reason = error.body.get("message", "")
-    else:
-        reason = error.reason
+    # Prefer the lakeFS server's error message, fall back to the HTTP reason phrase.
+    reason = error.body.get("message") or error.reason or ""
 
     emsg = f"{status} {reason}".rstrip()
     if rpath:

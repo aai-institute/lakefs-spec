@@ -37,7 +37,7 @@ jobs:
         python-version: ["3.11", "3.12", "3.13", "3.14"]
         deps:
           # Oldest supported versions
-          - lakefs: "lakefs==0.2.0"
+          - lakefs: "lakefs==0.7.0"
             fsspec: "fsspec==2024.12.0"
           # Latest versions
           - lakefs: "lakefs>0"
