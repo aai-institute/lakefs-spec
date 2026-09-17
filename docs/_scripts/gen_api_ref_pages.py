@@ -9,7 +9,6 @@ import ast
 import logging
 from pathlib import Path
 
-import docstring_parser
 import mkdocs_gen_files
 
 log = logging.getLogger(f"mkdocs.plugins.{__name__}")
@@ -57,12 +56,12 @@ with mkdocs_gen_files.open(f"reference/{root_page.filename}", "a") as f:
                 source_file = source_file.with_stem("__init__")
 
             tree = ast.parse(source_file.read_text())
-            docstring = ast.get_docstring(tree, clean=False)
-            doc = docstring_parser.parse(docstring)
+            docstring = ast.get_docstring(tree) or ""
 
-            if doc.short_description:
-                f.write(f"{doc.short_description}\n\n")
-        except Exception as e:
+            # The short description is the first paragraph of the docstring.
+            if short_description := docstring.split("\n\n", 1)[0].strip():
+                f.write(f"{short_description}\n\n")
+        except Exception:
             log.warning(f"Could not parse module docstring: {ch.filename}", exc_info=True)
 
 with mkdocs_gen_files.open("reference/SUMMARY.md", "w") as nav_file:

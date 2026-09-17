@@ -1,6 +1,5 @@
-import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
-import pytest
 from lakefs.branch import Branch
 from lakefs.repository import Repository
 
@@ -72,8 +71,7 @@ def test_rm_recursive_with_maxdepth(
     assert fs.exists(f"{prefix}/dir1/dir2/c.txt")
 
 
-@pytest.mark.asyncio
-async def test_rm_with_1k_objects_or_more(
+def test_rm_with_1k_objects_or_more(
     fs: LakeFSFileSystem,
     repository: Repository,
     temp_branch: Branch,
@@ -84,17 +82,16 @@ async def test_rm_with_1k_objects_or_more(
     """
     testdir = f"{repository.id}/{temp_branch.id}/subfolder"
 
-    # Create and put 1001 objects into the above lakeFS directory (to exceed the 1k API batch limit)
-    # Doing this async since we are I/O bound and get a significant speedup.
-    # Unfortunately, we cannot use a TaskGroup, since it was only introduced in Python 3.11.
-    tasks = []
-    for i in range(1002):
-        f = random_file_factory.make()
-        lpath = str(f)
+    # Create and put 1002 objects into the above lakeFS directory (to exceed the 1k API batch limit)
+    # Uploading from a thread pool since we are I/O bound and get a significant speedup.
+    def upload(i: int) -> None:
+        lpath = str(random_file_factory.make())
         rpath = testdir + f"/test_{i}.txt"
-        task = asyncio.create_task(asyncio.to_thread(fs.put_file, lpath, rpath))
-        tasks.append(task)
-    await asyncio.gather(*tasks)
+        fs.put_file(lpath, rpath)
+
+    with ThreadPoolExecutor() as pool:
+        # Consume the iterator to surface any exception raised in a worker.
+        list(pool.map(upload, range(1002)))
 
     assert len(fs.ls(testdir, detail=False)) > 1000
 

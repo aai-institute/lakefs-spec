@@ -53,7 +53,6 @@ Documentation = "https://lakefs-spec.org/latest"
 dev = [
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",
-    "pytest-asyncio>=0.24.0",
     # for integration tests.
     "pandas[parquet]",
     "polars",
@@ -70,14 +69,12 @@ docs = [
     "mkdocs-material",
     "mkdocstrings[python]",
     "mkdocs-git-revision-date-localized-plugin",
-    "mkdocs-include-dir-to-nav",
     "neoteroi-mkdocs",
     "mknotebooks",
-    "jupyter",
+    "ipykernel",                                 # kernel for executing the tutorial notebook
     "jupytext",                                  # conversion between Jupytext and ipynb notebooks
-    "black",                                     # formatting of signatures in docs
+    "ruff",                                      # formatting of signatures in docs
     "mike",
-    "docstring-parser",
     "scikit-learn",                              # for the data science demo.
     "pandas",
 ]
@@ -93,38 +90,22 @@ packages = ["src/lakefs_spec"]
 # pyproject.toml, README.md and LICENSE are always included.
 only-include = ["src", "tests", "assets"]
 
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "WARNING"
+
 [tool.uv]
 default-groups = ["dev", "docs"]
 exclude-newer = "1 week"
 exclude-newer-package = { ruff = false, ty = false }
 
 [tool.ruff]
+exclude = ["*.md"]
 line-length = 100
 target-version = "py310"
 
 [tool.ruff.lint]
-ignore = [
-    # Allow dict literals
-    "C408",
-    # Line too long
-    "E501",
-    # Allow capitalized variable names
-    "F841",
-]
-
-[tool.ruff.lint.per-file-ignores]
-# Ignore unused imports in all `__init__.py` files
-"__init__.py" = ["F401"]
-"docs/tutorials/*.py" = [
-    "E402",
-    "S",
-] # Imports may appear anywhere in Jupytext notebooks
-"tests/**/*.py" = ["S"]  # Tests are not security-critical.
-
-[tool.pytest.ini_options]
-log_cli = true
-log_cli_level = "WARNING"
-asyncio_default_fixture_loop_scope = "function"
+ignore = ["C408"]
 
 [[tool.ty.overrides]]
 # The HF datasets example is not runnable in the dev environment, ignore the missing import.
