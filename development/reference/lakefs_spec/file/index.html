@@ -8,31 +8,31 @@
       
       
       
-        <link rel="canonical" href="https://lakefs-spec.org/latest/guides/configuration/">
+        <link rel="canonical" href="https://lakefs-spec.org/latest/reference/lakefs_spec/file/">
       
       
-        <link rel="prev" href="../filesystem-usage/">
+        <link rel="prev" href="../errors/">
       
       
-        <link rel="next" href="../transactions/">
+        <link rel="next" href="../spec/">
       
       
         
       
       
-      <link rel="icon" href="../../_images/lakefs-spec-favicon.png">
+      <link rel="icon" href="../../../_images/lakefs-spec-favicon.png">
       <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
-        <title>Passing configuration to the file system - lakeFS-spec</title>
+        <title>file - lakeFS-spec</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -46,26 +46,26 @@
         
         
         
-        <link rel="stylesheet" href="../../assets/external/fonts.googleapis.com/css.38e079b2.css">
+        <link rel="stylesheet" href="../../../assets/external/fonts.googleapis.com/css.38e079b2.css">
         <style>:root{--md-text-font:"IBM Plex Sans";--md-code-font:"Source Code Pro"}</style>
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../_styles/extra.css">
+      <link rel="stylesheet" href="../../../_styles/extra.css">
     
-      <link rel="stylesheet" href="../../_styles/theme.css">
+      <link rel="stylesheet" href="../../../_styles/theme.css">
     
-      <link rel="stylesheet" href="../../_styles/neoteroi-mkdocs.css">
+      <link rel="stylesheet" href="../../../_styles/neoteroi-mkdocs.css">
     
-      <link rel="stylesheet" href="../../css/ansi-colours.css">
+      <link rel="stylesheet" href="../../../css/ansi-colours.css">
     
-      <link rel="stylesheet" href="../../css/jupyter-cells.css">
+      <link rel="stylesheet" href="../../../css/jupyter-cells.css">
     
-      <link rel="stylesheet" href="../../css/pandas-dataframe.css">
+      <link rel="stylesheet" href="../../../css/pandas-dataframe.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -90,7 +90,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#passing-configuration-to-the-file-system" class="md-skip">
+        <a href="#lakefs_spec.file" class="md-skip">
           Skip to content
         </a>
       
@@ -101,7 +101,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             You are currently viewing <strong>pre-release</strong> documentation. This may contain features that have not yet been
-released. For the most accurate information, please <strong><a href="../../..">access the latest
+released. For the most accurate information, please <strong><a href="../../../..">access the latest
     release</a></strong>.
           </div>
           
@@ -152,7 +152,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
     <!-- Link to home -->
     <a href="https://lakefs-spec.org" title="lakeFS-spec" class="md-header__button md-logo" aria-label="lakeFS-spec" data-md-component="logo">
       
-  <img src="../../_images/aai-logo-cropped.png" alt="logo">
+  <img src="../../../_images/aai-logo-cropped.png" alt="logo">
 
     </a>
 
@@ -173,7 +173,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              lakeFS-spec &mdash; <strong>Passing configuration to the file system</strong>
+              lakeFS-spec &mdash; <strong>file</strong>
             
           </span>
         </div>
@@ -302,7 +302,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   <label class="md-nav__title" for="__drawer">
     <a href="https://lakefs-spec.org" title="lakeFS-spec" class="md-nav__button md-logo" aria-label="lakeFS-spec" data-md-component="logo">
       
-  <img src="../../_images/aai-logo-cropped.png" alt="logo">
+  <img src="../../../_images/aai-logo-cropped.png" alt="logo">
 
     </a>
     lakeFS-spec
@@ -329,7 +329,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -356,7 +356,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../../quickstart/" class="md-nav__link">
+      <a href="../../../quickstart/" class="md-nav__link">
         
   
   
@@ -380,24 +380,22 @@ released. For the most accurate information, please <strong><a href="../../..">a
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../../guides/" class="md-nav__link ">
               
   
   
@@ -421,7 +419,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -439,7 +437,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../filesystem-usage/" class="md-nav__link">
+      <a href="../../../guides/filesystem-usage/" class="md-nav__link">
         
   
   
@@ -464,37 +462,10 @@ released. For the most accurate information, please <strong><a href="../../..">a
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Passing configuration to the file system
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../guides/configuration/" class="md-nav__link">
         
   
   
@@ -510,59 +481,6 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#the-lakectlyaml-configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The .lakectl.yaml configuration file
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#setting-environment-variables" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Setting environment variables
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#appendix-mixing-zero-config-methods" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Appendix: Mixing zero-config methods
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -575,7 +493,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../transactions/" class="md-nav__link">
+      <a href="../../../guides/transactions/" class="md-nav__link">
         
   
   
@@ -603,7 +521,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../integrations/" class="md-nav__link">
+      <a href="../../../guides/integrations/" class="md-nav__link">
         
   
   
@@ -650,7 +568,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../tutorials/" class="md-nav__link ">
+            <a href="../../../tutorials/" class="md-nav__link ">
               
   
   
@@ -692,7 +610,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../../tutorials/demo_data_science_project/" class="md-nav__link">
+      <a href="../../../tutorials/demo_data_science_project/" class="md-nav__link">
         
   
   
@@ -724,18 +642,20 @@ released. For the most accurate information, please <strong><a href="../../..">a
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -756,7 +676,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -771,22 +691,24 @@ released. For the most accurate information, please <strong><a href="../../..">a
                 
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../reference/lakefs_spec/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -810,7 +732,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -828,7 +750,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../../reference/lakefs_spec/errors/" class="md-nav__link">
+      <a href="../errors/" class="md-nav__link">
         
   
   
@@ -853,10 +775,35 @@ released. For the most accurate information, please <strong><a href="../../..">a
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../reference/lakefs_spec/file/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    file
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -872,6 +819,57 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#lakefs_spec.file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        file
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lakefs_spec.file.LakeFSObjectReader" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LakeFSObjectReader
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lakefs_spec.file.LakeFSObjectWriter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LakeFSObjectWriter
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -884,7 +882,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../../reference/lakefs_spec/spec/" class="md-nav__link">
+      <a href="../spec/" class="md-nav__link">
         
   
   
@@ -912,7 +910,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../../reference/lakefs_spec/transaction/" class="md-nav__link">
+      <a href="../transaction/" class="md-nav__link">
         
   
   
@@ -940,7 +938,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../../reference/lakefs_spec/types/" class="md-nav__link">
+      <a href="../types/" class="md-nav__link">
         
   
   
@@ -968,7 +966,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../../reference/lakefs_spec/util/" class="md-nav__link">
+      <a href="../util/" class="md-nav__link">
         
   
   
@@ -1011,7 +1009,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
     <li class="md-nav__item">
-      <a href="../../CONTRIBUTING/" class="md-nav__link">
+      <a href="../../../CONTRIBUTING/" class="md-nav__link">
         
   
   
@@ -1048,8 +1046,6 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1058,10 +1054,10 @@ released. For the most accurate information, please <strong><a href="../../..">a
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-lakectlyaml-configuration-file" class="md-nav__link">
+  <a href="#lakefs_spec.file" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The .lakectl.yaml configuration file
+        file
       
     </span>
   </a>
@@ -1069,10 +1065,10 @@ released. For the most accurate information, please <strong><a href="../../..">a
 </li>
       
         <li class="md-nav__item">
-  <a href="#setting-environment-variables" class="md-nav__link">
+  <a href="#lakefs_spec.file.LakeFSObjectReader" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Setting environment variables
+        LakeFSObjectReader
       
     </span>
   </a>
@@ -1080,10 +1076,10 @@ released. For the most accurate information, please <strong><a href="../../..">a
 </li>
       
         <li class="md-nav__item">
-  <a href="#appendix-mixing-zero-config-methods" class="md-nav__link">
+  <a href="#lakefs_spec.file.LakeFSObjectWriter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Appendix: Mixing zero-config methods
+        LakeFSObjectWriter
       
     </span>
   </a>
@@ -1107,7 +1103,7 @@ released. For the most accurate information, please <strong><a href="../../..">a
 
 
   
-    <a href="https://github.com/aai-institute/lakefs-spec/edit/main/docs/guides/configuration.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/aai-institute/lakefs-spec/edit/main/docs/src/lakefs_spec/file.py" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1115,114 +1111,246 @@ released. For the most accurate information, please <strong><a href="../../..">a
   
 
 
-<h1 id="passing-configuration-to-the-file-system">Passing configuration to the file system<a class="headerlink" href="#passing-configuration-to-the-file-system" title="Permanent link">&para;</a></h1>
-<p>There are multiple ways to configure the <code>LakeFSFileSystem</code> for use with a deployed lakeFS instance.
-This guide introduces them in the order of least to most in-Python configuration - the preferred way to use the file system is with as little Python code as possible.</p>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>The configuration methods are introduced in reverse order of precedence - config file arguments have the lowest priority and are overwritten by environment variables (if specified).</p>
+  <h1>file</h1>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="lakefs_spec.file"></a>
+    <div class="doc doc-contents first">
+
+        <p>File-like objects returned by <code>LakeFSFileSystem.open()</code>.</p>
+<p>These are thin subclasses of the lakeFS SDK's <code>ObjectReader</code> and <code>ObjectWriter</code>,
+which translate lakeFS API errors into Python builtin exceptions.</p>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="lakefs_spec.file.LakeFSObjectReader" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">LakeFSObjectReader</span>
+
+
+<a href="#lakefs_spec.file.LakeFSObjectReader" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="lakefs_spec.file._ErrorTranslationMixin">_ErrorTranslationMixin</span></code>, <code><span title="lakefs.object.ObjectReader">ObjectReader</span></code>, <code><span title="typing.Generic">Generic</span>[<span title="typing.AnyStr">AnyStr</span>]</code></p>
+
+
+
+        <p>A file-like object for reading from lakeFS, raising Python builtin exceptions
+on lakeFS API errors.</p>
+<p>Returned by <code>LakeFSFileSystem.open()</code> in read mode.
+The type parameter is <code>bytes</code> for binary modes and <code>str</code> for text modes.</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/lakefs_spec/file.py</code></summary>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-40">40</a></span>
+<span class="normal"><a href="#__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#__codelineno-0-42">42</a></span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span>
+<span class="normal"><a href="#__codelineno-0-51">51</a></span>
+<span class="normal"><a href="#__codelineno-0-52">52</a></span>
+<span class="normal"><a href="#__codelineno-0-53">53</a></span>
+<span class="normal"><a href="#__codelineno-0-54">54</a></span>
+<span class="normal"><a href="#__codelineno-0-55">55</a></span>
+<span class="normal"><a href="#__codelineno-0-56">56</a></span>
+<span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span>
+<span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
+<span class="normal"><a href="#__codelineno-0-61">61</a></span>
+<span class="normal"><a href="#__codelineno-0-62">62</a></span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#__codelineno-0-64">64</a></span>
+<span class="normal"><a href="#__codelineno-0-65">65</a></span>
+<span class="normal"><a href="#__codelineno-0-66">66</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="k">class</span><span class="w"> </span><span class="nc">LakeFSObjectReader</span><span class="p">(</span><span class="n">_ErrorTranslationMixin</span><span class="p">,</span> <span class="n">ObjectReader</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">AnyStr</span><span class="p">]):</span>
+</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="w">    </span><span class="sd">"""</span>
+</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">    A file-like object for reading from lakeFS, raising Python builtin exceptions</span>
+</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    on lakeFS API errors.</span>
+</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44"></a>
+</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">    Returned by ``LakeFSFileSystem.open()`` in read mode.</span>
+</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    The type parameter is ``bytes`` for binary modes and ``str`` for text modes.</span>
+</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">    """</span>
+</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48"></a>
+</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnyStr</span><span class="p">:</span>
+</span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50"></a>        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translate_errors</span><span class="p">():</span>
+</span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51"></a>            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">AnyStr</span><span class="p">,</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+</span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52"></a>
+</span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">readline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnyStr</span><span class="p">:</span>
+</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54"></a>        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translate_errors</span><span class="p">():</span>
+</span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55"></a>            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">AnyStr</span><span class="p">,</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">readline</span><span class="p">(</span><span class="n">limit</span><span class="p">))</span>
+</span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56"></a>
+</span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">AnyStr</span><span class="p">]:</span>
+</span><span id="__span-0-58"><a id="__codelineno-0-58" name="__codelineno-0-58"></a>        <span class="k">return</span> <span class="bp">self</span>
+</span><span id="__span-0-59"><a id="__codelineno-0-59" name="__codelineno-0-59"></a>
+</span><span id="__span-0-60"><a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnyStr</span><span class="p">:</span>
+</span><span id="__span-0-61"><a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">AnyStr</span><span class="p">,</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__next__</span><span class="p">())</span>
+</span><span id="__span-0-62"><a id="__codelineno-0-62" name="__codelineno-0-62"></a>
+</span><span id="__span-0-63"><a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">seek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">whence</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="__span-0-64"><a id="__codelineno-0-64" name="__codelineno-0-64"></a>        <span class="c1"># Seeking from the end requires a stat call to the lakeFS server.</span>
+</span><span id="__span-0-65"><a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translate_errors</span><span class="p">():</span>
+</span><span id="__span-0-66"><a id="__codelineno-0-66" name="__codelineno-0-66"></a>            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">whence</span><span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
 </div>
-<h2 id="the-lakectlyaml-configuration-file">The <code>.lakectl.yaml</code> configuration file<a class="headerlink" href="#the-lakectlyaml-configuration-file" title="Permanent link">&para;</a></h2>
-<p>The easiest way of configuring the lakeFS file system is with a <code>lakectl</code> YAML configuration file. To address a lakeFS server, the following minimum configuration is required:</p>
-<div class="language-yaml highlight"><span class="filename">~/.lakectl.yaml</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">credentials</span><span class="p">:</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;ID&gt;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;KEY&gt;</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nt">server</span><span class="p">:</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;LAKEFS-HOST&gt;</span>
-</span></code></pre></div>
-<p>For a local instance produced by the <a href="../../quickstart/">quickstart</a>, the following values will work:</p>
-<div class="language-yaml highlight"><span class="filename">~/.lakectl.yaml</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">credentials</span><span class="p">:</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AKIAIOSFOLQUICKSTART</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nt">server</span><span class="p">:</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://127.0.0.1:8000</span>
-</span></code></pre></div>
-<p>To work without any more arguments "out of the box", the configuration file has to be placed in your home directory with the name <code>.lakectl.yaml</code> (this is where lakeFS expects it).
-If you set all values correctly, you can instantiate the lakeFS file system without any arguments:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># zero config necessary.</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
-</span></code></pre></div>
-<p>If you cannot use the default location (<code>$HOME/.lakectl.yaml</code>), set the <code>LAKECTL_CONFIG_FILE</code> environment variable to the desired path before instantiating the file system:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"LAKECTL_CONFIG_FILE"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"/path/to/my/configfile.yaml"</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
-</span></code></pre></div>
-<h2 id="setting-environment-variables">Setting environment variables<a class="headerlink" href="#setting-environment-variables" title="Permanent link">&para;</a></h2>
-<p>It is also possible to specify configuration values used for authentication with the lakeFS server with environment variables.
-These follow the same naming scheme as the <code>lakectl</code> CLI and override the corresponding values from a <code>.lakectl.yaml</code> config file:</p>
-<table>
-<thead>
-<tr>
-<th>Environment variable</th>
-<th>Config file field</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>LAKECTL_SERVER_ENDPOINT_URL</code></td>
-<td><code>server.endpoint_url</code></td>
-</tr>
-<tr>
-<td><code>LAKECTL_CREDENTIALS_ACCESS_KEY_ID</code></td>
-<td><code>credentials.access_key_id</code></td>
-</tr>
-<tr>
-<td><code>LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY</code></td>
-<td><code>credentials.secret_access_key</code></td>
-</tr>
-</tbody>
-</table>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"LAKECTL_SERVER_ENDPOINT_URL"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"http://my-lakefs.host"</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"LAKECTL_CREDENTIALS_ACCESS_KEY_ID"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"my-access-key-id"</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"my-secret-access-key"</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># also zero-config.</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
-</span></code></pre></div>
-<div class="admonition info">
-<p class="admonition-title">Info</p>
-<p>Environment variable discovery is handled by the underlying <code>lakefs</code> Python client. The <code>proxy</code>, <code>create_branch_ok</code>, and <code>source_branch</code> arguments of <code>LakeFSFileSystem</code> have no environment variable counterpart and can only be supplied in Python.</p>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="lakefs_spec.file.LakeFSObjectWriter" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">LakeFSObjectWriter</span>
+
+
+<a href="#lakefs_spec.file.LakeFSObjectWriter" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="lakefs_spec.file._ErrorTranslationMixin">_ErrorTranslationMixin</span></code>, <code><span title="lakefs.object.ObjectWriter">ObjectWriter</span></code>, <code><span title="typing.Generic">Generic</span>[<span title="typing.AnyStr">AnyStr</span>]</code></p>
+
+
+
+        <p>A file-like object for writing to lakeFS, raising Python builtin exceptions on lakeFS API errors.</p>
+<p>Returned by <code>LakeFSFileSystem.open()</code> in write mode. The type parameter is <code>bytes</code> for binary modes
+and <code>str</code> for text modes, mirroring <code>typing.IO</code>.
+Data is buffered locally and only uploaded to the lakeFS server on <code>close()</code>.</p>
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>src/lakefs_spec/file.py</code></summary>
+                <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-69">69</a></span>
+<span class="normal"><a href="#__codelineno-0-70">70</a></span>
+<span class="normal"><a href="#__codelineno-0-71">71</a></span>
+<span class="normal"><a href="#__codelineno-0-72">72</a></span>
+<span class="normal"><a href="#__codelineno-0-73">73</a></span>
+<span class="normal"><a href="#__codelineno-0-74">74</a></span>
+<span class="normal"><a href="#__codelineno-0-75">75</a></span>
+<span class="normal"><a href="#__codelineno-0-76">76</a></span>
+<span class="normal"><a href="#__codelineno-0-77">77</a></span>
+<span class="normal"><a href="#__codelineno-0-78">78</a></span>
+<span class="normal"><a href="#__codelineno-0-79">79</a></span>
+<span class="normal"><a href="#__codelineno-0-80">80</a></span>
+<span class="normal"><a href="#__codelineno-0-81">81</a></span>
+<span class="normal"><a href="#__codelineno-0-82">82</a></span>
+<span class="normal"><a href="#__codelineno-0-83">83</a></span>
+<span class="normal"><a href="#__codelineno-0-84">84</a></span>
+<span class="normal"><a href="#__codelineno-0-85">85</a></span>
+<span class="normal"><a href="#__codelineno-0-86">86</a></span>
+<span class="normal"><a href="#__codelineno-0-87">87</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-69"><a id="__codelineno-0-69" name="__codelineno-0-69"></a><span class="k">class</span><span class="w"> </span><span class="nc">LakeFSObjectWriter</span><span class="p">(</span><span class="n">_ErrorTranslationMixin</span><span class="p">,</span> <span class="n">ObjectWriter</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">AnyStr</span><span class="p">]):</span>
+</span><span id="__span-0-70"><a id="__codelineno-0-70" name="__codelineno-0-70"></a><span class="w">    </span><span class="sd">"""</span>
+</span><span id="__span-0-71"><a id="__codelineno-0-71" name="__codelineno-0-71"></a><span class="sd">    A file-like object for writing to lakeFS, raising Python builtin exceptions on lakeFS API errors.</span>
+</span><span id="__span-0-72"><a id="__codelineno-0-72" name="__codelineno-0-72"></a>
+</span><span id="__span-0-73"><a id="__codelineno-0-73" name="__codelineno-0-73"></a><span class="sd">    Returned by ``LakeFSFileSystem.open()`` in write mode. The type parameter is ``bytes`` for binary modes</span>
+</span><span id="__span-0-74"><a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="sd">    and ``str`` for text modes, mirroring ``typing.IO``.</span>
+</span><span id="__span-0-75"><a id="__codelineno-0-75" name="__codelineno-0-75"></a><span class="sd">    Data is buffered locally and only uploaded to the lakeFS server on ``close()``.</span>
+</span><span id="__span-0-76"><a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="sd">    """</span>
+</span><span id="__span-0-77"><a id="__codelineno-0-77" name="__codelineno-0-77"></a>
+</span><span id="__span-0-78"><a id="__codelineno-0-78" name="__codelineno-0-78"></a>    <span class="c1"># The lakeFS SDK declares `write` with a method-scoped `AnyStr`,</span>
+</span><span id="__span-0-79"><a id="__codelineno-0-79" name="__codelineno-0-79"></a>    <span class="c1"># i.e. every writer accepts both str and bytes.</span>
+</span><span id="__span-0-80"><a id="__codelineno-0-80" name="__codelineno-0-80"></a>    <span class="c1"># Narrowing to the class type parameter is intentional:</span>
+</span><span id="__span-0-81"><a id="__codelineno-0-81" name="__codelineno-0-81"></a>    <span class="c1"># writing str to a binary writer fails at upload time.</span>
+</span><span id="__span-0-82"><a id="__codelineno-0-82" name="__codelineno-0-82"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">AnyStr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>  <span class="c1"># ty: ignore[invalid-method-override]</span>
+</span><span id="__span-0-83"><a id="__codelineno-0-83" name="__codelineno-0-83"></a>        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span id="__span-0-84"><a id="__codelineno-0-84" name="__codelineno-0-84"></a>
+</span><span id="__span-0-85"><a id="__codelineno-0-85" name="__codelineno-0-85"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-0-86"><a id="__codelineno-0-86" name="__codelineno-0-86"></a>        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translate_errors</span><span class="p">():</span>
+</span><span id="__span-0-87"><a id="__codelineno-0-87" name="__codelineno-0-87"></a>            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
 </div>
-<h2 id="appendix-mixing-zero-config-methods">Appendix: Mixing zero-config methods<a class="headerlink" href="#appendix-mixing-zero-config-methods" title="Permanent link">&para;</a></h2>
-<p>Two of the introduced methods allow for "zero-config" (i.e. no arguments given to the constructor) initialization of the file system.
-However, care must be taken when working with different file systems configured by the same means (for example, file systems configured with separate environment variables).</p>
-<p>The reason for this is the <a href="https://filesystem-spec.readthedocs.io/en/latest/features.html#instance-caching">instance caching mechanism</a> built into fsspec.
-While this allows for efficient reuse of file systems e.g. by third-party libraries (pandas, DuckDB, ...), it can lead to silent misconfigurations. Consider this example, with an existent <code>.lakectl.yaml</code> file:</p>
-<div class="language-yaml highlight"><span class="filename">~/.lakectl.yaml</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">credentials</span><span class="p">:</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">access_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AKIAIOSFOLQUICKSTART</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">secret_access_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nt">server</span><span class="p">:</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="nt">endpoint_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://127.0.0.1:8000</span>
-</span></code></pre></div>
-<p>Now, mixing config file and environment variable initializations leads to the wrong result:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># first file system, initialized from the config file</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">config_fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"LAKECTL_SERVER_ENDPOINT_URL"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"http://my-other-lakefs.host"</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"LAKECTL_CREDENTIALS_ACCESS_KEY_ID"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"my-access-key-id"</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"LAKECTL_CREDENTIALS_SECRET_ACCESS_KEY"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"my-secret-access-key"</span>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="n">envvar_fs</span> <span class="o">=</span> <span class="n">LakeFSFileSystem</span><span class="p">()</span>
-</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
-</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="nb">print</span><span class="p">(</span><span class="n">config_fs</span> <span class="ow">is</span> <span class="n">envvar_fs</span><span class="p">)</span> <span class="c1"># &lt;- prints True! </span>
-</span></code></pre></div>
-<p>The reason why the above code does not work as desired is that the cached config-file-initialized file system is simply reused on the second assignment.
-To clear the file system instance cache, you can run the following:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">lakefs_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeFSFileSystem</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">LakeFSFileSystem</span><span class="o">.</span><span class="n">clear_instance_cache</span><span class="p">()</span>
-</span></code></pre></div>
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 
@@ -1243,7 +1371,7 @@ To clear the file system instance cache, you can run the following:</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="April 21, 2026 06:48:18 UTC">2026-04-21</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date" title="September 17, 2026 10:47:20 UTC">2026-09-17</span>
   </span>
 
     
@@ -1340,10 +1468,10 @@ To clear the file system instance cache, you can run the following:</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.tabs.link", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.tabs.link", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
