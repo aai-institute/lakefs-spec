@@ -888,12 +888,14 @@ class LakeFSFileSystem(AbstractFileSystem):
             The bytes at the end of the requested file.
         """
         with self.open(path, "rb") as f:
-            # size_bytes is typed int | None, but the None case is impossible
-            # for an existing file - it's optional only client-side (i.e. on uploads).
-            nbytes: int = f._obj.stat().size_bytes  # ty: ignore[invalid-assignment]
+            nbytes = f._obj.stat().size_bytes
+            if nbytes is None:
+                # size_bytes is optional only client-side (e.g. on uploads),
+                # the lakeFS server always populates it for existing objects.
+                raise RuntimeError(f"lakeFS server returned no object size for {path!r}")
 
             f.seek(max(-size, -nbytes), 2)
-            return cast(bytes, f.read())
+            return f.read()
 
     def created(self, path: str | os.PathLike[str]) -> datetime:
         """
