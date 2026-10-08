@@ -3,7 +3,7 @@ Static typing checks for the public API. These functions are never executed;
 they are verified by the type checker (ty) as part of the pre-commit hooks.
 """
 
-from typing_extensions import assert_type
+from typing import assert_type
 
 from lakefs_spec import LakeFSFileSystem
 from lakefs_spec.file import LakeFSObjectReader, LakeFSObjectWriter

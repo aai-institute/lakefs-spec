@@ -7,11 +7,10 @@ which translate lakeFS API errors into Python builtin exceptions.
 
 from collections.abc import Generator, Iterator
 from contextlib import contextmanager
-from typing import AnyStr, Generic, cast
+from typing import AnyStr, Generic, Self, cast
 
 from lakefs.exceptions import ServerException, api_exception_handler
 from lakefs.object import LakeFSIOBase, ObjectReader, ObjectWriter
-from typing_extensions import Self
 
 from lakefs_spec.errors import translate_lakefs_error
 
