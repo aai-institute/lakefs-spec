@@ -70,6 +70,10 @@ class LakeFSFileSystem(AbstractFileSystem):
         Whether to create branches implicitly when not-existing branches are referenced on file uploads.
     source_branch: str
         Source branch set as origin when a new branch is implicitly created.
+    pre_sign: bool | None
+        Whether to use pre-signed URLs for file up- and downloads by default.
+        If ``None``, the value from the lakeFS server's storage configuration is used.
+        Can be overridden per call via the ``pre_sign`` argument of ``LakeFSFileSystem.open()``.
     request_config: RequestConfig | None
         A dictionary containing configuration to use in API requests made with the lakefs SDK.
     **storage_options: Any
@@ -93,6 +97,7 @@ class LakeFSFileSystem(AbstractFileSystem):
         proxy: str | None = None,
         create_branch_ok: bool = True,
         source_branch: str = "main",
+        pre_sign: bool | None = None,
         request_config: RequestConfig | None = None,
         **storage_options: Any,
     ):
@@ -122,6 +127,7 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         self.create_branch_ok = create_branch_ok
         self.source_branch = source_branch
+        self.pre_sign = pre_sign
 
         # a persistent config for all API requests made with the lakefs SDK.
         self._request_config: dict[str, Any] = prefix_with_underscore(
@@ -669,7 +675,8 @@ class LakeFSFileSystem(AbstractFileSystem):
         mode: Literal["r", "rb", "rt", "w", "wb", "wt", "x", "xb", "xt"]
             The file mode indicating its purpose. Use ``r/rb/rt`` for downloads from lakeFS, ``w/wb/wt/x/xb/xt`` for uploads to lakeFS.
         pre_sign: bool | None
-            Whether to use a pre-signed URL for the file up-/download. If ``None``, the value from the storage configuration is used.
+            Whether to use a pre-signed URL for the file up-/download.
+            If ``None``, the file system's ``pre_sign`` default is used, falling back to the value from the storage configuration.
         content_type: str | None
             Content type to use for the file, relevant for uploads only.
         metadata: dict[str, str] | None
@@ -698,6 +705,9 @@ class LakeFSFileSystem(AbstractFileSystem):
 
         path = stringify_path(path)
         repo, ref, resource = parse(path)
+
+        if pre_sign is None:
+            pre_sign = self.pre_sign
 
         if mode.startswith("r"):
             mode = cast(Literal["r", "rb"], mode)
