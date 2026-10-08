@@ -73,6 +73,26 @@ def test_initialization(monkeypatch: MonkeyPatch, temporary_lakectl_config: str)
     assert config.password == "my-password"
 
 
+def test_pre_sign_default_applies_to_open() -> None:
+    """The file system's ``pre_sign`` default is used by ``open()`` unless overridden per call."""
+    fs = LakeFSFileSystem(
+        host="localhost:8000",
+        username="AKIAIOSFOLQUICKSTART",
+        password="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+        create_branch_ok=False,
+        pre_sign=False,
+    )
+
+    # NB: write mode with create_branch_ok=False does not contact the server before close().
+    with fs.open("repo/main/file.txt", "wb") as f:
+        assert f.pre_sign is False
+        f.discard()
+
+    with fs.open("repo/main/file.txt", "wb", pre_sign=True) as f:
+        assert f.pre_sign is True
+        f.discard()
+
+
 @pytest.mark.skipif(lakefs_version < Version("0.14"), reason="requires lakefs>=0.14.0")
 def test_request_config(repository: Repository) -> None:
     # Set a shorter timeout value for the filesystem (= lakeFS client)

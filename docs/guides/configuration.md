@@ -75,7 +75,7 @@ fs = LakeFSFileSystem()
 
 !!! Info
     
-    Environment variable discovery is handled by the underlying `lakefs` Python client. The `proxy`, `create_branch_ok`, and `source_branch` arguments of `LakeFSFileSystem` have no environment variable counterpart and can only be supplied in Python.
+    Environment variable discovery is handled by the underlying `lakefs` Python client. The `proxy`, `create_branch_ok`, `source_branch`, and `pre_sign` arguments of `LakeFSFileSystem` have no environment variable counterpart and can only be supplied in Python.
 
 ## Appendix: Mixing zero-config methods
 
